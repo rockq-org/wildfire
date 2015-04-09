@@ -1,5 +1,22 @@
 # WILDFIRE
-Project to publish personal stuffs, a platform like eBay based wechat.
+
+
+[![build status][travis-image]][travis-url]
+[![Coverage Status][coverage-image]][coverage-url]
+[![David deps][david-image]][david-url]
+[![node version][node-image]][node-url]
+
+[travis-image]: https://img.shields.io/travis/cnodejs/nodeclub.svg?style=flat-square
+[travis-url]: https://travis-ci.org/cnodejs/nodeclub
+[coverage-image]: https://img.shields.io/coveralls/cnodejs/nodeclub.svg?style=flat-square
+[coverage-url]: https://coveralls.io/r/cnodejs/nodeclub?branch=master
+[david-image]: https://img.shields.io/david/cnodejs/nodeclub.svg?style=flat-square
+[david-url]: https://david-dm.org/cnodejs/nodeclub
+[node-image]: https://img.shields.io/badge/node.js-%3E=_0.10-green.svg?style=flat-square
+[node-url]: http://nodejs.org/download/
+
+
+### Project to publish personal stuffs, a platform like eBay based wechat.
 
 ## [Documentation](https://github.com/arrking/wildfire-docs)
 

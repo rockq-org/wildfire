@@ -17,15 +17,6 @@
 [node-url]: http://nodejs.org/download/
 
 
-
-[coverage-image]: https://img.shields.io/coveralls/cnodejs/nodeclub.svg?style=flat-square
-[coverage-url]: https://coveralls.io/r/cnodejs/nodeclub?branch=master
-[![david-image](https://david-dm.org/arrking/wildfire.svg?style=flat-square)](https://david-dm.org/arrking/wildfire)
-[david-url]: https://david-dm.org/arrking/wildfire
-[node-image]: https://img.shields.io/badge/node.js-%3E=_0.10-green.svg?style=flat-square
-[node-url]: http://nodejs.org/download/
-
-
 ### Project to publish personal stuffs, a platform like eBay based wechat.
 
 ## [Documentation](https://github.com/arrking/wildfire-docs)

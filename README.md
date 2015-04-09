@@ -6,12 +6,22 @@
 [![David deps][david-image]][david-url]
 [![node version][node-image]][node-url]
 
-[travis-image]: https://img.shields.io/travis/cnodejs/nodeclub.svg?style=flat-square
-[travis-url]: https://travis-ci.org/cnodejs/nodeclub
+
+[travis-image]: https://magnum.travis-ci.com/arrking/wildfire.svg?token=mUBz4MeEPzjmzby6dXqa&branch=master&style=flat-square
+[travis-url]: https://magnum.travis-ci.com/arrking/wildfire
+[coverage-image]: https://img.shields.io/coveralls/arrking/wildfire.svg?style=flat-square
+[coverage-url]: https://coveralls.io/r/arrking/wildfire?branch=master
+[david-image]: https://david-dm.org/arrking/wildfire.svg?style=flat-square
+[david-url]: https://david-dm.org/arrking/wildfire
+[node-image]: https://img.shields.io/badge/node.js-%3E=_0.10-green.svg?style=flat-square
+[node-url]: http://nodejs.org/download/
+
+
+
 [coverage-image]: https://img.shields.io/coveralls/cnodejs/nodeclub.svg?style=flat-square
 [coverage-url]: https://coveralls.io/r/cnodejs/nodeclub?branch=master
-[david-image]: https://img.shields.io/david/cnodejs/nodeclub.svg?style=flat-square
-[david-url]: https://david-dm.org/cnodejs/nodeclub
+[![david-image](https://david-dm.org/arrking/wildfire.svg?style=flat-square)](https://david-dm.org/arrking/wildfire)
+[david-url]: https://david-dm.org/arrking/wildfire
 [node-image]: https://img.shields.io/badge/node.js-%3E=_0.10-green.svg?style=flat-square
 [node-url]: http://nodejs.org/download/
 

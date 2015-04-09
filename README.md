@@ -12,7 +12,7 @@
 [coverage-image]: https://img.shields.io/coveralls/arrking/wildfire.svg?style=flat-square
 [coverage-url]: https://coveralls.io/r/arrking/wildfire?branch=master
 [david-image]: https://david-dm.org/arrking/wildfire.svg?style=flat-square
-[david-url]: https://david-dm.org/arrking/wildfire
+[david-url]: https://david-dm.org/arrking/wildfire#info=dependencies&view=table
 [node-image]: https://img.shields.io/badge/node.js-%3E=_0.10-green.svg?style=flat-square
 [node-url]: http://nodejs.org/download/
 

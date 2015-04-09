@@ -1,16 +1,30 @@
 {
-  "name": "nodeclub",
+  "name": "wildfire",
   "version": "2.0.0",
   "private": true,
   "main": "app.js",
-  "description": "A Node.js bbs using MongoDB",
-  "repository": "https://github.com/cnodejs/nodeclub",
+  "description": "Platform to sell personal stuffs, a platform like eBay based wechat and nodeclub.",
+  "repository": "https://github.com/arrking/wildfire",
   "customHost": [
-    "cnodejs.org",
-    "club.cnodejs.org"
+    "wildfire.arrking.com"
+  ],
+  "author": "Hain <hain@arrking.com>",
+  "contributors": [
+    {
+      "name": "Hai Liang Wang",
+      "email": "hain@arrking.com"
+    },
+    {
+      "name": "Jian Fei Zhao",
+      "email": "icefox0801@hotmail.com"
+    },
+    {
+      "name": "Lai Jin Yue",
+      "email": "lymanlai2011@gmail.com"
+    }
   ],
   "engines": {
-    "node": "0.12.x"
+    "node": "0.11.x"
   },
   "dependencies": {
     "async": "0.9.0",
@@ -67,5 +81,6 @@
   },
   "scripts": {
     "test": "make test"
-  }
+  },
+  "license": "Beijing Arrking Tech Co., Ltd. All Copyright Reserved"
 }

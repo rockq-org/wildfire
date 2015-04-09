@@ -14,6 +14,7 @@ Project to publish personal stuffs, a platform like eBay based wechat.
 #### [NodeClub](https://github.com/arrking/wildfire/blob/master/nodeclub.README.md)
 [github](https://github.com/cnodejs/nodeclub)
 [community](https://cnodejs.org/)
+[从开源社区继承的commit 起始点 b03495b](https://github.com/arrking/wildfire/releases/tag/c1)
 #### Ionic
 [Get started](http://ionicframework.com/getting-started/)
 #### Wechat

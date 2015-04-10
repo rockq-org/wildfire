@@ -43,13 +43,24 @@
 ```
 git clone git@github.com:arrking/node.git
 cd node 
-git checkout v0.11.9
+git checkout v0.11.16
 ./configure 
 make && sudo make install
 ```
 Verify version of node and nom
 ```
-npm -v # 1.3.15
-node -v # v0.11.9
+npm -v # 2.3.0
+node -v # v0.11.16
 ```
+
+#### pm2
+```
+sudo npm install pm2@0.12.10 -g
+```
+
+#### MongoDB db version v2.6.5
+
+#### Redis server v=2.8.17
+
+#### Cordova 3.6.3-0.2.13, ionic v1.3.19, [generator-ionic](https://github.com/diegonetto/generator-ionic) 0.7.1
 

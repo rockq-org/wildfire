@@ -26,3 +26,6 @@ public/upload/*
 *.swp
 nohup.out
 *~
+
+# redis dump data
+dump.rdb

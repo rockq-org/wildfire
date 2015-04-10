@@ -31,6 +31,10 @@
 
 > [User Stories](https://github.com/arrking/wildfire/issues?q=is%3Aissue+label%3A%22user+story%22)
 
+## Implementation
+
+![image](https://github.com/arrking/wildfire-docs/blob/master/omnigraffle/app-implementations.png)
+
 ## [Documentation](https://github.com/arrking/wildfire-docs)
 
 

@@ -22,9 +22,11 @@
 ### Persona
 
 * Bob - User who wants to post second-hand goods.
+
 ![image](https://github.com/arrking/wildfire-docs/blob/master/StarUML/png/CommonUser__UseCaseDiagram1_1.png)
 
 * Alice - Platform Administrator.
+
 ![image](https://github.com/arrking/wildfire-docs/blob/master/StarUML/png/Model1__Admin_2.png)
 
 > [User Stories](https://github.com/arrking/wildfire/issues?q=is%3Aissue+label%3A%22user+story%22)

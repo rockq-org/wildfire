@@ -24,3 +24,4 @@ public/upload/*
 *.sublime-project
 *.sublime-workspace
 *.swp
+nohup.out

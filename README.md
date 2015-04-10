@@ -17,7 +17,15 @@
 [node-url]: http://nodejs.org/download/
 
 
-### Project to publish personal stuffs, a platform like eBay based wechat.
+## Project to publish personal stuffs, a platform like eBay based wechat.
+
+### Persona
+
+* Bob - User who wants to post second-hand goods.
+
+* Alice - Platform Administrator.
+
+> [User Stories](https://github.com/arrking/wildfire/issues?q=is%3Aissue+label%3A%22user+story%22)
 
 ## [Documentation](https://github.com/arrking/wildfire-docs)
 

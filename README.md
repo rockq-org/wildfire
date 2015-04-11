@@ -78,5 +78,5 @@ sudo npm install pm2@0.12.10 -g
 
 #### Redis server v=2.8.17
 
-#### Cordova 3.6.3-0.2.13, ionic v1.3.19, [generator-ionic](https://github.com/diegonetto/generator-ionic) 0.7.1
+#### Cordova 3.6.3-0.2.13, ionic v1.3.19, [generator-ionic](https://github.com/diegonetto/generator-ionic) 0.7.1, bower 1.4.1
 

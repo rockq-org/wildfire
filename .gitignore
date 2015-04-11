@@ -29,3 +29,16 @@ nohup.out
 
 # redis dump data
 dump.rdb
+
+# ignore ionic app
+public/ionic/platforms
+public/ionic/plugins
+public/ionic/www
+public/ionic/node_modules
+public/ionic/.idea
+public/ionic/.tmp
+public/ionic/.temp
+public/ionic/.sass-cache
+public/ionic/app/scripts/config.js
+public/ionic/app/bower_components
+public/ionic/app/scripts/configuration.js

@@ -29,3 +29,9 @@ Features
 It you've got an idea about a new feature, it's most likely that you have do implement it on your own.
 If you cannot implement the feature, but it is very important, you can add a task in [issues](https://github.com/arrking/wildfire/issues), but expect it be declined by the maintainer.
 
+npm mirror in taobao
+---------
+淘宝 NPM 镜像
+https://npm.taobao.org/
+RubyGems 镜像
+https://ruby.taobao.org/

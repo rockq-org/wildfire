@@ -7,6 +7,7 @@
  */
 
 var config = require('./config');
+var appInit = require('./appinit.js');
 
 if (!config.debug) {
   require('newrelic');
@@ -17,6 +18,7 @@ var Loader = require('loader');
 var express = require('express');
 var session = require('express-session');
 var passport = require('passport');
+require('./persistence/database');
 require('./models');
 var GitHubStrategy = require('passport-github').Strategy;
 var githubStrategyMiddleware = require('./middlewares/github_strategy');
@@ -33,6 +35,7 @@ var busboy = require('connect-busboy');
 var errorhandler = require('errorhandler');
 var cors = require('cors');
 var limitMiddleware = require('./middlewares/limit');
+var logger = require('./common/loggerUtil').getLogger('app');
 
 // 静态文件目录
 var staticDir = path.join(__dirname, 'public');
@@ -152,9 +155,9 @@ if (config.debug) {
 }
 
 app.listen(config.port, function () {
-  console.log("NodeClub listening on port %d", config.port);
-  console.log("God bless love....");
-  console.log("You can debug your app with http://" + config.hostname + ':' + config.port);
+  logger.info("wildfire listening on port %d", config.port);
+  logger.info("God bless love....");
+  logger.info("You can debug your app with http://" + config.hostname + ':' + config.port);
 });
 
 

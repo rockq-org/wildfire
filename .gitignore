@@ -17,6 +17,7 @@ assets.json
 desktop.ini
 
 *.log
+logs/*.log*
 
 .idea
 public/upload/*

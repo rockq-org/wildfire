@@ -5,17 +5,9 @@
 var Q = require('q'),
     common = require('../common'),
     logger = common.loggerUtil.getLogger('redisq'),
-    redis = require('redis'),
     u = require('util'),
-    config = require('../config');
+    redisClient = require('./redis');
 
-// configuration ===============================================================
-var redisClient = redis.createClient(config.redis_port, config.redis_host, {
-    auth_pass: config.redis_pass,
-    no_ready_check: true
-});
-// redisClient.auth(config.redis_pass);
-logger.debug(u.format('Using Redis %s:%d pass: %s', config.redis_host, config.redis_port, config.redis_pass));
 
 var WX_ACCESS_TOKEN_KEY = 'WILDFIRE_WX_ACCESS_TOKEN';
 var WX_JSPAPI_TICKET_KEY = 'WILDFIRE_WX_JSPAPI_TICKET';

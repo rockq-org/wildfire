@@ -1,4 +1,4 @@
-var redis = require('./redis');
+var redis = require('../persistence/redis');
 var _ = require('lodash');
 
 var get = function (key, callback) {

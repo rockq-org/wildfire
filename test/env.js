@@ -1,5 +1,5 @@
 var nock = require('nock');
-var redis = require('../common/redis');
+var redis = require('../persistence/redis');
 
 nock.enableNetConnect(); // 允许真实的网络连接
 

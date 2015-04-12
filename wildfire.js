@@ -24,7 +24,7 @@ var webRouter = require('./web_router');
 var apiRouterV1 = require('./api_router_v1');
 var auth = require('./middlewares/auth');
 var proxyMiddleware = require('./middlewares/proxy');
-var RedisStore = require('connect-redis')(session);
+var MongoStore = require('connect-mongo')(session);
 var _ = require('lodash');
 var csurf = require('csurf');
 var compress = require('compression');
@@ -78,13 +78,12 @@ app.use(require('method-override')());
 app.use(require('cookie-parser')(config.session_secret));
 app.use(compress());
 app.use(session({
-  secret: config.session_secret,
-  store: new RedisStore({
-    port: config.redis_port,
-    host: config.redis_host,
-  }),
-  resave: true,
-  saveUninitialized: true,
+    secret: config.session_secret,
+    store: new MongoStore({
+        url: config.db
+    }),
+    resave: true,
+    saveUninitialized: true,
 }));
 
 app.use(passport.initialize());

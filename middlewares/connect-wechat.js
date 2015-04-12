@@ -9,6 +9,7 @@ var u = require('util');
 var Q = require('q');
 var wxSign = require("weixin-signature").sign;
 var redisq = require('../persistence/redisq');
+var wxCfg = require('../wechat-gzh.json');
 
 // function _postWXEvent(msg) {
 //     reflux.post('/collections/WXEvents', {
@@ -153,7 +154,7 @@ exports.setup = function(app, path) {
 function _getWxAccessToken() {
     var defer = Q.defer();
     superagent.get(u.format('https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=%s&secret=%s',
-            common.sys.wechat_gzh.appId, common.sys.wechat_gzh.appSecret))
+            wxCfg.appId, wxCfg.appSecret))
         .end(function(err, res) {
             if (err) {
                 defer.reject(err);
@@ -319,6 +320,15 @@ function _getWxJsapiTicketFromRedis() {
 
     return defer.promise;
 }
+
+/**
+ * Get a access token for debugging wechat API
+ * @param  {[type]} doc){                 console.log('wechat access token: ' + doc);} [description]
+ * @return {[type]}        [description]
+ */
+_getWxAccessTokenFromRedis().then(function(doc){
+    console.log('wechat access token: ' + doc);
+});
 
 exports.getWxAccessTokenFromRedis = _getWxAccessTokenFromRedis;
 exports.getWxJsapiTicketFromRedis = _getWxJsapiTicketFromRedis;

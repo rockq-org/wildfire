@@ -36,6 +36,7 @@ var errorhandler = require('errorhandler');
 var cors = require('cors');
 var limitMiddleware = require('./middlewares/limit');
 var logger = require('./common/loggerUtil').getLogger('app');
+var wechat = require('./middlewares/connect-wechat');
 
 // 静态文件目录
 var staticDir = path.join(__dirname, 'public');
@@ -143,6 +144,7 @@ app.use(busboy({
 // routes
 app.use('/api/v1', cors(), apiRouterV1);
 app.use('/', webRouter);
+wechat.setup(app, '/connect-wechat');
 
 // error handler
 if (config.debug) {

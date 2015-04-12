@@ -10,13 +10,13 @@ var Q = require('q');
 var wxSign = require("weixin-signature").sign;
 var redisq = require('../persistence/redisq');
 
-function _postWXEvent(msg) {
-    reflux.post('/collections/WXEvents', {
-        openId: msg.FromUserName,
-        creationDate: (new Date()),
-        payload: msg
-    });
-}
+// function _postWXEvent(msg) {
+//     reflux.post('/collections/WXEvents', {
+//         openId: msg.FromUserName,
+//         creationDate: (new Date()),
+//         payload: msg
+//     });
+// }
 
 function _saveUserProfileDataByOpenId(openId) {
     logger.debug('_saveUserProfileDataByOpenId', 'start to save OpenID: ' + openId);
@@ -55,7 +55,7 @@ function _saveUserProfileDataByOpenId(openId) {
 
 function onSubscribe(msg, res) {
     // get user profile data with RESt API
-    _saveUserProfileDataByOpenId(msg.FromUserName);
+    // _saveUserProfileDataByOpenId(msg.FromUserName);
     res.reply({
         content: '感谢您的关注，互联网是一张扁平的、大众的、可信赖的网。金矢科技致力于帮助您借助这张网，拓展业务，获得更多的渠道通路。让我们实现财富共赢！',
         type: 'text'
@@ -123,13 +123,13 @@ function onDefault(msg, res) {
 }
 
 exports.setup = function(app, path) {
-    app.use(path, wechat('yauczelCuj1', function(req, res, next) {
+    app.use(path, wechat('wiUtuddAk3', function(req, res, next) {
         // message is located in req.weixin
         var message = req.weixin;
-        _postWXEvent(message);
+        // _postWXEvent(message);
         // TODO
         // post the data into database
-        superagent.post()
+        // superagent.post()
 
         switch (message.Event) {
             case 'CLICK':

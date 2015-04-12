@@ -41,6 +41,7 @@ var config = {
   // redis 配置，默认是本地
   redis_host: '127.0.0.1',
   redis_port: 6379,
+  redis_pass: null,
 
   session_secret: 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {var r = Math.random()*16|0,v=c=='x'?r:r&0x3|0x8;return v.toString(16);}),
   auth_cookie_name: 'wildfire_sid',

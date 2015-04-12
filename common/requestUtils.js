@@ -5,10 +5,6 @@
 var Database = require('../persistence/database');
 var MessageGenerator = require('./messageGenerator');
 var Version = require('./version');
-var Profile = require('../persistence/profile');
-
-var loginURL = "/auth/login";
-var defaultProvider = "?provider=bluemix&redirect=";
 
 var logger = require("./loggerUtil").getLogger("requestUtils");
 var url = require('url');
@@ -266,43 +262,6 @@ Util.prototype.acceptsJson = function(req) {
 	return req.accepts(['html', 'json']) == 'json';
 };
 
-/*
- * If not already logged in, will reroute for a login dance.
- * If already logged in, will return a NO Permission error
- * 
- *  @param {req}  original server request
- *  @param {res}  original server response
- *  @param {provider}  optional provider to use for authentication, default is bluemix
- */
-Util.prototype.loginreroute = function (req, res, provider) {
-	var url = [];
-    
-    if (this.isAnonymous(req)) {
-		if (Util.prototype.acceptsJson(req)) {
-			// programatic path, raise the auth dialog
-			this.okJsonResponse(new Error("Not Authorized"), res, this.httpcode.UNAUTHORIZED);
-		}
-		else {
-			// likely a brouser path, redirect
-			url.push(_getServerURL(req));
-			url.push (loginURL);
-			if (provider) {
-				url.push("?provider=");
-				url.push(provider);
-				url.push("&redirect=");
-			}
-			else
-				url.push(defaultProvider);
-			url.push(req.url);
-
-			res.statusCode = Util.prototype.httpcode.FOUND;
-			res.setHeader('Location', url.join(""));
-			res.end();  
-		}
-    } else {
-		exports.errCodeResponse(new Error("No permission, already logged in"), this.httpcode.FORBIDDEN, res);
-	}
-};
 /*
  * Check to see if the request is for anonymous or logged in user
  * 

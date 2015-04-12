@@ -101,7 +101,7 @@ Version.prototype = {
 };
 
 var fs = require('fs');
-var file ='config/apiVersion.json';
+var file ='./apiVersion.json';
 
 Version.config = JSON.parse(fs.readFileSync(file, 'utf8'));
 

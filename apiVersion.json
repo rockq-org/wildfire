@@ -1,0 +1,8 @@
+{
+	"versionPrefix": "vnd.tenx.",
+    "supportedVersions": [
+       {
+    	   "version": "v1.0"
+       }
+     ]
+}

@@ -236,7 +236,7 @@ app.get('/auth/wechat/embedded/callback', function(req, res, next) {
         if (err) {
             logger.error('wechat uaa', err);
         } else {
-            logger.debug('wechat uaa', );
+            logger.debug('wechat uaa', JSON.stringify(user));
         }
         res.redirect(util.format('http://%s/public/ionic/www/wechat', config.host));
     })(req, res, next);

@@ -134,12 +134,7 @@ exports.getGravatar = function(user) {
 /**
  * Find user by unionid, if not exist, create a new record.
  * @param  {[type]} profile {
-  "provider": "wechat",
-  "id": "o0DaijgmdOUuAIRQ1QNZzuTizOT8",
-  "displayName": "王海良",
-  "user": true,
-  "__v": 0,
-  "profile": {
+  {
     "openid": "ogWfMt5hcNzyPu2BRHjGj4CZmGqo",
     "nickname": "王海良",
     "sex": 1,
@@ -151,7 +146,6 @@ exports.getGravatar = function(user) {
     "privilege": [],
     "unionid": "o0DaijgmdOUuAIRQ1QNZzuTizOT8"
   }
-}
  * @return {user}         new user model record.
  */
 exports.newOrUpdate = function(profile) {

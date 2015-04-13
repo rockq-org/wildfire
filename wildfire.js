@@ -165,22 +165,11 @@ passport.use(new WechatStrategy({
         // }, function (openid, profile, token, done) {
 }, function(req, openid, profile, params, done) {
     req.session.wechat_params = params;
-    var _profile = {
-        "provider": "wechat",
-        "id": profile.unionid,
-        "displayName": profile.nickname,
-        "user": true,
-        "__v": 0,
-        "profile": profile
-    };
+
+    logger.debug('snsapi_userinfo', JSON.stringify(profile));
     /**
-     * {
-  "provider": "wechat",
-  "id": "o0DaijgmdOUuAIRQ1QNZzuTizOT8",
-  "displayName": "王海良",
-  "user": true,
-  "__v": 0,
-  "profile": {
+     * 
+    {
     "openid": "ogWfMt5hcNzyPu2BRHjGj4CZmGqo",
     "nickname": "王海良",
     "sex": 1,
@@ -191,23 +180,10 @@ passport.use(new WechatStrategy({
     "headimgurl": "http://wx.qlogo.cn/mmopen/Q3auHgzwzM4K3X0qF1xm0lH7MWFobvcge14aBibJbeV78z9TwWjicb5gOwVbQ7QO0CiaIBGv1DrJibDL0tacJM6VZw/0",
     "privilege": [],
     "unionid": "o0DaijgmdOUuAIRQ1QNZzuTizOT8"
-  }
-}
+    }
      */
-    logger.debug('snsapi_userinfo', JSON.stringify(_profile));
-
-    // profileModule.findOrCreate(_profile, {}).then(function(dbProfile) {
-    //     req.logIn(dbProfile, function(err) {
-    //         return done(null, dbProfile);
-    //     });
-    // }, function(err) {
-    //     console.log("Error logging in user");
-    //     console.log(err);
-    //     done(err);
-    // }).end();
-
     // create user profile
-    UserProxy.newOrUpdate(_profile)
+    UserProxy.newOrUpdate(profile)
         .then(function(user) {
             req.logIn(user, function(err) {
                 return done(null, user);

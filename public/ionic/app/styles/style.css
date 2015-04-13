@@ -1,1 +1,7 @@
 /* Empty. Add your own CSS if you like */
+.chat{
+  border: none;
+}
+.chat-right{
+  text-align: right;
+}

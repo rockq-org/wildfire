@@ -10,9 +10,9 @@ var config = require('./config');
 var appInit = require('./appinit.js');
 
 if (!config.debug) {
-  require('newrelic');
+    require('newrelic');
 }
-
+var util = require('util');
 var path = require('path');
 var Loader = require('loader');
 var express = require('express');
@@ -22,6 +22,7 @@ require('./persistence/database');
 require('./models');
 var GitHubStrategy = require('passport-github').Strategy;
 var githubStrategyMiddleware = require('./middlewares/github_strategy');
+var WechatStrategy = require('passport-wechat');
 var webRouter = require('./web_router');
 var apiRouterV1 = require('./api_router_v1');
 var auth = require('./middlewares/auth');
@@ -37,6 +38,7 @@ var cors = require('cors');
 var limitMiddleware = require('./middlewares/limit');
 var logger = require('./common/loggerUtil').getLogger('app');
 var wechat = require('./middlewares/connect-wechat');
+var wxConfig = require('./wechat-gzh.json');
 
 // 静态文件目录
 var staticDir = path.join(__dirname, 'public');
@@ -44,12 +46,12 @@ var staticDir = path.join(__dirname, 'public');
 // assets
 var assets = {};
 if (config.mini_assets) {
-  try {
-    assets = require('./assets.json');
-  } catch (e) {
-    console.log('You must execute `make build` before start app when mini_assets is true.');
-    throw e;
-  }
+    try {
+        assets = require('./assets.json');
+    } catch (e) {
+        console.log('You must execute `make build` before start app when mini_assets is true.');
+        throw e;
+    }
 }
 
 var urlinfo = require('url').parse(config.host);
@@ -82,7 +84,7 @@ app.use('/agent', proxyMiddleware.proxy);
 app.use(require('response-time')());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({
-  extended: true
+    extended: true
 }));
 app.use(require('method-override')());
 app.use(require('cookie-parser')(config.session_secret));
@@ -104,14 +106,14 @@ app.use(auth.blockUser());
 
 
 if (!config.debug) {
-  app.use(function (req, res, next) {
-    if (req.path.indexOf('/api') === -1) {
-      csurf()(req, res, next);
-      return;
-    }
-    next();
-  });
-  app.set('view cache', true);
+    app.use(function(req, res, next) {
+        if (req.path.indexOf('/api') === -1) {
+            csurf()(req, res, next);
+            return;
+        }
+        next();
+    });
+    app.set('view cache', true);
 }
 
 // for debug
@@ -121,30 +123,105 @@ if (!config.debug) {
 
 // set static, dynamic helpers
 _.extend(app.locals, {
-  config: config,
-  Loader: Loader,
-  assets: assets
+    config: config,
+    Loader: Loader,
+    assets: assets
 });
 
 _.extend(app.locals, require('./common/render_helper'));
-app.use(function (req, res, next) {
-  res.locals.csrf = req.csrfToken ? req.csrfToken() : '';
-  next();
+app.use(function(req, res, next) {
+    res.locals.csrf = req.csrfToken ? req.csrfToken() : '';
+    next();
 });
 
 // github oauth
-passport.serializeUser(function (user, done) {
-  done(null, user);
+passport.serializeUser(function(user, done) {
+    done(null, user);
 });
-passport.deserializeUser(function (user, done) {
-  done(null, user);
+passport.deserializeUser(function(user, done) {
+    done(null, user);
 });
+
 passport.use(new GitHubStrategy(config.GITHUB_OAUTH, githubStrategyMiddleware));
 
+/**
+ * Wechat UAA Service for ionic app embedded wechat 
+ * @param  {[type]} req           [description]
+ * @param  {[type]} openid        [description]
+ * @param  {[type]} profile       [description]
+ * @param  {[type]} params        [description]
+ * @param  {[type]} done)         {               req.session.wechat_params [description]
+ * @param  {[type]} function(err) {                                                         console.log("Error logging in user");        console.log(err [description]
+ * @return {[type]}               [description]
+ */
+passport.use(new WechatStrategy({
+    appid: wxConfig.appId,
+    appsecret: wxConfig.appSecret,
+    callbackURL: util.format('http://%s/auth/wechat/embedded/callback', config.host),
+    scope: 'snsapi_userinfo',
+    passReqToCallback: true,
+    state: true
+        // }, function (openid, profile, token, done) {
+}, function(req, openid, profile, params, done) {
+    req.session.wechat_params = params;
+    var _profile = {
+        "provider": "wechat",
+        "id": profile.unionid,
+        "displayName": profile.nickname,
+        "user": true,
+        "__v": 0,
+        "profile": profile
+    };
+    logger.debug('snsapi_userinfo', JSON.stringify(_profile));
+    // profileModule.findOrCreate(_profile, {}).then(function(dbProfile) {
+    //     req.logIn(dbProfile, function(err) {
+    //         return done(null, dbProfile);
+    //     });
+    // }, function(err) {
+    //     console.log("Error logging in user");
+    //     console.log(err);
+    //     done(err);
+    // }).end();
+
+    req.logIn(_profile, function(err) {
+        return done(null, _profile);
+    });
+
+
+    // return done(null, openid, profile);
+}));
+
+app.get('/auth/wechat/embedded/err', function(req, res) {
+    res.send({
+        message: 'error'
+    });
+});
+
+app.get('/auth/wechat/embedded/success', function(req, res) {
+    // console.log(req.session);
+    // res.send( req.session );
+    res.send({
+        message: 'success'
+    });
+});
+
+app.get('/auth/wechat/embedded', passport.authenticate('wechat'), function(req, res) {
+    //dont't call it
+});
+//endof oauth2/wechat
+
+
+app.get('/auth/wechat/embedded/callback', passport.authenticate('wechat', {
+    failureRedirect: '/auth/wechat/embedded/err',
+    successRedirect: '/auth/wechat/embedded/success'
+}));
+
+
+
 app.use(busboy({
-  limits: {
-    fileSize: 10 * 1024 * 1024 // 10MB
-  }
+    limits: {
+        fileSize: 10 * 1024 * 1024 // 10MB
+    }
 }));
 
 // routes
@@ -154,18 +231,18 @@ wechat.setup(app, '/connect-wechat');
 
 // error handler
 if (config.debug) {
-  app.use(errorhandler());
+    app.use(errorhandler());
 } else {
-  app.use(function (err, req, res, next) {
-    console.error('server 500 error:', err);
-    return res.status(500).send('500 status');
-  });
+    app.use(function(err, req, res, next) {
+        console.error('server 500 error:', err);
+        return res.status(500).send('500 status');
+    });
 }
 
-app.listen(config.port, function () {
-  logger.info("wildfire listening on port %d", config.port);
-  logger.info("God bless love....");
-  logger.info("You can debug your app with http://" + config.hostname + ':' + config.port);
+app.listen(config.port, function() {
+    logger.info("wildfire listening on port %d", config.port);
+    logger.info("God bless love....");
+    logger.info("You can debug your app with http://" + config.hostname + ':' + config.port);
 });
 
 

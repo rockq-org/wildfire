@@ -57,12 +57,12 @@ function _saveUserProfileDataByOpenId(openId) {
 function onSubscribe(msg, res) {
     // get user profile data with RESt API
     // _saveUserProfileDataByOpenId(msg.FromUserName);
-    res.reply({
+    res.reply([{
         title: '注册账号',
         description: '使用微信登陆呱呱叫。',
         picurl: 'http://wildfire-staging.arrking.com/public/images/frog-icon.png',
-        url: 'http://wildfire-staging.arrking.com/public/ionic/www/#/wechat-uaa'
-    });
+        url: 'http://wildfire-staging.arrking.com/'
+    }]);
 }
 
 function onUnsubscribe(msg, res) {

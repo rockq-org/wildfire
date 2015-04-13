@@ -18,29 +18,30 @@ angular.module('iwildfire', ['ionic', 'iwildfire.controllers', 'iwildfire.servic
             // org.apache.cordova.statusbar required
             StatusBar.styleLightContent();
         }
-
-        if (window.ARRKING_WECHAT_SIG && window.ARRKING_WECHAT_SIG.appId) {
-            wx.config(window.ARRKING_WECHAT_SIG);
-            wx.error(function(err) {
-                alert(err);
-            });
-            wx.ready(function() {
-                /**
-                 * check api permissions
-                 * @param  {[type]}
-                 * @return {[type]}
-                 */
-                wx.scanQRCode({
-                    desc: 'ScanQRCode API',
-                    needResult: 1, // 默认为0，扫描结果由微信处理，1则直接返回扫描结果，
-                    scanType: ["qrCode", "barCode"], // 可以指定扫二维码还是一维码，默认二者都有
-                    success: function(res) {
-                        var result = res.resultStr; // 当needResult 为 1 时，扫码返回的结果
-                        alert(result);
-                    }
-                });
-            });
-        }
+        // setup weixin sdk
+        // http://mp.weixin.qq.com/wiki/7/aaa137b55fb2e0456bf8dd9148dd613f.html#JSSDK.E4.BD.BF.E7.94.A8.E6.AD.A5.E9.AA.A4
+        // if (window.ARRKING_WECHAT_SIG && window.ARRKING_WECHAT_SIG.appId) {
+        //     wx.config(window.ARRKING_WECHAT_SIG);
+        //     wx.error(function(err) {
+        //         alert(err);
+        //     });
+        //     wx.ready(function() {
+        //         /**
+        //          * check api permissions
+        //          * @param  {[type]}
+        //          * @return {[type]}
+        //          */
+        //         wx.scanQRCode({
+        //             desc: 'ScanQRCode API',
+        //             needResult: 1, // 默认为0，扫描结果由微信处理，1则直接返回扫描结果，
+        //             scanType: ["qrCode", "barCode"], // 可以指定扫二维码还是一维码，默认二者都有
+        //             success: function(res) {
+        //                 var result = res.resultStr; // 当needResult 为 1 时，扫码返回的结果
+        //                 alert(result);
+        //             }
+        //         });
+        //     });
+        // }
     });
 })
 

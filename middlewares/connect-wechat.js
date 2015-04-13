@@ -2,6 +2,7 @@
  * Wechat I/O Backend
  */
 var wechat = require('wechat');
+var config = require('../config');
 var common = require('../common');
 var logger = common.loggerUtil.getLogger("wechat");
 var superagent = require('superagent');
@@ -59,9 +60,9 @@ function onSubscribe(msg, res) {
     // _saveUserProfileDataByOpenId(msg.FromUserName);
     res.reply([{
         title: '注册账号',
-        description: '使用微信登陆呱呱叫。',
-        picurl: 'http://wildfire-staging.arrking.com/public/images/frog-icon.png',
-        url: 'http://wildfire-staging.arrking.com/'
+        description: '使用微信登陆呱呱叫，未注册用户可浏览二手物品信息。',
+        picurl: u.format('http://%s/public/images/frog-icon.png', config.host),
+        url: u.format('http://%s/public/ionic/www/wechat', config.host)
     }]);
 }
 

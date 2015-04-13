@@ -1,0 +1,30 @@
+<ion-view view-title="欢迎加入呱呱叫">
+    <ion-content>
+        <div class="list">
+            <label class="item item-input item-select">
+                <div class="input-label">
+                    选择国家/地区
+                </div>
+                <select>
+                    <option value='1' selected>中国大陆(+86)</option>
+                    <option value='2'>中国台湾(+886)</option>
+                    <option value='3'>中国香港(+852)</option>
+                </select>
+            </label>
+            <div class="item item-input-inset">
+                <label class="item-input-wrapper">
+                    <input type="text" placeholder="手机号码">
+                </label>
+                <button class="button button-small">
+                    发送验证码
+                </button>
+            </div>
+            <label class="item item-input">
+                <input type="text" placeholder="输入六位验证码">
+            </label>
+            <button class="button button-block button-positive" ng-click="bindPhoneNumber()">
+                注册
+            </button>
+        </div>
+    </ion-content>
+</ion-view>

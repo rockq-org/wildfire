@@ -41,7 +41,8 @@ var UserSchema = new Schema({
 
   accessToken: {type: String},
   profile: { type: Schema.Types.Mixed, require: false},
-  passport: {type: String, require: true, default: 'local'}
+  passport: {type: String, require: true, default: 'local'},
+  phone_number: {type: String, require: false}
 });
 
 UserSchema.virtual('avatar_url').get(function () {

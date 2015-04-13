@@ -214,7 +214,12 @@ app.get('/auth/wechat/embedded/callback', function(req, res, next) {
         } else {
             logger.debug('wechat uaa', JSON.stringify(user));
         }
-        res.redirect(util.format('http://%s/public/ionic/www/wechat', config.host));
+        if (user.phone_number) {
+          // force user input phone number
+          res.redirect(util.format('http://%s/public/ionic/www/#/bind-mobile-phone', config.host));
+        } else {
+            res.redirect(util.format('http://%s/public/ionic/www/wechat', config.host));
+        }
     })(req, res, next);
 });
 

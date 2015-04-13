@@ -19,4 +19,12 @@ angular.module('iwildfire.controllers', [])
     $scope.settings = {
         enableFriends: true
     };
-});
+})
+
+.controller('BindMobilePhoneCtrl', function($scope, $state) {
+    $scope.bindPhoneNumber = function() {
+        $state.go('tab.index');
+    }
+})
+
+;

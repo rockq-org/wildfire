@@ -1,21 +1,19 @@
 <!DOCTYPE html>
 <html>
-  <head>
+
+<head>
     <meta charset="utf-8">
     <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no, width=device-width">
     <title>呱呱叫 二手信息</title>
-
     <!-- build:css styles/vendor.css -->
     <!-- bower:css -->
     <link rel="stylesheet" href="bower_components/ionic/release/css/ionic.css" />
     <!-- endbower -->
     <!-- endbuild -->
     <link href="styles/style.css" rel="stylesheet">
-
     <!-- IF using Sass (run gulp sass first), then uncomment below and remove the CSS includes above
     <link href="styles/ionic.app.css" rel="stylesheet">
     -->
-
     <!-- ionic/angularjs js -->
     <!-- build:js scripts/vendor.js -->
     <!-- bower:js -->
@@ -28,25 +26,25 @@
     <script src="bower_components/ngCordova/dist/ng-cordova.js"></script>
     <!-- endbower -->
     <!-- endbuild -->
-
     <!-- cordova script (this will be a 404 during development) -->
     <script src="cordova.js"></script>
-
     <!-- your app's js -->
     <!-- build:js scripts/scripts.js -->
+    <script src="scripts/jweixin-1.0.0.js"></script>
     <script src="scripts/app.js"></script>
     <script src="scripts/controllers.js"></script>
     <script src="scripts/services.js"></script>
     <script src="scripts/configuration.js"></script>
     <!-- endbuild -->
-  </head>
-  <body ng-app="iwildfire">
+</head>
+
+<body ng-app="iwildfire">
     <!--
       The nav bar that will be updated as we navigate between views.
     -->
     <ion-nav-bar class="bar-dark">
-      <ion-nav-back-button>
-      </ion-nav-back-button>
+        <ion-nav-back-button>
+        </ion-nav-back-button>
     </ion-nav-bar>
     <!--
       The views will be rendered in the <ion-nav-view> directive below
@@ -54,5 +52,6 @@
       have templates inline in this html file if you'd like).
     -->
     <ion-nav-view></ion-nav-view>
-  </body>
+</body>
+
 </html>

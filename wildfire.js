@@ -61,7 +61,13 @@ var app = express();
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'html');
 app.engine('html', require('ejs-mate'));
-app.locals._layoutFile = 'layout.html';
+/**
+ * Need to support wechat entry, disable the default layout.
+ * Specific layout in each partial views.
+ * <%- layout( 'layout.html') %>
+ * http://yijiebuyi.com/blog/08cf14e904325c19814465689453b3aa.html
+ */
+// app.locals._layoutFile = 'layout.html';
 app.enable('trust proxy');
 
 

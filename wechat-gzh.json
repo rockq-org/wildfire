@@ -1,4 +1,5 @@
 {
     "appId": "wx6683c43fb2d1db42",
-    "appSecret": "0ce4f65165afdbdf838c88f3e015275d"
+    "appSecret": "0ce4f65165afdbdf838c88f3e015275d",
+    "debug": true
 }

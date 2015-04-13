@@ -62,7 +62,7 @@ function onSubscribe(msg, res) {
         title: '注册账号',
         description: '使用微信登陆呱呱叫，未注册用户可浏览二手物品信息。',
         picurl: u.format('http://%s/public/images/frog-icon.png', config.host),
-        url: u.format('http://%s/public/ionic/www/wechat', config.host)
+        url: u.format('http://%s/auth/wechat/embedded', config.host)
     }]);
 }
 

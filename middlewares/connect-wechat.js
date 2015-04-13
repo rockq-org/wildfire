@@ -58,8 +58,10 @@ function onSubscribe(msg, res) {
     // get user profile data with RESt API
     // _saveUserProfileDataByOpenId(msg.FromUserName);
     res.reply({
-        content: '感谢您的关注，互联网是一张扁平的、大众的、可信赖的网。金矢科技致力于帮助您借助这张网，拓展业务，获得更多的渠道通路。让我们实现财富共赢！',
-        type: 'text'
+        title: '注册账号',
+        description: '使用微信登陆呱呱叫。',
+        picurl: 'http://wildfire-staging.arrking.com/public/images/frog-icon.png',
+        url: 'http://wildfire-staging.arrking.com/public/ionic/www/#/wechat-uaa'
     });
 }
 
@@ -326,7 +328,7 @@ function _getWxJsapiTicketFromRedis() {
  * @param  {[type]} doc){                 console.log('wechat access token: ' + doc);} [description]
  * @return {[type]}        [description]
  */
-_getWxAccessTokenFromRedis().then(function(doc){
+_getWxAccessTokenFromRedis().then(function(doc) {
     console.log('wechat access token: ' + doc);
 });
 

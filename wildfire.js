@@ -39,6 +39,7 @@ var limitMiddleware = require('./middlewares/limit');
 var logger = require('./common/loggerUtil').getLogger('app');
 var wechat = require('./middlewares/connect-wechat');
 var wxConfig = require('./wechat-gzh.json');
+var UserProxy = require('./proxy/user');
 
 // 静态文件目录
 var staticDir = path.join(__dirname, 'public');
@@ -172,7 +173,29 @@ passport.use(new WechatStrategy({
         "__v": 0,
         "profile": profile
     };
+    /**
+     * {
+  "provider": "wechat",
+  "id": "o0DaijgmdOUuAIRQ1QNZzuTizOT8",
+  "displayName": "王海良",
+  "user": true,
+  "__v": 0,
+  "profile": {
+    "openid": "ogWfMt5hcNzyPu2BRHjGj4CZmGqo",
+    "nickname": "王海良",
+    "sex": 1,
+    "language": "en",
+    "city": "Haidian",
+    "province": "Beijing",
+    "country": "China",
+    "headimgurl": "http://wx.qlogo.cn/mmopen/Q3auHgzwzM4K3X0qF1xm0lH7MWFobvcge14aBibJbeV78z9TwWjicb5gOwVbQ7QO0CiaIBGv1DrJibDL0tacJM6VZw/0",
+    "privilege": [],
+    "unionid": "o0DaijgmdOUuAIRQ1QNZzuTizOT8"
+  }
+}
+     */
     logger.debug('snsapi_userinfo', JSON.stringify(_profile));
+
     // profileModule.findOrCreate(_profile, {}).then(function(dbProfile) {
     //     req.logIn(dbProfile, function(err) {
     //         return done(null, dbProfile);
@@ -183,40 +206,43 @@ passport.use(new WechatStrategy({
     //     done(err);
     // }).end();
 
-    req.logIn(_profile, function(err) {
-        return done(null, _profile);
-    });
+    // create user profile
+    UserProxy.newOrUpdate(_profile)
+        .then(function(user) {
+            req.logIn(user, function(err) {
+                return done(null, user);
+            });
+        })
+        .fail(function(err) {
+            return done(err);
+        });
 
 
     // return done(null, openid, profile);
 }));
 
-app.get('/auth/wechat/embedded/err', function(req, res) {
-    res.send({
-        message: 'error'
-    });
-});
-
-app.get('/auth/wechat/embedded/success', function(req, res) {
-    // console.log(req.session);
-    // res.send( req.session );
-    res.send({
-        message: 'success'
-    });
-});
-
 app.get('/auth/wechat/embedded', passport.authenticate('wechat'), function(req, res) {
     //dont't call it
 });
-//endof oauth2/wechat
 
 
-app.get('/auth/wechat/embedded/callback', passport.authenticate('wechat', {
-    failureRedirect: '/auth/wechat/embedded/err',
-    successRedirect: '/auth/wechat/embedded/success'
-}));
+// app.get('/auth/wechat/embedded/callback', passport.authenticate('wechat', {
+//     failureRedirect: '/auth/wechat/embedded/err',
+//     successRedirect: '/auth/wechat/embedded/success'
+// }));
 
+app.get('/auth/wechat/embedded/callback', function(req, res, next) {
+    passport.authenticate('wechat', function(err, user, info) {
+        if (err) {
+            logger.error('wechat uaa', err);
+        } else {
+            logger.debug('wechat uaa', );
+        }
+        res.redirect(util.format('http://%s/public/ionic/www/wechat', config.host));
+    })(req, res, next);
+});
 
+//endof auth/wechat/embedded
 
 app.use(busboy({
     limits: {

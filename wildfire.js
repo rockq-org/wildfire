@@ -38,7 +38,7 @@ var cors = require('cors');
 var limitMiddleware = require('./middlewares/limit');
 var logger = require('./common/loggerUtil').getLogger('app');
 var wechat = require('./middlewares/connect-wechat');
-var wxConfig = require('./wechat-gzh.json');
+var wxConfig = config.wechat_gzh;
 var UserProxy = require('./proxy/user');
 
 // 静态文件目录
@@ -215,8 +215,8 @@ app.get('/auth/wechat/embedded/callback', function(req, res, next) {
             logger.debug('wechat uaa', JSON.stringify(user));
         }
         if (!user.phone_number) {
-          // force user input phone number
-          res.redirect(util.format('http://%s/public/ionic/www/#/bind-mobile-phone', config.host));
+            // force user input phone number
+            res.redirect(util.format('http://%s/public/ionic/www/#/bind-mobile-phone', config.host));
         } else {
             res.redirect(util.format('http://%s/public/ionic/www/wechat', config.host));
         }

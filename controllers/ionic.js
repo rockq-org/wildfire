@@ -9,8 +9,8 @@ var common = require('../common'),
     _ = require('lodash'),
     minimatch = require("minimatch"),
     wx = require('../middlewares/connect-wechat'),
-    wxConfig = require('../wechat-gzh'),
-    config = require('../config');
+    config = require('../config'),
+    wxConfig = config.wechat_gzh;
 
 
 // wechat only supprt 80 port and the HOST is register in wechat web console

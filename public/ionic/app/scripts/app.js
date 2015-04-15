@@ -121,7 +121,7 @@ angular.module('iwildfire', ['ionic', 'iwildfire.controllers', 'iwildfire.servic
     ;
 
     // if none of the above states are matched, use this as the fallback
-    $urlRouterProvider.otherwise('/tab/inbox');
-    // $urlRouterProvider.otherwise('/tab/index');
+    // $urlRouterProvider.otherwise('/tab/inbox');
+    $urlRouterProvider.otherwise('/tab/index');
 
 });

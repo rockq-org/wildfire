@@ -7,20 +7,20 @@
                 </div>
                 <select>
                     <option value='1' selected>中国大陆(+86)</option>
-                    <option value='2'>中国台湾(+886)</option>
-                    <option value='3'>中国香港(+852)</option>
+                    <!-- <option value='2'>中国台湾(+886)</option> -->
+                    <!-- <option value='3'>中国香港(+852)</option> -->
                 </select>
             </label>
             <div class="item item-input-inset">
                 <label class="item-input-wrapper">
-                    <input type="text" placeholder="手机号码">
+                    <input id="phoneNumber" type="text" placeholder="手机号码" ng-model="data.phoneNumber">
                 </label>
-                <button class="button button-small">
+                <button class="button button-small" ng-click="sendVerifyCode()">
                     发送验证码
                 </button>
             </div>
             <label class="item item-input">
-                <input type="text" placeholder="输入六位验证码">
+                <input type="text" placeholder="输入六位验证码" ng-model="data.verifyCode">
             </label>
             <button class="button button-block button-positive" ng-click="bindPhoneNumber()">
                 注册

@@ -44,3 +44,5 @@ public/ionic/.sass-cache
 public/ionic/app/scripts/config.js
 public/ionic/app/bower_components
 public/ionic/app/scripts/configuration.js
+public/ionic/config/development.json
+public/ionic/config/production.json

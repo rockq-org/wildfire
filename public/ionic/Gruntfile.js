@@ -41,18 +41,16 @@ module.exports = function (grunt) {
       },
       development: {
         constants: {
-          ENV: {
-            name: 'development',
-            apiEndpoint: 'http://dev.yoursite.com:10000/'
-          }
+          // cfg: {
+          //   name: 'development',
+          //   apiEndpoint: 'http://localhost:3000'
+          // }
+          cfg: grunt.file.readJSON('config/development.json')
         }
       },
       production: {
         constants: {
-          ENV: {
-            name: 'production',
-            apiEndpoint: 'http://api.yoursite.com/'
-          }
+          cfg: grunt.file.readJSON('config/production.json')
         }
       }
     },

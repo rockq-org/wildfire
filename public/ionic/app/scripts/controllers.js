@@ -69,6 +69,7 @@ angular.module('iwildfire.controllers', [])
         if ($scope.data.phoneNumber &&
             isPhonenumber($scope.data.phoneNumber)) {
             // user has input a phone number
+            // post request to send the api
         	_show();
         	$timeout(function(){
         		_hide();

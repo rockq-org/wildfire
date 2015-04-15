@@ -120,3 +120,39 @@ exports.getWxJsapiTicketTTL = function() {
 
     return defer.promise;
 }
+
+/**
+ * create verify code by userId, phone number, code, exp
+ * @param  {[type]} userId      [_id for this user]
+ * @param  {[type]} phoneNumber [description]
+ * @param  {[type]} code        [description]
+ * @param  {[type]} expiration  [description]
+ * @return {[type]}             [description]
+ */
+exports.createVerifyCodeWithExpirationAndPhoneNumber = function(userId, phoneNumber, code, expiration) {
+    var deferred = Q.defer();
+    var key = u.format('verify-phone-number:%s', phoneNumber);
+    console.log('key', key);
+    redisClient.hmset(key, {
+        phone: phoneNumber,
+        code: code,
+        userId: userId,
+        attempt: 0,
+        // predefined max attempts
+        maxAttempt: 3
+    }, function(err, reply) {
+        if (!err) {
+            redisClient.expire(key, expiration, function(err2, reply2) {
+                if (!err) {
+                    deferred.resolve();
+                } else {
+                    deferred.reject(err);
+                }
+            });
+        } else {
+            deferred.reject(err);
+        }
+    });
+
+    return deferred.promise;
+}

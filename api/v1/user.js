@@ -4,6 +4,9 @@ var UserProxy = require('../../proxy').User;
 var TopicProxy = require('../../proxy').Topic;
 var ReplyProxy = require('../../proxy').Reply;
 var TopicCollect = require('../../proxy').TopicCollect;
+var weimi = require('../../middlewares/weimi');
+var logger = require('../../common').loggerUtil.getLogger('api/v1/user');
+var requestUtil = require('../../common').requestUtil;
 
 var show = function (req, res, next) {
   var loginname = req.params.loginname;
@@ -70,5 +73,28 @@ var show = function (req, res, next) {
       });
   }));
 };
+
+exports.bindPhoneNumber = function(req, res, next){
+  logger.debug('bindPhoneNumber', 'user ' + JSON.stringify(req.user));
+  if(typeof req.body === 'object' && req.body.phoneNumber){
+    weimi.sendVerifyCodeToRegisterAccount(req.user.id, req.body.phoneNumber)
+      .then(function(result){
+        requestUtil.okJsonResponse({
+          rc: 0,
+          msg: 'Success.'
+        }, res);        
+      }, function(err){
+        requestUtil.okJsonResponse({
+          rc: 1,
+          msg: err
+        }, res);
+      });
+  } else {
+    requestUtil.okJsonResponse({
+      rc: 2,
+      msg: 'Invalid parameter.'
+    }, res);
+  }
+}
 
 exports.show = show;

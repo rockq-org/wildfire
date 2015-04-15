@@ -44,13 +44,28 @@ angular.module('iwildfire.services', [])
 
 .service('webq', function($http, $q, $log, cfg, store) {
 
-    this.sendVerifyCode = function() {
+    this.sendVerifyCode = function(phoneNumber) {
         var deferred = $q.defer();
-        $http.post()
+
+        $http.post('{0}/api/vi/user/bind_phone_number'.f(cfg.server), {
+                phoneNumber: phoneNumber
+            }, {
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
+                }
+            })
+            .success(function(data) {
+
+            })
+            .error(function(err) {
+
+            });
 
         return deferred.promise;
-
     }
+
+
 })
 
 ;

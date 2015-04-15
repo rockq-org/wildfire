@@ -36,7 +36,7 @@ angular.module('iwildfire.controllers', [])
 })
 
 .controller('BindMobilePhoneCtrl', function($scope, $state, $ionicPopup,
-    $ionicLoading, $timeout) {
+    $ionicLoading, $timeout, webq) {
     var phonenoPattern = /^\(?([0-9]{11})\)?$/;
     $scope.data = {
         phoneNumber: null,
@@ -52,13 +52,14 @@ angular.module('iwildfire.controllers', [])
         }
     }
 
-    function _show() {
+    function _showLoadingSpin(callback) {
         $ionicLoading.show({
             template: '发送验证码 ...'
         });
+        callback();
     };
 
-    function _hide() {
+    function _hideLoadingSpin() {
         $ionicLoading.hide();
     };
 
@@ -70,10 +71,24 @@ angular.module('iwildfire.controllers', [])
             isPhonenumber($scope.data.phoneNumber)) {
             // user has input a phone number
             // post request to send the api
-        	_show();
-        	$timeout(function(){
-        		_hide();
-        	}, 3000);
+
+            _showLoadingSpin(function() {
+                webq.sendVerifyCode($scope.data.phoneNumber)
+                    .then(function(result) {
+                        // send code sucessfully, just close loading 
+                        // spin in finally.
+                    }, function(err) {
+                        // get an error, now alert it.
+                        // TODO process err in a user friendly way.
+                        alert(JSON.stringify(err));
+                    })
+                    .finally(function() {
+                        _hideLoadingSpin();
+                    });
+            });
+            // $timeout(function(){
+            // 	_hideLoadingSpin();
+            // }, 3000);
         } else {
             // validate failed.
             $scope.data.phoneNumber = null;

@@ -82,7 +82,7 @@ exports.getWechatApp = function(req, res, next) {
             logger.debug('wxCredentials', JSON.stringify(params));
 
             if (req.query.userId) {
-                logger.debug('_resolveUserProfile', 'get user by id ' + req.params.userId);
+                logger.debug('_resolveUserProfile', 'get user by id ' + req.query.userId);
                 _resolveUserProfile(req.query.userId)
                     .then(function(user) {
                         params.user = user;

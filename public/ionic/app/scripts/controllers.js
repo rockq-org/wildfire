@@ -56,7 +56,6 @@ angular.module('iwildfire.controllers', [])
     }
 
     function _showLoadingSpin(callback) {
-        parseAccessToken();
         $ionicLoading.show({
             template: '发送验证码 ...'
         });

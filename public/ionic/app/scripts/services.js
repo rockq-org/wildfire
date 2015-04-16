@@ -42,12 +42,11 @@ angular.module('iwildfire.services', [])
     };
 })
 
-.service('webq', function($http, $q, $log, cfg, store) {
+.service('webq', function($http, $q, $log, cfg) {
 
     this.sendVerifyCode = function(phoneNumber) {
         var deferred = $q.defer();
-
-        $http.post('{0}/api/vi/user/bind_phone_number'.f(cfg.server), {
+        $http.post('{0}/api/v1/user/bind_phone_number'.f(cfg.server), {
                 phoneNumber: phoneNumber
             }, {
                 headers: {
@@ -56,10 +55,14 @@ angular.module('iwildfire.services', [])
                 }
             })
             .success(function(data) {
-
+                if (typeof data === 'object' && data.rc === 0) {
+                    deferred.resolve(data);
+                } else {
+                    deferred.reject(data);
+                }
             })
             .error(function(err) {
-
+                deferred.reject(err);
             });
 
         return deferred.promise;

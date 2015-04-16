@@ -11,23 +11,11 @@ var events = require('events');
 var dynamicLogging = new events.EventEmitter();
 var u = require("util");
 var LOGPATH = './logs';
-var fs = require('fs');
+var config = require('../config');
 
 dynamicLogging.setMaxListeners(50);
 
-fs.stat(LOGPATH, function(err,stats) {
-    if(err){
-		fs.mkdir(LOGPATH, "0744", function() {
-			log4js.configure('./log4js.json', {
-				reloadSecs : 180
-			});
-		});
-	} else {
-		log4js.configure('./log4js.json', {
-			reloadSecs : 180
-		});
-	}
-});
+log4js.configure(config.log4js);
 
 exports.getLogger = function(name) {
 	var logger = log4js.getLogger(name);

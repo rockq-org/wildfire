@@ -3,7 +3,7 @@ var User = models.User;
 var utility = require('utility');
 var uuid = require('node-uuid');
 var Q = require('q');
-
+var logger = require('../common/loggerUtil').getLogger('proxy/user');
 /**
  * 根据用户名列表查找用户列表
  * Callback:
@@ -195,5 +195,25 @@ exports.newOrUpdate = function(profile) {
             });
         }
     });
+    return deferred.promise;
+}
+
+exports.updateUserPhoneNumber = function(userId, phoneNumber) {
+    var deferred = Q.defer();
+    // Model.findOneAndUpdate([conditions], [update], [options], [callback])
+    logger.debug('updateUserPhoneNumber', userId + " " + phoneNumber);
+    User.findOneAndUpdate({
+        _id: userId
+    }, {
+        phone_number: phoneNumber
+    }, function(err, doc) {
+        logger.debug('updateUserPhoneNumber', JSON.stringify(doc));
+        if (err) {
+            deferred.reject(err);
+        } else {
+            deferred.resolve(doc);
+        }
+    });
+
     return deferred.promise;
 }

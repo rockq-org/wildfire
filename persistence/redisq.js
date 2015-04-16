@@ -120,3 +120,93 @@ exports.getWxJsapiTicketTTL = function() {
 
     return defer.promise;
 }
+
+/**
+ * create verify code by userId, phone number, code, exp
+ * @param  {[type]} userId      [_id for this user]
+ * @param  {[type]} phoneNumber [description]
+ * @param  {[type]} code        [description]
+ * @param  {[type]} expiration  [description]
+ * @return {[type]}             [description]
+ */
+exports.createVerifyCodeWithExpirationAndPhoneNumber = function(userId, phoneNumber, code, expiration) {
+    var deferred = Q.defer();
+    var key = u.format('verify-phone-number:%s', phoneNumber);
+    console.log('key', key);
+    redisClient.hmset(key, {
+        phone: phoneNumber,
+        code: code,
+        userId: userId,
+        attempt: 0,
+        // predefined max attempts
+        maxAttempt: 3
+    }, function(err, reply) {
+        if (!err) {
+            redisClient.expire(key, expiration, function(err2, reply2) {
+                if (!err) {
+                    deferred.resolve();
+                } else {
+                    deferred.reject(err);
+                }
+            });
+        } else {
+            deferred.reject(err);
+        }
+    });
+
+    return deferred.promise;
+}
+
+exports.checkPhoneVerifyCode = function(userId, phone, code) {
+    var deferred = Q.defer();
+    var key = u.format('verify-phone-number:%s', phone);
+    logger.debug('key ' + key);
+    redisClient.hgetall(key, function(err, obj) {
+        logger.debug(obj);
+        if (err) {
+            logger.error('checkPhoneVerifyCode', 'internal error');
+            deferred.reject({
+                error: err,
+                rc: 0,
+                msg: 'internal error'
+            });
+        } else if (obj && obj.code === code && obj.attempt < obj.maxAttempt) {
+            redisClient.del(key, function(err2, replies) {
+                if (!err2) {
+                    logger.debug('checkPhoneVerifyCode', 'the code is valid.');
+                    deferred.resolve({
+                        rc: 1,
+                        msg: obj
+                    });
+                } else {
+                    logger.error('checkPhoneVerifyCode', 'fail to delete key.');
+                    deferred.reject({
+                        rc: 5,
+                        msg: err2
+                    });
+                }
+            })
+        } else if (obj && obj.attempt < obj.maxAttempt) {
+            logger.warn('checkPhoneVerifyCode', 'wrong code');
+            redisClient.hincrby(key, 'attempt', 1, function(err, replies) {
+                deferred.reject({
+                    rc: 2,
+                    msg: 'wrong code'
+                });
+            });
+        } else if (obj && obj.attempt >= obj.maxAttempt) {
+            deferred.reject({
+                rc: 3,
+                msg: 'try too many times, the signup is discarded.'
+            });
+        } else {
+            // the key is deleted from hash
+            deferred.reject({
+                rc: 4,
+                msg: 'invalid signup request.'
+            });
+        }
+    });
+    return deferred.promise;
+
+}

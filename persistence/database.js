@@ -390,13 +390,6 @@ function init() {
             return promise;
         })
         .then(function() {
-            var promise = new mongoose.Promise();
-            _registerEMP(require('../models/schedule'), 'schedule', function() {
-                promise.resolve();
-            });
-            return promise;
-        })
-        .then(function() {
             Database.prototype.connection = dbase;
             Database.prototype.empEvent = _empEvent;
             Database.prototype.registerEMP = _registerEMP;

@@ -5,7 +5,7 @@
 // the 2nd parameter is an array of 'requires'
 // 'starter.services' is found in services.js
 // 'starter.controllers' is found in controllers.js
-angular.module('iwildfire', ['ionic', 'iwildfire.controllers', 'iwildfire.services', 'iwildfire.directive'])
+angular.module('iwildfire', ['ionic', 'iwildfire.controllers', 'iwildfire.services', 'iwildfire.directive', 'config'])
 
 .run(function($ionicPlatform) {
     $ionicPlatform.ready(function() {
@@ -20,28 +20,33 @@ angular.module('iwildfire', ['ionic', 'iwildfire.controllers', 'iwildfire.servic
         }
         // setup weixin sdk
         // http://mp.weixin.qq.com/wiki/7/aaa137b55fb2e0456bf8dd9148dd613f.html#JSSDK.E4.BD.BF.E7.94.A8.E6.AD.A5.E9.AA.A4
-        // if (window.ARRKING_WECHAT_SIG && window.ARRKING_WECHAT_SIG.appId) {
-        //     wx.config(window.ARRKING_WECHAT_SIG);
-        //     wx.error(function(err) {
-        //         alert(err);
-        //     });
-        //     wx.ready(function() {
-        //         /**
-        //          * check api permissions
-        //          * @param  {[type]}
-        //          * @return {[type]}
-        //          */
-        //         wx.scanQRCode({
-        //             desc: 'ScanQRCode API',
-        //             needResult: 1, // 默认为0，扫描结果由微信处理，1则直接返回扫描结果，
-        //             scanType: ["qrCode", "barCode"], // 可以指定扫二维码还是一维码，默认二者都有
-        //             success: function(res) {
-        //                 var result = res.resultStr; // 当needResult 为 1 时，扫码返回的结果
-        //                 alert(result);
-        //             }
-        //         });
-        //     });
-        // }
+        if (window.ARRKING_WECHAT_SIG && window.ARRKING_WECHAT_SIG.appId) {
+            wx.config(window.ARRKING_WECHAT_SIG);
+            wx.error(function(err) {
+                alert(err);
+            });
+            wx.ready(function() {
+                /**
+                 * check api permissions
+                 * @param  {[type]}
+                 * @return {[type]}
+                 */
+                // wx.scanQRCode({
+                //     desc: 'ScanQRCode API',
+                //     needResult: 1, // 默认为0，扫描结果由微信处理，1则直接返回扫描结果，
+                //     scanType: ["qrCode", "barCode"], // 可以指定扫二维码还是一维码，默认二者都有
+                //     success: function(res) {
+                //         var result = res.resultStr; // 当needResult 为 1 时，扫码返回的结果
+                //         alert(result);
+                //     }
+                // });
+                wx.chooseImage({
+                    success: function(res) {
+                        var localIds = res.localIds; // 返回选定照片的本地ID列表，localId可以作为img标签的src属性显示图片
+                    }
+                });
+            });
+        }
     });
 })
 
@@ -113,7 +118,7 @@ angular.module('iwildfire', ['ionic', 'iwildfire.controllers', 'iwildfire.servic
     })
 
     .state('bind-mobile-phone', {
-        url: '/bind-mobile-phone',
+        url: '/bind-mobile-phone/:accessToken',
         templateUrl: 'templates/bind-mobile-phone.html',
         controller: 'BindMobilePhoneCtrl'
     })
@@ -122,6 +127,4 @@ angular.module('iwildfire', ['ionic', 'iwildfire.controllers', 'iwildfire.servic
 
     // if none of the above states are matched, use this as the fallback
     $urlRouterProvider.otherwise('/tab/maps');
-    // $urlRouterProvider.otherwise('/tab/index');
-
 });

@@ -10,7 +10,7 @@ var u = require('util');
 var Q = require('q');
 var wxSign = require("weixin-signature").sign;
 var redisq = require('../persistence/redisq');
-var wxCfg = require('../wechat-gzh.json');
+var wxCfg = config.wechat_gzh;
 
 // function _postWXEvent(msg) {
 //     reflux.post('/collections/WXEvents', {

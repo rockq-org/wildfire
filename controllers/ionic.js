@@ -55,7 +55,9 @@ exports.getWechatApp = function(req, res, next) {
                     timestamp: wxCredentials.timestamp,
                     nonceStr: wxCredentials.noncestr,
                     signature: wxCredentials.signature,
-                    jsApiList: ['scanQRCode']
+                    // 附录2-所有JS接口列表
+                    // http://mp.weixin.qq.com/wiki/7/aaa137b55fb2e0456bf8dd9148dd613f.html#.E6.8B.8D.E7.85.A7.E6.88.96.E4.BB.8E.E6.89.8B.E6.9C.BA.E7.9B.B8.E5.86.8C.E4.B8.AD.E9.80.89.E5.9B.BE.E6.8E.A5.E5.8F.A3
+                    jsApiList: ['scanQRCode', 'chooseImage', 'getLocation']
                 },
                 appId: 'ggj',
                 title: '呱呱叫',

@@ -1,1 +1,5 @@
 // Your application styles go here
+@import "modules/profile.scss";
+
+// The path for our ionicons font files, relative to the built CSS in www/styles
+$ionicons-font-path: "../fonts" !default;

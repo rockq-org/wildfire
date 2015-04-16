@@ -2,7 +2,9 @@ angular.module('iwildfire.controllers', [])
 
 .controller('IndexCtrl', function($scope) {})
 
-.controller('MapsCtrl', function($scope) {})
+.controller('MapsCtrl', function($scope) {
+
+})
 
 .controller('InboxCtrl', function($scope, Chats) {
     $scope.chats = Chats.all();

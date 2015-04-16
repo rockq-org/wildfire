@@ -58,6 +58,30 @@ angular.module('iwildfire.services', [])
     this.deleteAccessToken = function() {
         window.localStorage.removeItem('WILDFIRE_ACCESS_TOKEN');
     };
+
+    /**
+     * save user profile data into localstorage
+     * @param {json} data json object of this user
+     */
+    this.setUserProfile = function(data) {
+        if (data) {
+            window.localStorage.setItem('WILDFIRE_USER_PROFILE', JSON.stringify(data));
+        }
+    };
+
+    this.getUserProfile = function() {
+        var rawProfile = window.localStorage.getItem('WILDFIRE_USER_PROFILE');
+        if (rawProfile) {
+            return JSON.parse(rawProfile);
+        } else {
+            return null;
+        }
+    };
+
+    this.deleteUserProfile = function() {
+        window.removeItem('WILDFIRE_USER_PROFILE');
+    };
+
 })
 
 
@@ -99,7 +123,7 @@ angular.module('iwildfire.services', [])
 
     this.checkVerifyCode = function(phoneNumber, verifyCode) {
         var deferred = $q.defer();
-        
+
         $http.post('{0}/api/v1/user/check_phone_verifycode'.f(cfg.server), {
                 accesstoken: store.getAccessToken(),
                 code: verifyCode,

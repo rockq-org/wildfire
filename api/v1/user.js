@@ -135,10 +135,11 @@ exports.checkPhoneVerifyCode = function(req, res, next) {
                     throw result;
                 }
             })
-            .then(function() {
+            .then(function(doc) {
                 requestUtil.okJsonResponse({
                     rc: 0,
-                    msg: 'Phone number is verified.'
+                    msg: 'Phone number is verified.',
+                    user: doc
                 }, res);
             })
             .fail(function(err) {

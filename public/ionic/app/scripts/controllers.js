@@ -116,7 +116,9 @@ angular.module('iwildfire.controllers', [])
                 webq.checkVerifyCode(currentPhoneNumber, $scope.data.verifyCode)
                     .then(function(result) {
                         // register successfully.
-                        alert('You are in.');
+                        if (result.user) {
+                            store.setUserProfile(result.user);
+                        }
                         $state.go('tab.index');
                     }, function(err) {
                         _fixVerifyCodeInputPlaceholder('验证码错误，重新输入');

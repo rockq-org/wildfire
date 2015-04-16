@@ -40,6 +40,7 @@ angular.module('iwildfire.controllers', [])
     var phonenoPattern = /^\(?([0-9]{11})\)?$/;
     var accessToken = $stateParams.accessToken;
     store.setAccessToken(accessToken);
+    var currentPhoneNumber;
 
     $scope.data = {
         phoneNumber: null,
@@ -55,9 +56,9 @@ angular.module('iwildfire.controllers', [])
         }
     }
 
-    function _showLoadingSpin(callback) {
+    function _showLoadingSpin(txt, callback) {
         $ionicLoading.show({
-            template: '发送验证码 ...'
+            template: txt
         });
         callback();
     };
@@ -66,6 +67,16 @@ angular.module('iwildfire.controllers', [])
         $ionicLoading.hide();
     };
 
+    function _fixPhoneNumberInputPlaceholder(txt) {
+        $scope.data.phoneNumber = null;
+        angular.element(document.getElementById('phoneNumber')).attr('placeholder', txt);
+    }
+
+    function _fixVerifyCodeInputPlaceholder(txt) {
+        $scope.data.verifyCode = null;
+        angular.element(document.getElementById('verifyCode')).attr('placeholder', txt);
+    }
+
     $scope.sendVerifyCode = function() {
         // verify the input nubmer is a phone number
         // alert('sendVerifyCode' + JSON.stringify($scope.data));
@@ -73,12 +84,13 @@ angular.module('iwildfire.controllers', [])
             isPhonenumber($scope.data.phoneNumber)) {
             // user has input a phone number
             // post request to send the api
-
-            _showLoadingSpin(function() {
+            currentPhoneNumber = $scope.data.phoneNumber;
+            _showLoadingSpin('发送验证码 ...', function() {
                 webq.sendVerifyCode($scope.data.phoneNumber)
                     .then(function(result) {
                         // send code sucessfully, just close loading 
                         // spin in finally.
+                        _fixPhoneNumberInputPlaceholder('已发送至 {0}.'.f($scope.data.phoneNumber));
                     }, function(err) {
                         // get an error, now alert it.
                         // TODO process err in a user friendly way.
@@ -93,14 +105,30 @@ angular.module('iwildfire.controllers', [])
             // }, 3000);
         } else {
             // validate failed.
-            $scope.data.phoneNumber = null;
-            angular.element(document.getElementById('phoneNumber')).attr('placeholder', '输入正确的手机号码');
+            _fixPhoneNumberInputPlaceholder('输入正确的手机号码');
         }
     }
 
     $scope.bindPhoneNumber = function() {
-        alert(JSON.stringify($scope.data));
-        // $state.go('tab.index');
+        if ($scope.data.verifyCode && $scope.data.length == 4) {
+            // check the verify code
+            _showLoadingSpin('验证中 ...', function() {
+                webq.checkVerifyCode(currentPhoneNumber, $scope.data.verifyCode)
+                    .then(function(result) {
+                        // register successfully.
+                        alert('You are in.');
+                        $state.go('tab.index');
+                    }, function(err) {
+                        _fixVerifyCodeInputPlaceholder('验证码错误，重新输入');
+                    })
+                    .finally(function() {
+                        _hideLoadingSpin();
+                    });
+            });
+        } else {
+            // error
+            _fixVerifyCodeInputPlaceholder('验证码格式不正确，重新输入');
+        }
     }
 })
 

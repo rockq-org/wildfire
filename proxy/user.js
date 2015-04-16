@@ -197,3 +197,22 @@ exports.newOrUpdate = function(profile) {
     });
     return deferred.promise;
 }
+
+exports.updateUserPhoneNumber = function(userId, phoneNumber) {
+    var deferred = Q.defer();
+    // Model.findOneAndUpdate([conditions], [update], [options], [callback])
+    User.findOneAndUpdate({
+        _id: userId
+    }, {
+        phone_number: phoneNumber
+    }, function(err, doc) {
+        logger.debug('updateUserPhoneNumber', JSON.stringify(doc));
+        if (err) {
+            deferred.reject(err);
+        } else {
+            deferred.resolve(doc);
+        }
+    });
+
+    return deferred.promise;
+}

@@ -35,5 +35,6 @@ router.post('/message/mark_all', middleware.auth, messageController.markAll);
 
 // 发送手机验证码
 router.post('/user/bind_phone_number', middleware.auth, userController.bindPhoneNumber);
+router.post('/user/check_phone_verifycode', middleware.auth, userController.checkPhoneVerifyCode);
 
 module.exports = router;

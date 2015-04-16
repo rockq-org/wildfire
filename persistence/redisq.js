@@ -157,5 +157,52 @@ exports.createVerifyCodeWithExpirationAndPhoneNumber = function(userId, phoneNum
     return deferred.promise;
 }
 
+exports.checkPhoneVerifyCode = function(userId, phone, code) {
+    var deferred = Q.defer();
+    var key = u.format('verify-phone-number:%s', phone);
+    console.log('key ' + key);
+    redisClient.hgetall(key, function(err, obj) {
+        console.log(obj);
+        if (err) {
+            deferred.reject({
+                error: err,
+                rc: 0,
+                msg: 'internal error'
+            });
+        } else if (obj && obj.code === code && obj.attempt < obj.maxAttempt) {
+            redisClient.del(key, function(err2, replies) {
+                if (!err2) {
+                    deferred.resolve({
+                        rc: 1,
+                        msg: obj
+                    });
+                } else {
+                    deferred.reject({
+                        rc: 5,
+                        msg: err2
+                    });
+                }
+            })
+        } else if (obj && obj.attempt < obj.maxAttempt) {
+            redisClient.hincrby(key, 'attempt', 1, function(err, replies) {
+                deferred.reject({
+                    rc: 2,
+                    msg: 'wrong code'
+                });
+            });
+        } else if (obj && obj.attempt >= obj.maxAttempt) {
+            deferred.reject({
+                rc: 3,
+                msg: 'try too many times, the signup is discarded.'
+            });
+        } else {
+            // the key is deleted from hash
+            deferred.reject({
+                rc: 4,
+                msg: 'invalid signup request.'
+            });
+        }
+    });
+    return deferred.promise;
 
-
+}

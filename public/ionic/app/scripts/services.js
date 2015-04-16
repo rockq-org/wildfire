@@ -97,6 +97,31 @@ angular.module('iwildfire.services', [])
         return deferred.promise;
     }
 
+    this.checkVerifyCode = function(phoneNumber, verifyCode) {
+        var deferred = $q.defer();
+        $http.post('{0}/api/v1/user/check_phone_verifycode'.f(cfg.server), {
+                accesstoken: store.getAccessToken(),
+                code: verifyCode,
+                phoneNumber: phoneNumber
+            }, {
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
+                }
+            })
+            .success(function(result) {
+                if (typeof result == 'object' && result.rc == 0) {
+                    deferred.resolve(result);
+                } else {
+                    deferred.reject(result);
+                }
+            })
+            .error(function(err) {
+                deferred.reject(err);
+            });
+        return deferred.promise;
+    }
+
 })
 
 ;

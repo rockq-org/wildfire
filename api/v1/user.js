@@ -130,7 +130,8 @@ exports.checkPhoneVerifyCode = function(req, res, next) {
         redisq.checkPhoneVerifyCode(req.user._id, req.body.phoneNumber, req.body.code)
             .then(function(result) {
                 logger.debug('checkPhoneVerifyCode', 'result ' + JSON.stringify(result));
-                if (result.rc == 1) {
+                if (result.rc === 1) {
+                    
                     return UserProxy.updateUserPhoneNumber(req.user._id, phoneNumber);
                 } else {
                     throw result;

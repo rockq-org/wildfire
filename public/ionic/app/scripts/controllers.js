@@ -3,7 +3,6 @@ angular.module('iwildfire.controllers', [])
 .controller('IndexCtrl', function($scope) {})
 
 .controller('MapsCtrl', function($scope) {
-
 })
 
 .controller('InboxCtrl', function($scope, Chats) {
@@ -90,7 +89,7 @@ angular.module('iwildfire.controllers', [])
             _showLoadingSpin('发送验证码 ...', function() {
                 webq.sendVerifyCode($scope.data.phoneNumber)
                     .then(function(result) {
-                        // send code sucessfully, just close loading 
+                        // send code sucessfully, just close loading
                         // spin in finally.
                         _fixPhoneNumberInputPlaceholder('已发送至 {0}.'.f($scope.data.phoneNumber));
                     }, function(err) {

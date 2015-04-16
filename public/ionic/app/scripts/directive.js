@@ -16,22 +16,34 @@ angular.module('iwildfire.directive', [])
             radius: 2000,
             map: map
         });
-        var latlngBounds = new qq.maps.LatLngBounds();
         searchService = new qq.maps.SearchService({
             complete : function(results){
-              console.log(results);
+                //设置回调函数参数
                 var pois = results.detail.pois;
-                for(var i = 0,l = pois.length;i < l; i++){
+                var infoWin = new qq.maps.InfoWindow({
+                    map: map
+                });
+                var latlngBounds = new qq.maps.LatLngBounds();
+                for (var i = 0, l = pois.length; i < l; i++) {
                     var poi = pois[i];
+                    //扩展边界范围，用来包含搜索到的Poi点
                     latlngBounds.extend(poi.latLng);
-                    var marker = new qq.maps.Marker({
-                        map:map,
-                        position: poi.latLng
-                    });
 
-                    marker.setTitle(i+1);
+                    (function(n) {
+                        var marker = new qq.maps.Marker({
+                            map: map
+                        });
+                        marker.setPosition(pois[n].latLng);
 
-                    markers.push(marker);
+                        marker.setTitle(i + 1);
+                        markers.push(marker);
+
+                        qq.maps.event.addListener(marker, 'click', function() {
+                            infoWin.open();
+                            infoWin.setContent('<div style="width:180px;height:180px;">二手自行车卖啦转卖价：1000 原价：2000                              <img height="100px" src="http://img03.taobaocdn.com/imgextra/i3/691389747/TB2ppC1cpXXXXa1XpXXXXXXXXXX_!!691389747-0-fleamarket.jpg_728x728.jpg" /> <br /><a href="#">点击查看详情</a></div>');
+                            infoWin.setPosition(pois[n].latLng);
+                        });
+                    })(i);
                 }
                 map.fitBounds(latlngBounds);
             }
@@ -49,8 +61,10 @@ angular.module('iwildfire.directive', [])
     }
 
     return function (scope, element, attrs) {
+      scope.searchKeyword = searchKeyword;
       var height = $('ion-content').height();
-      element.height( height );
-      init( element[0] );
+      var container = $(element).find('.container');
+      container.height( height-100 );
+      init( container[0] );
     };
   })

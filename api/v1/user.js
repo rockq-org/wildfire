@@ -129,33 +129,24 @@ exports.checkPhoneVerifyCode = function(req, res, next) {
     if (typeof req.body === 'object' && req.body.code && req.body.code.length === 4 && req.body.phoneNumber) {
         redisq.checkPhoneVerifyCode(req.user._id, req.body.phoneNumber, req.body.code)
             .then(function(result) {
-                var response = {};
-
+                logger.debug('checkPhoneVerifyCode', 'result ' + JSON.stringify(result));
                 switch (result.rc) {
                     // 认证成功
                     case 1:
-                        response.rc = 0;
-                        response.msg = result;
+                        // update user phone number into database
+                        return UserProxy.updateUserPhoneNumber(req.user._id, phoneNumber);
                         break;
-
                         // 种种原因，认证失败
                     default:
-                        response.rc = 3;
-                        response.msg = result;
+                        throw result;
                         break;
                 }
-
-                // update user phone number into database
-                UserProxy.updateUserPhoneNumber(req.user._id, phoneNumber)
-                    .then(function(doc) {
-                        requestUtil.okJsonResponse(response, res);
-                    })
-                    .fail(function(err) {
-                        // can not update phone number
-                        response.rc = 4;
-                        response.msg = 'Can not save user phone number.'
-                        requestUtil.okJsonResponse(response, res);
-                    });
+            })
+            .then(function() {
+                requestUtil.okJsonResponse({
+                    rc: 0,
+                    msg: 'phone number is verified.'
+                }, res);
             })
             .fail(function(err) {
                 requestUtil.okJsonResponse({

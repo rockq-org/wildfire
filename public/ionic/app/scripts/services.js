@@ -99,6 +99,7 @@ angular.module('iwildfire.services', [])
 
     this.checkVerifyCode = function(phoneNumber, verifyCode) {
         var deferred = $q.defer();
+        
         $http.post('{0}/api/v1/user/check_phone_verifycode'.f(cfg.server), {
                 accesstoken: store.getAccessToken(),
                 code: verifyCode,

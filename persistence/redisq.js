@@ -160,10 +160,11 @@ exports.createVerifyCodeWithExpirationAndPhoneNumber = function(userId, phoneNum
 exports.checkPhoneVerifyCode = function(userId, phone, code) {
     var deferred = Q.defer();
     var key = u.format('verify-phone-number:%s', phone);
-    console.log('key ' + key);
+    logger.debug('key ' + key);
     redisClient.hgetall(key, function(err, obj) {
-        console.log(obj);
+        logger.debug(obj);
         if (err) {
+            logger.error('checkPhoneVerifyCode', 'internal error');
             deferred.reject({
                 error: err,
                 rc: 0,
@@ -172,11 +173,13 @@ exports.checkPhoneVerifyCode = function(userId, phone, code) {
         } else if (obj && obj.code === code && obj.attempt < obj.maxAttempt) {
             redisClient.del(key, function(err2, replies) {
                 if (!err2) {
+                    logger.debug('checkPhoneVerifyCode', 'the code is valid.');
                     deferred.resolve({
                         rc: 1,
                         msg: obj
                     });
                 } else {
+                    logger.error('checkPhoneVerifyCode', 'fail to delete key.');
                     deferred.reject({
                         rc: 5,
                         msg: err2
@@ -184,6 +187,7 @@ exports.checkPhoneVerifyCode = function(userId, phone, code) {
                 }
             })
         } else if (obj && obj.attempt < obj.maxAttempt) {
+            logger.warn('checkPhoneVerifyCode', 'wrong code');
             redisClient.hincrby(key, 'attempt', 1, function(err, replies) {
                 deferred.reject({
                     rc: 2,

@@ -110,7 +110,7 @@ angular.module('iwildfire.controllers', [])
     }
 
     $scope.bindPhoneNumber = function() {
-        if ($scope.data.verifyCode && $scope.data.length == 4) {
+        if ($scope.data.verifyCode && $scope.data.verifyCode.length == 4) {
             // check the verify code
             _showLoadingSpin('验证中 ...', function() {
                 webq.checkVerifyCode(currentPhoneNumber, $scope.data.verifyCode)

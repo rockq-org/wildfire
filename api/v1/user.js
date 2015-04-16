@@ -130,16 +130,10 @@ exports.checkPhoneVerifyCode = function(req, res, next) {
         redisq.checkPhoneVerifyCode(req.user._id, req.body.phoneNumber, req.body.code)
             .then(function(result) {
                 logger.debug('checkPhoneVerifyCode', 'result ' + JSON.stringify(result));
-                switch (result.rc) {
-                    // 认证成功
-                    case 1:
-                        // update user phone number into database
-                        return UserProxy.updateUserPhoneNumber(req.user._id, phoneNumber);
-                        break;
-                        // 种种原因，认证失败
-                    default:
-                        throw result;
-                        break;
+                if (result.rc == 1) {
+                    return UserProxy.updateUserPhoneNumber(req.user._id, phoneNumber);
+                } else {
+                    throw result;
                 }
             })
             .then(function() {

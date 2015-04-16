@@ -3,6 +3,7 @@ var User = models.User;
 var utility = require('utility');
 var uuid = require('node-uuid');
 var Q = require('q');
+var logger = require('../common').loggerUtil.getLogger('proxy/user');
 
 /**
  * 根据用户名列表查找用户列表
@@ -201,6 +202,7 @@ exports.newOrUpdate = function(profile) {
 exports.updateUserPhoneNumber = function(userId, phoneNumber) {
     var deferred = Q.defer();
     // Model.findOneAndUpdate([conditions], [update], [options], [callback])
+    logger.debug('updateUserPhoneNumber', userId+ " " + phoneNumber);
     User.findOneAndUpdate({
         _id: userId
     }, {

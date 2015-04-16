@@ -219,7 +219,7 @@ app.get('/auth/wechat/embedded/callback', function(req, res, next) {
             res.redirect(util.format('http://%s/public/ionic/www/#/bind-mobile-phone/%s', config.host, user.accessToken));
         } else {
             // pass user id into redirect url
-            res.redirect(util.format('http://%s/public/ionic/www/wechat/%s', config.host, user._id));
+            res.redirect(util.format('http://%s/public/ionic/www/wechat?userId=%s', config.host, user._id));
         }
     })(req, res, next);
 });

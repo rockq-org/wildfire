@@ -81,9 +81,9 @@ exports.getWechatApp = function(req, res, next) {
 
             logger.debug('wxCredentials', JSON.stringify(params));
 
-            if (req.params.userId) {
+            if (req.query.userId) {
                 logger.debug('_resolveUserProfile', 'get user by id ' + req.params.userId);
-                _resolveUserProfile(req.params.userId)
+                _resolveUserProfile(req.query.userId)
                     .then(function(user) {
                         params.user = user;
                         res.render('ionic/wechat', params);

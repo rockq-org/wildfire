@@ -35,9 +35,12 @@ angular.module('iwildfire.controllers', [])
     };
 })
 
-.controller('BindMobilePhoneCtrl', function($scope, $state, $ionicPopup,
-    $ionicLoading, $timeout, webq) {
+.controller('BindMobilePhoneCtrl', function($scope, $state, $stateParams,
+    $ionicPopup, $ionicLoading, $timeout, $log, webq, store) {
     var phonenoPattern = /^\(?([0-9]{11})\)?$/;
+    var accessToken = $stateParams.accessToken;
+    store.setAccessToken(accessToken);
+
     $scope.data = {
         phoneNumber: null,
         verifyCode: null
@@ -53,6 +56,7 @@ angular.module('iwildfire.controllers', [])
     }
 
     function _showLoadingSpin(callback) {
+        parseAccessToken();
         $ionicLoading.show({
             template: '发送验证码 ...'
         });
@@ -62,7 +66,6 @@ angular.module('iwildfire.controllers', [])
     function _hideLoadingSpin() {
         $ionicLoading.hide();
     };
-
 
     $scope.sendVerifyCode = function() {
         // verify the input nubmer is a phone number

@@ -77,7 +77,7 @@ var show = function (req, res, next) {
 exports.bindPhoneNumber = function(req, res, next){
   logger.debug('bindPhoneNumber', 'user ' + JSON.stringify(req.user));
   if(typeof req.body === 'object' && req.body.phoneNumber){
-    weimi.sendVerifyCodeToRegisterAccount(req.user.id, req.body.phoneNumber)
+    weimi.sendVerifyCodeToRegisterAccount(req.user._id, req.body.phoneNumber)
       .then(function(result){
         requestUtil.okJsonResponse({
           rc: 0,

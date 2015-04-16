@@ -216,7 +216,7 @@ app.get('/auth/wechat/embedded/callback', function(req, res, next) {
         }
         if (!user.phone_number) {
             // force user input phone number
-            res.redirect(util.format('http://%s/public/ionic/www/#/bind-mobile-phone', config.host));
+            res.redirect(util.format('http://%s/public/ionic/www/#/bind-mobile-phone/%s', config.host, user.accessToken));
         } else {
             res.redirect(util.format('http://%s/public/ionic/www/wechat', config.host));
         }

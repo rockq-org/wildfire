@@ -113,7 +113,7 @@ angular.module('iwildfire', ['ionic', 'iwildfire.controllers', 'iwildfire.servic
     })
 
     .state('bind-mobile-phone', {
-        url: '/bind-mobile-phone',
+        url: '/bind-mobile-phone/:accessToken',
         templateUrl: 'templates/bind-mobile-phone.html',
         controller: 'BindMobilePhoneCtrl'
     })

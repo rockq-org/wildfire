@@ -42,12 +42,41 @@ angular.module('iwildfire.services', [])
     };
 })
 
-.service('webq', function($http, $q, $log, cfg) {
+/**
+ * http://www.zhihu.com/question/21323842
+ */
+.service('store', function($log, cfg) {
+
+    this.setAccessToken = function(data) {
+        window.localStorage.setItem('WILDFIRE_ACCESS_TOKEN', data);
+    };
+
+    this.getAccessToken = function() {
+        return window.localStorage.getItem('WILDFIRE_ACCESS_TOKEN');
+    };
+
+    this.deleteAccessToken = function() {
+        window.localStorage.removeItem('WILDFIRE_ACCESS_TOKEN');
+    };
+})
+
+
+
+/**
+ * communicate with server, post/get request, return promise.
+ * @param  {[type]} $http [description]
+ * @param  {[type]} $q    [description]
+ * @param  {[type]} $log  [description]
+ * @param  {[type]} cfg)  {               this.sendVerifyCode [description]
+ * @return {[type]}       [description]
+ */
+.service('webq', function($http, $q, $log, cfg, store) {
 
     this.sendVerifyCode = function(phoneNumber) {
         var deferred = $q.defer();
         $http.post('{0}/api/v1/user/bind_phone_number'.f(cfg.server), {
-                phoneNumber: phoneNumber
+                phoneNumber: phoneNumber,
+                accesstoken: store.getAccessToken()
             }, {
                 headers: {
                     'Content-Type': 'application/json',
@@ -67,7 +96,6 @@ angular.module('iwildfire.services', [])
 
         return deferred.promise;
     }
-
 
 })
 

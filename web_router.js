@@ -118,6 +118,6 @@ router.post('/auth/github/create', github.create);
 router.get('/search', search.index);
 
 // inoic app for wechat
-router.get('/public/ionic/www/wechat', ionic.getWechatApp);
+router.get('/public/ionic/www/wechat/:userId', ionic.getWechatApp);
 
 module.exports = router;

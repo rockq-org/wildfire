@@ -29,10 +29,18 @@ angular.module('iwildfire.controllers', [])
     $scope.chats = Chats.all();
 })
 
-.controller('AccountCtrl', function($scope) {
-    $scope.settings = {
-        enableFriends: true
-    };
+.controller('AccountCtrl', function($scope, store, cfg) {
+    var userProfile = store.getUserProfile();
+    if (!userProfile) {
+        // change to wechat uaa page
+        window.location.href = '{0}/auth/wechat/embedded'.f(cfg.server);
+    } else {
+        $scope.settings = {
+            name: userProfile.name,
+            avatar: userProfile.avatar,
+            phone: userProfile.phone_number
+        };
+    }
 })
 
 .controller('BindMobilePhoneCtrl', function($scope, $state, $stateParams,
@@ -101,7 +109,7 @@ angular.module('iwildfire.controllers', [])
                     });
             });
             // $timeout(function(){
-            // 	_hideLoadingSpin();
+            //  _hideLoadingSpin();
             // }, 3000);
         } else {
             // validate failed.

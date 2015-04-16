@@ -5,6 +5,7 @@ var common = require('../common'),
     logger = common.loggerUtil.getLogger("ionic"),
     requestUtil = common.requestUtil,
     u = require('util'),
+    User = require('../proxy').User,
     Q = require('q'),
     _ = require('lodash'),
     minimatch = require("minimatch"),
@@ -23,6 +24,19 @@ var common = require('../common'),
 
 var APP_URL;
 
+
+function _resolveUserProfile(userId) {
+    var deferred = Q.defer();
+    User.getUserById(userId, function(err, doc) {
+        if (err) {
+            deferred.reject(err);
+        } else {
+            deferred.resolve(doc);
+        }
+    });
+    return deferred.promise;
+}
+
 if (minimatch(config.host, "*.arrking.com")) {
     // with arrking.com domain
     APP_URL = u.format('http://%s/public/ionic/www/wechat', config.host);
@@ -39,6 +53,7 @@ exports.getWechatApp = function(req, res, next) {
      * @param  {[type]}
      * @return {[type]}
      */
+
     wx.getWxJsapiTicketFromRedis()
         .then(function(jspApiTicket) {
             return wx.getSignatureByJspApiTicketAndUrl(jspApiTicket, APP_URL);
@@ -66,8 +81,21 @@ exports.getWechatApp = function(req, res, next) {
 
             logger.debug('wxCredentials', JSON.stringify(params));
 
-            // get the wxSig Object
-            res.render('ionic/wechat', params);
+            if (req.params.userId) {
+                logger.debug('_resolveUserProfile', 'get user by id ' + req.params.userId);
+                _resolveUserProfile(req.params.userId)
+                    .then(function(user) {
+                        params.user = user;
+                        res.render('ionic/wechat', params);
+                    })
+                    .fail(function(err) {
+                        logger.error(err);
+                        res.render('ionic/wechat', params);
+                    });
+            } else {
+                // get the wxSig Object
+                res.render('ionic/wechat', params);
+            }
 
             // res.render('mapps-wx.ejs', {
             //     wxSig: {

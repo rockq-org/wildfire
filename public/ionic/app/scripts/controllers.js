@@ -5,6 +5,15 @@ angular.module('iwildfire.controllers', [])
 
 })
 
+.controller('NavCtrl', function($scope, $ionicSideMenuDelegate) {
+  $scope.showMenu = function () {
+    $ionicSideMenuDelegate.toggleLeft();
+  };
+  $scope.showRightMenu = function () {
+    $ionicSideMenuDelegate.toggleRight();
+  };
+})
+
 .controller('MapsCtrl', function($scope) {
 })
 

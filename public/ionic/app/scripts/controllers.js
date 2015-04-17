@@ -34,17 +34,53 @@ angular.module('iwildfire.controllers', [])
 })
 
 .controller('AccountCtrl', function($scope, store, cfg) {
-    var userProfile = store.getUserProfile();
-    if (!userProfile) {
+    var userProfile = store.getUserProfile() || {};
+    if (!userProfile && !cfg.debug) {
         // change to wechat uaa page
         window.location.href = '{0}/auth/wechat/embedded'.f(cfg.server);
     } else {
-        $scope.settings = {
-            name: userProfile.name,
-            avatar: userProfile.avatar,
-            phone: userProfile.phone_number
+        $scope.data = {
+            name: userProfile.name || 'foo',
+            avatar: userProfile.avatar || 'http://georgeblog.gwheron.com/wp-content/uploads/2012/06/201201131752008228.jpg',
+            phone: userProfile.phone_number || 'bar',
+            title: '我的呱呱',
+            badge: {
+                onGoingStuffs: 1,
+                offShelfStuffs: 2,
+                favoritesStuffs: 3
+            }
         };
+
+        $scope.stuffs = [{
+            name: 'foo'
+        }, {
+            name: 'bar'
+        }, {
+            name: 'foo'
+        }, {
+            name: 'bar'
+        }, {
+            name: 'foo'
+        }, {
+            name: 'bar'
+        }, {
+            name: 'foo'
+        }, {
+            name: 'bar'
+        }, {
+            name: 'foo'
+        }, {
+            name: 'bar'
+        }]
+
     }
+
+    $scope.displayOnGoingStuffs = function() {
+
+    }
+
+
+
 })
 
 .controller('BindMobilePhoneCtrl', function($scope, $state, $stateParams,

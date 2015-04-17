@@ -62,9 +62,9 @@ angular.module('iwildfire.directive', [])
 
     return function (scope, element, attrs) {
       scope.searchKeyword = searchKeyword;
-      var height = $('ion-content').height();
-      var container = $(element).find('.container');
-      container.height( height-100 );
-      init( container[0] );
+      var height = angular.element(element).parent().parent().height();
+      var div = angular.element(element).find('div');
+      div.height( height - 100 );
+      init( div[0] );
     };
   })

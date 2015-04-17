@@ -6,17 +6,16 @@ angular.module('iwildfire.controllers', [])
 })
 
 .controller('NavCtrl', function($scope, $ionicSideMenuDelegate) {
-   $scope.category = '全部';
-  $scope.showMenu = function () {
-    $ionicSideMenuDelegate.toggleLeft();
-  };
-  $scope.showRightMenu = function () {
-    $ionicSideMenuDelegate.toggleRight();
-  };
+    $scope.category = '全部';
+    $scope.showMenu = function() {
+        $ionicSideMenuDelegate.toggleLeft();
+    };
+    $scope.showRightMenu = function() {
+        $ionicSideMenuDelegate.toggleRight();
+    };
 })
 
-.controller('MapsCtrl', function($scope) {
-})
+.controller('MapsCtrl', function($scope) {})
 
 .controller('InboxCtrl', function($scope, Chats) {
     $scope.chats = Chats.all();
@@ -65,54 +64,77 @@ angular.module('iwildfire.controllers', [])
             $scope.active_content = active_content;
         }
 
-        $scope.stuffs = [{
-            name: 'foo'
-        }, {
-            name: 'bar'
-        }, {
-            name: 'foo'
-        }, {
-            name: 'bar'
-        }, {
-            name: 'foo'
-        }, {
-            name: 'bar'
-        }, {
-            name: 'foo'
-        }, {
-            name: 'bar'
-        }, {
-            name: 'foo'
-        }, {
-            name: 'bar'
-        }, {
-            name: 'foo'
-        }, {
-            name: 'bar'
-        }, {
-            name: 'foo'
-        }, {
-            name: 'bar'
-        }, {
-            name: 'foo'
-        }, {
-            name: 'bar'
-        }, {
-            name: 'foo'
-        }, {
-            name: 'bar'
-        }, {
-            name: 'foo'
-        }, {
-            name: 'bar'
-        }]
+        //     $scope.stuffs = [{
+        //         name: 'foo'
+        //     }, {
+        //         name: 'bar'
+        //     }, {
+        //         name: 'foo'
+        //     }, {
+        //         name: 'bar'
+        //     }, {
+        //         name: 'foo'
+        //     }, {
+        //         name: 'bar'
+        //     }, {
+        //         name: 'foo'
+        //     }, {
+        //         name: 'bar'
+        //     }, {
+        //         name: 'foo'
+        //     }, {
+        //         name: 'bar'
+        //     }, {
+        //         name: 'foo'
+        //     }, {
+        //         name: 'bar'
+        //     }, {
+        //         name: 'foo'
+        //     }, {
+        //         name: 'bar'
+        //     }, {
+        //         name: 'foo'
+        //     }, {
+        //         name: 'bar'
+        //     }, {
+        //         name: 'foo'
+        //     }, {
+        //         name: 'bar'
+        //     }, {
+        //         name: 'foo'
+        //     }, {
+        //         name: 'bar'
+        //     }]
 
     }
 
-    $scope.displayOnGoingStuffs = function() {
-
+    $scope.onTabSelected = function(category) {
+        switch (category) {
+            case 'onGoingStuffs':
+                $scope.stuffs = [{
+                    name: '我是正在售出1'
+                }, {
+                    name: '我是正在售出2'
+                }];
+                break;
+            case 'offShelfStuffs':
+                $scope.stuffs = [{
+                    name: '我是正在下架1'
+                }, {
+                    name: '我是正在下架2'
+                }];
+                break;
+            case 'favoritesStuffs':
+                $scope.stuffs = [{
+                    name: '我是正在收藏1'
+                }, {
+                    name: '我是正在收藏2'
+                }];
+                break;
+            default:
+                break;
+        }
     }
-
 
 
 })

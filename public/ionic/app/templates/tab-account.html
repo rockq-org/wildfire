@@ -1,22 +1,37 @@
 <ion-view view-title="我的呱呱">
-    <ion-content class="padding-top stable-bg">
+    <ion-content>
         <div id="content">
             <div id="profile-info">
                 <img id="profile-image" ng-src='{{data.avatar}}'>
                 <h3 id="profile-name">{{data.name}}</h3>
-                <h3 id="profile-phone"><i class="icon ion-iphone"></i> &nbsp;{{data.phone}}</h3>
+<!--                 <h3 id="profile-phone"><i class="icon ion-iphone"></i> &nbsp;{{data.phone}}</h3> -->
             </div>
+
+            <!-- example https://gist.github.com/Samurais/3cb9498588575f342f1e# -->
+
+            <ion-tabs class="tabs-striped tabs-color-assertive">
+                <ion-tab title="在售" icon-on="ion-ios7-filing" icon-off="ion-ios7-filing-outline" badge="data.badge.onGoingStuffs" badge-style="badge-light">
+                    <!-- Tab 1 content -->
+                </ion-tab>
+                <ion-tab title="下架" icon-on="ion-ios7-box" icon-off="ion-ios7-box-outline" badge="data.badge.offShelfStuffs" badge-style="badge-light">
+                    <!-- Tab 2 content -->
+                </ion-tab>
+                <ion-tab title="收藏" icon-on="ion-ios7-bookmarks" icon-off="ion-ios7-bookmarks-outline" badge="data.badge.favoritesStuffs" badge-style="badge-light">
+                    <!-- Tab 3 content -->
+                </ion-tab>
+            </ion-tabs>
         </div>
-        <ion-tabs class="tabs-striped tabs-color-assertive">
-            <ion-tab title="在售" icon-on="ion-ios7-filing" icon-off="ion-ios7-filing-outline" badge="data.badge.onGoingStuffs" badge-style="badge-light">
-                <!-- Tab 1 content -->
-            </ion-tab>
-            <ion-tab title="下架" icon-on="ion-ios7-box" icon-off="ion-ios7-box-outline" badge="data.badge.offShelfStuffs" badge-style="badge-light">
-                <!-- Tab 2 content -->
-            </ion-tab>
-            <ion-tab title="收藏" icon-on="ion-ios7-bookmarks" icon-off="ion-ios7-bookmarks-outline" badge="data.badge.favoritesStuffs" badge-style="badge-light">
-                <!-- Tab 3 content -->
-            </ion-tab>
-        </ion-tabs>
+        <!-- <div padding="true" style="padding-top:300px;z-index:300">
+Orders fake tab
+</div> -->
+        <ion-pane id="my-stuff-list-container">
+            <ion-scroll id="my-stuff-list-scroll" zooming="false" direction="y">
+                <ion-list>
+                    <ion-item ng-repeat="item in stuffs">
+                        Hello, {{item.name}}!
+                    </ion-item>
+                </ion-list>
+            </ion-scroll>
+        </ion-pane>
     </ion-content>
 </ion-view>

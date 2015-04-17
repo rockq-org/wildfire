@@ -5,8 +5,7 @@ angular.module('iwildfire.controllers', [])
 
 })
 
-.controller('MapsCtrl', function($scope) {
-})
+.controller('MapsCtrl', function($scope) {})
 
 .controller('InboxCtrl', function($scope, Chats) {
     $scope.chats = Chats.all();
@@ -41,7 +40,7 @@ angular.module('iwildfire.controllers', [])
     } else {
         $scope.data = {
             name: userProfile.name || 'foo',
-            avatar: userProfile.avatar || 'http://georgeblog.gwheron.com/wp-content/uploads/2012/06/201201131752008228.jpg',
+            avatar: userProfile.avatar || 'images/dummy-avatar.jpg',
             phone: userProfile.phone_number || 'bar',
             title: '我的呱呱',
             badge: {
@@ -50,8 +49,32 @@ angular.module('iwildfire.controllers', [])
                 favoritesStuffs: 3
             }
         };
+        $scope.active_content = 'orders';
+        $scope.setActiveContent = function(active_content) {
+            $scope.active_content = active_content;
+        }
 
         $scope.stuffs = [{
+            name: 'foo'
+        }, {
+            name: 'bar'
+        }, {
+            name: 'foo'
+        }, {
+            name: 'bar'
+        }, {
+            name: 'foo'
+        }, {
+            name: 'bar'
+        }, {
+            name: 'foo'
+        }, {
+            name: 'bar'
+        }, {
+            name: 'foo'
+        }, {
+            name: 'bar'
+        }, {
             name: 'foo'
         }, {
             name: 'bar'

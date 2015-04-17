@@ -5,7 +5,7 @@
 // the 2nd parameter is an array of 'requires'
 // 'starter.services' is found in services.js
 // 'starter.controllers' is found in controllers.js
-angular.module('iwildfire', ['ionic', 'iwildfire.controllers', 'iwildfire.services', 'config'])
+angular.module('iwildfire', ['ionic', 'iwildfire.controllers', 'iwildfire.services', 'iwildfire.directive', 'config'])
 
 .run(function($ionicPlatform, store) {
     $ionicPlatform.ready(function() {
@@ -125,12 +125,8 @@ angular.module('iwildfire', ['ionic', 'iwildfire.controllers', 'iwildfire.servic
         url: '/bind-mobile-phone/:accessToken',
         templateUrl: 'templates/bind-mobile-phone.html',
         controller: 'BindMobilePhoneCtrl'
-    })
-
-    ;
+    });
 
     // if none of the above states are matched, use this as the fallback
-    // $urlRouterProvider.otherwise('/tab/inbox');
     $urlRouterProvider.otherwise('/tab/index');
-
 });

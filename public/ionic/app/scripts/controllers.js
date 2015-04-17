@@ -6,6 +6,7 @@ angular.module('iwildfire.controllers', [])
 })
 
 .controller('NavCtrl', function($scope, $ionicSideMenuDelegate) {
+   $scope.category = '全部';
   $scope.showMenu = function () {
     $ionicSideMenuDelegate.toggleLeft();
   };

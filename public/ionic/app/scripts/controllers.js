@@ -33,10 +33,18 @@ angular.module('iwildfire.controllers', [])
     $scope.chats = Chats.all();
 })
 
-.controller('AccountCtrl', function($scope) {
-    $scope.settings = {
-        enableFriends: true
-    };
+.controller('AccountCtrl', function($scope, store, cfg) {
+    var userProfile = store.getUserProfile();
+    if (!userProfile) {
+        // change to wechat uaa page
+        window.location.href = '{0}/auth/wechat/embedded'.f(cfg.server);
+    } else {
+        $scope.settings = {
+            name: userProfile.name,
+            avatar: userProfile.avatar,
+            phone: userProfile.phone_number
+        };
+    }
 })
 
 .controller('BindMobilePhoneCtrl', function($scope, $state, $stateParams,
@@ -105,7 +113,7 @@ angular.module('iwildfire.controllers', [])
                     });
             });
             // $timeout(function(){
-            // 	_hideLoadingSpin();
+            //  _hideLoadingSpin();
             // }, 3000);
         } else {
             // validate failed.
@@ -120,7 +128,9 @@ angular.module('iwildfire.controllers', [])
                 webq.checkVerifyCode(currentPhoneNumber, $scope.data.verifyCode)
                     .then(function(result) {
                         // register successfully.
-                        alert('You are in.');
+                        if (result.user) {
+                            store.setUserProfile(result.user);
+                        }
                         $state.go('tab.index');
                     }, function(err) {
                         _fixVerifyCodeInputPlaceholder('验证码错误，重新输入');

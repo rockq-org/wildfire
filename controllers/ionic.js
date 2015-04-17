@@ -5,6 +5,7 @@ var common = require('../common'),
     logger = common.loggerUtil.getLogger("ionic"),
     requestUtil = common.requestUtil,
     u = require('util'),
+    User = require('../proxy').User,
     Q = require('q'),
     _ = require('lodash'),
     minimatch = require("minimatch"),
@@ -23,6 +24,19 @@ var common = require('../common'),
 
 var APP_URL;
 
+
+function _resolveUserProfile(userId) {
+    var deferred = Q.defer();
+    User.getUserById(userId, function(err, doc) {
+        if (err) {
+            deferred.reject(err);
+        } else {
+            deferred.resolve(doc);
+        }
+    });
+    return deferred.promise;
+}
+
 if (minimatch(config.host, "*.arrking.com")) {
     // with arrking.com domain
     APP_URL = u.format('http://%s/public/ionic/www/wechat', config.host);
@@ -39,6 +53,7 @@ exports.getWechatApp = function(req, res, next) {
      * @param  {[type]}
      * @return {[type]}
      */
+
     wx.getWxJsapiTicketFromRedis()
         .then(function(jspApiTicket) {
             return wx.getSignatureByJspApiTicketAndUrl(jspApiTicket, APP_URL);
@@ -57,7 +72,7 @@ exports.getWechatApp = function(req, res, next) {
                     signature: wxCredentials.signature,
                     // 附录2-所有JS接口列表
                     // http://mp.weixin.qq.com/wiki/7/aaa137b55fb2e0456bf8dd9148dd613f.html#.E6.8B.8D.E7.85.A7.E6.88.96.E4.BB.8E.E6.89.8B.E6.9C.BA.E7.9B.B8.E5.86.8C.E4.B8.AD.E9.80.89.E5.9B.BE.E6.8E.A5.E5.8F.A3
-                    jsApiList: ['scanQRCode', 'chooseImage', 'getLocation']
+                    jsApiList: ['scanQRCode', 'chooseImage', 'getLocation', 'openLocation']
                 },
                 appId: 'ggj',
                 title: '呱呱叫',
@@ -66,8 +81,21 @@ exports.getWechatApp = function(req, res, next) {
 
             logger.debug('wxCredentials', JSON.stringify(params));
 
-            // get the wxSig Object
-            res.render('ionic/wechat', params);
+            if (req.query.userId) {
+                logger.debug('_resolveUserProfile', 'get user by id ' + req.query.userId);
+                _resolveUserProfile(req.query.userId)
+                    .then(function(user) {
+                        params.user = user;
+                        res.render('ionic/wechat', params);
+                    })
+                    .fail(function(err) {
+                        logger.error(err);
+                        res.render('ionic/wechat', params);
+                    });
+            } else {
+                // get the wxSig Object
+                res.render('ionic/wechat', params);
+            }
 
             // res.render('mapps-wx.ejs', {
             //     wxSig: {

@@ -129,18 +129,17 @@ exports.checkPhoneVerifyCode = function(req, res, next) {
     if (typeof req.body === 'object' && req.body.code && req.body.code.length === 4 && req.body.phoneNumber) {
         redisq.checkPhoneVerifyCode(req.user._id, req.body.phoneNumber, req.body.code)
             .then(function(result) {
-                logger.debug('checkPhoneVerifyCode', 'result ' + JSON.stringify(result));
                 if (result.rc === 1) {
-                    
-                    return UserProxy.updateUserPhoneNumber(req.user._id, phoneNumber);
+                    return UserProxy.updateUserPhoneNumber(req.user._id, req.body.phoneNumber);
                 } else {
                     throw result;
                 }
             })
-            .then(function() {
+            .then(function(doc) {
                 requestUtil.okJsonResponse({
                     rc: 0,
-                    msg: 'phone number is verified.'
+                    msg: 'Phone number is verified.',
+                    user: doc
                 }, res);
             })
             .fail(function(err) {

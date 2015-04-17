@@ -1,22 +1,11 @@
-<ion-view title="个人信息" hide-nav-bar="true">
-    <ion-header-bar class="bar-dark">
-        <h1 class="title" ng-bind='title'>
-        </h1>
-    </ion-header-bar>
+<ion-view view-title="我的呱呱">
     <ion-content class="padding-top stable-bg">
-        <div id="profile-bg"></div>
         <div id="content">
             <div id="profile-info">
-                <img id="profile-image" ng-src='{{avatarUrl}}' ng-click="takePhotoActionSheet()">
-                <h3 id="profile-name">{{name}}</h3>
+                <img id="profile-image" ng-src='{{data.avatar}}'>
+                <h3 id="profile-name">{{data.name}}</h3>
+                <h3 id="profile-phone"><i class="icon ion-iphone"></i> &nbsp;{{data.phone}}</h3>
             </div>
-            <ion-list>
-                <ion-item class="item-icon-right assertive">
-                    邮箱
-                    <span class="item-note">{{email}}</span>
-                    <i class="icon ion-ios7-email-outline"></i>
-                </ion-item>
-            </ion-list>
         </div>
     </ion-content>
 </ion-view>

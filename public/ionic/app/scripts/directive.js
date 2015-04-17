@@ -7,8 +7,8 @@ angular.module('iwildfire.directive', [])
         map = new qq.maps.Map( element, {
             center: center,
             zoom: 13,
-            zoomControl: false,
-            panControl: false,
+            // zoomControl: false,
+            // panControl: false,
             mapTypeControl: false
         });
         new qq.maps.Circle({

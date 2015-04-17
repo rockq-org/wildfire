@@ -121,10 +121,8 @@ angular.module('iwildfire', ['ionic', 'iwildfire.controllers', 'iwildfire.servic
         url: '/bind-mobile-phone/:accessToken',
         templateUrl: 'templates/bind-mobile-phone.html',
         controller: 'BindMobilePhoneCtrl'
-    })
-
-    ;
+    });
 
     // if none of the above states are matched, use this as the fallback
-    $urlRouterProvider.otherwise('/tab/maps');
+    $urlRouterProvider.otherwise('/tab/index');
 });

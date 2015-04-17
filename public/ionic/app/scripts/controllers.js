@@ -1,6 +1,9 @@
 angular.module('iwildfire.controllers', [])
 
-.controller('IndexCtrl', function($scope) {})
+.controller('IndexCtrl', function($scope) {
+
+
+})
 
 .controller('MapsCtrl', function($scope) {
 })

@@ -39,9 +39,44 @@ angular.module('iwildfire.controllers', [])
             name: userProfile.name || 'foo',
             avatar: userProfile.avatar || 'http://georgeblog.gwheron.com/wp-content/uploads/2012/06/201201131752008228.jpg',
             phone: userProfile.phone_number || 'bar',
-            title: '我的呱呱'
+            title: '我的呱呱',
+            badge: {
+                onGoingStuffs: 1,
+                offShelfStuffs: 2,
+                favoritesStuffs: 3
+            }
         };
+
+        $scope.stuffs = [{
+            name: 'foo'
+        }, {
+            name: 'bar'
+        }, {
+            name: 'foo'
+        }, {
+            name: 'bar'
+        }, {
+            name: 'foo'
+        }, {
+            name: 'bar'
+        }, {
+            name: 'foo'
+        }, {
+            name: 'bar'
+        }, {
+            name: 'foo'
+        }, {
+            name: 'bar'
+        }]
+
     }
+
+    $scope.displayOnGoingStuffs = function() {
+
+    }
+
+
+
 })
 
 .controller('BindMobilePhoneCtrl', function($scope, $state, $stateParams,

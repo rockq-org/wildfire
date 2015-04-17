@@ -1,35 +1,82 @@
-<ion-view view-title="我的呱呱">
-    <ion-content>
-        <div id="content">
-            <div id="profile-info">
-                <img id="profile-image" ng-src='{{data.avatar}}'>
-                <h3 id="profile-name">{{data.name}}</h3>
-                <!--                 <h3 id="profile-phone"><i class="icon ion-iphone"></i> &nbsp;{{data.phone}}</h3> -->
-            </div>
-            <!-- example https://gist.github.com/Samurais/3cb9498588575f342f1e# -->
-            <ion-tabs class="tabs-striped tabs-color-assertive">
-                <ion-tab title="在售" icon-on="ion-ios7-filing" icon-off="ion-ios7-filing-outline" badge="data.badge.onGoingStuffs" badge-style="badge-light" on-select="onTabSelected('onGoingStuffs')" on-deselect="onTabDeselected('onGoingStuffs')">
-                    <!-- Tab 1 content -->
-                </ion-tab>
-                <ion-tab title="下架" icon-on="ion-ios7-box" icon-off="ion-ios7-box-outline" badge="data.badge.offShelfStuffs" badge-style="badge-light" on-select="onTabSelected('offShelfStuffs')" on-deselect="onTabDeselected('offShelfStuffs')">
-                    <!-- Tab 2 content -->
-                </ion-tab>
-                <ion-tab title="收藏" icon-on="ion-ios7-bookmarks" icon-off="ion-ios7-bookmarks-outline" badge="data.badge.favoritesStuffs" badge-style="badge-light" on-select="onTabSelected('favoritesStuffs')" on-deselect="onTabDeselected('favoritesStuffs')">
-                    <!-- Tab 3 content -->
-                </ion-tab>
-            </ion-tabs>
-        </div>
-        <!-- <div padding="true" style="padding-top:300px;z-index:300">
+<!-- http://ionicframework.com/docs/api/directive/ionSideMenus/ -->
+<ion-view hide-nav-bar="true">
+    <ion-side-menus>
+        <ion-side-menu-content>
+            <ion-view>
+                <ion-header-bar class="bar-dark">
+                    <h1 class="title">我的呱呱</h1>
+                    <div class="buttons">
+                        <button class="button button-icon ion-ios7-gear-outline" menu-toggle="right"></button>
+                    </div>
+                </ion-header-bar>
+                <ion-content has-header="true">
+                    <div id="content">
+                        <div id="profile-info">
+                            <img id="profile-image" ng-src='{{data.avatar}}'>
+                            <h3 id="profile-name">{{data.name}}</h3>
+                            <!-- <h3 id="profile-phone"><i class="icon ion-iphone"></i> &nbsp;{{data.phone}}</h3> -->
+                        </div>
+                        <!-- example https://gist.github.com/Samurais/3cb9498588575f342f1e# -->
+                        <ion-tabs class="tabs-striped tabs-color-assertive">
+                            <ion-tab title="在售" icon-on="ion-ios7-filing" icon-off="ion-ios7-filing-outline" badge="data.badge.onGoingStuffs" badge-style="badge-light" on-select="onTabSelected('onGoingStuffs')" on-deselect="onTabDeselected('onGoingStuffs')">
+                                <!-- Tab 1 content -->
+                            </ion-tab>
+                            <ion-tab title="下架" icon-on="ion-ios7-box" icon-off="ion-ios7-box-outline" badge="data.badge.offShelfStuffs" badge-style="badge-light" on-select="onTabSelected('offShelfStuffs')" on-deselect="onTabDeselected('offShelfStuffs')">
+                                <!-- Tab 2 content -->
+                            </ion-tab>
+                            <ion-tab title="收藏" icon-on="ion-ios7-bookmarks" icon-off="ion-ios7-bookmarks-outline" badge="data.badge.favoritesStuffs" badge-style="badge-light" on-select="onTabSelected('favoritesStuffs')" on-deselect="onTabDeselected('favoritesStuffs')">
+                                <!-- Tab 3 content -->
+                            </ion-tab>
+                        </ion-tabs>
+                    </div>
+                    <!-- <div padding="true" style="padding-top:300px;z-index:300">
 Orders fake tab
 </div> -->
-        <ion-pane id="my-stuff-list-container">
-            <ion-scroll id="my-stuff-list-scroll" zooming="false" direction="y">
-                <ion-list>
-                    <ion-item ng-repeat="item in stuffs">
-                        Hello, {{item.name}}!
-                    </ion-item>
-                </ion-list>
-            </ion-scroll>
-        </ion-pane>
-    </ion-content>
+                    <ion-pane id="my-stuff-list-container">
+                        <ion-scroll id="my-stuff-list-scroll" zooming="false" direction="y">
+                            <ion-list>
+                                <ion-item ng-repeat="item in stuffs">
+                                    Hello, {{item.name}}!
+                                </ion-item>
+                            </ion-list>
+                        </ion-scroll>
+                    </ion-pane>
+                </ion-content>
+            </ion-view>
+        </ion-side-menu-content>
+        <ion-side-menu side="right">
+            <ion-header-bar class="bar-dark">
+                <h1 class="title">设置</h1>
+            </ion-header-bar>
+            <ion-content>
+                <div class="list">
+                    <a class="item item-icon-right" href="#">
+                        手机号码 {{data.phone}}
+                        <i class="icon ion-iphone"></i>
+                    </a>
+                    <li class="item item-toggle">
+                        消息提醒
+                        <label class="toggle toggle-balanced">
+                            <input type="checkbox">
+                            <div class="track">
+                                <div class="handle"></div>
+                            </div>
+                        </label>
+                    </li>
+                    <a class="item item-icon-right" href="#">
+                        用户反馈 <i class="icon ion-ios7-paperplane-outline"></i> 
+                    </a>
+                    <a class="item item-icon-right" href="#">
+                        用户协议 <i class="icon ion-ios7-paper-outline"></i> 
+                    </a>
+                    <a class="item item-icon-right" href="#">
+                         帮助 <i class="icon ion-help-buoy"></i>
+                    </a>
+                    <a class="item item-icon-right" href="#">
+                        关于 <i class="icon ion-card"></i> 
+                    </a>
+                </div>
+            </ion-content>
+        </ion-side-menu>
+    </ion-side-menus>
 </ion-view>

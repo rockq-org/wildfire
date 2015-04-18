@@ -120,9 +120,13 @@ var config = {
 
     // 版块
     tabs: [
-        ['share', '分享'],
-        ['ask', '问答'],
-        ['job', '招聘'],
+        ['books', '教材书籍'],
+        ['transports', '代步工具'],
+        ['electronics', '数码电器'],
+        ['supplies', '生活用品'],
+        ['healthcare', '运动健身'],
+        ['clothes', '衣帽饰物'],
+        ['others', '其它']
     ],
 
     // 极光推送

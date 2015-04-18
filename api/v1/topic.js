@@ -117,6 +117,17 @@ var create = function(req, res, next) {
     tab = validator.escape(tab);
     var content = validator.trim(req.body.content);
 
+    // start to resolve goods parameters
+    var goods_pics = req.body.goods_pics;
+    var goods_pre_price = req.body.goods_pre_price;
+    var goods_now_price = req.body.goods_now_price;
+    var goods_is_bargain = req.body.goods_is_bargain;
+    var goods_quality_degree = req.body.goods_quality_degree;
+    var goods_exchange_location = req.body.goods_exchange_location;
+    var goods_status = req.body.goods_status;
+    // end resolve goods parameters
+
+
     // 得到所有的 tab, e.g. ['ask', 'share', ..]
     var allTabs = config.tabs.map(function(tPair) {
         return tPair[0];
@@ -129,10 +140,21 @@ var create = function(req, res, next) {
     } else if (title.length < 5 || title.length > 100) {
         editError = '标题字数太多或太少。';
     } else if (!tab || allTabs.indexOf(tab) === -1) {
-        editError = '必须选择一个版块。';
+        editError = '必须选择一个类别。';
     } else if (content === '') {
         editError = '内容不可为空';
     }
+
+    // TODO validate goods parameters
+    if (_.some([goods_pics, goods_pre_price,
+            goods_now_price, goods_exchange_location,
+            goods_quality_degree, goods_status
+        ], function(x) {
+            return x == null;
+        })) {
+        editError = "创建交易物品，缺少参数！";
+    };
+
     // END 验证
 
     if (editError) {
@@ -142,31 +164,43 @@ var create = function(req, res, next) {
         });
     }
 
-    TopicProxy.newAndSave(title, content, tab, req.user.id, function(err, topic) {
-        if (err) {
-            return next(err);
-        }
+    TopicProxy.newAndSave(title,
+        content,
+        tab,
+        req.user.id,
+        // goods parameters
+        goods_pics,
+        goods_pre_price,
+        goods_now_price,
+        goods_is_bargain,
+        goods_quality_degree,
+        goods_exchange_location,
+        goods_status,
+        function(err, topic) {
+            if (err) {
+                return next(err);
+            }
 
-        var proxy = new eventproxy();
-        proxy.fail(next);
+            var proxy = new eventproxy();
+            proxy.fail(next);
 
-        proxy.all('score_saved', function() {
-            res.send({
-                success: true,
-                topic_id: topic.id,
+            proxy.all('score_saved', function() {
+                res.send({
+                    success: true,
+                    topic_id: topic.id,
+                });
             });
-        });
-        UserProxy.getUserById(req.user.id, proxy.done(function(user) {
-            user.score += 5;
-            user.topic_count += 1;
-            user.save();
-            req.user = user;
-            proxy.emit('score_saved');
-        }));
+            UserProxy.getUserById(req.user.id, proxy.done(function(user) {
+                user.score += 5;
+                user.topic_count += 1;
+                user.save();
+                req.user = user;
+                proxy.emit('score_saved');
+            }));
 
-        //发送at消息
-        at.sendMessageToMentionUsers(content, topic.id, req.user.id);
-    });
+            //发送at消息
+            at.sendMessageToMentionUsers(content, topic.id, req.user.id);
+        });
 };
 
 exports.create = create;

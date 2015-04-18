@@ -54,6 +54,13 @@ var TopicSchema = new Schema({
   /**
    * 类别
    * @type ［教材书籍|代步工具|数码电器|生活用品|运动健身|衣帽饰物|其它］
+   *    ['books', '教材书籍'],
+        ['transports', '代步工具'],
+        ['electronics', '数码电器'],
+        ['supplies', '生活用品'],
+        ['healthcare', '运动健身'],
+        ['clothes', '衣帽饰物'],
+        ['others', '其它']
    */
   tab: {type: String},
   deleted: {type: Boolean, default: false},

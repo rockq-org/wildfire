@@ -7,7 +7,7 @@ require('./topic');
 require('./reply');
 require('./topic_collect');
 require('./message');
-require('./FileStorage');
+require('./fileStorage');
 
 exports.User = mongoose.model('User');
 exports.Topic = mongoose.model('Topic');

@@ -6,6 +6,7 @@ var toolsController = require('./api/v1/tools');
 var replyController = require('./api/v1/reply');
 var messageController = require('./api/v1/message');
 var middleware = require('./api/v1/middleware');
+var fileStorageController = require('./api/v1/fileStorage');
 var limit = require('./middlewares/limit');
 var config = require('./config');
 
@@ -36,5 +37,12 @@ router.post('/message/mark_all', middleware.auth, messageController.markAll);
 // 发送手机验证码
 router.post('/user/bind_phone_number', middleware.auth, userController.bindPhoneNumber);
 router.post('/user/check_phone_verifycode', middleware.auth, userController.checkPhoneVerifyCode);
+
+/**
+ * 文件
+ */
+router.post('/file/image-web-url', middleware.auth, fileStorageController.uploadWebUrlImage);
+router.get('/file/image-anonymous/:id', fileStorageController.displayAnonymousImage);
+
 
 module.exports = router;

@@ -56,6 +56,9 @@ exports.getWechatApp = function(req, res, next) {
 
     wx.getWxJsapiTicketFromRedis()
         .then(function(jspApiTicket) {
+            if (req.query.userId) {
+                APP_URL = u.format('%s?userId=%s', APP_URL, req.query.userId);
+            }
             return wx.getSignatureByJspApiTicketAndUrl(jspApiTicket, APP_URL);
         }, function(err) {
             // can not get jspApiTicket

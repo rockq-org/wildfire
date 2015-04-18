@@ -2,7 +2,6 @@ angular.module('iwildfire.controllers', [])
 
 .controller('IndexCtrl', function($scope) {
 
-
 })
 
 .controller('NavCtrl', function($scope, $ionicSideMenuDelegate) {

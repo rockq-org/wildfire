@@ -1,0 +1,20 @@
+.wf-img-upload .box {
+	box-sizing: border-box;
+	border: 1px solid #aaa;
+	background: #ddd;
+	margin: 4px 2px;
+}
+
+.wf-img-upload .group .box {
+	height: 60px;
+}
+
+.wf-img-upload .box.upload {
+	background: #fff;
+	text-align: center;
+	color: #aaa;
+	i {
+		font-size: 26px;
+		line-height: 52px;
+	}
+}

@@ -1,0 +1,90 @@
+<ion-view view-title="发布">
+  <ion-content>
+    <ion-list class="wf-post-form">
+      <ion-item>
+        <div class="row wf-img-upload">
+          <div class="col box"></div>
+          <div class="col group nopadding">
+            <div class="row nopadding">
+              <div class="col box">
+              </div>
+              <div class="col box">
+              </div>
+            </div>
+            <div class="row nopadding">
+              <div class="col box"></div>
+              <div class="col box upload" id="uploadImg" ng-click="uploadImage()">
+                <i class="icon ion-plus"></i>
+              </div>
+            </div>
+          </div>
+        </div>
+      </ion-item>
+      <ion-item>
+        <ul class="tag-list">
+          <li ng-repeat="item in tagList">
+            <a href="javascript:void(0)" ng-click="changeTag(item.name)">{{item.name}}</a>
+          </li>
+        </ul>
+      </ion-item>
+      <ion-item class="border-dashed">
+        <ul class="quality-list">
+          <li ng-repeat="item in qualityList">
+            <a href="">{{item.name}}</a>
+          </li>
+        </ul>
+      </ion-item>
+      <ion-item>
+        <div class="row nopadding">
+          <div class="col">
+            <input type="text" placeholder="转让价 ￥">
+          </div>
+          <div class="col">
+            <input type="text" placeholder="原价 ￥">
+          </div>
+        </div>
+      </ion-item>
+      <ion-item class="item-toggle border-dashed">
+        <div class="row">
+          <div class="col">
+            <span>是否接受侃价：</span>
+          </div>
+          <div class="col"></div>
+        </div>
+        <label class="toggle">
+          <input type="checkbox">
+          <div class="track">
+            <div class="handle"></div>
+          </div>
+        </label>
+      </ion-item>
+      <ion-item class="border-dashed">
+        <div class="row nopadding mb10">
+          <div class="col">
+            <input type="text" placeholder="宝贝名称">
+          </div>
+        </div>
+        <div class="row nopadding">
+          <div class="col">
+            <input type="text" placeholder="宝贝详情">
+          </div>
+        </div>
+      </ion-item>
+      <ion-item>
+        <div class="row">
+          <div class="col">
+            <p><i class="icon ion-ios7-location mr5"></i>交易地点</p>
+            <p class="address">北京市海淀区西二旗中路6号1区4号楼<a href="" class="fr">使用其他位置</a></p>
+          </div>
+        </div>
+      </ion-item>
+      <ion-item>
+        <div class="row nopadding">
+          <div class="col">
+            <button class="button button-block button-dark m0">确定发布</button>
+          </div>
+        </div>
+      </ion-item>
+    </ion-list>
+  </ion-content>
+</ion-view>

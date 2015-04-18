@@ -7,7 +7,7 @@
 // 'starter.controllers' is found in controllers.js
 angular.module('iwildfire', ['ionic', 'iwildfire.controllers', 'iwildfire.services', 'iwildfire.directive', 'config'])
 
-.run(function($ionicPlatform, store) {
+.run(function($ionicPlatform, store, $rootScope) {
     $ionicPlatform.ready(function() {
         // Hide the accessory bar by default (remove this to show the accessory bar above the keyboard
         // for form inputs)
@@ -52,6 +52,7 @@ angular.module('iwildfire', ['ionic', 'iwildfire.controllers', 'iwildfire.servic
         //     });
         // }
     });
+
 })
 
 .config(function($stateProvider, $urlRouterProvider) {
@@ -80,6 +81,17 @@ angular.module('iwildfire', ['ionic', 'iwildfire.controllers', 'iwildfire.servic
             }
         }
     })
+
+    .state('tab.post', {
+        url: '/post',
+        views: {
+            'tab-post': {
+                templateUrl: 'templates/tab-post.html',
+                controller: 'PostCtrl'
+            }
+        }
+    })
+
     .state('tab.maps', {
         url: '/maps',
         views: {

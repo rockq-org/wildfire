@@ -1,0 +1,78 @@
+.wf-post-form {
+	* {
+		color: #666;
+		font-size: 14px;
+	}
+	.item {
+		padding: 4px;
+		border-top: none;
+		border-bottom: none;
+	}
+	a {
+		color: #666;
+		text-decoration: none;
+		font-size: 12px;
+	}
+	input {
+		-webkit-appearance: none;
+		border: 1px solid #aaa;
+		border-radius: 0;
+		padding: 4px;
+		height: 28px;
+		line-height: 28px;
+		font-size: 14px;
+	}
+	.button {
+		background: #aaa;
+		border-color: #999;
+		min-height: 24px;
+		line-height: 30px;
+	}
+	.tag-list {
+		white-space: normal;
+		li {
+			display: inline-block;
+			text-align: center;
+			margin: 6px 0;
+			line-height: 14px;
+			font-size: 12px;
+			display: inline-block;
+			width: 72px;
+			border-right: 1px solid #666;
+			padding: 0 4px;
+			a {
+				color: #666;
+				text-decoration: none;
+			}
+			&:last-child {
+				border-right: none;
+			}
+			&.active {
+				background: #ccc;
+			}
+		}
+	}
+	.quality-list {
+		margin: 10px 20px;
+		li {
+			width: 20%;
+			display: inline-block;
+			text-align: center;
+			a {
+				display: inline-block;
+				height: 40px;
+				width: 40px;
+				border-radius: 50%;
+				line-height: 40px;
+				background: #ddd;
+				box-sizing: border-box;
+			}
+		}
+	}
+	.address {
+		font-size: 12px;
+		a {
+			text-decoration: underline;
+		}
+	}
+}

@@ -14,12 +14,11 @@ var accesstoken = function(req, res, next) {
 };
 
 exports.getAccessToken = function(req, res, next) {
-    logger.debug('getAccessToken', '');
     if (req.session.user) {
         res.send({
             rc: 0,
-            loginname: req.user.loginname,
-            avatar_url: req.user.avatar_url,
+            loginname: req.session.user.loginname,
+            avatar_url: req.session.user.avatar_url,
             id: req.session.user.id,
             accesstoken: req.session.user.accessToken
         });

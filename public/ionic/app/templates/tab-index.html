@@ -10,54 +10,39 @@
               <a class="button button-icon icon ion-ios7-search" ng-click="search()"></a>
           </ion-header-bar>
           <ion-nav-view name="menuContent">
-          <ion-tabs class="tabs-striped tabs-top">
-            <ion-tab title="新发布">
-              <br />
-              <br />
-              <br />
-              <br />
-              <br />
-              <div class="row" ng-repeat="t in [1, 2, 3, 4, 5]">
-                <div class="col col-50" ng-repeat="t in [1, 2]">
-                  <div class="item item-image">
-                    <img class="full-image" src="templates/tab-inbox-imgs/1.jpg">
-                    <div class="text-left padding-left padding-right padding-top">
-                      <h3>Iphone6+</h3>
-                      <h3> <strong class="assertive">￥ 5000.00</strong> <del>￥ 7288.00</del> </h3>
-                      <h3> 1天前</h3>
-                      <div class="text-right">
-                        <a class="button button-clear">54 <i class=" icon ion-chatbox-working"> </i></a>
-                        <a class="button button-clear button-assertive">15 <i class=" icon ion-heart"> </i></a>
+              <ion-content class="has-header">
+
+                <ion-refresher ng-if="topics.length > 0 || loadError" pulling-text="下拉刷新..." on-refresh="doRefresh()" refreshing-icon="ion-loading-c">
+                </ion-refresher>
+
+                <ion-list class="topics">
+                  <ion-item class="col col-50 no-border"
+                    collection-repeat="topic in topics"
+                    collection-item-height="386"
+                    collection-item-width="'50%'"
+                    >
+                      <div class="item item-image">
+                        <img class="full-image" src="templates/tab-inbox-imgs/1.jpg">
+                        <div class="text-left padding-left padding-right padding-top">
+                          <h3>{{topic.title}}</h3>
+                          <h3> <strong class="assertive">￥ {{topic.goods_now_price}}</strong> <del>￥ {{topic.goods_pre_price}}</del> </h3>
+                          <h3 am-time-ago="topic.update_at"> </h3>
+                          <div class="text-right">
+                            <a class="button button-clear">{{topic.reply_count}} <i class=" icon ion-chatbox-working"> </i></a>
+                            <a class="button button-clear button-assertive">{{topic.collect_count}} <i class=" icon ion-heart"> </i></a>
+                          </div>
+                        </div>
                       </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </ion-tab>
-            <ion-tab title="特价推荐">
-              <br />
-              <br />
-              <br />
-              <br />
-              <br />
-              <div class="row" ng-repeat="t in [1, 2, 3, 4, 5]">
-                <div class="col col-50" ng-repeat="t in [1, 2]">
-                  <div class="item item-image">
-                    <img class="full-image" src="templates/tab-inbox-imgs/avatar.jpeg">
-                    <div class="text-left padding-left padding-right padding-top">
-                      <h3>Iphone5s</h3>
-                      <h3> <strong class="assertive">￥ 2000.00</strong> <del>￥ 5000.00</del> </h3>
-                      <h3> 1天前</h3>
-                      <div class="text-right">
-                        <a class="button button-clear">23 <i class=" icon ion-chatbox-working"> </i></a>
-                        <a class="button button-clear button-assertive">999 <i class=" icon ion-heart"> </i></a>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </ion-tab>
-          </ion-tabs>
+                  </ion-item>
+                </ion-list>
+
+                <!--
+                  Loading icon of infinte-scroll not showing with collection-repeat
+                  https://github.com/driftyco/ionic/issues/2376
+                -->
+                <ion-infinite-scroll on-infinite="loadMore()" distance="10%" icon="ion-loading-c" ng-if="hasNextPage && !loadError">
+                </ion-infinite-scroll>
+              </ion-content>
           </ion-nav-view>
         </ion-side-menu-content>
         <ion-side-menu side="left">

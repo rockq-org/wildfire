@@ -5,9 +5,12 @@
 // the 2nd parameter is an array of 'requires'
 // 'starter.services' is found in services.js
 // 'starter.controllers' is found in controllers.js
-angular.module('iwildfire', ['ionic', 'iwildfire.controllers', 'iwildfire.services', 'iwildfire.directives', 'iwildfire.filters', 'config'])
+angular.module('iwildfire', ['ionic', 'iwildfire.controllers', 'iwildfire.services', 'iwildfire.directives', 'iwildfire.filters', 'config', 'angularMoment'])
 
-.run(function($ionicPlatform, $rootScope, $log, store, webq, $ionicLoading) {
+.run(function($ionicPlatform, $rootScope, $log, store, webq, $ionicLoading, amMoment) {
+
+    amMoment.changeLocale('zh-cn');
+
     $ionicPlatform.ready(function() {
         // Hide the accessory bar by default (remove this to show the accessory bar above the keyboard
         // for form inputs)
@@ -102,7 +105,6 @@ angular.module('iwildfire', ['ionic', 'iwildfire.controllers', 'iwildfire.servic
             'tab-index': {
                 templateUrl: 'templates/tab-index.html',
                 controller: 'IndexCtrl'
-
             }
         }
     })

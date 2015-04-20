@@ -98,7 +98,8 @@ angular.module('iwildfire.services', [])
 
     this.getWechatSignature = function() {
         var deferred = $q.defer();
-        var app_url = encodeURIComponent(window.location.href.split('#')[0]);
+        // should not use encodeURIComponent
+        var app_url = window.location.href.split('#')[0];
         var accesstoken = store.getAccessToken();
 
         $http.post('{0}/api/v1/ionic/wecat-signature'.f(cfg.server), {

@@ -249,8 +249,8 @@ angular.module('iwildfire.services', [])
         // https://github.com/arrking/wildfire/issues/53
         $http.post('{0}/api/v1/topics'.f(cfg.server), {
                 /*debug*/
-                accesstoken: 'd8e60e1f-b4ba-4a1b-9eaa-56e9f6a8d5f0',
-                // accesstoken: store.getAccessToken(),
+                // accesstoken: 'd8e60e1f-b4ba-4a1b-9eaa-56e9f6a8d5f0',
+                accesstoken: store.getAccessToken(),
                 title: params.title,
                 tab: params.tab,
                 content: params.content,

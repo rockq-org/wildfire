@@ -1,10 +1,10 @@
 angular.module('iwildfire.controllers', [])
 
-.controller('IndexCtrl', function($scope, wechat_signature) {
-    alert(JSON.stringify(wechat_signature));
+.controller('IndexCtrl', function($scope) {
+
 })
 
-.controller('PostCtrl', function($scope) {
+.controller('PostCtrl', function($scope, wechat_signature) {
 
     $scope.params = {};
 
@@ -17,20 +17,17 @@ angular.module('iwildfire.controllers', [])
     $scope.uploadImage = function() {
         // setup weixin sdk
         // http://mp.weixin.qq.com/wiki/7/aaa137b55fb2e0456bf8dd9148dd613f.html#JSSDK.E4.BD.BF.E7.94.A8.E6.AD.A5.E9.AA.A4
-        if (window.ARRKING_WECHAT_SIG && window.ARRKING_WECHAT_SIG.appId) {
-            wx.config(window.ARRKING_WECHAT_SIG);
-            wx.error(function(err) {
-                alert(err);
+        wx.config(wechat_signature);
+        wx.error(function(err) {
+            alert(err);
+        });
+        wx.ready(function() {
+            wx.chooseImage({
+                success: function(res) {
+                    var localIds = res.localIds; // 返回选定照片的本地ID列表，localId可以作为img标签的src属性显示图片
+                }
             });
-            wx.ready(function() {
-                alert(1);
-                wx.chooseImage({
-                    success: function(res) {
-                        var localIds = res.localIds; // 返回选定照片的本地ID列表，localId可以作为img标签的src属性显示图片
-                    }
-                });
-            });
-        }
+        });
     };
 
     $scope.tagList = [{

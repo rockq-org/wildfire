@@ -149,4 +149,24 @@ angular.module('iwildfire.services', [])
 
 })
 
+.service('SideMenu', function() {
+    this.getList = function(){
+        return [{
+            name: '教材书籍'
+        }, {
+            name: '数码电器'
+        }, {
+            name: '代步工具'
+        }, {
+            name: '衣服饰品'
+        }, {
+            name: '生活用品'
+        }, {
+            name: '运动健身'
+        }, {
+            name: '其他更多'
+        }];
+    }
+})
+
 ;

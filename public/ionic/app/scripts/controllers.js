@@ -1,10 +1,10 @@
 angular.module('iwildfire.controllers', [])
 
-.controller('IndexCtrl', function($scope) {
-
+.controller('IndexCtrl', function($scope, SideMenu) {
+    $scope.sideMenus = SideMenu.getList();
 })
 
-.controller('PostCtrl', function ($scope) {
+.controller('PostCtrl', function ($scope, SideMenu) {
 
     $scope.params = {};
 
@@ -33,21 +33,7 @@ angular.module('iwildfire.controllers', [])
         }
     };
 
-    $scope.tagList = [{
-        name: '教材书籍'
-    }, {
-        name: '数码电器'
-    }, {
-        name: '代步工具'
-    }, {
-        name: '衣服饰品'
-    }, {
-        name: '生活用品'
-    }, {
-        name: '运动健身'
-    }, {
-        name: '其他更多'
-    }];
+    $scope.tagList = SideMenu.getList();
 
     $scope.qualityList = [{
         name: '全新'

@@ -64,15 +64,8 @@
             </ion-header-bar>
             <ion-content>
                 <ion-list>
-                    <!-- <ion-item class="item" menu-close nav-clear href="#/tab/index">教材书籍</ion-item> -->
-                    <ion-item class="item item-icon-right assertive {{selected==category?'stable-bg':''}}" menu-close ng-click="changeSelected()">
-                        <i class="icon ion-ios7-arrow-right assertive" ng-if="category==selected"></i> 教材书籍
-                    </ion-item>
-                    <ion-item class="item item-icon-right assertive {{selected==category?'stable-bg':''}}" menu-close ng-click="changeSelected()">
-                        <i class="icon ion-ios7-arrow-right assertive" ng-if="category==selected"></i> 数码电脑
-                    </ion-item>
-                    <ion-item class="item item-icon-right assertive {{selected==category?'stable-bg':''}}" menu-close ng-click="changeSelected()">
-                        <i class="icon ion-ios7-arrow-right assertive" ng-if="category==selected"></i> 其它
+                    <ion-item class="item item-icon-right assertive {{selected==category?'stable-bg':''}}" menu-close ng-click="changeSelected()" ng-repeat="item in sideMenus">
+                        <i class="icon ion-ios7-arrow-right assertive" ng-if="category==selected"></i> {{item.name}}
                     </ion-item>
                 </ion-list>
             </ion-content>

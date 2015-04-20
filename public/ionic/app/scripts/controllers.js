@@ -65,7 +65,7 @@ angular.module('iwildfire.controllers', [])
     function _processWxImages(resIds, results, deferred) {
         try {
             if (!results) {
-                result = [];
+                results = [];
             }
             var resId = resIds.pop();
             if (resId) {
@@ -104,10 +104,10 @@ angular.module('iwildfire.controllers', [])
                         // can not upload multi-images at the same time.
                         var deferred = $q.defer();
                         _processWxImages(localIds, null, deferred);
-                        deferred.promise.then(function(data){
-                          alert(JSON.stringify(data));
-                        }, function(err){
-                          alert(JSON.stringify(err));
+                        deferred.promise.then(function(data) {
+                            alert(JSON.stringify(data));
+                        }, function(err) {
+                            alert(JSON.stringify(err));
                         });
                     }
                 });

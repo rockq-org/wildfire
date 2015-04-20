@@ -22,9 +22,9 @@
                     collection-item-width="'50%'"
                     >
                       <div class="item item-image">
-                        <img class="full-image" src="templates/tab-inbox-imgs/1.jpg">
+                        <a href="#/tab/index/topic/{{topic.id}}"> <img class="full-image" src="templates/tab-inbox-imgs/1.jpg"> </a>
                         <div class="text-left padding-left padding-right padding-top">
-                          <h3>{{topic.title}}</h3>
+                          <a href="#/tab/index/topic/{{topic.id}}"> <h3> {{topic.title}} </h3></a>
                           <h3> <strong class="assertive">￥ {{topic.goods_now_price}}</strong> <del>￥ {{topic.goods_pre_price}}</del> </h3>
                           <h3 am-time-ago="topic.update_at"> </h3>
                           <div class="text-right">

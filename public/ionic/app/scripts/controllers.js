@@ -524,10 +524,9 @@ angular.module('iwildfire.controllers', [])
         $ionicScrollDelegate,
         $log,
         Topics,
-        Topic,
-        User
+        Topic
     ) {
-        console.log('zzzzz');
+        var User = {}; // should be real model later
         $log.debug('topic ctrl', $stateParams);
         var id = $stateParams.id;
         var topic = Topics.getById(id);
@@ -560,13 +559,13 @@ angular.module('iwildfire.controllers', [])
         $scope.loadTopic();
 
         // detect if user has collected this topic
-        var currentUser = User.getCurrentUser();
-        $scope.isCollected = false;
-        angular.forEach(currentUser.collect_topics, function(topics) {
-            if (topics.id === id) {
-                $scope.isCollected = true;
-            }
-        });
+        // var currentUser = User.getCurrentUser();
+        // $scope.isCollected = false;
+        // angular.forEach(currentUser.collect_topics, function(topics) {
+        //     if (topics.id === id) {
+        //         $scope.isCollected = true;
+        //     }
+        // });
 
         // do refresh
         $scope.doRefresh = function() {

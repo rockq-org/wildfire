@@ -1,20 +1,20 @@
 angular.module('iwildfire.controllers', [])
 
-.controller('IndexCtrl', function($scope) {
-
+.controller('IndexCtrl', function($scope, wechat_signature) {
+    alert(JSON.stringify(wechat_signature));
 })
 
-.controller('PostCtrl', function ($scope) {
+.controller('PostCtrl', function($scope) {
 
     $scope.params = {};
 
     $scope.params.tag = '';
 
-    $scope.changeTag = function (value) {
+    $scope.changeTag = function(value) {
         $scope.params.tag = value;
     };
 
-    $scope.uploadImage = function () {
+    $scope.uploadImage = function() {
         // setup weixin sdk
         // http://mp.weixin.qq.com/wiki/7/aaa137b55fb2e0456bf8dd9148dd613f.html#JSSDK.E4.BD.BF.E7.94.A8.E6.AD.A5.E9.AA.A4
         if (window.ARRKING_WECHAT_SIG && window.ARRKING_WECHAT_SIG.appId) {

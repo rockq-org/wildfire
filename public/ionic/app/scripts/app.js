@@ -7,7 +7,7 @@
 // 'starter.controllers' is found in controllers.js
 angular.module('iwildfire', ['ionic', 'iwildfire.controllers', 'iwildfire.services', 'iwildfire.directive', 'config'])
 
-.run(function($ionicPlatform, $rootScope, store, webq) {
+.run(function($ionicPlatform, $rootScope, $log, store, webq) {
     $ionicPlatform.ready(function() {
         // Hide the accessory bar by default (remove this to show the accessory bar above the keyboard
         // for form inputs)
@@ -19,21 +19,33 @@ angular.module('iwildfire', ['ionic', 'iwildfire.controllers', 'iwildfire.servic
             StatusBar.styleLightContent();
         }
 
-        if (window.ARRKING_WECHAT_USER) {
-            store.setUserProfile(window.ARRKING_WECHAT_USER);
-        }
-
-        try {
-            // detect if no access token is available.
-            webq.getAccessToken()
-                .then(function(val) {
-                    alert(JSON.stringify(val));
-                }, function(err) {
-                    alert(JSON.stringify(err));
-                });
-        } catch (e) {
-            alert(e);
-        }
+        // detect if no access token is available.
+        // if (!store.getAccessToken()) {
+        //     webq.getAccessToken()
+        //         .then(function(val) {
+        //             store.setAccessToken(val.accesstoken);
+        //             return webq.getUserProfile();
+        //         })
+        //         .then(function(data) {
+        //             store.setUserProfile(data);
+        //         })
+        //         .catch(function(err) {
+        //             // #TODO need login again ?
+        //             // window.location.href = '{0}/auth/wechat/embedded'.f(cfg.server);
+        //             alert(JSON.stringify(err));
+        //         });
+        // } else if (!store.getUserProfile()) {
+        //     // retrieve user profile
+        //     webq.getUserProfile()
+        //         .then(function(data) {
+        //             store.setUserProfile(data)
+        //         }, function(err) {
+        //             // maybe accessToken is expired.
+        //         });
+        // } else {
+        //     // accesstoken and user profile are all available
+        //     // 
+        // }
 
         // setup weixin sdk
         // http://mp.weixin.qq.com/wiki/7/aaa137b55fb2e0456bf8dd9148dd613f.html#JSSDK.E4.BD.BF.E7.94.A8.E6.AD.A5.E9.AA.A4
@@ -70,6 +82,12 @@ angular.module('iwildfire', ['ionic', 'iwildfire.controllers', 'iwildfire.servic
 
 .config(function($stateProvider, $urlRouterProvider) {
 
+    /**
+     * more about ui-router
+     * http://angular-ui.github.io/ui-router/site/
+     */
+
+
     // Ionic uses AngularUI Router which uses the concept of states
     // Learn more here: https://github.com/angular-ui/ui-router
     // Set up the various states which the app can be in.
@@ -90,7 +108,13 @@ angular.module('iwildfire', ['ionic', 'iwildfire.controllers', 'iwildfire.servic
         views: {
             'tab-index': {
                 templateUrl: 'templates/tab-index.html',
-                controller: 'IndexCtrl'
+                controller: 'IndexCtrl',
+                // https://github.com/angular-ui/ui-router/wiki#resolve
+                resolve: {
+                    wechat_signature: function(webq) {
+                        return webq.getWechatSignature();
+                    }
+                }
             }
         }
     })

@@ -96,6 +96,42 @@ angular.module('iwildfire.services', [])
  */
 .service('webq', function($http, $q, $log, cfg, store) {
 
+    this.getWechatSignature = function() {
+        var deferred = $q.defer();
+        var app_url = encodeURIComponent(window.location.href.split('#')[0]);
+        var accesstoken = store.getAccessToken();
+
+        $http.post('{0}/api/v1/ionic/wecat-signature'.f(cfg.server), {
+                accesstoken: accesstoken,
+                app_url: app_url
+            })
+            .success(function(data) {
+                /**
+                 * data
+                 * >>
+                 * {
+                    debug: wxConfig.debug,
+                    appId: wxConfig.appId,
+                    timestamp: wxCredentials.timestamp,
+                    nonceStr: wxCredentials.noncestr,
+                    signature: wxCredentials.signature,
+                    // 附录2-所有JS接口列表
+                    // http://mp.weixin.qq.com/wiki/7/aaa137b55fb2e0456bf8dd9148dd613f.html#.E6.8B.8D.E7.85.A7.E6.88.96.E4.BB.8E.E6.89.8B.E6.9C.BA.E7.9B.B8.E5.86.8C.E4.B8.AD.E9.80.89.E5.9B.BE.E6.8E.A5.E5.8F.A3
+                    // jsApiList可以在客户端用的时候再调整
+                    jsApiList: ['scanQRCode', 'chooseImage', 'getLocation', 'openLocation']
+                };
+                 * <<
+                 * jsApiList和debug 可以在客户端修改
+                 */
+                deferred.resolve(data);
+            })
+            .error(function(err) {
+                deferred.reject(err);
+            })
+
+        return deferred.promise;
+    }
+
     this.sendVerifyCode = function(phoneNumber) {
         var deferred = $q.defer();
         $http.post('{0}/api/v1/user/bind_phone_number'.f(cfg.server), {
@@ -152,7 +188,39 @@ angular.module('iwildfire.services', [])
         var deferred = $q.defer();
         $http.get('{0}/api/v1/accesstoken'.f(cfg.server))
             .success(function(data) {
-                deferred.resolve(data);
+                if (typeof(data) === 'object' && data.rc == 0) {
+                    // https://github.com/arrking/wildfire/issues/63
+                    /**
+                     * {
+            rc: 0,
+            loginname: req.session.user.loginname,
+            avatar_url: req.session.user.avatar_url,
+            id: req.session.user.id,
+            accesstoken: req.session.user.accessToken
+        }
+                     */
+                    deferred.resolve(data);
+                } else {
+                    deferred.reject(data);
+                }
+            })
+            .error(function(err) {
+                deferred.reject(err);
+            });
+        return deferred.promise;
+    }
+
+    this.getUserProfile = function() {
+        var deferred = $q.defer();
+        $http.post('{0}/api/v1/accesstoken'.f(cfg.server), {
+                accesstoken: store.getAccessToken()
+            })
+            .success(function(data) {
+                if (data.success) {
+                    deferred.resolve(data.profile);
+                } else {
+                    deferred.reject(data);
+                }
             })
             .error(function(err) {
                 deferred.reject(err);

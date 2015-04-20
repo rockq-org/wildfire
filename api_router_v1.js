@@ -46,6 +46,9 @@ router.post('/user/check_phone_verifycode', middleware.auth, userController.chec
 router.post('/file/image-web-url', middleware.auth, fileStorageController.uploadWebUrlImage);
 router.get('/file/image-anonymous/:id', fileStorageController.displayAnonymousImage);
 
+/**
+ * 获取微信JS SDK 签名
+ */
 router.post('/ionic/wecat-signature', middleware.auth, ionicController.getWechatSignature);
 
 module.exports = router;

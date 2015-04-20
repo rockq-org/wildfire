@@ -10,6 +10,7 @@ var accesstoken = function(req, res, next) {
         loginname: req.user.loginname,
         avatar_url: req.user.avatar_url,
         id: req.user.id,
+        profile: req.user
     });
 };
 

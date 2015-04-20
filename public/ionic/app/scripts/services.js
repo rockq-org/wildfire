@@ -107,7 +107,8 @@ angular.module('iwildfire.services', [])
             })
             .success(function(data) {
                 /**
-                 * data
+                 * data.rc: 0 --> succ; others --> fail
+                 * data.msg
                  * >>
                  * {
                     debug: wxConfig.debug,
@@ -123,7 +124,10 @@ angular.module('iwildfire.services', [])
                  * <<
                  * jsApiList和debug 可以在客户端修改
                  */
-                deferred.resolve(data);
+                if (typeof(data) == object &&
+                    data.rc == 0) {
+                    deferred.resolve(data.msg);
+                }
             })
             .error(function(err) {
                 deferred.reject(err);

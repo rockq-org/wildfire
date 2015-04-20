@@ -185,6 +185,8 @@ passport.use(new WechatStrategy({
     // create user profile
     UserProxy.newOrUpdate(profile)
         .then(function(user) {
+            logger.debug('WechatStrategy', 'login user.');
+            // When the login operation completes, user will be assigned to req.user.
             req.logIn(user, function(err) {
                 return done(null, user);
             });
@@ -214,12 +216,17 @@ app.get('/auth/wechat/embedded/callback', function(req, res, next) {
         } else {
             logger.debug('wechat uaa', JSON.stringify(user));
         }
+        // node passport login user as req.user, but in nodeclub, 
+        // req.session.user should also be signed.
+        if (user) {
+            res.locals.current_user = req.session.user = user;
+        }
         if (!user.phone_number) {
             // force user input phone number
             res.redirect(util.format('http://%s/public/ionic/www/#/bind-mobile-phone/%s', config.host, user.accessToken));
         } else {
             // pass user id into redirect url
-            res.redirect(util.format('http://%s/public/ionic/www/wechat?userId=%s', config.host, user._id));
+            res.redirect(util.format('http://%s/public/ionic/www', config.host));
         }
     })(req, res, next);
 });

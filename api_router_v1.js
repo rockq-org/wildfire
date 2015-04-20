@@ -25,6 +25,7 @@ router.get('/user/:loginname', userController.show);
 
 // accessToken 测试
 router.post('/accesstoken', middleware.auth, toolsController.accesstoken);
+router.get('/accesstoken', toolsController.getAccessToken);
 
 // 评论
 router.post('/topic/:topic_id/replies', middleware.auth, limit.peruserperday('create_reply', config.create_reply_per_day), replyController.create);

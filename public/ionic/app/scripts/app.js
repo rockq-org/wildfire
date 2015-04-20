@@ -7,7 +7,7 @@
 // 'starter.controllers' is found in controllers.js
 angular.module('iwildfire', ['ionic', 'iwildfire.controllers', 'iwildfire.services', 'iwildfire.directive', 'config'])
 
-.run(function($ionicPlatform, store, $rootScope) {
+.run(function($ionicPlatform, $rootScope, store, webq) {
     $ionicPlatform.ready(function() {
         // Hide the accessory bar by default (remove this to show the accessory bar above the keyboard
         // for form inputs)
@@ -22,6 +22,19 @@ angular.module('iwildfire', ['ionic', 'iwildfire.controllers', 'iwildfire.servic
         if (window.ARRKING_WECHAT_USER) {
             store.setUserProfile(window.ARRKING_WECHAT_USER);
         }
+
+        try {
+            // detect if no access token is available.
+            webq.getAccessToken()
+                .then(function(val) {
+                    alert(JSON.stringify(val));
+                }, function(err) {
+                    alert(JSON.stringify(err));
+                });
+        } catch (e) {
+            alert(e);
+        }
+
         // setup weixin sdk
         // http://mp.weixin.qq.com/wiki/7/aaa137b55fb2e0456bf8dd9148dd613f.html#JSSDK.E4.BD.BF.E7.94.A8.E6.AD.A5.E9.AA.A4
         // if (window.ARRKING_WECHAT_SIG && window.ARRKING_WECHAT_SIG.appId) {
@@ -64,7 +77,7 @@ angular.module('iwildfire', ['ionic', 'iwildfire.controllers', 'iwildfire.servic
     $stateProvider
 
     // setup an abstract state for the tabs directive
-    .state('tab', {
+        .state('tab', {
         url: "/tab",
         abstract: true,
         templateUrl: "templates/tabs.html"

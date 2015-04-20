@@ -147,6 +147,19 @@ angular.module('iwildfire.services', [])
         return deferred.promise;
     }
 
+    // get access token, assume the browser has contained valid cookie.
+    this.getAccessToken = function() {
+        var deferred = $q.defer();
+        $http.get('{0}/api/v1/accesstoken'.f(cfg.server))
+            .success(function(data) {
+                deferred.resolve(data);
+            })
+            .error(function(err) {
+                deferred.reject(err);
+            });
+        return deferred.promise;
+    }
+
 })
 
 ;

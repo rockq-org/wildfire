@@ -4,59 +4,138 @@ angular.module('iwildfire.controllers', [])
 
 })
 
-.controller('PostCtrl', function($scope, wechat_signature) {
+/**
+ * create Goods item in backend
+ * Implementation: https://github.com/arrking/wildfire/issues/17
+ * Task: https://github.com/arrking/wildfire/issues/55
+ * Depend API: https://github.com/arrking/wildfire/issues/53
+ * @param  {[type]} $scope           [description]
+ * @param  {[type]} $log             [description]
+ * @param  {[type]} wechat_signature [description]
+ * @return {[type]}                  [description]
+ */
+.controller('PostCtrl', function($scope, $log, webq, wechat_signature) {
 
-    $scope.params = {};
+    $scope.params = {
+        // 标题5到10个字
+        title: null,
+        content: null,
+        tab: null,
+        quality: null,
+        goods_pics: ['link1', 'link2'],
+        goods_pre_price: null,
+        goods_now_price: null,
+        goods_is_bargain: true,
+        // dummy data
+        goods_exchange_location: {
+            txt: '北京市海淀区西二旗中路6号1区4号楼', // user input text
+            lat: '40.056961', // latitude
+            lng: '116.318857' // longitude
+        },
+        goods_status: '在售'
+    };
 
-    $scope.params.tag = '';
+    $scope.tagList = [{
+        name: '教材书籍',
+        tab: 'books'
+    }, {
+        name: '数码电器',
+        tab: '数码电器'
+    }, {
+        name: '代步工具',
+        tab: 'transports'
+    }, {
+        name: '衣服饰品',
+        tab: 'clothes'
+    }, {
+        name: '生活用品',
+        tab: 'supplies'
+    }, {
+        name: '运动健身',
+        tab: 'healthcare'
+    }, {
+        name: '其它',
+        tab: 'others'
+    }];
+
+    $scope.qualityList = ['全新', '很新', '完好', '适用', '能用'];
 
     $scope.changeTag = function(value) {
-        $scope.params.tag = value;
+        $scope.params.tab = value;
+        $log.debug('params: {0}'.f(JSON.stringify($scope.params)));
     };
+
+    $scope.changeQuality = function(value) {
+        $scope.params.quality = value;
+        $log.debug('params: {0}'.f(JSON.stringify($scope.params)));
+    }
 
     $scope.uploadImage = function() {
         // setup weixin sdk
         // http://mp.weixin.qq.com/wiki/7/aaa137b55fb2e0456bf8dd9148dd613f.html#JSSDK.E4.BD.BF.E7.94.A8.E6.AD.A5.E9.AA.A4
-        wx.config(wechat_signature);
-        wx.error(function(err) {
-            alert(err);
-        });
-        wx.ready(function() {
-            wx.chooseImage({
-                success: function(res) {
-                    var localIds = res.localIds; // 返回选定照片的本地ID列表，localId可以作为img标签的src属性显示图片
-                }
+
+        // if APP URL is not belong to arrking.com , 
+        // wechat_signature is null.
+        if (wechat_signature) {
+            wx.config(wechat_signature);
+            wx.error(function(err) {
+                alert(err);
             });
-        });
+            wx.ready(function() {
+                wx.chooseImage({
+                    success: function(res) {
+                        var localIds = res.localIds; // 返回选定照片的本地ID列表，localId可以作为img标签的src属性显示图片
+                    }
+                });
+            });
+        } else {
+            $log.debug('app url: {0}. wechat_signature is not available.'.f(window.location.href.split('#')[0]));
+        }
     };
 
-    $scope.tagList = [{
-        name: '教材书籍'
-    }, {
-        name: '数码电器'
-    }, {
-        name: '代步工具'
-    }, {
-        name: '衣服饰品'
-    }, {
-        name: '生活用品'
-    }, {
-        name: '运动健身'
-    }, {
-        name: '其他更多'
-    }];
+    /**
+     * 验证表单字段
+     */
+    function validateForm(params) {
+        return !_.some([params.title, params.content, params.tab,
+            params.quality, params.goods_pre_price, params.goods_now_price
+        ], function(x) {
+            return (x == null) || (x == '');
+        });
+    }
 
-    $scope.qualityList = [{
-        name: '全新'
-    }, {
-        name: '很新'
-    }, {
-        name: '完好'
-    }, {
-        name: '适用'
-    }, {
-        name: '能用'
-    }];
+    /**
+     * 提交二手物品创建信息
+     * @return {[type]} [description]
+     */
+    $scope.submitGoods = function() {
+        // validate data
+        if (validateForm($scope.params)) {
+            webq.createNewGoods($scope.params)
+                .then(function(result) {
+                    /**
+                     * success: true
+                     * topic_id: xxxx
+                     * @param  {[type]} result.success [description]
+                     * @return {[type]}                [description]
+                     */
+                    if (result.success) {
+                        // create record successfully.
+                        // #TODO navigate to detail page.
+                        alert('创建成功！');
+                    } else {
+                        // fail to create record.
+                        alert('创建失败！');
+                    }
+                }, function(err) {
+                    $log.error(err);
+                    alert(err.error_msg);
+                });
+        } else {
+            alert('缺少信息。')
+        }
+    }
+
 })
 
 .controller('NavCtrl', function($scope, $ionicSideMenuDelegate) {

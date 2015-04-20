@@ -14,7 +14,13 @@ angular.module('iwildfire.controllers', [])
  * @param  {[type]} wechat_signature [description]
  * @return {[type]}                  [description]
  */
-.controller('PostCtrl', function($scope, $log, webq, wechat_signature) {
+.controller('PostCtrl', function($scope, $log, cfg, store, webq, wechat_signature) {
+
+    // if not contains profile and accesstoken, just naviagte 
+    // to user authentication page.
+    if (!store.getAccessToken()) {
+        window.location.href = '{0}/auth/wechat/embedded'.f(cfg.server);
+    }
 
     $scope.params = {
         // 标题5到10个字

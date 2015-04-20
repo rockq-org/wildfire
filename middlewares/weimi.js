@@ -15,11 +15,10 @@ var redisq = require('../persistence/redisq');
  */
 function _createVerifyCodeWithExpirationAndPhoneNumberInRedis(userId, phoneNumber) {
     var deferred = Q.defer();
-    var code = 'xyxy'.replace(/[xy]/g, function(c) {
-        var r = Math.random() * 16 | 0,
-            v = c == 'x' ? r : r & 0x3 | 0x8;
-        return v.toString(16);
-    });
+    
+    // 四位数字验证码
+    var code = Math.floor(Math.random() * (9999 - 1000) + 1000);
+
     // expiration in five minutes.
     var expiration = 300;
 
@@ -91,8 +90,8 @@ exports.sendVerifyCodeToRegisterAccount = function(userId, mobilePhoneNumber) {
         .then(function(result) {
             return _sendVerifyCodeByPhoneNumberAndCode(result.phoneNumber, result.code);
         })
-        .then(function(result2){
-        	deferred.resolve();
+        .then(function(result2) {
+            deferred.resolve();
         })
         .fail(function(err) {
             deferred.reject(err);

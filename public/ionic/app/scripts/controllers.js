@@ -14,7 +14,7 @@ angular.module('iwildfire.controllers', [])
  * @param  {[type]} wechat_signature [description]
  * @return {[type]}                  [description]
  */
-.controller('PostCtrl', function($scope, $log, cfg, store, webq, wechat_signature, Tabs) {
+.controller('PostCtrl', function($scope, $log, $q, cfg, store, webq, wechat_signature, Tabs) {
 
     // if not contains profile and accesstoken, just naviagte
     // to user authentication page.
@@ -55,6 +55,36 @@ angular.module('iwildfire.controllers', [])
         $log.debug('params: {0}'.f(JSON.stringify($scope.params)));
     }
 
+    /**
+     * upload wechat images in loop
+     * must be called after wx ready and the 
+     * jsApiList has uploadImage.
+     * @param  {[type]} resIds [description]
+     * @return {[type]}        [description]
+     */
+    function _processWxImages(resIds, results, deferred) {
+        try {
+            if (!results) {
+                result = [];
+            }
+            var resId = resIds.pop();
+            if (resId) {
+                wx.uploadImage({
+                    localId: resId, // 需要上传的图片的本地ID，由chooseImage接口获得
+                    isShowProgressTips: 1, // 默认为1，显示进度提示
+                    success: function(res) {
+                        results.push(res.serverId); // 返回图片的服务器端ID
+                        _processWxImages(resIds, results, deferred);
+                    }
+                });
+            } else {
+                deferred.resolve(results);
+            }
+        } catch (e) {
+            deferred.reject(e);
+        }
+    }
+
     $scope.uploadImage = function() {
         // setup weixin sdk
         // http://mp.weixin.qq.com/wiki/7/aaa137b55fb2e0456bf8dd9148dd613f.html#JSSDK.E4.BD.BF.E7.94.A8.E6.AD.A5.E9.AA.A4
@@ -62,7 +92,7 @@ angular.module('iwildfire.controllers', [])
         // if APP URL is not belong to arrking.com ,
         // wechat_signature is null.
         if (wechat_signature) {
-            wx.jsApiList = ['chooseImage', 'previewImage', 'uploadImage', 'downloadImage'];
+            wechat_signature.jsApiList = ['chooseImage', 'previewImage', 'uploadImage', 'downloadImage'];
             wx.config(wechat_signature);
             wx.error(function(err) {
                 alert(err);
@@ -71,17 +101,14 @@ angular.module('iwildfire.controllers', [])
                 wx.chooseImage({
                     success: function(res) {
                         var localIds = res.localIds; // 返回选定照片的本地ID列表，localId可以作为img标签的src属性显示图片
-                        var serverIds = [];
-                        _.each(localIds, function(x) {
-                            wx.uploadImage({
-                                localId: x, // 需要上传的图片的本地ID，由chooseImage接口获得
-                                isShowProgressTips: 1, // 默认为1，显示进度提示
-                                success: function(res) {
-                                    serverIds.push(res.serverId); // 返回图片的服务器端ID
-                                }
-                            });
+                        // can not upload multi-images at the same time.
+                        var deferred = $q.defer();
+                        _processWxImages(localIds, null, deferred);
+                        deferred.promise.then(function(data){
+                          alert(JSON.stringify(data));
+                        }, function(err){
+                          alert(JSON.stringify(err));
                         });
-                        alert('Get server ids ' + JSON.stringify(serverIds));
                     }
                 });
             });

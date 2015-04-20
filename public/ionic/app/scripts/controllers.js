@@ -22,7 +22,7 @@ angular.module('iwildfire.controllers', [])
         content: null,
         tab: null,
         quality: null,
-        goods_pics: ['link1', 'link2'],
+        goods_pics: ['http://img0.imgtn.bdimg.com/it/u=2581619234,3796563842&fm=21&gp=0.jpg', 'http://img0.imgtn.bdimg.com/it/u=1183279317,3364561579&fm=21&gp=0.jpg'],
         goods_pre_price: null,
         goods_now_price: null,
         goods_is_bargain: true,

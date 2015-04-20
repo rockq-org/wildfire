@@ -62,6 +62,7 @@ angular.module('iwildfire.controllers', [])
         // if APP URL is not belong to arrking.com ,
         // wechat_signature is null.
         if (wechat_signature) {
+            wx.jsApiList = ['chooseImage', 'previewImage', 'uploadImage', 'downloadImage'];
             wx.config(wechat_signature);
             wx.error(function(err) {
                 alert(err);

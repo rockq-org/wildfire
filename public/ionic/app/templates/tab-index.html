@@ -9,6 +9,7 @@
               <h1 class="title">首页</h1>
               <a class="button button-icon icon ion-ios7-search" ng-click="search()"></a>
           </ion-header-bar>
+          <ion-nav-view name="menuContent">
           <ion-tabs class="tabs-striped tabs-top">
             <ion-tab title="新发布">
               <br />
@@ -57,6 +58,7 @@
               </div>
             </ion-tab>
           </ion-tabs>
+          </ion-nav-view>
         </ion-side-menu-content>
         <ion-side-menu side="left">
             <ion-header-bar class="bar-assertive">
@@ -64,8 +66,8 @@
             </ion-header-bar>
             <ion-content>
                 <ion-list>
-                    <ion-item class="item item-icon-right assertive {{selected==category?'stable-bg':''}}" menu-close ng-click="changeSelected()" ng-repeat="item in sideMenus">
-                        <i class="icon ion-ios7-arrow-right assertive" ng-if="category==selected"></i> {{item.name}}
+                    <ion-item class="item item-icon-right assertive {{selected==category?'stable-bg':''}}" menu-close ng-click="changeSelected()" ng-repeat="item in sideMenus" href="#/tab/index/topics/{{item.value}}">
+                        <i class="icon ion-ios7-arrow-right assertive" ng-if="category==selected"></i> {{item.label}}
                     </ion-item>
                 </ion-list>
             </ion-content>

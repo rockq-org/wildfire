@@ -1,4 +1,4 @@
-angular.module('iwildfire.directive', [])
+angular.module('iwildfire.directives', [])
 
 .directive('map', function () {
     var searchService,map,markers = [];

@@ -5,9 +5,9 @@
 // the 2nd parameter is an array of 'requires'
 // 'starter.services' is found in services.js
 // 'starter.controllers' is found in controllers.js
-angular.module('iwildfire', ['ionic', 'iwildfire.controllers', 'iwildfire.services', 'iwildfire.directive', 'config'])
+angular.module('iwildfire', ['ionic', 'iwildfire.controllers', 'iwildfire.services', 'iwildfire.directives', 'iwildfire.filters', 'config'])
 
-.run(function($ionicPlatform, store, $rootScope) {
+.run(function($ionicPlatform, store, $rootScope, $ionicLoading) {
     $ionicPlatform.ready(function() {
         // Hide the accessory bar by default (remove this to show the accessory bar above the keyboard
         // for form inputs)
@@ -53,6 +53,28 @@ angular.module('iwildfire', ['ionic', 'iwildfire.controllers', 'iwildfire.servic
         // }
     });
 
+    // error handler
+      var errorMsg = {
+        0: '网络出错啦，请再试一下',
+        'wrong accessToken': '授权失败'
+      };
+    $rootScope.requestErrorHandler = function(options, callback) {
+        return function(response) {
+          var error;
+          if (response.data && response.data.error_msg) {
+            error = errorMsg[response.data.error_msg];
+          } else {
+            error = errorMsg[response.status] || 'Error: ' + response.status + ' ' + response.statusText;
+          }
+          var o = options || {};
+          angular.extend(o, {
+            template: error,
+            duration: 1000
+          });
+          $ionicLoading.show(o);
+          return callback && callback();
+        };
+      };
 })
 
 .config(function($stateProvider, $urlRouterProvider) {
@@ -80,6 +102,25 @@ angular.module('iwildfire', ['ionic', 'iwildfire.controllers', 'iwildfire.servic
                 controller: 'IndexCtrl'
             }
         }
+    })
+
+    .state('tab.index.topics', {
+      url: '/topics/:tab',
+      views: {
+        'menuContent': {
+          templateUrl: 'templates/topics.html',
+          controller: 'TopicsCtrl'
+        }
+      }
+    })
+    .state('tab.index.topic', {
+      url: '/topic/:id',
+      views: {
+        'menuContent': {
+          templateUrl: 'templates/topic.html',
+          controller: 'TopicCtrl'
+        }
+      }
     })
 
     .state('tab.post', {
@@ -139,5 +180,5 @@ angular.module('iwildfire', ['ionic', 'iwildfire.controllers', 'iwildfire.servic
     });
 
     // if none of the above states are matched, use this as the fallback
-    $urlRouterProvider.otherwise('/tab/index');
+    $urlRouterProvider.otherwise('/tab/index/topics/books');
 });

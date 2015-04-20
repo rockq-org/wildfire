@@ -1,4 +1,4 @@
-angular.module('iwildfire.services', [])
+angular.module('iwildfire.services', ['ngResource'])
 
 .factory('Chats', function() {
     // Might use a resource here that returns a JSON array
@@ -149,24 +149,189 @@ angular.module('iwildfire.services', [])
 
 })
 
-.service('SideMenu', function() {
-    this.getList = function(){
-        return [{
-            name: '教材书籍'
-        }, {
-            name: '数码电器'
-        }, {
-            name: '代步工具'
-        }, {
-            name: '衣服饰品'
-        }, {
-            name: '生活用品'
-        }, {
-            name: '运动健身'
-        }, {
-            name: '其他更多'
-        }];
-    }
+.factory('Tabs', function() {
+  return [
+        { value: 'books', label: '教材书籍' },
+        { value: 'transports', label: '代步工具' },
+        { value: 'electronics', label: '数码电器' },
+        { value: 'supplies', label: '生活用品' },
+        { value: 'healthcare', label: '运动健身' },
+        { value: 'clothes', label: '衣帽饰物' },
+        { value: 'others', label: '其它' }
+    ];
 })
 
+.factory('Topics', function(cfg, $resource, $log) {
+  var User = {}; //do it later
+  var topics = [];
+  var currentTab = 'all';
+  var nextPage = 1;
+  var hasNextPage = true;
+  var resource =  $resource(cfg.api + '/topics', {
+  }, {
+    query: {
+      method: 'get',
+      params: {
+        tab: 'all',
+        page: 1,
+        limit: 10,
+        mdrender: true
+      },
+      timeout: 20000
+    }
+  });
+  var getTopics = function(tab, page, callback) {
+    return resource.query({
+      tab: tab,
+      page: page
+    }, function(r) {
+      $log.debug('get topics tab:', tab, 'page:', page, 'data:', r.data);
+      return callback && callback(r);
+    });
+  };
+  return {
+    refresh: function() {
+      return getTopics(currentTab, 1, function(response) {
+        nextPage = 2;
+        hasNextPage = true;
+        topics = response.data;
+      });
+    },
+    pagination: function() {
+      return getTopics(currentTab, nextPage, function(response) {
+        if (response.data.length < 10) {
+          $log.debug('response data length', response.data.length);
+          hasNextPage = false;
+        }
+        nextPage++;
+        topics = topics.concat(response.data);
+      });
+    },
+    currentTab: function(newTab) {
+      if (typeof newTab !== 'undefined') {
+        currentTab = newTab;
+      }
+      return currentTab;
+    },
+    hasNextPage: function(has) {
+      if (typeof has !== 'undefined') {
+        hasNextPage = has;
+      }
+      return hasNextPage;
+    },
+    resetData: function() {
+      topics = [];
+      nextPage = 1;
+      hasNextPage = true;
+    },
+    getTopics: function() {
+      return topics;
+    },
+    getById: function(id) {
+
+      if (!!topics) {
+        for (var i = 0; i < topics.length; i++) {
+          if (topics[i].id === id) {
+            return topics[i];
+          }
+        }
+      } else {
+        return null;
+      }
+    },
+    saveNewTopic: function(newTopicData) {
+      var currentUser = User.getCurrentUser();
+      return resource.save({accesstoken: currentUser.accesstoken}, newTopicData);
+    }
+  };
+})
+.factory('Topic', function(cfg, $resource, $log, $q, User, Settings) {
+  var topic;
+  var resource =  $resource(cfg.api + '/topic/:id', {
+    id: '@id',
+  }, {
+    collect: {
+      method: 'post',
+      url: cfg.api + '/topic/collect'
+    },
+    deCollect: {
+      method: 'post',
+      url: cfg.api + '/topic/de_collect'
+    },
+    reply: {
+      method: 'post',
+      url: cfg.api + '/topic/:topicId/replies'
+    },
+    upReply: {
+      method: 'post',
+      url: cfg.api + '/reply/:replyId/ups'
+    }
+  });
+  return {
+    getById: function(id) {
+      if (topic !== undefined && topic.id === id) {
+        var topicDefer = $q.defer();
+        topicDefer.resolve({
+          data: topic
+        });
+        return {
+          $promise: topicDefer.promise
+        };
+      }
+      return this.get(id);
+    },
+    get: function(id) {
+      return resource.get({id: id}, function(response) {
+        topic = response.data;
+      });
+    },
+    saveReply: function(topicId, replyData) {
+      var reply = angular.extend({}, replyData);
+      var currentUser = User.getCurrentUser();
+      // add send from
+      if (Settings.getSettings().sendFrom) {
+        reply.content = replyData.content + '\n 自豪地采用 [CNodeJS ionic](https://github.com/lanceli/cnodejs-ionic)';
+      }
+      return resource.reply({
+        topicId: topicId,
+        accesstoken: currentUser.accesstoken
+      }, reply
+      );
+    },
+    upReply: function(replyId) {
+      var currentUser = User.getCurrentUser();
+      return resource.upReply({
+        replyId: replyId,
+        accesstoken: currentUser.accesstoken
+      }, null, function(response) {
+        if (response.success) {
+          angular.forEach(topic.replies, function(reply, key) {
+            if (reply.id === replyId) {
+              if (response.action === 'up') {
+                reply.ups.push(currentUser.id);
+              } else {
+                reply.ups.pop();
+              }
+            }
+          });
+        }
+      }
+      );
+    },
+    collectTopic: function(topicId) {
+      var currentUser = User.getCurrentUser();
+      return resource.collect({
+        topic_id: topicId,
+        accesstoken: currentUser.accesstoken
+      });
+    },
+    deCollectTopic: function(topicId) {
+      var currentUser = User.getCurrentUser();
+      return resource.deCollect({
+        topic_id: topicId,
+        accesstoken: currentUser.accesstoken
+      });
+    }
+  };
+})
 ;

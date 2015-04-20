@@ -14,17 +14,6 @@ var common = require('../common'),
     wxConfig = config.wechat_gzh;
 
 
-// wechat only supprt 80 port and the HOST is register in wechat web console
-// this is for security reason, but it also means, developer can not 
-// retrieve signature during development. So, the comom.argv.host here
-// is used in niobe.arrking.com. It only possible to debug signature after 
-// niobe is publish into production or staging.
-// var MAPP_URL_PREFIX = config.host === 'niobe.arrking.com' ? 'http://niobe.arrking.com/mapps' :
-//     u.format('http://%s:%d/mapps', common.argv.host, common.argv.port);
-
-var APP_URL;
-
-
 function _resolveUserProfile(userId) {
     var deferred = Q.defer();
     User.getUserById(userId, function(err, doc) {
@@ -37,15 +26,28 @@ function _resolveUserProfile(userId) {
     return deferred.promise;
 }
 
-if (minimatch(config.host, "*.arrking.com")) {
-    // with arrking.com domain
-    APP_URL = u.format('http://%s/public/ionic/www/wechat', config.host);
-} else {
-    // something like localhost or local IP
-    APP_URL = u.format('http://%s:%d/public/ionic/www/wechat', config.host, config.port);
-}
-
 exports.getWechatApp = function(req, res, next) {
+    var APP_URL;
+    // wechat only supprt 80 port and the HOST is register in wechat web console
+    // this is for security reason, but it also means, developer can not 
+    // retrieve signature during development. So, the comom.argv.host here
+    // is used in niobe.arrking.com. It only possible to debug signature after 
+    // niobe is publish into production or staging.
+    // var MAPP_URL_PREFIX = config.host === 'niobe.arrking.com' ? 'http://niobe.arrking.com/mapps' :
+    //     u.format('http://%s:%d/mapps', common.argv.host, common.argv.port);
+
+    if (minimatch(config.host, "*.arrking.com")) {
+        // with arrking.com domain
+        APP_URL = u.format('http://%s/public/ionic/www/wechat', config.host);
+    } else {
+        // something like localhost or local IP
+        APP_URL = u.format('http://%s:%d/public/ionic/www/wechat', config.host, config.port);
+    }
+
+    if (req.query.userId) {
+        APP_URL = u.format('%s?userId=%s', APP_URL, req.query.userId);
+    }
+
     /**
      * only attache wx signature header running on niobe.arrking.com
      * In the end, res is handle by res.redirect(mappUrl)
@@ -56,9 +58,6 @@ exports.getWechatApp = function(req, res, next) {
 
     wx.getWxJsapiTicketFromRedis()
         .then(function(jspApiTicket) {
-            if (req.query.userId) {
-                APP_URL = u.format('%s?userId=%s', APP_URL, req.query.userId);
-            }
             return wx.getSignatureByJspApiTicketAndUrl(jspApiTicket, APP_URL);
         }, function(err) {
             // can not get jspApiTicket

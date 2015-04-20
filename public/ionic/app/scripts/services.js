@@ -102,7 +102,7 @@ angular.module('iwildfire.services', ['ngResource'])
         var app_url = window.location.href.split('#')[0];
         var accesstoken = store.getAccessToken();
 
-        // when the server domain is registered in 
+        // when the server domain is registered in
         // wechat plaform. If not, the signature can be
         // generated with this app url.
         if (S(cfg.server).contains('arrking.com')) {
@@ -140,7 +140,7 @@ angular.module('iwildfire.services', ['ngResource'])
                     deferred.reject(err);
                 })
         } else {
-            // wechat signature is assigned to undefined if 
+            // wechat signature is assigned to undefined if
             // APP_URL is not belong to arrking.com.
             deferred.resolve();
         }
@@ -369,7 +369,9 @@ angular.module('iwildfire.services', ['ngResource'])
     }
   };
 })
-.factory('Topic', function(cfg, $resource, $log, $q, User, Settings) {
+.factory('Topic', function(cfg, $resource, $log, $q) {
+  var User = {};
+  var Settings = {};
   var topic;
   var resource =  $resource(cfg.api + '/topic/:id', {
     id: '@id',

@@ -5,6 +5,7 @@ var userController = require('./api/v1/user');
 var toolsController = require('./api/v1/tools');
 var replyController = require('./api/v1/reply');
 var messageController = require('./api/v1/message');
+var ionicController = require('./api/v1/ionic');
 var middleware = require('./api/v1/middleware');
 var fileStorageController = require('./api/v1/fileStorage');
 var limit = require('./middlewares/limit');
@@ -24,6 +25,7 @@ router.get('/user/:loginname', userController.show);
 
 // accessToken 测试
 router.post('/accesstoken', middleware.auth, toolsController.accesstoken);
+router.get('/accesstoken', toolsController.getAccessToken);
 
 // 评论
 router.post('/topic/:topic_id/replies', middleware.auth, limit.peruserperday('create_reply', config.create_reply_per_day), replyController.create);
@@ -44,5 +46,9 @@ router.post('/user/check_phone_verifycode', middleware.auth, userController.chec
 router.post('/file/image-web-url', middleware.auth, fileStorageController.uploadWebUrlImage);
 router.get('/file/image-anonymous/:id', fileStorageController.displayAnonymousImage);
 
+/**
+ * 获取微信JS SDK 签名
+ */
+router.post('/ionic/wecat-signature', middleware.auth, ionicController.getWechatSignature);
 
 module.exports = router;

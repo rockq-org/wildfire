@@ -329,9 +329,11 @@ function _getWxJsapiTicketFromRedis() {
  * @param  {[type]} doc){                 console.log('wechat access token: ' + doc);} [description]
  * @return {[type]}        [description]
  */
+// comment out for production usage, becuase the accesstoken should always cached.
 _getWxAccessTokenFromRedis().then(function(doc) {
     console.log('wechat access token: ' + doc);
 });
+
 
 exports.getWxAccessTokenFromRedis = _getWxAccessTokenFromRedis;
 exports.getWxJsapiTicketFromRedis = _getWxJsapiTicketFromRedis;

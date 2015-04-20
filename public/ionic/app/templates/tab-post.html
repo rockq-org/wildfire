@@ -23,24 +23,24 @@
       <ion-item>
         <ul class="tag-list">
           <li ng-repeat="item in tagList">
-            <a href="javascript:void(0)" ng-click="changeTag(item.name)">{{item.name}}</a>
+            <a href="javascript:void(0)" ng-click="changeTag(item.tab)">{{item.name}}</a>
           </li>
         </ul>
       </ion-item>
       <ion-item class="border-dashed">
         <ul class="quality-list">
           <li ng-repeat="item in qualityList">
-            <a href="">{{item.name}}</a>
+            <a href="javascript:void(0)" ng-click="changeQuality(item)">{{item}}</a>
           </li>
         </ul>
       </ion-item>
       <ion-item>
         <div class="row nopadding">
           <div class="col">
-            <input type="text" placeholder="转让价 ￥">
+            <input type="number" placeholder="转让价 ￥" ng-model="params.goods_now_price">
           </div>
           <div class="col">
-            <input type="text" placeholder="原价 ￥">
+            <input type="number" placeholder="原价 ￥" ng-model="params.goods_pre_price">
           </div>
         </div>
       </ion-item>
@@ -52,7 +52,7 @@
           <div class="col"></div>
         </div>
         <label class="toggle">
-          <input type="checkbox">
+          <input type="checkbox" ng-model="params.goods_is_bargain">
           <div class="track">
             <div class="handle"></div>
           </div>
@@ -61,12 +61,12 @@
       <ion-item class="border-dashed">
         <div class="row nopadding mb10">
           <div class="col">
-            <input type="text" placeholder="宝贝名称">
+            <input type="text" placeholder="宝贝名称" ng-model="params.title">
           </div>
         </div>
         <div class="row nopadding">
           <div class="col">
-            <input type="text" placeholder="宝贝详情">
+            <input type="text" placeholder="宝贝详情" ng-model="params.content">
           </div>
         </div>
       </ion-item>
@@ -81,7 +81,7 @@
       <ion-item>
         <div class="row nopadding">
           <div class="col">
-            <button class="button button-block button-dark m0">确定发布</button>
+            <button class="button button-block button-dark m0" ng-click="submitGoods()">确定发布</button>
           </div>
         </div>
       </ion-item>

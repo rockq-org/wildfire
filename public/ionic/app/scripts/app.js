@@ -7,7 +7,7 @@
 // 'starter.controllers' is found in controllers.js
 angular.module('iwildfire', ['ionic', 'iwildfire.controllers', 'iwildfire.services', 'iwildfire.directives', 'iwildfire.filters', 'config'])
 
-.run(function($ionicPlatform, store, $rootScope, $ionicLoading) {
+.run(function($ionicPlatform, $rootScope, $log, store, webq, $ionicLoading) {
     $ionicPlatform.ready(function() {
         // Hide the accessory bar by default (remove this to show the accessory bar above the keyboard
         // for form inputs)
@@ -19,38 +19,34 @@ angular.module('iwildfire', ['ionic', 'iwildfire.controllers', 'iwildfire.servic
             StatusBar.styleLightContent();
         }
 
-        if (window.ARRKING_WECHAT_USER) {
-            store.setUserProfile(window.ARRKING_WECHAT_USER);
-        }
-        // setup weixin sdk
-        // http://mp.weixin.qq.com/wiki/7/aaa137b55fb2e0456bf8dd9148dd613f.html#JSSDK.E4.BD.BF.E7.94.A8.E6.AD.A5.E9.AA.A4
-        // if (window.ARRKING_WECHAT_SIG && window.ARRKING_WECHAT_SIG.appId) {
-        //     wx.config(window.ARRKING_WECHAT_SIG);
-        //     wx.error(function(err) {
-        //         alert(err);
-        //     });
-        //     wx.ready(function() {
-        //         /**
-        //          * check api permissions
-        //          * @param  {[type]}
-        //          * @return {[type]}
-        //          */
-        //         // wx.scanQRCode({
-        //         //     desc: 'ScanQRCode API',
-        //         //     needResult: 1, // 默认为0，扫描结果由微信处理，1则直接返回扫描结果，
-        //         //     scanType: ["qrCode", "barCode"], // 可以指定扫二维码还是一维码，默认二者都有
-        //         //     success: function(res) {
-        //         //         var result = res.resultStr; // 当needResult 为 1 时，扫码返回的结果
-        //         //         alert(result);
-        //         //     }
-        //         // });
-        //         wx.chooseImage({
-        //             success: function(res) {
-        //                 var localIds = res.localIds; // 返回选定照片的本地ID列表，localId可以作为img标签的src属性显示图片
-        //             }
+        // detect if no access token is available.
+        // if (!store.getAccessToken()) {
+        //     webq.getAccessToken()
+        //         .then(function(val) {
+        //             store.setAccessToken(val.accesstoken);
+        //             return webq.getUserProfile();
+        //         })
+        //         .then(function(data) {
+        //             store.setUserProfile(data);
+        //         })
+        //         .catch(function(err) {
+        //             // #TODO need login again ?
+        //             // window.location.href = '{0}/auth/wechat/embedded'.f(cfg.server);
+        //             alert(JSON.stringify(err));
         //         });
-        //     });
+        // } else if (!store.getUserProfile()) {
+        //     // retrieve user profile
+        //     webq.getUserProfile()
+        //         .then(function(data) {
+        //             store.setUserProfile(data)
+        //         }, function(err) {
+        //             // maybe accessToken is expired.
+        //         });
+        // } else {
+        //     // accesstoken and user profile are all available
+        //     //
         // }
+
     });
 
     // error handler
@@ -79,6 +75,12 @@ angular.module('iwildfire', ['ionic', 'iwildfire.controllers', 'iwildfire.servic
 
 .config(function($stateProvider, $urlRouterProvider) {
 
+    /**
+     * more about ui-router
+     * http://angular-ui.github.io/ui-router/site/
+     */
+
+
     // Ionic uses AngularUI Router which uses the concept of states
     // Learn more here: https://github.com/angular-ui/ui-router
     // Set up the various states which the app can be in.
@@ -86,7 +88,7 @@ angular.module('iwildfire', ['ionic', 'iwildfire.controllers', 'iwildfire.servic
     $stateProvider
 
     // setup an abstract state for the tabs directive
-    .state('tab', {
+        .state('tab', {
         url: "/tab",
         abstract: true,
         templateUrl: "templates/tabs.html"
@@ -100,6 +102,7 @@ angular.module('iwildfire', ['ionic', 'iwildfire.controllers', 'iwildfire.servic
             'tab-index': {
                 templateUrl: 'templates/tab-index.html',
                 controller: 'IndexCtrl'
+
             }
         }
     })
@@ -128,7 +131,13 @@ angular.module('iwildfire', ['ionic', 'iwildfire.controllers', 'iwildfire.servic
         views: {
             'tab-post': {
                 templateUrl: 'templates/tab-post.html',
-                controller: 'PostCtrl'
+                controller: 'PostCtrl',
+                // https://github.com/angular-ui/ui-router/wiki#resolve
+                resolve: {
+                    wechat_signature: function(webq) {
+                        return webq.getWechatSignature();
+                    }
+                }
             }
         }
     })

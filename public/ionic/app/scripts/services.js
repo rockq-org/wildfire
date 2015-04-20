@@ -96,6 +96,58 @@ angular.module('iwildfire.services', ['ngResource'])
  */
 .service('webq', function($http, $q, $log, cfg, store) {
 
+    this.getWechatSignature = function() {
+        var deferred = $q.defer();
+        // should not use encodeURIComponent
+        var app_url = window.location.href.split('#')[0];
+        var accesstoken = store.getAccessToken();
+
+        // when the server domain is registered in 
+        // wechat plaform. If not, the signature can be
+        // generated with this app url.
+        if (S(cfg.server).contains('arrking.com')) {
+            $http.post('{0}/api/v1/ionic/wecat-signature'.f(cfg.server), {
+                    accesstoken: accesstoken,
+                    app_url: app_url
+                })
+                .success(function(data) {
+                    /**
+                     * data.rc: 0 --> succ; others --> fail
+                     * data.msg
+                     * >>
+                     * {
+                        debug: wxConfig.debug,
+                        appId: wxConfig.appId,
+                        timestamp: wxCredentials.timestamp,
+                        nonceStr: wxCredentials.noncestr,
+                        signature: wxCredentials.signature,
+                        // 附录2-所有JS接口列表
+                        // http://mp.weixin.qq.com/wiki/7/aaa137b55fb2e0456bf8dd9148dd613f.html#.E6.8B.8D.E7.85.A7.E6.88.96.E4.BB.8E.E6.89.8B.E6.9C.BA.E7.9B.B8.E5.86.8C.E4.B8.AD.E9.80.89.E5.9B.BE.E6.8E.A5.E5.8F.A3
+                        // jsApiList可以在客户端用的时候再调整
+                        jsApiList: ['scanQRCode', 'chooseImage', 'getLocation', 'openLocation']
+                    };
+                     * <<
+                     * jsApiList和debug 可以在客户端修改
+                     */
+                    if (typeof(data) == 'object' &&
+                        data.rc == 0) {
+                        deferred.resolve(data.msg);
+                    } else {
+                        deferred.reject(data);
+                    }
+                })
+                .error(function(err) {
+                    deferred.reject(err);
+                })
+        } else {
+            // wechat signature is assigned to undefined if 
+            // APP_URL is not belong to arrking.com.
+            deferred.resolve();
+        }
+
+        return deferred.promise;
+    }
+
     this.sendVerifyCode = function(phoneNumber) {
         var deferred = $q.defer();
         $http.post('{0}/api/v1/user/bind_phone_number'.f(cfg.server), {
@@ -140,6 +192,78 @@ angular.module('iwildfire.services', ['ngResource'])
                 } else {
                     deferred.reject(result);
                 }
+            })
+            .error(function(err) {
+                deferred.reject(err);
+            });
+        return deferred.promise;
+    }
+
+    // get access token, assume the browser has contained valid cookie.
+    this.getAccessToken = function() {
+        var deferred = $q.defer();
+        $http.get('{0}/api/v1/accesstoken'.f(cfg.server))
+            .success(function(data) {
+                if (typeof(data) === 'object' && data.rc == 0) {
+                    // https://github.com/arrking/wildfire/issues/63
+                    /**
+                     * {
+            rc: 0,
+            loginname: req.session.user.loginname,
+            avatar_url: req.session.user.avatar_url,
+            id: req.session.user.id,
+            accesstoken: req.session.user.accessToken
+        }
+                     */
+                    deferred.resolve(data);
+                } else {
+                    deferred.reject(data);
+                }
+            })
+            .error(function(err) {
+                deferred.reject(err);
+            });
+        return deferred.promise;
+    }
+
+    this.getUserProfile = function() {
+        var deferred = $q.defer();
+        $http.post('{0}/api/v1/accesstoken'.f(cfg.server), {
+                accesstoken: store.getAccessToken()
+            })
+            .success(function(data) {
+                if (data.success) {
+                    deferred.resolve(data.profile);
+                } else {
+                    deferred.reject(data);
+                }
+            })
+            .error(function(err) {
+                deferred.reject(err);
+            });
+        return deferred.promise;
+    }
+
+    this.createNewGoods = function(params) {
+        var deferred = $q.defer();
+        // https://github.com/arrking/wildfire/issues/53
+        $http.post('{0}/api/v1/topics'.f(cfg.server), {
+                /*debug*/
+                // accesstoken: 'd8e60e1f-b4ba-4a1b-9eaa-56e9f6a8d5f0',
+                accesstoken: store.getAccessToken(),
+                title: params.title,
+                tab: params.tab,
+                content: params.content,
+                goods_pics: params.goods_pics,
+                goods_quality_degree: params.quality,
+                goods_pre_price: params.goods_pre_price,
+                goods_now_price: params.goods_now_price,
+                goods_is_bargain: params.goods_is_bargain,
+                goods_exchange_location: params.goods_exchange_location,
+                goods_status: params.goods_status
+            })
+            .success(function(data) {
+                deferred.resolve(data);
             })
             .error(function(err) {
                 deferred.reject(err);

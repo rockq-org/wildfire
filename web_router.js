@@ -24,7 +24,6 @@ var search = require('./controllers/search');
 var passport = require('passport');
 var configMiddleware = require('./middlewares/conf');
 var config = require('./config');
-var ionic = require('./controllers/ionic');
 
 var router = express.Router();
 
@@ -116,8 +115,5 @@ router.get('/auth/github/new', github.new);
 router.post('/auth/github/create', github.create);
 
 router.get('/search', search.index);
-
-// inoic app for wechat
-router.get('/public/ionic/www/wechat', ionic.getWechatApp);
 
 module.exports = router;

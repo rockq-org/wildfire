@@ -41,28 +41,7 @@ angular.module('iwildfire.controllers', [])
         goods_status: '在售'
     };
 
-    $scope.tagList = [{
-        name: '教材书籍',
-        tab: 'books'
-    }, {
-        name: '数码电器',
-        tab: '数码电器'
-    }, {
-        name: '代步工具',
-        tab: 'transports'
-    }, {
-        name: '衣服饰品',
-        tab: 'clothes'
-    }, {
-        name: '生活用品',
-        tab: 'supplies'
-    }, {
-        name: '运动健身',
-        tab: 'healthcare'
-    }, {
-        name: '其它',
-        tab: 'others'
-    }];
+    $scope.tagList = Tabs;
 
     $scope.qualityList = ['全新', '很新', '完好', '适用', '能用'];
 
@@ -99,7 +78,7 @@ angular.module('iwildfire.controllers', [])
         }
     };
 
-    $scope.tagList = Tabs;
+
 
     /**
      * 验证表单字段

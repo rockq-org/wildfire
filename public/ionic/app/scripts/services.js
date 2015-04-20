@@ -124,9 +124,11 @@ angular.module('iwildfire.services', [])
                  * <<
                  * jsApiList和debug 可以在客户端修改
                  */
-                if (typeof(data) == object &&
+                if (typeof(data) == 'object' &&
                     data.rc == 0) {
                     deferred.resolve(data.msg);
+                } else {
+                    deferred.reject(data);
                 }
             })
             .error(function(err) {

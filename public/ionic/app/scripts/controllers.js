@@ -1,8 +1,10 @@
 angular.module('iwildfire.controllers', [])
 
 .controller('IndexCtrl', function($scope, $rootScope, $stateParams, $ionicLoading, $ionicModal, $timeout, $state, $location, $log, Topics, Tabs) {
-    $log.debug('index ctrl', $stateParams);
+
     $scope.sideMenus = Tabs;
+    $scope.menuTitle = '全部';
+    $stateParams.tab = 'all';
 
     $scope.currentTab = Topics.currentTab();
 
@@ -27,34 +29,43 @@ angular.module('iwildfire.controllers', [])
             $scope.topics = response.data;
             $scope.hasNextPage = true;
             $scope.loadError = false;
-        }, $rootScope.requestErrorHandler({
+          }, $rootScope.requestErrorHandler({
             noBackdrop: true
-        }, function() {
+          }, function() {
             $scope.loadError = true;
-        })).finally(function() {
-            $scope.$broadcast('scroll.refreshComplete');
+          })
+        ).finally(function() {
+          $scope.$broadcast('scroll.refreshComplete');
         });
     };
     $scope.loadMore = function() {
-        $log.debug('load more');
-        Topics.pagination().$promise.then(function(response) {
-            $log.debug('load more complete');
-            $scope.hasNextPage = false;
-            $scope.loadError = false;
-            $timeout(function() {
-                $scope.hasNextPage = Topics.hasNextPage();
-                $log.debug('has next page ? ', $scope.hasNextPage);
-            }, 100);
-            $scope.topics = $scope.topics.concat(response.data);
-        }, $rootScope.requestErrorHandler({
-            noBackdrop: true
-        }, function() {
-            $scope.loadError = true;
-        })).finally(function() {
-            $scope.$broadcast('scroll.infiniteScrollComplete');
-        });
+    $log.debug('load more');
+    Topics.pagination().$promise.then(function(response) {
+        $log.debug('load more complete');
+        $scope.hasNextPage = false;
+        $scope.loadError = false;
+        $timeout(function() {
+          $scope.hasNextPage = Topics.hasNextPage();
+          $log.debug('has next page ? ', $scope.hasNextPage);
+        }, 100);
+        $scope.topics = $scope.topics.concat(response.data);
+      }, $rootScope.requestErrorHandler({
+        noBackdrop: true
+      }, function() {
+        $scope.loadError = true;
+      })
+    ).finally(function() {
+      $scope.$broadcast('scroll.infiniteScrollComplete');
+    });
     };
 
+    $scope.changeSelected = function( item ){
+        $scope.menuTitle = item.label;
+        $stateParams.tab = item.value;
+
+        $scope.currentTab = Topics.currentTab($stateParams.tab);
+        $scope.doRefresh();
+    }
 })
 
 /**
@@ -160,8 +171,8 @@ angular.module('iwildfire.controllers', [])
                         deferred.promise.then(function(data) {
                                 /**
                                  * data is the serverIds array
-                                 * ServerIds can be used to download 
-                                 * images from wechat server to local 
+                                 * ServerIds can be used to download
+                                 * images from wechat server to local
                                  * server, by default, the images are
                                  * expired in three days.
                                  * http://mp.weixin.qq.com/wiki/12/58bfcfabbd501c7cd77c19bd9cfa8354.html
@@ -451,70 +462,7 @@ angular.module('iwildfire.controllers', [])
     }
 })
 
-.controller('TopicsCtrl', function($scope, $rootScope, $stateParams, $ionicLoading, $ionicModal, $timeout, $state, $location, $log, Topics, Tabs) {
-        $log.debug('topics ctrl', $stateParams);
-
-        // before enter view event
-        $scope.$on('$ionicView.beforeEnter', function() {
-            // track view
-            if (window.analytics) {
-                window.analytics.trackView('topics view');
-            }
-        });
-
-        $scope.currentTab = Topics.currentTab();
-
-        // check if tab is changed
-        if ($stateParams.tab !== Topics.currentTab()) {
-            $scope.currentTab = Topics.currentTab($stateParams.tab);
-            // reset data if tab is changed
-            Topics.resetData();
-        }
-
-        $scope.topics = Topics.getTopics();
-
-        // pagination
-        $scope.hasNextPage = Topics.hasNextPage();
-        $scope.loadError = false;
-        $log.debug('page load, has next page ? ', $scope.hasNextPage);
-        $scope.doRefresh = function() {
-            Topics.currentTab($stateParams.tab);
-            $log.debug('do refresh');
-            Topics.refresh().$promise.then(function(response) {
-                $log.debug('do refresh complete');
-                $scope.topics = response.data;
-                $scope.hasNextPage = true;
-                $scope.loadError = false;
-            }, $rootScope.requestErrorHandler({
-                noBackdrop: true
-            }, function() {
-                $scope.loadError = true;
-            })).finally(function() {
-                $scope.$broadcast('scroll.refreshComplete');
-            });
-        };
-        $scope.loadMore = function() {
-            $log.debug('load more');
-            Topics.pagination().$promise.then(function(response) {
-                $log.debug('load more complete');
-                $scope.hasNextPage = false;
-                $scope.loadError = false;
-                $timeout(function() {
-                    $scope.hasNextPage = Topics.hasNextPage();
-                    $log.debug('has next page ? ', $scope.hasNextPage);
-                }, 100);
-                $scope.topics = $scope.topics.concat(response.data);
-            }, $rootScope.requestErrorHandler({
-                noBackdrop: true
-            }, function() {
-                $scope.loadError = true;
-            })).finally(function() {
-                $scope.$broadcast('scroll.infiniteScrollComplete');
-            });
-        };
-
-    })
-    .controller('TopicCtrl', function(
+.controller('TopicCtrl', function(
         $scope,
         $rootScope,
         $stateParams,

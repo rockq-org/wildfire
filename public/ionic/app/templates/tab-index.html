@@ -4,7 +4,7 @@
         <ion-side-menu-content>
           <ion-header-bar class="bar-dark">
               <div class="buttons">
-                  <button class="button button-icon ion-navicon" menu-toggle="left"></button>
+                  <button class="button button-icon ion-navicon" menu-toggle="left"> {{menuTitle}}</button>
               </div>
               <h1 class="title">首页</h1>
               <a class="button button-icon icon ion-ios7-search" ng-click="search()"></a>
@@ -18,13 +18,16 @@
                 <ion-list class="topics">
                   <ion-item class="col col-50 no-border"
                     collection-repeat="topic in topics"
-                    collection-item-height="286"
+                    collection-item-height="310"
                     collection-item-width="'50%'"
                     >
                       <div class="item item-image">
-                        <a href="#/tab/index/topic/{{topic.id}}"> <img class="full-image" src="templates/tab-inbox-imgs/1.jpg"> </a>
+                        <a href="#/tab/index/topic/{{topic.id}}">
+                          <img class="full-image " src="templates/tab-inbox-imgs/1.jpg">
+                          <span class="goods-new">全新</span>
+                        </a>
                         <div class="text-left padding-left padding-right padding-top">
-                          <a href="#/tab/index/topic/{{topic.id}}" class="topics-title"> <h3> {{topic.title}} </h3></a>
+                            <a href="#/tab/index/topic/{{topic.id}}" class="topics-title"> <h3> {{topic.title}} </h3></a>
                           <h3> <strong class="assertive">￥ {{topic.goods_now_price}}</strong> <del>￥ {{topic.goods_pre_price}}</del> </h3>
                           <h3 am-time-ago="topic.update_at"> </h3>
                           <div class="text-right">
@@ -51,7 +54,7 @@
             </ion-header-bar>
             <ion-content>
                 <ion-list>
-                    <ion-item class="item item-icon-right assertive {{selected==category?'stable-bg':''}}" menu-close ng-click="changeSelected()" ng-repeat="item in sideMenus" href="#/tab/index/topics/{{item.value}}">
+                    <ion-item class="item item-icon-right assertive {{selected==category?'stable-bg':''}}" menu-close ng-click="changeSelected(item)" ng-repeat="item in sideMenus" href="#/tab/index/{{item.value}}">
                         <i class="icon ion-ios7-arrow-right assertive" ng-if="category==selected"></i> {{item.label}}
                     </ion-item>
                 </ion-list>

@@ -71,21 +71,11 @@ angular.module('iwildfire', ['ionic', 'iwildfire.controllers', 'iwildfire.servic
     // Each tab has its own nav history stack:
 
     .state('tab.index', {
-        url: '/index',
+        url: '/index/:tab',
         views: {
             'tab-index': {
                 templateUrl: 'templates/tab-index.html',
                 controller: 'IndexCtrl'
-            }
-        }
-    })
-
-    .state('tab.index.topics', {
-        url: '/topics/:tab',
-        views: {
-            'menuContent': {
-                templateUrl: 'templates/topics.html',
-                controller: 'TopicsCtrl'
             }
         }
     })
@@ -164,5 +154,5 @@ angular.module('iwildfire', ['ionic', 'iwildfire.controllers', 'iwildfire.servic
     });
 
     // if none of the above states are matched, use this as the fallback
-    $urlRouterProvider.otherwise('/tab/index/topics/books');
+    $urlRouterProvider.otherwise('/tab/index/');
 });

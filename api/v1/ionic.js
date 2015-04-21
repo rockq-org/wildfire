@@ -66,12 +66,12 @@ exports.getWechatSignature = function(req, res, next) {
  * @param  {[type]} serverIds [description]
  * @return {[type]}           [description]
  */
-function _downloadWechatImages(serverIds) {
+function _downloadWechatImages(userId, serverIds) {
     logger.debug('_downloadWechatImages', 'ServerIds ' + JSON.stringify(serverIds));
     var promises = [];
 
     _.each(serverIds, function(serverId) {
-        promises.push(wx.downloadWechatServerImage(serverId));
+        promises.push(wx.downloadWechatServerImage(userId, serverId));
     });
 
     return promises;
@@ -84,7 +84,7 @@ function _downloadWechatImages(serverIds) {
 exports.getWechatImages = function(req, res, next) {
     if (req.body.serverIds && typeof(req.body.serverIds) &&
         req.body.serverIds.length > 0) {
-        Q.allSettled(_downloadWechatImages(req.body.serverIds))
+        Q.allSettled(_downloadWechatImages(req.user._id, req.body.serverIds))
             .then(function(results) {
                 var returns = [];
                 results.forEach(function(result) {

@@ -112,7 +112,17 @@ angular.module('iwildfire.services', ['ngResource'])
                 }
             })
             .success(function(result) {
-                deferred.resolve(result);
+                // get the result in 
+                // https://github.com/arrking/wildfire/issues/54
+                if (result.rc == 0) {
+                    /**
+                     * msg
+                     * [{serverId, imageUrl}]
+                     */
+                    deferred.resolve(result.msg);
+                } else {
+                    deferred.reject(result);
+                }
             })
             .error(function(err) {
                 deferred.reject(err);

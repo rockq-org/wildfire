@@ -11,6 +11,7 @@ var Q = require('q');
 var wxSign = require("weixin-signature").sign;
 var redisq = require('../persistence/redisq');
 var wxCfg = config.wechat_gzh;
+var fileStorage = require('../api/v1/fileStorage');
 
 
 /**
@@ -18,17 +19,21 @@ var wxCfg = config.wechat_gzh;
  * @param  {[type]} serverId [description]
  * @return {[type]}          [description]
  */
-function _downloadWechatServerImage(serverId) {
+function _downloadWechatServerImage(userId, serverId) {
     var deferred = Q.defer();
 
     _getWxAccessTokenFromRedis()
         .then(function(accessToken) {
             var imageUrl = u.format('http://file.api.weixin.qq.com/cgi-bin/media/get?access_token=%s&media_id=%s', accessToken, serverId);
             logger.debug('_downloadWechatServerImage', 'wechat image url:' + imageUrl);
-            deferred.resolve({
-                serverId: serverId,
-                imageUrl: imageUrl
-            });
+
+            fileStorage.processWebUrlImageWithUserId(userId, imageUrl)
+                .then(function(result) {
+                    deferred.resolve({
+                        serverId: serverId,
+                        imageUrl: '/api/v1/file/image-anonymous/' + result._id
+                    });
+                });
         });
 
     return deferred.promise;

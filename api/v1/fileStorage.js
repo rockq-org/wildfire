@@ -75,31 +75,35 @@ function _resolveRootDirObjectId() {
     return deferred.promise;
 }
 
+function _processWebUrlImageWithUserId(userId, imageUrl) {
+    return _saveFileByWebUrlInAnonymous(imageUrl)
+        .then(function(result) {
+            // resolve dir
+            return _resolveRootDirObjectId()
+                .then(function(_id) {
+                    result.dir = _id;
+                    return result;
+                });
+        })
+        .then(function(result1) {
+            // save into Grid FS
+            var file = {
+                name: result1.name,
+                type: result1.type,
+                path: result1.path
+            };
+            logger.debug('_saveFileInGridFS', JSON.stringify(file));
+            var dir = result1.dir;
+
+            return _saveFileInGridFS(file, dir, /* task */ null, userId);
+        });
+}
+
 exports.uploadWebUrlImage = function(req, res, next) {
         if (req.body.url) {
             // check body
-            _saveFileByWebUrlInAnonymous(req.body.url)
-                .then(function(result) {
-                    // resolve dir
-                    return _resolveRootDirObjectId()
-                        .then(function(_id) {
-                            result.dir = _id;
-                            return result;
-                        });
-                })
-                .then(function(result1) {
-                    // save into Grid FS
-                    var file = {
-                        name: result1.name,
-                        type: result1.type,
-                        path: result1.path
-                    };
-                    logger.debug('_saveFileInGridFS', JSON.stringify(file));
-                    var dir = result1.dir;
-                    var user = req.user._id;
-
-                    return _saveFileInGridFS(file, dir, /* task */ null, user);
-                })
+            var user = req.user._id;
+            _processWebUrlImageWithUserId(user, req.body.url)
                 .then(function(result2) {
                     requestUtils.okJsonResponse({
                         rc: 0,
@@ -156,3 +160,5 @@ exports.displayAnonymousImage = function(req, res, next) {
         }, res, 200);
     }
 }
+
+exports.processWebUrlImageWithUserId = _processWebUrlImageWithUserId;

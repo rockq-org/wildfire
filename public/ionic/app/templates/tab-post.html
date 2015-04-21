@@ -3,16 +3,22 @@
     <ion-list class="wf-post-form">
       <ion-item>
         <div class="row wf-img-upload">
-          <div class="col box"></div>
+          <div class="col box">
+            <img ng-if="params.goods_pics.length > 0" ng-src="{{params.goods_pics[0]}}"/>
+          </div>
           <div class="col group nopadding">
             <div class="row nopadding">
               <div class="col box">
+                <img ng-if="params.goods_pics.length > 1" ng-src="{{params.goods_pics[1]}}"/>
               </div>
               <div class="col box">
+                <img ng-if="params.goods_pics.length > 2" ng-src="{{params.goods_pics[2]}}"/>
               </div>
             </div>
             <div class="row nopadding">
-              <div class="col box"></div>
+              <div class="col box">
+                <img ng-if="params.goods_pics.length > 3" ng-src="{{params.goods_pics[3]}}"/>
+              </div>
               <div class="col box upload" id="uploadImg" ng-click="uploadImage()">
                 <i class="icon ion-plus"></i>
               </div>

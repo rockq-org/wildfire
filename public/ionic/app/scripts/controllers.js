@@ -80,7 +80,7 @@ angular.module('iwildfire.controllers', [])
             content: null,
             tab: null,
             quality: null,
-            goods_pics: ['http://img0.imgtn.bdimg.com/it/u=2581619234,3796563842&fm=21&gp=0.jpg', 'http://img0.imgtn.bdimg.com/it/u=1183279317,3364561579&fm=21&gp=0.jpg'],
+            goods_pics: [],
             goods_pre_price: null,
             goods_now_price: null,
             goods_is_bargain: true,
@@ -172,7 +172,12 @@ angular.module('iwildfire.controllers', [])
                                     alert(JSON.stringify(err));
                                 })
                                 .then(function(result) {
-                                    alert('succ:' + JSON.stringify(result));
+                                    // alert('succ:' + JSON.stringify(result));
+                                    _.each(result, function(value, index) {
+                                        // insert the image url into goods metadata
+                                        $scope.params.goods_pics.push(value.imageUrl);
+                                    });
+
                                 }, function(err) {
                                     alert('fail:' + JSON.stringify(err));
                                 });

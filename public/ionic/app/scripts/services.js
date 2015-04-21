@@ -140,7 +140,9 @@ angular.module('iwildfire.services', ['ngResource'])
         // when the server domain is registered in
         // wechat plaform. If not, the signature can be
         // generated with this app url.
-        if (S(cfg.server).contains('arrking.com')) {
+        if (!accesstoken) {
+            deferred.resolve();
+        } else if (S(cfg.server).contains('arrking.com')) {
             $http.post('{0}/ionic/wechat-signature'.f(cfg.api), {
                     accesstoken: accesstoken,
                     app_url: app_url
@@ -173,11 +175,11 @@ angular.module('iwildfire.services', ['ngResource'])
                         data.rc == 0) {
                         deferred.resolve(data.msg);
                     } else {
-                        deferred.reject(data);
+                        deferred.resolve();
                     }
                 })
                 .error(function(err) {
-                    deferred.reject(err);
+                    deferred.resolve();
                 })
         } else {
             // wechat signature is assigned to undefined if

@@ -21,59 +21,30 @@ angular.module('iwildfire', ['ionic', 'iwildfire.controllers', 'iwildfire.servic
             // org.apache.cordova.statusbar required
             StatusBar.styleLightContent();
         }
-
-        // detect if no access token is available.
-        // if (!store.getAccessToken()) {
-        //     webq.getAccessToken()
-        //         .then(function(val) {
-        //             store.setAccessToken(val.accesstoken);
-        //             return webq.getUserProfile();
-        //         })
-        //         .then(function(data) {
-        //             store.setUserProfile(data);
-        //         })
-        //         .catch(function(err) {
-        //             // #TODO need login again ?
-        //             // window.location.href = '{0}/auth/wechat/embedded'.f(cfg.server);
-        //             alert(JSON.stringify(err));
-        //         });
-        // } else if (!store.getUserProfile()) {
-        //     // retrieve user profile
-        //     webq.getUserProfile()
-        //         .then(function(data) {
-        //             store.setUserProfile(data)
-        //         }, function(err) {
-        //             // maybe accessToken is expired.
-        //         });
-        // } else {
-        //     // accesstoken and user profile are all available
-        //     //
-        // }
-
     });
 
     // error handler
-      var errorMsg = {
+    var errorMsg = {
         0: '网络出错啦，请再试一下',
         'wrong accessToken': '授权失败'
-      };
+    };
     $rootScope.requestErrorHandler = function(options, callback) {
         return function(response) {
-          var error;
-          if (response.data && response.data.error_msg) {
-            error = errorMsg[response.data.error_msg];
-          } else {
-            error = errorMsg[response.status] || 'Error: ' + response.status + ' ' + response.statusText;
-          }
-          var o = options || {};
-          angular.extend(o, {
-            template: error,
-            duration: 1000
-          });
-          $ionicLoading.show(o);
-          return callback && callback();
+            var error;
+            if (response.data && response.data.error_msg) {
+                error = errorMsg[response.data.error_msg];
+            } else {
+                error = errorMsg[response.status] || 'Error: ' + response.status + ' ' + response.statusText;
+            }
+            var o = options || {};
+            angular.extend(o, {
+                template: error,
+                duration: 1000
+            });
+            $ionicLoading.show(o);
+            return callback && callback();
         };
-      };
+    };
 })
 
 .config(function($stateProvider, $urlRouterProvider) {
@@ -110,22 +81,23 @@ angular.module('iwildfire', ['ionic', 'iwildfire.controllers', 'iwildfire.servic
     })
 
     .state('tab.index.topics', {
-      url: '/topics/:tab',
-      views: {
-        'menuContent': {
-          templateUrl: 'templates/topics.html',
-          controller: 'TopicsCtrl'
+        url: '/topics/:tab',
+        views: {
+            'menuContent': {
+                templateUrl: 'templates/topics.html',
+                controller: 'TopicsCtrl'
+            }
         }
-      }
     })
+
     .state('tab.index.topic', {
-      url: '/topic/:id',
-      views: {
-        'menuContent': {
-          templateUrl: 'templates/topic.html',
-          controller: 'TopicCtrl'
+        url: '/topic/:id',
+        views: {
+            'menuContent': {
+                templateUrl: 'templates/topic.html',
+                controller: 'TopicCtrl'
+            }
         }
-      }
     })
 
     .state('tab.post', {
@@ -137,6 +109,7 @@ angular.module('iwildfire', ['ionic', 'iwildfire.controllers', 'iwildfire.servic
                 // https://github.com/angular-ui/ui-router/wiki#resolve
                 resolve: {
                     wechat_signature: function(webq) {
+                        // check the accesstoken
                         return webq.getWechatSignature();
                     }
                 }

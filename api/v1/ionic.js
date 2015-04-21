@@ -71,8 +71,7 @@ function _downloadWechatImages(serverIds) {
     var promises = [];
 
     _.each(serverIds, function(serverId) {
-        // first, get the accesstoken
-        promises.push[wx.downloadWechatServerImage(serverId)];
+        promises.push(wx.downloadWechatServerImage(serverId));
     });
 
     return promises;

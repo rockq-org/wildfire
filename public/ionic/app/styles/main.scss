@@ -13,3 +13,13 @@ $ionicons-font-path: "../fonts" !default;
 .topics-title{
   text-decoration: none;
 }
+.goods-new{
+  width: 75px;
+  height: 75px;
+  position: absolute;
+  text-indent: -9999px;
+  display: block;
+  top: 0;
+  left: 0;
+  background: url(../images/new.png) no-repeat top left;
+}

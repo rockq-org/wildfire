@@ -96,6 +96,31 @@ angular.module('iwildfire.services', ['ngResource'])
  */
 .service('webq', function($http, $q, $log, cfg, store) {
 
+    /**
+     * upload wechat images
+     * @return {[type]} [description]
+     */
+    this.uploadWechatImages = function(serverIds) {
+        var deferred = $q.defer();
+        $http.post('{0}/ionic/wechat-images'.f(cfg.api), {
+                accesstoken: store.getAccessToken(),
+                serverIds: serverIds
+            }, {
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
+                }
+            })
+            .success(function(result) {
+                deferred.resolve(result);
+            })
+            .error(function(err) {
+                deferred.reject(err);
+            });
+
+        return deferred.promise;
+    }
+
     this.getWechatSignature = function() {
         var deferred = $q.defer();
         // should not use encodeURIComponent
@@ -106,9 +131,14 @@ angular.module('iwildfire.services', ['ngResource'])
         // wechat plaform. If not, the signature can be
         // generated with this app url.
         if (S(cfg.server).contains('arrking.com')) {
-            $http.post('{0}/api/v1/ionic/wecat-signature'.f(cfg.server), {
+            $http.post('{0}/ionic/wechat-signature'.f(cfg.api), {
                     accesstoken: accesstoken,
                     app_url: app_url
+                }, {
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    }
                 })
                 .success(function(data) {
                     /**
@@ -150,7 +180,7 @@ angular.module('iwildfire.services', ['ngResource'])
 
     this.sendVerifyCode = function(phoneNumber) {
         var deferred = $q.defer();
-        $http.post('{0}/api/v1/user/bind_phone_number'.f(cfg.server), {
+        $http.post('{0}/user/bind_phone_number'.f(cfg.api), {
                 phoneNumber: phoneNumber,
                 accesstoken: store.getAccessToken()
             }, {
@@ -176,7 +206,7 @@ angular.module('iwildfire.services', ['ngResource'])
     this.checkVerifyCode = function(phoneNumber, verifyCode) {
         var deferred = $q.defer();
 
-        $http.post('{0}/api/v1/user/check_phone_verifycode'.f(cfg.server), {
+        $http.post('{0}/user/check_phone_verifycode'.f(cfg.api), {
                 accesstoken: store.getAccessToken(),
                 code: verifyCode,
                 phoneNumber: phoneNumber
@@ -202,7 +232,7 @@ angular.module('iwildfire.services', ['ngResource'])
     // get access token, assume the browser has contained valid cookie.
     this.getAccessToken = function() {
         var deferred = $q.defer();
-        $http.get('{0}/api/v1/accesstoken'.f(cfg.server))
+        $http.get('{0}/accesstoken'.f(cfg.api))
             .success(function(data) {
                 if (typeof(data) === 'object' && data.rc == 0) {
                     // https://github.com/arrking/wildfire/issues/63
@@ -228,7 +258,7 @@ angular.module('iwildfire.services', ['ngResource'])
 
     this.getUserProfile = function() {
         var deferred = $q.defer();
-        $http.post('{0}/api/v1/accesstoken'.f(cfg.server), {
+        $http.post('{0}/accesstoken'.f(cfg.api), {
                 accesstoken: store.getAccessToken()
             })
             .success(function(data) {
@@ -247,7 +277,7 @@ angular.module('iwildfire.services', ['ngResource'])
     this.createNewGoods = function(params) {
         var deferred = $q.defer();
         // https://github.com/arrking/wildfire/issues/53
-        $http.post('{0}/api/v1/topics'.f(cfg.server), {
+        $http.post('{0}/topics'.f(cfg.api), {
                 /*debug*/
                 // accesstoken: 'd8e60e1f-b4ba-4a1b-9eaa-56e9f6a8d5f0',
                 accesstoken: store.getAccessToken(),
@@ -274,190 +304,203 @@ angular.module('iwildfire.services', ['ngResource'])
 })
 
 .factory('Tabs', function() {
-  return [
-        { value: 'books', label: '教材书籍' },
-        { value: 'transports', label: '代步工具' },
-        { value: 'electronics', label: '数码电器' },
-        { value: 'supplies', label: '生活用品' },
-        { value: 'healthcare', label: '运动健身' },
-        { value: 'clothes', label: '衣帽饰物' },
-        { value: 'others', label: '其它' }
-    ];
+    return [{
+        value: 'books',
+        label: '教材书籍'
+    }, {
+        value: 'transports',
+        label: '代步工具'
+    }, {
+        value: 'electronics',
+        label: '数码电器'
+    }, {
+        value: 'supplies',
+        label: '生活用品'
+    }, {
+        value: 'healthcare',
+        label: '运动健身'
+    }, {
+        value: 'clothes',
+        label: '衣帽饰物'
+    }, {
+        value: 'others',
+        label: '其它'
+    }];
 })
 
 .factory('Topics', function(cfg, $resource, $log) {
-  var User = {}; //do it later
-  var topics = [];
-  var currentTab = 'all';
-  var nextPage = 1;
-  var hasNextPage = true;
-  var resource =  $resource(cfg.api + '/topics', {
-  }, {
-    query: {
-      method: 'get',
-      params: {
-        tab: 'all',
-        page: 1,
-        limit: 10,
-        mdrender: true
-      },
-      timeout: 20000
-    }
-  });
-  var getTopics = function(tab, page, callback) {
-    return resource.query({
-      tab: tab,
-      page: page
-    }, function(r) {
-      $log.debug('get topics tab:', tab, 'page:', page, 'data:', r.data);
-      return callback && callback(r);
-    });
-  };
-  return {
-    refresh: function() {
-      return getTopics(currentTab, 1, function(response) {
-        nextPage = 2;
-        hasNextPage = true;
-        topics = response.data;
-      });
-    },
-    pagination: function() {
-      return getTopics(currentTab, nextPage, function(response) {
-        if (response.data.length < 10) {
-          $log.debug('response data length', response.data.length);
-          hasNextPage = false;
-        }
-        nextPage++;
-        topics = topics.concat(response.data);
-      });
-    },
-    currentTab: function(newTab) {
-      if (typeof newTab !== 'undefined') {
-        currentTab = newTab;
-      }
-      return currentTab;
-    },
-    hasNextPage: function(has) {
-      if (typeof has !== 'undefined') {
-        hasNextPage = has;
-      }
-      return hasNextPage;
-    },
-    resetData: function() {
-      topics = [];
-      nextPage = 1;
-      hasNextPage = true;
-    },
-    getTopics: function() {
-      return topics;
-    },
-    getById: function(id) {
+        var User = {}; //do it later
+        var topics = [];
+        var currentTab = 'all';
+        var nextPage = 1;
+        var hasNextPage = true;
+        var resource = $resource(cfg.api + '/topics', {}, {
+            query: {
+                method: 'get',
+                params: {
+                    tab: 'all',
+                    page: 1,
+                    limit: 10,
+                    mdrender: true
+                },
+                timeout: 20000
+            }
+        });
+        var getTopics = function(tab, page, callback) {
+            return resource.query({
+                tab: tab,
+                page: page
+            }, function(r) {
+                $log.debug('get topics tab:', tab, 'page:', page, 'data:', r.data);
+                return callback && callback(r);
+            });
+        };
+        return {
+            refresh: function() {
+                return getTopics(currentTab, 1, function(response) {
+                    nextPage = 2;
+                    hasNextPage = true;
+                    topics = response.data;
+                });
+            },
+            pagination: function() {
+                return getTopics(currentTab, nextPage, function(response) {
+                    if (response.data.length < 10) {
+                        $log.debug('response data length', response.data.length);
+                        hasNextPage = false;
+                    }
+                    nextPage++;
+                    topics = topics.concat(response.data);
+                });
+            },
+            currentTab: function(newTab) {
+                if (typeof newTab !== 'undefined') {
+                    currentTab = newTab;
+                }
+                return currentTab;
+            },
+            hasNextPage: function(has) {
+                if (typeof has !== 'undefined') {
+                    hasNextPage = has;
+                }
+                return hasNextPage;
+            },
+            resetData: function() {
+                topics = [];
+                nextPage = 1;
+                hasNextPage = true;
+            },
+            getTopics: function() {
+                return topics;
+            },
+            getById: function(id) {
 
-      if (!!topics) {
-        for (var i = 0; i < topics.length; i++) {
-          if (topics[i].id === id) {
-            return topics[i];
-          }
-        }
-      } else {
-        return null;
-      }
-    },
-    saveNewTopic: function(newTopicData) {
-      var currentUser = User.getCurrentUser();
-      return resource.save({accesstoken: currentUser.accesstoken}, newTopicData);
-    }
-  };
-})
-.factory('Topic', function(cfg, $resource, $log, $q) {
-  var User = {};
-  var Settings = {};
-  var topic;
-  var resource =  $resource(cfg.api + '/topic/:id', {
-    id: '@id',
-  }, {
-    collect: {
-      method: 'post',
-      url: cfg.api + '/topic/collect'
-    },
-    deCollect: {
-      method: 'post',
-      url: cfg.api + '/topic/de_collect'
-    },
-    reply: {
-      method: 'post',
-      url: cfg.api + '/topic/:topicId/replies'
-    },
-    upReply: {
-      method: 'post',
-      url: cfg.api + '/reply/:replyId/ups'
-    }
-  });
-  return {
-    getById: function(id) {
-      if (topic !== undefined && topic.id === id) {
-        var topicDefer = $q.defer();
-        topicDefer.resolve({
-          data: topic
+                if (!!topics) {
+                    for (var i = 0; i < topics.length; i++) {
+                        if (topics[i].id === id) {
+                            return topics[i];
+                        }
+                    }
+                } else {
+                    return null;
+                }
+            },
+            saveNewTopic: function(newTopicData) {
+                var currentUser = User.getCurrentUser();
+                return resource.save({
+                    accesstoken: currentUser.accesstoken
+                }, newTopicData);
+            }
+        };
+    })
+    .factory('Topic', function(cfg, $resource, $log, $q) {
+        var User = {};
+        var Settings = {};
+        var topic;
+        var resource = $resource(cfg.api + '/topic/:id', {
+            id: '@id',
+        }, {
+            collect: {
+                method: 'post',
+                url: cfg.api + '/topic/collect'
+            },
+            deCollect: {
+                method: 'post',
+                url: cfg.api + '/topic/de_collect'
+            },
+            reply: {
+                method: 'post',
+                url: cfg.api + '/topic/:topicId/replies'
+            },
+            upReply: {
+                method: 'post',
+                url: cfg.api + '/reply/:replyId/ups'
+            }
         });
         return {
-          $promise: topicDefer.promise
-        };
-      }
-      return this.get(id);
-    },
-    get: function(id) {
-      return resource.get({id: id}, function(response) {
-        topic = response.data;
-      });
-    },
-    saveReply: function(topicId, replyData) {
-      var reply = angular.extend({}, replyData);
-      var currentUser = User.getCurrentUser();
-      // add send from
-      if (Settings.getSettings().sendFrom) {
-        reply.content = replyData.content + '\n 自豪地采用 [CNodeJS ionic](https://github.com/lanceli/cnodejs-ionic)';
-      }
-      return resource.reply({
-        topicId: topicId,
-        accesstoken: currentUser.accesstoken
-      }, reply
-      );
-    },
-    upReply: function(replyId) {
-      var currentUser = User.getCurrentUser();
-      return resource.upReply({
-        replyId: replyId,
-        accesstoken: currentUser.accesstoken
-      }, null, function(response) {
-        if (response.success) {
-          angular.forEach(topic.replies, function(reply, key) {
-            if (reply.id === replyId) {
-              if (response.action === 'up') {
-                reply.ups.push(currentUser.id);
-              } else {
-                reply.ups.pop();
-              }
+            getById: function(id) {
+                if (topic !== undefined && topic.id === id) {
+                    var topicDefer = $q.defer();
+                    topicDefer.resolve({
+                        data: topic
+                    });
+                    return {
+                        $promise: topicDefer.promise
+                    };
+                }
+                return this.get(id);
+            },
+            get: function(id) {
+                return resource.get({
+                    id: id
+                }, function(response) {
+                    topic = response.data;
+                });
+            },
+            saveReply: function(topicId, replyData) {
+                var reply = angular.extend({}, replyData);
+                var currentUser = User.getCurrentUser();
+                // add send from
+                if (Settings.getSettings().sendFrom) {
+                    reply.content = replyData.content + '\n 自豪地采用 [CNodeJS ionic](https://github.com/lanceli/cnodejs-ionic)';
+                }
+                return resource.reply({
+                    topicId: topicId,
+                    accesstoken: currentUser.accesstoken
+                }, reply);
+            },
+            upReply: function(replyId) {
+                var currentUser = User.getCurrentUser();
+                return resource.upReply({
+                    replyId: replyId,
+                    accesstoken: currentUser.accesstoken
+                }, null, function(response) {
+                    if (response.success) {
+                        angular.forEach(topic.replies, function(reply, key) {
+                            if (reply.id === replyId) {
+                                if (response.action === 'up') {
+                                    reply.ups.push(currentUser.id);
+                                } else {
+                                    reply.ups.pop();
+                                }
+                            }
+                        });
+                    }
+                });
+            },
+            collectTopic: function(topicId) {
+                var currentUser = User.getCurrentUser();
+                return resource.collect({
+                    topic_id: topicId,
+                    accesstoken: currentUser.accesstoken
+                });
+            },
+            deCollectTopic: function(topicId) {
+                var currentUser = User.getCurrentUser();
+                return resource.deCollect({
+                    topic_id: topicId,
+                    accesstoken: currentUser.accesstoken
+                });
             }
-          });
-        }
-      }
-      );
-    },
-    collectTopic: function(topicId) {
-      var currentUser = User.getCurrentUser();
-      return resource.collect({
-        topic_id: topicId,
-        accesstoken: currentUser.accesstoken
-      });
-    },
-    deCollectTopic: function(topicId) {
-      var currentUser = User.getCurrentUser();
-      return resource.deCollect({
-        topic_id: topicId,
-        accesstoken: currentUser.accesstoken
-      });
-    }
-  };
-})
-;
+        };
+    });

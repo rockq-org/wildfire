@@ -14,10 +14,14 @@ var Q = require('q'),
     utf8 = require('utf8');
 
 
-function _downloadImageByWebURl(url) {
+function _downloadImageByWebURl(url, fileType) {
     var deferred = Q.defer();
     request.head(url, function(err, res, body) {
-        var fileType = httpContentTypeDef.getExtByContentType(res.headers['content-type']);
+
+        if (!fileType) {
+            fileType = httpContentTypeDef.getExtByContentType(res.headers['content-type']);
+        }
+
         if (fileType) {
             var fileName = util.format('%s.%s', shortid.generate(), fileType);
             var filePath = util.format('public/upload/%s', fileName);
@@ -36,9 +40,9 @@ function _downloadImageByWebURl(url) {
     return deferred.promise;
 }
 
-function _saveFileByWebUrlInAnonymous(url) {
+function _saveFileByWebUrlInAnonymous(url, fileType) {
     var deferred = Q.defer();
-    _downloadImageByWebURl(url)
+    _downloadImageByWebURl(url, fileType)
         .then(function(result) {
             logger.debug('_saveFileByWebUrlInAnonymous', JSON.stringify(result));
             deferred.resolve(result);
@@ -75,8 +79,15 @@ function _resolveRootDirObjectId() {
     return deferred.promise;
 }
 
-function _processWebUrlImageWithUserId(userId, imageUrl) {
-    return _saveFileByWebUrlInAnonymous(imageUrl)
+/**
+ * download image by url and save to local GridFS
+ * @param  {string} userId   user id
+ * @param  {string} imageUrl web url of image
+ * @param  {string} fileType the saved type
+ * @return {promise}          [description]
+ */
+function _processWebUrlImageWithUserId(userId, imageUrl, fileType) {
+    return _saveFileByWebUrlInAnonymous(imageUrl, fileType)
         .then(function(result) {
             // resolve dir
             return _resolveRootDirObjectId()

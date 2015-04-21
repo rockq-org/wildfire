@@ -27,7 +27,7 @@ function _downloadWechatServerImage(userId, serverId) {
             var imageUrl = u.format('http://file.api.weixin.qq.com/cgi-bin/media/get?access_token=%s&media_id=%s', accessToken, serverId);
             logger.debug('_downloadWechatServerImage', 'wechat image url:' + imageUrl);
 
-            fileStorage.processWebUrlImageWithUserId(userId, imageUrl)
+            fileStorage.processWebUrlImageWithUserId(userId, imageUrl, 'jpg')
                 .then(function(result) {
                     deferred.resolve({
                         serverId: serverId,

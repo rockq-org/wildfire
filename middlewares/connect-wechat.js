@@ -4,22 +4,46 @@
 var wechat = require('wechat');
 var config = require('../config');
 var common = require('../common');
-var logger = common.loggerUtil.getLogger("wechat");
+var logger = common.loggerUtil.getLogger("connect-wechat");
 var superagent = require('superagent');
 var u = require('util');
 var Q = require('q');
 var wxSign = require("weixin-signature").sign;
 var redisq = require('../persistence/redisq');
 var wxCfg = config.wechat_gzh;
+var fileStorage = require('../api/v1/fileStorage');
 
-// function _postWXEvent(msg) {
-//     reflux.post('/collections/WXEvents', {
-//         openId: msg.FromUserName,
-//         creationDate: (new Date()),
-//         payload: msg
-//     });
-// }
 
+/**
+ * download wechat server image with server id
+ * @param  {[type]} serverId [description]
+ * @return {[type]}          [description]
+ */
+function _downloadWechatServerImage(userId, serverId) {
+    var deferred = Q.defer();
+
+    _getWxAccessTokenFromRedis()
+        .then(function(accessToken) {
+            var imageUrl = u.format('http://file.api.weixin.qq.com/cgi-bin/media/get?access_token=%s&media_id=%s', accessToken, serverId);
+            logger.debug('_downloadWechatServerImage', 'wechat image url:' + imageUrl);
+
+            fileStorage.processWebUrlImageWithUserId(userId, imageUrl, 'jpg')
+                .then(function(result) {
+                    deferred.resolve({
+                        serverId: serverId,
+                        imageUrl: '/api/v1/file/image-anonymous/' + result._id
+                    });
+                });
+        });
+
+    return deferred.promise;
+}
+
+/**
+ * [_saveUserProfileDataByOpenId description]
+ * @param  {[type]} openId [description]
+ * @return {[type]}        [description]
+ */
 function _saveUserProfileDataByOpenId(openId) {
     logger.debug('_saveUserProfileDataByOpenId', 'start to save OpenID: ' + openId);
     var defer = Q.defer();
@@ -338,3 +362,4 @@ _getWxAccessTokenFromRedis().then(function(doc) {
 exports.getWxAccessTokenFromRedis = _getWxAccessTokenFromRedis;
 exports.getWxJsapiTicketFromRedis = _getWxJsapiTicketFromRedis;
 exports.getSignatureByJspApiTicketAndUrl = _getSignatureByJspApiTicketAndUrl;
+exports.downloadWechatServerImage = _downloadWechatServerImage;

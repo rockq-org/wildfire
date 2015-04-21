@@ -49,6 +49,7 @@ router.get('/file/image-anonymous/:id', fileStorageController.displayAnonymousIm
 /**
  * 获取微信JS SDK 签名
  */
-router.post('/ionic/wecat-signature', middleware.auth, ionicController.getWechatSignature);
+router.post('/ionic/wechat-signature', middleware.auth, ionicController.getWechatSignature);
+router.post('/ionic/wechat-images', middleware.auth, ionicController.getWechatImages);
 
 module.exports = router;

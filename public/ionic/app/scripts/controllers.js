@@ -1,63 +1,62 @@
 angular.module('iwildfire.controllers', [])
 
 .controller('IndexCtrl', function($scope, $rootScope, $stateParams, $ionicLoading, $ionicModal, $timeout, $state, $location, $log, Topics, Tabs) {
-  $log.debug('index ctrl', $stateParams);
-  $scope.sideMenus = Tabs;
+    $log.debug('index ctrl', $stateParams);
+    $scope.sideMenus = Tabs;
 
-  $scope.currentTab = Topics.currentTab();
+    $scope.currentTab = Topics.currentTab();
 
-  // check if tab is changed
-  if ($stateParams.tab !== Topics.currentTab()) {
-    $scope.currentTab = Topics.currentTab($stateParams.tab);
-    // reset data if tab is changed
-    Topics.resetData();
-  }
+    // check if tab is changed
+    if ($stateParams.tab !== Topics.currentTab()) {
+        $scope.currentTab = Topics.currentTab($stateParams.tab);
+        // reset data if tab is changed
+        Topics.resetData();
+    }
 
-  $scope.topics = Topics.getTopics();
+    $scope.topics = Topics.getTopics();
 
-  // pagination
-  $scope.hasNextPage = Topics.hasNextPage();
-  $scope.loadError = false;
-  $log.debug('page load, has next page ? ', $scope.hasNextPage);
-  $scope.doRefresh = function() {
-    Topics.currentTab($stateParams.tab);
-    $log.debug('do refresh');
-    Topics.refresh().$promise.then(function(response) {
-        $log.debug('do refresh complete');
-        $scope.topics = response.data;
-        $scope.hasNextPage = true;
-        $scope.loadError = false;
-      }, $rootScope.requestErrorHandler({
-        noBackdrop: true
-      }, function() {
-        $scope.loadError = true;
-      })
-    ).finally(function() {
-      $scope.$broadcast('scroll.refreshComplete');
-    });
-  };
-  $scope.loadMore = function() {
-    $log.debug('load more');
-    Topics.pagination().$promise.then(function(response) {
-        $log.debug('load more complete');
-        $scope.hasNextPage = false;
-        $scope.loadError = false;
-        $timeout(function() {
-          $scope.hasNextPage = Topics.hasNextPage();
-          $log.debug('has next page ? ', $scope.hasNextPage);
-        }, 100);
-        $scope.topics = $scope.topics.concat(response.data);
-      }, $rootScope.requestErrorHandler({
-        noBackdrop: true
-      }, function() {
-        $scope.loadError = true;
-      })
-    ).finally(function() {
-      $scope.$broadcast('scroll.infiniteScrollComplete');
-    });
-  };
+    // pagination
+    $scope.hasNextPage = Topics.hasNextPage();
+    $scope.loadError = false;
+    $log.debug('page load, has next page ? ', $scope.hasNextPage);
+    $scope.doRefresh = function() {
+        Topics.currentTab($stateParams.tab);
+        $log.debug('do refresh');
+        Topics.refresh().$promise.then(function(response) {
+            $log.debug('do refresh complete');
+            $scope.topics = response.data;
+            $scope.hasNextPage = true;
+            $scope.loadError = false;
+        }, $rootScope.requestErrorHandler({
+            noBackdrop: true
+        }, function() {
+            $scope.loadError = true;
+        })).finally(function() {
+            $scope.$broadcast('scroll.refreshComplete');
+        });
+    };
+    $scope.loadMore = function() {
+        $log.debug('load more');
+        Topics.pagination().$promise.then(function(response) {
+            $log.debug('load more complete');
+            $scope.hasNextPage = false;
+            $scope.loadError = false;
+            $timeout(function() {
+                $scope.hasNextPage = Topics.hasNextPage();
+                $log.debug('has next page ? ', $scope.hasNextPage);
+            }, 100);
+            $scope.topics = $scope.topics.concat(response.data);
+        }, $rootScope.requestErrorHandler({
+            noBackdrop: true
+        }, function() {
+            $scope.loadError = true;
+        })).finally(function() {
+            $scope.$broadcast('scroll.infiniteScrollComplete');
+        });
+    };
 
 })
+
 /**
  * create Goods item in backend
  * Implementation: https://github.com/arrking/wildfire/issues/17
@@ -82,7 +81,7 @@ angular.module('iwildfire.controllers', [])
         content: null,
         tab: null,
         quality: null,
-        goods_pics: ['http://img0.imgtn.bdimg.com/it/u=2581619234,3796563842&fm=21&gp=0.jpg', 'http://img0.imgtn.bdimg.com/it/u=1183279317,3364561579&fm=21&gp=0.jpg'],
+        goods_pics: [],
         goods_pre_price: null,
         goods_now_price: null,
         goods_is_bargain: true,
@@ -119,7 +118,7 @@ angular.module('iwildfire.controllers', [])
     function _processWxImages(resIds, results, deferred) {
         try {
             if (!results) {
-                result = [];
+                results = [];
             }
             var resId = resIds.pop();
             if (resId) {
@@ -158,11 +157,31 @@ angular.module('iwildfire.controllers', [])
                         // can not upload multi-images at the same time.
                         var deferred = $q.defer();
                         _processWxImages(localIds, null, deferred);
-                        deferred.promise.then(function(data){
-                          alert(JSON.stringify(data));
-                        }, function(err){
-                          alert(JSON.stringify(err));
-                        });
+                        deferred.promise.then(function(data) {
+                                /**
+                                 * data is the serverIds array
+                                 * ServerIds can be used to download 
+                                 * images from wechat server to local 
+                                 * server, by default, the images are
+                                 * expired in three days.
+                                 * http://mp.weixin.qq.com/wiki/12/58bfcfabbd501c7cd77c19bd9cfa8354.html
+                                 * @param  {[type]} err [description]
+                                 * @return {[type]}     [description]
+                                 */
+                                return webq.uploadWechatImages(data)
+                            }, function(err) {
+                                alert(JSON.stringify(err));
+                            })
+                            .then(function(result) {
+                                // alert('succ:' + JSON.stringify(result));
+                                _.each(result, function(value, index) {
+                                    // insert the image url into goods metadata
+                                    $scope.params.goods_pics.push(value.imageUrl);
+                                });
+
+                            }, function(err) {
+                                alert('fail:' + JSON.stringify(err));
+                            });
                     }
                 });
             });
@@ -255,70 +274,28 @@ angular.module('iwildfire.controllers', [])
     $scope.chats = Chats.all();
 })
 
-.controller('AccountCtrl', function($scope, store, cfg) {
+.controller('AccountCtrl', function($scope, $ionicModal, store, cfg) {
+    // load user profile from localStorage
     var userProfile = store.getUserProfile() || {};
     if (!userProfile && !cfg.debug) {
         // change to wechat uaa page
         window.location.href = '{0}/auth/wechat/embedded'.f(cfg.server);
-    } else {
-        $scope.data = {
-            name: userProfile.name || 'foo',
-            avatar: userProfile.avatar || 'images/dummy-avatar.jpg',
-            phone: userProfile.phone_number || 'bar',
-            title: '我的呱呱',
-            badge: {
-                onGoingStuffs: 1,
-                offShelfStuffs: 2,
-                favoritesStuffs: 3
-            }
-        };
-        $scope.active_content = 'orders';
-        $scope.setActiveContent = function(active_content) {
-            $scope.active_content = active_content;
+    }
+
+    $scope.data = {
+        name: userProfile.name || 'foo' /* the default values for debugging usage.*/ ,
+        avatar: userProfile.avatar || 'images/dummy-avatar.jpg',
+        phone: userProfile.phone_number || 'bar',
+        title: '我的呱呱',
+        badge: {
+            onGoingStuffs: 1,
+            offShelfStuffs: 2,
+            favoritesStuffs: 3
         }
-
-        //     $scope.stuffs = [{
-        //         name: 'foo'
-        //     }, {
-        //         name: 'bar'
-        //     }, {
-        //         name: 'foo'
-        //     }, {
-        //         name: 'bar'
-        //     }, {
-        //         name: 'foo'
-        //     }, {
-        //         name: 'bar'
-        //     }, {
-        //         name: 'foo'
-        //     }, {
-        //         name: 'bar'
-        //     }, {
-        //         name: 'foo'
-        //     }, {
-        //         name: 'bar'
-        //     }, {
-        //         name: 'foo'
-        //     }, {
-        //         name: 'bar'
-        //     }, {
-        //         name: 'foo'
-        //     }, {
-        //         name: 'bar'
-        //     }, {
-        //         name: 'foo'
-        //     }, {
-        //         name: 'bar'
-        //     }, {
-        //         name: 'foo'
-        //     }, {
-        //         name: 'bar'
-        //     }, {
-        //         name: 'foo'
-        //     }, {
-        //         name: 'bar'
-        //     }]
-
+    };
+    $scope.active_content = 'orders';
+    $scope.setActiveContent = function(active_content) {
+        $scope.active_content = active_content;
     }
 
     $scope.onTabSelected = function(category) {
@@ -350,6 +327,29 @@ angular.module('iwildfire.controllers', [])
     }
 
 
+    /**
+     * settings modal
+     * @return {[type]} [description]
+     */
+    $ionicModal.fromTemplateUrl('templates/modal-settings.html', {
+        scope: $scope,
+        animation: 'slide-in-up'
+    }).then(function(modal) {
+        $scope.settingsModal = modal;
+    });
+
+    $scope.popupSettings = function() {
+        $scope.settingsModal.show();
+    }
+
+    $scope.closePopupSettings = function() {
+        $scope.settingsModal.hide();
+    }
+
+    //Cleanup the modal when we're done with it!
+    $scope.$on('$destroy', function() {
+        $scope.settingsModal.remove();
+    });
 })
 
 .controller('BindMobilePhoneCtrl', function($scope, $state, $stateParams,

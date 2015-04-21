@@ -14,10 +14,14 @@ var Q = require('q'),
     utf8 = require('utf8');
 
 
-function _downloadImageByWebURl(url) {
+function _downloadImageByWebURl(url, fileType) {
     var deferred = Q.defer();
     request.head(url, function(err, res, body) {
-        var fileType = httpContentTypeDef.getExtByContentType(res.headers['content-type']);
+
+        if (!fileType) {
+            fileType = httpContentTypeDef.getExtByContentType(res.headers['content-type']);
+        }
+
         if (fileType) {
             var fileName = util.format('%s.%s', shortid.generate(), fileType);
             var filePath = util.format('public/upload/%s', fileName);
@@ -36,9 +40,9 @@ function _downloadImageByWebURl(url) {
     return deferred.promise;
 }
 
-function _saveFileByWebUrlInAnonymous(url) {
+function _saveFileByWebUrlInAnonymous(url, fileType) {
     var deferred = Q.defer();
-    _downloadImageByWebURl(url)
+    _downloadImageByWebURl(url, fileType)
         .then(function(result) {
             logger.debug('_saveFileByWebUrlInAnonymous', JSON.stringify(result));
             deferred.resolve(result);
@@ -75,31 +79,42 @@ function _resolveRootDirObjectId() {
     return deferred.promise;
 }
 
+/**
+ * download image by url and save to local GridFS
+ * @param  {string} userId   user id
+ * @param  {string} imageUrl web url of image
+ * @param  {string} fileType the saved type
+ * @return {promise}          [description]
+ */
+function _processWebUrlImageWithUserId(userId, imageUrl, fileType) {
+    return _saveFileByWebUrlInAnonymous(imageUrl, fileType)
+        .then(function(result) {
+            // resolve dir
+            return _resolveRootDirObjectId()
+                .then(function(_id) {
+                    result.dir = _id;
+                    return result;
+                });
+        })
+        .then(function(result1) {
+            // save into Grid FS
+            var file = {
+                name: result1.name,
+                type: result1.type,
+                path: result1.path
+            };
+            logger.debug('_saveFileInGridFS', JSON.stringify(file));
+            var dir = result1.dir;
+
+            return _saveFileInGridFS(file, dir, /* task */ null, userId);
+        });
+}
+
 exports.uploadWebUrlImage = function(req, res, next) {
         if (req.body.url) {
             // check body
-            _saveFileByWebUrlInAnonymous(req.body.url)
-                .then(function(result) {
-                    // resolve dir
-                    return _resolveRootDirObjectId()
-                        .then(function(_id) {
-                            result.dir = _id;
-                            return result;
-                        });
-                })
-                .then(function(result1) {
-                    // save into Grid FS
-                    var file = {
-                        name: result1.name,
-                        type: result1.type,
-                        path: result1.path
-                    };
-                    logger.debug('_saveFileInGridFS', JSON.stringify(file));
-                    var dir = result1.dir;
-                    var user = req.user._id;
-
-                    return _saveFileInGridFS(file, dir, /* task */ null, user);
-                })
+            var user = req.user._id;
+            _processWebUrlImageWithUserId(user, req.body.url)
                 .then(function(result2) {
                     requestUtils.okJsonResponse({
                         rc: 0,
@@ -156,3 +171,5 @@ exports.displayAnonymousImage = function(req, res, next) {
         }, res, 200);
     }
 }
+
+exports.processWebUrlImageWithUserId = _processWebUrlImageWithUserId;

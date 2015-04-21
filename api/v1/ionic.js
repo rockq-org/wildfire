@@ -60,3 +60,51 @@ exports.getWechatSignature = function(req, res, next) {
         }, res);
     }
 }
+
+/**
+ * download wechat images in with a promise array.
+ * @param  {[type]} serverIds [description]
+ * @return {[type]}           [description]
+ */
+function _downloadWechatImages(userId, serverIds) {
+    logger.debug('_downloadWechatImages', 'ServerIds ' + JSON.stringify(serverIds));
+    var promises = [];
+
+    _.each(serverIds, function(serverId) {
+        promises.push(wx.downloadWechatServerImage(userId, serverId));
+    });
+
+    return promises;
+}
+
+/**
+ * download images from wechat server.
+ * @return {[type]} [description]
+ */
+exports.getWechatImages = function(req, res, next) {
+    if (req.body.serverIds && typeof(req.body.serverIds) &&
+        req.body.serverIds.length > 0) {
+        Q.allSettled(_downloadWechatImages(req.user._id, req.body.serverIds))
+            .then(function(results) {
+                var returns = [];
+                results.forEach(function(result) {
+                    if (result.state === 'fulfilled') {
+                        var value = result.value;
+                        returns.push(value);
+                    } else {
+                        var reason = result.reason;
+                        logger.debug('getWechatImages', 'error ' + JSON.stringify(reason));
+                    }
+                });
+                requestUtil.okJsonResponse({
+                    rc: 0,
+                    msg: returns
+                }, res);
+            });
+    } else {
+        requestUtil.okJsonResponse({
+            rc: 1,
+            msg: 'serverIds are required.'
+        }, res);
+    }
+}

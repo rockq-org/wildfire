@@ -1,5 +1,6 @@
 {
   "mode": "production",
   "server": "http://wildfire-staging.arrking.com",
+  "api": "http://wildfire-staging.arrking.com/api/v1",
   "debug": false
 }

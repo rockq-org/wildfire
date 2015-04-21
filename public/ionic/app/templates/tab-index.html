@@ -54,7 +54,7 @@
             </ion-header-bar>
             <ion-content>
                 <ion-list>
-                    <ion-item class="item item-icon-right assertive {{currentTab==item.value?'stable-bg':''}}" menu-close ng-click="changeSelected(item)" ng-repeat="item in sideMenus" href="#/tab/index/{{item.value}}">
+                    <ion-item class="item item-icon-right topic-name-menu assertive {{currentTab==item.value?'stable-bg':''}}" menu-close ng-click="changeSelected(item)" ng-repeat="item in sideMenus" href="#/tab/index/{{item.value}}">
                         <i class="icon ion-ios7-arrow-right assertive" ng-if="currentTab==item.value"></i> {{item.label}}
                     </ion-item>
                 </ion-list>

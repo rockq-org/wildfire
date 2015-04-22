@@ -54,7 +54,7 @@ var index = function(req, res, next) {
         ep.after('author', topics.length, function() {
             topics = topics.map(function(topic) {
                 return _.pick(topic, ['id', 'author_id', 'tab', 'content', 'title', 'last_reply_at',
-                    'collect_count', 'goods_now_price', 'goods_pre_price', 'update_at',
+                    'collect_count', 'goods_now_price', 'goods_pre_price', 'update_at', 'goods_pics',
                     'good', 'top', 'reply_count', 'visit_count', 'create_at', 'author'
                 ]);
             });

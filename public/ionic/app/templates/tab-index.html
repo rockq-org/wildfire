@@ -23,7 +23,8 @@
                     >
                       <div class="item item-image">
                         <a href="#/tab/index/topic/{{topic.id}}">
-                          <img class="full-image " src="templates/tab-inbox-imgs/1.jpg">
+                          {{topic.goods_pics}}
+                          <img class="full-image " ng-src="{{pic}}" ng-repeat="pic in topic.goods_pics" />
                           <span class="goods-new">全新</span>
                         </a>
                         <div class="text-left padding-left padding-right padding-top">

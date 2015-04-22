@@ -1,10 +1,11 @@
 angular.module('iwildfire.controllers', [])
 
-.controller('IndexCtrl', function($scope, $rootScope, $stateParams, $ionicLoading, $ionicModal, $timeout, $state, $location, $log, Topics, Tabs) {
+.controller('IndexCtrl', function($scope, $rootScope, $stateParams, $ionicLoading, $ionicModal, $timeout, $state, $location, $log, Topics, Tabs, cfg) {
 
     $scope.sideMenus = Tabs;
     $scope.menuTitle = '全部';
     $stateParams.tab = 'all';
+    $scope.img_prefix = cfg.server;
 
     $scope.currentTab = Topics.currentTab();
 

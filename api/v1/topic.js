@@ -367,7 +367,7 @@ exports.update = function(req, res, next) {
                         requestUtil.okJsonResponse({
                             rc: 0,
                             msg: 'topic is saved.',
-                            lastest: doc
+                            latest: doc
                         }, res);
                     }
                 });

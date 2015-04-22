@@ -246,16 +246,6 @@ angular.module('iwildfire.controllers', [])
 
 })
 
-.controller('NavCtrl', function($scope, $ionicSideMenuDelegate) {
-    $scope.category = '全部';
-    $scope.showMenu = function() {
-        $ionicSideMenuDelegate.toggleLeft();
-    };
-    $scope.showRightMenu = function() {
-        $ionicSideMenuDelegate.toggleRight();
-    };
-})
-
 .controller('MapsCtrl', function($scope) {})
 
 .controller('InboxCtrl', function($scope, Messages) {
@@ -404,41 +394,88 @@ angular.module('iwildfire.controllers', [])
     }
 
     /**
-     * 下架
+     * 下架 
+     * tab: onGoingStuffs
      * @param  {[type]} topic [description]
      * @return {[type]}       [description]
      */
     $scope.editOffShelf = function(topic) {
         $log.debug('profile: {0} 下架'.f(topic.title));
+        topic.goods_status = '下架';
+        webq.updateMyTopic(topic)
+            .then(function(data) {
+                // alert('{0} 成功下架'.f(topic.title));
+                _separateMyTopics(true, function() {
+                    $scope.stuffs = onGoingStuffs;
+                    _resetScopeData();
+                });
+            }, function(err) {
+                alert(JSON.stringify(err));
+            });
     }
 
     /**
      * 售出
+     * tab: onGoingStuffs
      * @param  {[type]} topic [description]
      * @return {[type]}       [description]
      */
     $scope.editSoldOut = function(topic) {
         $log.debug('profile: {0} 售出'.f(topic.title));
+        topic.goods_status = '售出';
+        webq.updateMyTopic(topic)
+            .then(function(data) {
+                // alert('{0} 成功下架'.f(topic.title));
+                _separateMyTopics(true, function() {
 
+                    $scope.stuffs = onGoingStuffs;
+                    _resetScopeData();
+                });
+            }, function(err) {
+                alert(JSON.stringify(err));
+            });
     }
 
     /**
      * 删除
+     * tab: offShelfStuffs
      * @param  {[type]} topic [description]
      * @return {[type]}       [description]
      */
     $scope.editDelete = function(topic) {
         $log.debug('profile: {0} 删除'.f(topic.title));
-
+        topic.deleted = true;
+        webq.updateMyTopic(topic)
+            .then(function(data) {
+                // alert('{0} 成功下架'.f(topic.title));
+                _separateMyTopics(true, function() {
+                    $scope.stuffs = offShelfStuffs;
+                    _resetScopeData();
+                });
+            }, function(err) {
+                alert(JSON.stringify(err));
+            });
     }
 
     /**
      * 上架
+     * tab: offShelfStuffs
      * @param  {[type]} topic [description]
      * @return {[type]}       [description]
      */
     $scope.editOnShelf = function(topic) {
         $log.debug('profile: {0} 上架'.f(topic.title));
+        topic.goods_status = '在售';
+        webq.updateMyTopic(topic)
+            .then(function(data) {
+                // alert('{0} 成功下架'.f(topic.title));
+                _separateMyTopics(true, function() {
+                    $scope.stuffs = offShelfStuffs;
+                    _resetScopeData();
+                });
+            }, function(err) {
+                alert(JSON.stringify(err));
+            });
     }
 
     //Cleanup the modal when we're done with it!

@@ -112,7 +112,7 @@ angular.module('iwildfire.services', ['ngResource'])
                 }
             })
             .success(function(result) {
-                // get the result in 
+                // get the result in
                 // https://github.com/arrking/wildfire/issues/54
                 if (result.rc == 0) {
                     /**
@@ -317,6 +317,9 @@ angular.module('iwildfire.services', ['ngResource'])
 
 .factory('Tabs', function() {
     return [{
+        value: 'all',
+        label: '全部'
+    }, {
         value: 'books',
         label: '教材书籍'
     }, {

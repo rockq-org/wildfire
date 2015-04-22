@@ -77,13 +77,13 @@ angular.module('iwildfire.controllers', [])
  * @param  {[type]} wechat_signature [description]
  * @return {[type]}                  [description]
  */
-.controller('PostCtrl', function($scope, $log, $q, cfg, store, webq, wechat_signature, Tabs) {
+.controller('PostCtrl', function($scope, $log, $q, cfg, store, webq, wechat_signature, Tabs, $ionicModal) {
 
     // if not contains profile and accesstoken, just naviagte
     // to user authentication page.
-    if (!store.getAccessToken()) {
-        window.location.href = '{0}/auth/wechat/embedded'.f(cfg.server);
-    }
+    // if (!store.getAccessToken()) {
+    //     window.location.href = '{0}/auth/wechat/embedded'.f(cfg.server);
+    // }
 
     $scope.params = {
         // 标题5到10个字
@@ -200,8 +200,41 @@ angular.module('iwildfire.controllers', [])
         }
     };
 
+    setupLocation();
+    function setupLocation() {
+        if (wechat_signature) {
+            wechat_signature.jsApiList = ['getLocation', 'openLocation'];
+            wx.config(wechat_signature);
+            wx.error(function(err) {
+                alert(err);
+            });
+            wx.ready(function() {
+                wx.getLocation({
+                    success: function (res) {
+                        var latitude = res.latitude; // 纬度，浮点数，范围为90 ~ -90
+                        var longitude = res.longitude; // 经度，浮点数，范围为180 ~ -180。
+                        var speed = res.speed; // 速度，以米/每秒计
+                        var accuracy = res.accuracy; // 位置精度
 
+                        console.log(latitude, longitude, speed, accuracy);
+                        $scope.latitude = latitude;
+                        $scope.longitude = longitude;
+                        // Create the modal that we will use later
+                        $ionicModal.fromTemplateUrl('templates/changeLocationModal.html', {
+                            tabs: Tabs,
+                            scope: $scope
+                        }).then(function(modal) {
+                            $scope.changeLocationModal = modal;
+                            modal.show();
+                        });
 
+                    }
+                });
+            });
+        } else {
+            $log.debug('app url: {0}. wechat_signature is not available while setup location.'.f(window.location.href.split('#')[0]));
+        }
+    }
     /**
      * 验证表单字段
      */
@@ -245,16 +278,6 @@ angular.module('iwildfire.controllers', [])
         }
     }
 
-})
-
-.controller('NavCtrl', function($scope, $ionicSideMenuDelegate) {
-    $scope.category = '全部';
-    $scope.showMenu = function() {
-        $ionicSideMenuDelegate.toggleLeft();
-    };
-    $scope.showRightMenu = function() {
-        $ionicSideMenuDelegate.toggleRight();
-    };
 })
 
 .controller('MapsCtrl', function($scope) {})

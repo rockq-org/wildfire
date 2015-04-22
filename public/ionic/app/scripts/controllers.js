@@ -260,14 +260,14 @@ angular.module('iwildfire.controllers', [])
 
 .controller('MapsCtrl', function($scope) {})
 
-.controller('InboxCtrl', function($scope, Chats) {
-    $scope.chats = Chats.all();
-    $scope.remove = function(chat) {
-        Chats.remove(chat);
+.controller('InboxCtrl', function($scope, Messages) {
+    $scope.messages = Messages.all();
+    $scope.remove = function(message) {
+        Messages.remove(message);
     }
 })
 
-.controller('InboxDetailCtrl', function($scope, $stateParams, Chats) {
+.controller('InboxDetailCtrl', function($scope, $stateParams, Messages) {
     $scope.items = [{
         id: 0,
         price: '￥ 1000.00 （含运费0.00元）',
@@ -282,7 +282,7 @@ angular.module('iwildfire.controllers', [])
         }
         return itemClass;
     }
-    $scope.chats = Chats.all();
+    $scope.messages = Messages.all();
 })
 
 .controller('AccountCtrl', function($scope, $ionicModal, store, cfg) {

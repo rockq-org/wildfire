@@ -10,6 +10,8 @@ var _ = require('lodash');
 var at = require('../../common/at');
 var renderHelper = require('../../common/render_helper');
 var validator = require('validator');
+var logger = require('../../common/loggerUtil').getLogger('api/v1/topic');
+var requestUtil = require('../../common').requestUtil;
 
 var index = function(req, res, next) {
     var page = parseInt(req.query.page, 10) || 1;
@@ -287,3 +289,89 @@ exports.de_collect = function(req, res, next) {
         req.user.collect_topic_count -= 1;
     });
 };
+
+/**
+ * Update topic as the author
+ * @param  {[type]}   req  [description]
+ * @param  {[type]}   res  [description]
+ * @param  {Function} next [description]
+ * @return {[type]}        [description]
+ */
+exports.update = function(req, res, next) {
+    var topicId = req.params.id;
+    var topicInRequest = req.body.topic;
+
+    // validate properties of topic
+    function _validateTopic(t) {
+        // topic is object
+        if (!(typeof(t) === 'object')) {
+            return false;
+        }
+        // 标题字数限制
+        if (t.title.length < 5 || t.title.length > 100) {
+            return false;
+        }
+        // #TODO should add more validation
+        return true;
+    }
+
+    if (!(topicId || topicInRequest)) {
+        requestUtil.okJsonResponse({
+            rc: 1,
+            msg: 'Parameters are wanted.'
+        }, res);
+    } else if (!_validateTopic(topicInRequest)) {
+        requestUtil.okJsonResponse({
+            rc: 2,
+            msg: 'Topic properties are set properly.'
+        }, res);
+    } else {
+        TopicProxy.getTopic(topicId, function(err, topic) {
+            if (err) {
+                requestUtil.okJsonResponse({
+                    rc: 3,
+                    msg: 'Can not get doc by this id.',
+                    err: err
+                }, res);
+            } else if ( // if user is not the author and not an admin
+                (!topic.author_id.equals(req.user._id)) &&
+                (!req.user.is_admin)) {
+                requestUtil.okJsonResponse({
+                    rc: 4,
+                    msg: 'Permission Error, the request must be sent by admin or author.'
+                }, res);
+            } else {
+                topic.tab = topicInRequest.tab;
+                topic.title = topicInRequest.title;
+                topic.content = topicInRequest.content;
+                topic.update_at = Date.now();
+                // mark this topic as deleted.
+                topic.deleted = topicInRequest.deleted;
+                topic.goods_pics = topicInRequest.goods_pics;
+                topic.markModified('goods_pics');
+                topic.goods_pre_price = topicInRequest.goods_pre_price;
+                topic.goods_now_price = topicInRequest.goods_now_price;
+                topic.goods_is_bargain = topicInRequest.goods_is_bargain;
+                topic.goods_quality_degree = topicInRequest.goods_quality_degree;
+                topic.goods_exchange_location = topicInRequest.goods_exchange_location;
+                topic.markModified('goods_exchange_location');
+                topic.goods_status = topicInRequest.goods_status;
+                topic.save(function(err, doc) {
+                    if (err) {
+                        requestUtil.okJsonResponse({
+                            rc: 5,
+                            msg: 'Can not save doc by this id.',
+                            err: err
+                        }, res);
+                    } else {
+                        requestUtil.okJsonResponse({
+                            rc: 0,
+                            msg: 'topic is saved.',
+                            lastest: doc
+                        }, res);
+                    }
+                });
+            }
+        });
+    }
+}

@@ -16,9 +16,11 @@ var router = express.Router();
 // 主题
 router.get('/topics', topicController.index);
 router.get('/topic/:id', topicController.show);
+router.put('/topic/:id', middleware.auth, topicController.update);
 router.post('/topics', middleware.auth, limit.peruserperday('create_topic', config.create_post_per_day), topicController.create);
 router.post('/topic/collect', middleware.auth, topicController.collect); // 关注某话题
 router.post('/topic/de_collect', middleware.auth, topicController.de_collect); // 取消关注某话题
+
 
 // 用户
 router.get('/user/my_topics', middleware.auth, userController.getMyTopics);

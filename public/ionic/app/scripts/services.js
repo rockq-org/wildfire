@@ -1,5 +1,30 @@
 angular.module('iwildfire.services', ['ngResource'])
 
+.factory('Tabs', function() {
+    return [{
+        value: 'books',
+        label: '教材书籍'
+    }, {
+        value: 'transports',
+        label: '代步工具'
+    }, {
+        value: 'electronics',
+        label: '数码电器'
+    }, {
+        value: 'supplies',
+        label: '生活用品'
+    }, {
+        value: 'healthcare',
+        label: '运动健身'
+    }, {
+        value: 'clothes',
+        label: '衣帽饰物'
+    }, {
+        value: 'others',
+        label: '其它'
+    }];
+})
+
 .factory('Messages', function() {
     // Might use a resource here that returns a JSON array
 
@@ -325,9 +350,9 @@ angular.module('iwildfire.services', ['ngResource'])
         var deferred = $q.defer();
 
         $http.get('{0}/user/my_topics?accesstoken={1}'.f(cfg.api,
-                // store.getAccessToken()
+                store.getAccessToken()
                 // for debug usage in local machine
-                'e26b54f0-6ca2-4eb7-97ae-a52c6af268dc'
+                // 'e26b54f0-6ca2-4eb7-97ae-a52c6af268dc'
             ))
             .success(function(data) {
                 if (data.rc === 1) {
@@ -343,33 +368,28 @@ angular.module('iwildfire.services', ['ngResource'])
         return deferred.promise;
     }
 
+    /**
+     * put my topic into off shelf status
+     * @param  {[type]} item [description]
+     * @return {[type]}      [description]
+     */
+    this.offShelfMyTopic = function(topic) {
+        var deferred = $q.defer();
+
+        return deferred.promise;
+    }
 })
 
-.factory('Tabs', function() {
-    return [{
-        value: 'books',
-        label: '教材书籍'
-    }, {
-        value: 'transports',
-        label: '代步工具'
-    }, {
-        value: 'electronics',
-        label: '数码电器'
-    }, {
-        value: 'supplies',
-        label: '生活用品'
-    }, {
-        value: 'healthcare',
-        label: '运动健身'
-    }, {
-        value: 'clothes',
-        label: '衣帽饰物'
-    }, {
-        value: 'others',
-        label: '其它'
-    }];
-})
-
+/**
+ * Manage Topics
+ * Creating a CRUD App in Minutes with Angular’s $resource
+ * http://www.sitepoint.com/creating-crud-app-minutes-angulars-resource/
+ * @param  {[type]} cfg         [description]
+ * @param  {[type]} $resource   [description]
+ * @param  {Object} $log)       {                   var User [description]
+ * @param  {[type]} function(r) {                                               $log.debug('get topics tab:', tab, 'page:', page, 'data:', r.data);                return callback && callback(r [description]
+ * @return {[type]}             [description]
+ */
 .factory('Topics', function(cfg, $resource, $log) {
         var User = {}; //do it later
         var topics = [];

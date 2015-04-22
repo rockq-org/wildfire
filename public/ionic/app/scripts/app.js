@@ -47,8 +47,9 @@ angular.module('iwildfire', ['ionic', 'iwildfire.controllers', 'iwildfire.servic
     };
 })
 
-.config(function($stateProvider, $urlRouterProvider) {
+.config(function($stateProvider, $urlRouterProvider, $ionicConfigProvider) {
 
+    $ionicConfigProvider.tabs.position( 'bottom' );
     /**
      * more about ui-router
      * http://angular-ui.github.io/ui-router/site/

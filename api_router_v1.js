@@ -21,7 +21,8 @@ router.post('/topic/collect', middleware.auth, topicController.collect); // 关�
 router.post('/topic/de_collect', middleware.auth, topicController.de_collect); // 取消关注某话题
 
 // 用户
-router.get('/user/:loginname', userController.show);
+router.get('/user/my_topics', middleware.auth, userController.getMyTopics);
+router.get('/user/:loginname', middleware.auth, userController.show);
 
 // accessToken 测试
 router.post('/accesstoken', middleware.auth, toolsController.accesstoken);

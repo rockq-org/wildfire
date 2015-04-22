@@ -156,4 +156,31 @@ exports.checkPhoneVerifyCode = function(req, res, next) {
     }
 }
 
+/**
+ * Get my topics
+ * @param  {[type]}   req  [description]
+ * @param  {[type]}   res  [description]
+ * @param  {Function} next [description]
+ * @return {[type]}        [description]
+ */
+exports.getMyTopics = function(req, res, next) {
+    var user = req.user;
+    TopicProxy.getFullTopicsByQuery({
+        author_id: user._id
+    }, function(err, docs) {
+        if (err) {
+            requestUtil.okJsonResponse({
+                rc: 0,
+                msg: err
+            }, res);
+        } else {
+            requestUtil.okJsonResponse({
+                rc: 1,
+                msg: docs
+            }, res);
+        }
+    });
+}
+
+
 exports.show = show;

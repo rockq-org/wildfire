@@ -109,6 +109,58 @@ exports.getTopicsByQuery = function(query, opt, callback) {
     });
 };
 
+
+/**
+ * 根据关键词，获取主题列表
+ * Callback:
+ * - err, 数据库错误
+ * - count, 主题列表
+ * Note, the maximum size is 1000 records,
+ * here is enough for a single user.
+ * When you have to load all data, think about optimize your query 
+ * Because user just need records around 200.
+ * http://stackoverflow.com/questions/12643195/mongoose-limiting-query-to-1000-results-when-i-want-more-all-migrating-from-2-6
+ * @param {String} query 搜索关键词
+ * @param {Object} opt 搜索选项
+ * @param {Function} callback 回调函数
+ */
+exports.getFullTopicsByQuery = function(query, opt, callback) {
+    query.deleted = false;
+    Topic.find(query, opt, function(err, docs) {
+        if (err) {
+            return callback(err);
+        }
+        if (docs.length === 0) {
+            return callback(null, []);
+        }
+
+        var topics_id = _.pluck(docs, 'id');
+
+        var proxy = new EventProxy();
+        proxy.after('topic_ready', topics_id.length, function(topics) {
+            // 过滤掉空值
+            var filtered = topics.filter(function(item) {
+                return !!item;
+            });
+            return callback(null, filtered);
+        });
+        proxy.fail(callback);
+
+        topics_id.forEach(function(id, i) {
+            exports.getTopicById(id, proxy.group('topic_ready', function(topic, author, last_reply) {
+                // 当id查询出来之后，进一步查询列表时，文章可能已经被删除了
+                // 所以这里有可能是null
+                if (topic) {
+                    topic.author = author;
+                    topic.reply = last_reply;
+                    topic.friendly_create_at = tools.formatDate(topic.create_at, true);
+                }
+                return topic;
+            }));
+        });
+    });
+};
+
 // for sitemap
 exports.getLimit5w = function(callback) {
     Topic.find({

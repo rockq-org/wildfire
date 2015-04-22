@@ -9,19 +9,19 @@ angular.module('iwildfire.services', ['ngResource'])
         userId: '00001',
         name: 'tb234243',
         lastText: '用户直接跟你对话的，这里显示你们最后一条的对话内容（可能是你的也可能是他的）点击后最顶部是宝贝的链接',
-        face: 'templates/tab-inbox-imgs/avatar.jpeg'
+        face: 'images/dummy/avatar.jpeg'
     }, {
         id: 1,
         userId: '00002',
         name: '宝贝留言',
         lastText: 'tb234243: 有点贵哦（这个是用户名+宝贝留言内容，点击到达宝贝页面的留言位置）',
-        face: 'templates/tab-inbox-imgs/1.jpg'
+        face: 'images/dummy/1.jpg'
     }, {
         id: 1,
         userId: '00002',
         name: 'name here',
         lastText: 'less text',
-        face: 'templates/tab-inbox-imgs/1.jpg'
+        face: 'images/dummy/1.jpg'
     }];
 
     return {
@@ -310,6 +310,33 @@ angular.module('iwildfire.services', ['ngResource'])
             .error(function(err) {
                 deferred.reject(err);
             });
+        return deferred.promise;
+    }
+
+    /**
+     * retrieve topics by userId from backend service.
+     * Should always return as resolve, even has error.
+     * because the controller is depended on the resolve 
+     * state, when get an error, resolve as undefined.
+     * See AccountCtrl
+     * @return {[type]} [description]
+     */
+    this.getMyTopicsResolve = function() {
+        var deferred = $q.defer();
+        $http.get('{0}/user/my_topics?accesstoken={1}'.f(cfg.api, store.getAccessToken()
+                /*'e26b54f0-6ca2-4eb7-97ae-a52c6af268dc'*/
+            ))
+            .success(function(data) {
+                if (data.rc === 1) {
+                    deferred.resolve(data.msg);
+                } else {
+                    deferred.resolve();
+                }
+            })
+            .error(function(err) {
+                deferred.resolve();
+            });
+
         return deferred.promise;
     }
 

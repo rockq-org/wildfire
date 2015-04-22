@@ -14,13 +14,13 @@
             </div>
             <!-- example https://gist.github.com/Samurais/3cb9498588575f342f1e# -->
             <ion-tabs class="tabs-striped tabs-color-assertive">
-                <ion-tab title="在售" icon-on="ion-ios7-filing" icon-off="ion-ios7-filing-outline" badge="data.badge.onGoingStuffs" badge-style="badge-light" on-select="onTabSelected('onGoingStuffs')" on-deselect="onTabDeselected('onGoingStuffs')">
+                <ion-tab title="在售" icon-on="ion-ios7-filing" icon-off="ion-ios7-filing-outline" badge="data.onGoingStuffsBadge" badge-style="badge-light" on-select="onTabSelected('onGoingStuffs')" on-deselect="onTabDeselected('onGoingStuffs')">
                     <!-- Tab 1 content -->
                 </ion-tab>
-                <ion-tab title="下架" icon-on="ion-ios7-box" icon-off="ion-ios7-box-outline" badge="data.badge.offShelfStuffs" badge-style="badge-light" on-select="onTabSelected('offShelfStuffs')" on-deselect="onTabDeselected('offShelfStuffs')">
+                <ion-tab title="下架" icon-on="ion-ios7-box" icon-off="ion-ios7-box-outline" badge="data.offShelfStuffsBadge" badge-style="badge-light" on-select="onTabSelected('offShelfStuffs')" on-deselect="onTabDeselected('offShelfStuffs')">
                     <!-- Tab 2 content -->
                 </ion-tab>
-                <ion-tab title="收藏" icon-on="ion-ios7-bookmarks" icon-off="ion-ios7-bookmarks-outline" badge="data.badge.favoritesStuffs" badge-style="badge-light" on-select="onTabSelected('favoritesStuffs')" on-deselect="onTabDeselected('favoritesStuffs')">
+                <ion-tab title="收藏" icon-on="ion-ios7-bookmarks" icon-off="ion-ios7-bookmarks-outline" badge="data.favoritesStuffsBadge" badge-style="badge-light" on-select="onTabSelected('favoritesStuffs')" on-deselect="onTabDeselected('favoritesStuffs')">
                     <!-- Tab 3 content -->
                 </ion-tab>
             </ion-tabs>
@@ -31,8 +31,10 @@ Orders fake tab
         <ion-pane id="my-stuff-list-container">
             <ion-scroll id="my-stuff-list-scroll" zooming="false" direction="y">
                 <ion-list>
-                    <ion-item ng-repeat="item in stuffs">
-                        Hello, {{item.name}}!
+                    <ion-item ng-repeat="item in stuffs" class="item item-avatar">
+                        <img src="{{item.goods_pics[0]}}">
+                        <h2>{{item.title}}</h2>
+                        <p>¥ {{item.goods_now_price}}</p>
                     </ion-item>
                 </ion-list>
             </ion-scroll>

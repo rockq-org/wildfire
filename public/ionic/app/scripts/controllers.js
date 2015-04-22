@@ -29,37 +29,35 @@ angular.module('iwildfire.controllers', [])
             $scope.topics = response.data;
             $scope.hasNextPage = true;
             $scope.loadError = false;
-          }, $rootScope.requestErrorHandler({
+        }, $rootScope.requestErrorHandler({
             noBackdrop: true
-          }, function() {
+        }, function() {
             $scope.loadError = true;
-          })
-        ).finally(function() {
-          $scope.$broadcast('scroll.refreshComplete');
+        })).finally(function() {
+            $scope.$broadcast('scroll.refreshComplete');
         });
     };
     $scope.loadMore = function() {
-    $log.debug('load more');
-    Topics.pagination().$promise.then(function(response) {
-        $log.debug('load more complete');
-        $scope.hasNextPage = false;
-        $scope.loadError = false;
-        $timeout(function() {
-          $scope.hasNextPage = Topics.hasNextPage();
-          $log.debug('has next page ? ', $scope.hasNextPage);
-        }, 100);
-        $scope.topics = $scope.topics.concat(response.data);
-      }, $rootScope.requestErrorHandler({
-        noBackdrop: true
-      }, function() {
-        $scope.loadError = true;
-      })
-    ).finally(function() {
-      $scope.$broadcast('scroll.infiniteScrollComplete');
-    });
+        $log.debug('load more');
+        Topics.pagination().$promise.then(function(response) {
+            $log.debug('load more complete');
+            $scope.hasNextPage = false;
+            $scope.loadError = false;
+            $timeout(function() {
+                $scope.hasNextPage = Topics.hasNextPage();
+                $log.debug('has next page ? ', $scope.hasNextPage);
+            }, 100);
+            $scope.topics = $scope.topics.concat(response.data);
+        }, $rootScope.requestErrorHandler({
+            noBackdrop: true
+        }, function() {
+            $scope.loadError = true;
+        })).finally(function() {
+            $scope.$broadcast('scroll.infiniteScrollComplete');
+        });
     };
 
-    $scope.changeSelected = function( item ){
+    $scope.changeSelected = function(item) {
         $scope.menuTitle = item.label;
         $stateParams.tab = item.value;
 
@@ -260,14 +258,14 @@ angular.module('iwildfire.controllers', [])
 
 .controller('MapsCtrl', function($scope) {})
 
-.controller('InboxCtrl', function($scope, Chats) {
-    $scope.chats = Chats.all();
-    $scope.remove = function(chat) {
-        Chats.remove(chat);
+.controller('InboxCtrl', function($scope, Messages) {
+    $scope.messages = Messages.all();
+    $scope.remove = function(message) {
+        Messages.remove(message);
     }
 })
 
-.controller('InboxDetailCtrl', function($scope, $stateParams, Chats) {
+.controller('InboxDetailCtrl', function($scope, $stateParams, Messages) {
     $scope.items = [{
         id: 0,
         price: '￥ 1000.00 （含运费0.00元）',
@@ -282,55 +280,103 @@ angular.module('iwildfire.controllers', [])
         }
         return itemClass;
     }
-    $scope.chats = Chats.all();
+    $scope.messages = Messages.all();
 })
 
-.controller('AccountCtrl', function($scope, $ionicModal, store, cfg) {
+.controller('AccountCtrl', function($scope, $ionicModal, $log, store, cfg,
+    webq, myTopics) {
+    $log.debug(JSON.stringify(myTopics));
     // load user profile from localStorage
     var userProfile = store.getUserProfile() || {};
+    var onGoingStuffs = [];
+    var offShelfStuffs = [];
+    var favoritesStuffs = [];
+
     if (!userProfile && !cfg.debug) {
         // change to wechat uaa page
         window.location.href = '{0}/auth/wechat/embedded'.f(cfg.server);
     }
 
-    $scope.data = {
-        name: userProfile.name || 'foo' /* the default values for debugging usage.*/ ,
-        avatar: userProfile.avatar || 'images/dummy-avatar.jpg',
-        phone: userProfile.phone_number || 'bar',
-        title: '我的呱呱',
-        badge: {
-            onGoingStuffs: 1,
-            offShelfStuffs: 2,
-            favoritesStuffs: 3
+    /**
+     * Separate topics into each category
+     * @param  {[boolean]} update whether fetch data from backend
+     * @return {[type]}          [description]
+     */
+    function _separateMyTopics(update, callback) {
+        if (update) {
+            webq.getMyTopicsResolve()
+                .then(function(latestMyTopics) {
+                    if (latestMyTopics) {
+                        myTopics = latestMyTopics;
+                        onGoingStuffs = _.filter(myTopics, function(x) {
+                            return x.goods_status === '在售';
+                        });
+
+                        offShelfStuffs = _.filter(myTopics, function(x) {
+                            return x.goods_status === '下架';
+                        });
+
+                        favoritesStuffs = _.filter(myTopics, function(x) {
+                            return x.goods_status === '收藏';
+                        });
+                        if (callback) callback();
+                    }
+                });
+        } else if (myTopics) {
+            onGoingStuffs = _.filter(myTopics, function(x) {
+                return x.goods_status === '在售';
+            });
+
+            offShelfStuffs = _.filter(myTopics, function(x) {
+                return x.goods_status === '下架';
+            });
+
+            favoritesStuffs = _.filter(myTopics, function(x) {
+                return x.goods_status === '收藏';
+            });
+            if (callback) callback();
         }
-    };
-    $scope.active_content = 'orders';
-    $scope.setActiveContent = function(active_content) {
-        $scope.active_content = active_content;
     }
+
+    function _resetScopeData() {
+        $scope.data = {
+            name: userProfile.name || 'foo' /* the default values for debugging usage.*/ ,
+            avatar: userProfile.avatar || 'images/dummy-avatar.jpg',
+            phone: userProfile.phone_number || 'bar',
+            title: '我的呱呱',
+            onGoingStuffs: onGoingStuffs,
+            onGoingStuffsBadge: onGoingStuffs.length,
+            offShelfStuffs: offShelfStuffs,
+            offShelfStuffsBadge: offShelfStuffs.length,
+            favoritesStuffs: favoritesStuffs,
+            favoritesStuffsBadge: favoritesStuffs.length,
+            // by default, render 在售 as content
+            stuffs: onGoingStuffs
+        };
+    }
+
+    _separateMyTopics();
+    _resetScopeData();
 
     $scope.onTabSelected = function(category) {
         switch (category) {
             case 'onGoingStuffs':
-                $scope.stuffs = [{
-                    name: '我是正在售出1'
-                }, {
-                    name: '我是正在售出2'
-                }];
+                _separateMyTopics(true, function() {
+                    $scope.stuffs = onGoingStuffs;
+                    _resetScopeData();
+                });
                 break;
             case 'offShelfStuffs':
-                $scope.stuffs = [{
-                    name: '我是正在下架1'
-                }, {
-                    name: '我是正在下架2'
-                }];
+                _separateMyTopics(true, function() {
+                    $scope.stuffs = offShelfStuffs;
+                    _resetScopeData();
+                });
                 break;
             case 'favoritesStuffs':
-                $scope.stuffs = [{
-                    name: '我是正在收藏1'
-                }, {
-                    name: '我是正在收藏2'
-                }];
+                _separateMyTopics(true, function() {
+                    $scope.stuffs = favoritesStuffs;
+                    _resetScopeData();
+                });
                 break;
             default:
                 break;
@@ -355,6 +401,44 @@ angular.module('iwildfire.controllers', [])
 
     $scope.closePopupSettings = function() {
         $scope.settingsModal.hide();
+    }
+
+    /**
+     * 下架
+     * @param  {[type]} topic [description]
+     * @return {[type]}       [description]
+     */
+    $scope.editOffShelf = function(topic) {
+        $log.debug('profile: {0} 下架'.f(topic.title));
+    }
+
+    /**
+     * 售出
+     * @param  {[type]} topic [description]
+     * @return {[type]}       [description]
+     */
+    $scope.editSoldOut = function(topic) {
+        $log.debug('profile: {0} 售出'.f(topic.title));
+
+    }
+
+    /**
+     * 删除
+     * @param  {[type]} topic [description]
+     * @return {[type]}       [description]
+     */
+    $scope.editDelete = function(topic) {
+        $log.debug('profile: {0} 删除'.f(topic.title));
+
+    }
+
+    /**
+     * 上架
+     * @param  {[type]} topic [description]
+     * @return {[type]}       [description]
+     */
+    $scope.editOnShelf = function(topic) {
+        $log.debug('profile: {0} 上架'.f(topic.title));
     }
 
     //Cleanup the modal when we're done with it!
@@ -463,151 +547,151 @@ angular.module('iwildfire.controllers', [])
 })
 
 .controller('TopicCtrl', function(
-        $scope,
-        $rootScope,
-        $stateParams,
-        $timeout,
-        $ionicLoading,
-        $ionicActionSheet,
-        $ionicScrollDelegate,
-        $log,
-        Topics,
-        Topic
-    ) {
-        var User = {}; // should be real model later
-        $log.debug('topic ctrl', $stateParams);
-        var id = $stateParams.id;
-        var topic = Topics.getById(id);
-        $scope.topic = topic;
+    $scope,
+    $rootScope,
+    $stateParams,
+    $timeout,
+    $ionicLoading,
+    $ionicActionSheet,
+    $ionicScrollDelegate,
+    $log,
+    Topics,
+    Topic
+) {
+    var User = {}; // should be real model later
+    $log.debug('topic ctrl', $stateParams);
+    var id = $stateParams.id;
+    var topic = Topics.getById(id);
+    $scope.topic = topic;
 
-        // before enter view event
-        $scope.$on('$ionicView.beforeEnter', function() {
-            // track view
-            if (window.analytics) {
-                window.analytics.trackView('topic view');
+    // before enter view event
+    $scope.$on('$ionicView.beforeEnter', function() {
+        // track view
+        if (window.analytics) {
+            window.analytics.trackView('topic view');
+        }
+    });
+
+    // load topic data
+    $scope.loadTopic = function(reload) {
+        var topicResource;
+        if (reload === true) {
+            topicResource = Topic.get(id);
+        } else {
+            topicResource = Topic.getById(id);
+        }
+        return topicResource.$promise.then(function(response) {
+            $scope.topic = response.data;
+        }, $rootScope.requestErrorHandler({
+            noBackdrop: true
+        }, function() {
+            $scope.loadError = true;
+        }));
+    };
+    $scope.loadTopic();
+
+    // detect if user has collected this topic
+    // var currentUser = User.getCurrentUser();
+    // $scope.isCollected = false;
+    // angular.forEach(currentUser.collect_topics, function(topics) {
+    //     if (topics.id === id) {
+    //         $scope.isCollected = true;
+    //     }
+    // });
+
+    // do refresh
+    $scope.doRefresh = function() {
+        return $scope.loadTopic(true).then(function(response) {
+            $log.debug('do refresh complete');
+        }, function() {}).finally(function() {
+            $scope.$broadcast('scroll.refreshComplete');
+        });
+    };
+
+    $scope.replyData = {
+        content: ''
+    };
+
+    // save reply
+    $scope.saveReply = function() {
+        $log.debug('new reply data:', $scope.replyData);
+        $ionicLoading.show();
+        Topic.saveReply(id, $scope.replyData).$promise.then(function(response) {
+            $ionicLoading.hide();
+            $scope.replyData.content = '';
+            $log.debug('post reply response:', response);
+            $scope.loadTopic(true).then(function() {
+                $ionicScrollDelegate.scrollBottom();
+            });
+        }, $rootScope.requestErrorHandler);
+    };
+
+    // show actions
+    $scope.showActions = function(reply) {
+        var currentUser = User.getCurrentUser();
+        if (currentUser.loginname === undefined || currentUser.loginname === reply.author.loginname) {
+            return;
+        }
+        $log.debug('action reply:', reply);
+        var upLabel = '赞';
+        // detect if current user already do up
+        if (reply.ups.indexOf(currentUser.id) !== -1) {
+            upLabel = '已赞';
+        }
+        var replyContent = '@' + reply.author.loginname;
+        $ionicActionSheet.show({
+            buttons: [{
+                text: '回复'
+            }, {
+                text: upLabel
+            }],
+            titleText: replyContent,
+            cancel: function() {},
+            buttonClicked: function(index) {
+
+                // reply to someone
+                if (index === 0) {
+                    $scope.replyData.content = replyContent + ' ';
+                    $scope.replyData.reply_id = reply.id;
+                    $timeout(function() {
+                        document.querySelector('.reply-new input').focus();
+                    }, 1);
+                }
+
+                // up reply
+                if (index === 1) {
+                    Topic.upReply(reply.id).$promise.then(function(response) {
+                        $log.debug('up reply response:', response);
+                        $ionicLoading.show({
+                            noBackdrop: true,
+                            template: response.action === 'up' ? '点赞成功' : '点赞已取消',
+                            duration: 1000
+                        });
+                    }, $rootScope.requestErrorHandler({
+                        noBackdrop: true,
+                    }));
+                }
+                return true;
             }
         });
+    };
 
-        // load topic data
-        $scope.loadTopic = function(reload) {
-            var topicResource;
-            if (reload === true) {
-                topicResource = Topic.get(id);
-            } else {
-                topicResource = Topic.getById(id);
-            }
-            return topicResource.$promise.then(function(response) {
-                $scope.topic = response.data;
-            }, $rootScope.requestErrorHandler({
-                noBackdrop: true
-            }, function() {
-                $scope.loadError = true;
-            }));
-        };
-        $scope.loadTopic();
-
-        // detect if user has collected this topic
-        // var currentUser = User.getCurrentUser();
-        // $scope.isCollected = false;
-        // angular.forEach(currentUser.collect_topics, function(topics) {
-        //     if (topics.id === id) {
-        //         $scope.isCollected = true;
-        //     }
-        // });
-
-        // do refresh
-        $scope.doRefresh = function() {
-            return $scope.loadTopic(true).then(function(response) {
-                $log.debug('do refresh complete');
-            }, function() {}).finally(function() {
-                $scope.$broadcast('scroll.refreshComplete');
-            });
-        };
-
-        $scope.replyData = {
-            content: ''
-        };
-
-        // save reply
-        $scope.saveReply = function() {
-            $log.debug('new reply data:', $scope.replyData);
-            $ionicLoading.show();
-            Topic.saveReply(id, $scope.replyData).$promise.then(function(response) {
-                $ionicLoading.hide();
-                $scope.replyData.content = '';
-                $log.debug('post reply response:', response);
-                $scope.loadTopic(true).then(function() {
-                    $ionicScrollDelegate.scrollBottom();
-                });
-            }, $rootScope.requestErrorHandler);
-        };
-
-        // show actions
-        $scope.showActions = function(reply) {
-            var currentUser = User.getCurrentUser();
-            if (currentUser.loginname === undefined || currentUser.loginname === reply.author.loginname) {
-                return;
-            }
-            $log.debug('action reply:', reply);
-            var upLabel = '赞';
-            // detect if current user already do up
-            if (reply.ups.indexOf(currentUser.id) !== -1) {
-                upLabel = '已赞';
-            }
-            var replyContent = '@' + reply.author.loginname;
-            $ionicActionSheet.show({
-                buttons: [{
-                    text: '回复'
-                }, {
-                    text: upLabel
-                }],
-                titleText: replyContent,
-                cancel: function() {},
-                buttonClicked: function(index) {
-
-                    // reply to someone
-                    if (index === 0) {
-                        $scope.replyData.content = replyContent + ' ';
-                        $scope.replyData.reply_id = reply.id;
-                        $timeout(function() {
-                            document.querySelector('.reply-new input').focus();
-                        }, 1);
-                    }
-
-                    // up reply
-                    if (index === 1) {
-                        Topic.upReply(reply.id).$promise.then(function(response) {
-                            $log.debug('up reply response:', response);
-                            $ionicLoading.show({
-                                noBackdrop: true,
-                                template: response.action === 'up' ? '点赞成功' : '点赞已取消',
-                                duration: 1000
-                            });
-                        }, $rootScope.requestErrorHandler({
-                            noBackdrop: true,
-                        }));
-                    }
-                    return true;
+    // collect topic
+    $scope.collectTopic = function() {
+        if ($scope.isCollected) {
+            Topic.deCollectTopic(id).$promise.then(function(response) {
+                if (response.success) {
+                    $scope.isCollected = false;
+                    User.deCollectTopic(id);
                 }
             });
-        };
-
-        // collect topic
-        $scope.collectTopic = function() {
-            if ($scope.isCollected) {
-                Topic.deCollectTopic(id).$promise.then(function(response) {
-                    if (response.success) {
-                        $scope.isCollected = false;
-                        User.deCollectTopic(id);
-                    }
-                });
-            } else {
-                Topic.collectTopic(id).$promise.then(function(response) {
-                    if (response.success) {
-                        $scope.isCollected = true;
-                        User.collectTopic(id);
-                    }
-                });
-            }
-        };
-    });
+        } else {
+            Topic.collectTopic(id).$promise.then(function(response) {
+                if (response.success) {
+                    $scope.isCollected = true;
+                    User.collectTopic(id);
+                }
+            });
+        }
+    };
+});

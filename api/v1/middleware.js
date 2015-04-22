@@ -1,3 +1,4 @@
+var config = require('../../config');
 var UserModel = require('../../models').User;
 var eventproxy = require('eventproxy');
 var validator = require('validator');
@@ -18,7 +19,14 @@ var auth = function(req, res, next) {
                 error_msg: 'wrong accessToken'
             });
         }
+
+        // set user as admin
+        if (config.admins.hasOwnProperty(user.loginname)) {
+            user.is_admin = true;
+        }
+
         req.user = user;
+
         next();
     }));
 

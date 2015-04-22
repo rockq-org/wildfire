@@ -70,11 +70,11 @@ angular.module('iwildfire.directives', [])
 })
 
 .directive('chooseLocation', function () {
-    var init = function(element, centerDiv) {
+    var init = function(element, centerDiv, attrs) {
         //初始化地图
         var map = new qq.maps.Map(element, {
             // 地图的中心地理坐标
-            center: new qq.maps.LatLng(39.916527, 116.397128),
+            center: new qq.maps.LatLng(attrs.latitude, attrs.longitude),
             zoom: 17
         });
 
@@ -91,7 +91,6 @@ angular.module('iwildfire.directives', [])
 
         var geocoder = new qq.maps.Geocoder({
             complete : function(result){
-                console.log(result);
                 centerDiv.innerHTML = result.detail.location + result.detail.address;
             }
         });
@@ -106,9 +105,7 @@ angular.module('iwildfire.directives', [])
     }
 
     return function (scope, element, attrs) {
-        console.log(attrs);
-      var height = angular.element(element).parent().parent().height();
       var div = angular.element(element).find('div');
-      init( div[0], div[1] );
+      init( div[0], div[1], attrs );
     };
 })

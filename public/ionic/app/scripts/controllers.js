@@ -221,7 +221,8 @@ angular.module('iwildfire.controllers', [])
                         $scope.longitude = longitude;
                         // Create the modal that we will use later
                         $ionicModal.fromTemplateUrl('templates/changeLocationModal.html', {
-                            tabs: Tabs,
+                            longitude, longitude,
+                            latitude, latitude,
                             scope: $scope
                         }).then(function(modal) {
                             $scope.changeLocationModal = modal;

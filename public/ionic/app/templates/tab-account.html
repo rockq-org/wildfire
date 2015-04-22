@@ -31,10 +31,26 @@ Orders fake tab
         <ion-pane id="my-stuff-list-container">
             <ion-scroll id="my-stuff-list-scroll" zooming="false" direction="y">
                 <ion-list>
-                    <ion-item ng-repeat="item in stuffs" class="item item-avatar">
+                    <ion-item ng-repeat="item in stuffs" class="item item-thumbnail-left">
                         <img src="{{item.goods_pics[0]}}">
                         <h2>{{item.title}}</h2>
                         <p>¥ {{item.goods_now_price}}</p>
+                        <i class="icon ion-ios7-chatbubble-outline" style="color:red">{{item.reply_count}}</i>
+                        <i class="icon ion-ios7-heart-outline" style="color:red">{{item.collect_count}}</i>
+                        <!-- need a filter to process create_at  -->
+                        <span>{{item.create_at | relativets}} </span>
+                        <ion-option-button class="button-positive" ng-click="editOffShelf(item)" ng-if="item.goods_status === '在售'">
+                            下架
+                        </ion-option-button>
+                        <ion-option-button class="button-info" ng-click="editSoldOut(item)" ng-if="item.goods_status === '在售'">
+                            售出
+                        </ion-option-button>
+                        <ion-option-button class="button-info" ng-click="editDelete(item)" ng-if="item.goods_status === '下架'">
+                            删除
+                        </ion-option-button>
+                        <ion-option-button class="button-info" ng-click="editOnShelf(item)" ng-if="item.goods_status === '下架'">
+                            上架
+                        </ion-option-button>
                     </ion-item>
                 </ion-list>
             </ion-scroll>

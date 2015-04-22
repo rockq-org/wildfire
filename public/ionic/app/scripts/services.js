@@ -323,8 +323,12 @@ angular.module('iwildfire.services', ['ngResource'])
      */
     this.getMyTopicsResolve = function() {
         var deferred = $q.defer();
-        $http.get('{0}/user/my_topics?accesstoken={1}'.f(cfg.api, /*store.getAccessToken()*/
-                'e26b54f0-6ca2-4eb7-97ae-a52c6af268dc'))
+
+        $http.get('{0}/user/my_topics?accesstoken={1}'.f(cfg.api,
+                // store.getAccessToken()
+                // for debug usage in local machine
+                'e26b54f0-6ca2-4eb7-97ae-a52c6af268dc'
+            ))
             .success(function(data) {
                 if (data.rc === 1) {
                     deferred.resolve(data.msg);

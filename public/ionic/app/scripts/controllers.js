@@ -403,6 +403,44 @@ angular.module('iwildfire.controllers', [])
         $scope.settingsModal.hide();
     }
 
+    /**
+     * 下架
+     * @param  {[type]} topic [description]
+     * @return {[type]}       [description]
+     */
+    $scope.editOffShelf = function(topic) {
+        $log.debug('profile: {0} 下架'.f(topic.title));
+    }
+
+    /**
+     * 售出
+     * @param  {[type]} topic [description]
+     * @return {[type]}       [description]
+     */
+    $scope.editSoldOut = function(topic) {
+        $log.debug('profile: {0} 售出'.f(topic.title));
+
+    }
+
+    /**
+     * 删除
+     * @param  {[type]} topic [description]
+     * @return {[type]}       [description]
+     */
+    $scope.editDelete = function(topic) {
+        $log.debug('profile: {0} 删除'.f(topic.title));
+
+    }
+
+    /**
+     * 上架
+     * @param  {[type]} topic [description]
+     * @return {[type]}       [description]
+     */
+    $scope.editOnShelf = function(topic) {
+        $log.debug('profile: {0} 上架'.f(topic.title));
+    }
+
     //Cleanup the modal when we're done with it!
     $scope.$on('$destroy', function() {
         $scope.settingsModal.remove();

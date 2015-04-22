@@ -142,7 +142,12 @@ angular.module('iwildfire', ['ionic', 'iwildfire.controllers', 'iwildfire.servic
         views: {
             'tab-account': {
                 templateUrl: 'templates/tab-account.html',
-                controller: 'AccountCtrl'
+                controller: 'AccountCtrl',
+                resolve: {
+                    myTopics: function(webq) {
+                        return webq.getMyTopicsResolve();
+                    }
+                }
             }
         }
     })

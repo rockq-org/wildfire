@@ -97,7 +97,8 @@ angular.module('iwildfire.controllers', [])
         goods_is_bargain: true,
         // dummy data
         goods_exchange_location: {
-            txt: '北京市海淀区西二旗中路6号1区4号楼', // user input text
+            user_add_txt: '',
+            address: '北京市海淀区西二旗中路6号1区4号楼', // user input text
             lat: '40.056961', // latitude
             lng: '116.318857' // longitude
         },
@@ -216,13 +217,12 @@ angular.module('iwildfire.controllers', [])
                         var speed = res.speed; // 速度，以米/每秒计
                         var accuracy = res.accuracy; // 位置精度
 
-                        console.log(latitude, longitude, speed, accuracy);
                         $scope.latitude = latitude;
                         $scope.longitude = longitude;
                         // Create the modal that we will use later
                         $ionicModal.fromTemplateUrl('templates/changeLocationModal.html', {
-                            longitude, longitude,
-                            latitude, latitude,
+                            longitude: longitude,
+                            latitude: latitude,
                             scope: $scope
                         }).then(function(modal) {
                             $scope.changeLocationModal = modal;

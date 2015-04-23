@@ -80,7 +80,7 @@
         <div class="row">
           <div class="col">
             <p><i class="icon ion-ios7-location mr5"></i>交易地点</p>
-            <p class="address">北京市海淀区西二旗中路6号1区4号楼<button ng-click="changeLocationModal.show()" class="fr">使用其他位置</button></p>
+            <p class="address"><span ng-model="params.goods_exchange_location.address"></span><span ng-model="params.goods_exchange_location.user_add_txt"></span><button ng-click="changeLocationModal.show()" class="fr">使用其他位置</button></p>
           </div>
         </div>
       </ion-item>

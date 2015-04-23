@@ -434,7 +434,7 @@ angular.module('iwildfire.controllers', [])
     }
 
     /**
-     * 下架 
+     * 下架
      * tab: onGoingStuffs
      * @param  {[type]} topic [description]
      * @return {[type]}       [description]

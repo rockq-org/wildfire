@@ -109,3 +109,7 @@ angular.module('iwildfire.directives', [])
       init( div[0], div[1], attrs );
     };
 })
+
+.directive('goodsBadge', function () {
+
+})

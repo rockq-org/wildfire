@@ -75,7 +75,6 @@ angular.module('iwildfire', ['ionic', 'iwildfire.controllers', 'iwildfire.servic
     })
 
     // Each tab has its own nav history stack:
-
     .state('tab.index', {
         url: '/index/:tab',
         views: {
@@ -87,16 +86,6 @@ angular.module('iwildfire', ['ionic', 'iwildfire.controllers', 'iwildfire.servic
                         return webq.getUserProfileResolve();
                     }
                 }
-            }
-        }
-    })
-
-    .state('tab.topic', {
-        url: '/topic/:id',
-        views: {
-            'tab-index': {
-                templateUrl: 'templates/topic.html',
-                controller: 'TopicCtrl'
             }
         }
     })

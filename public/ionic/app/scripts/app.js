@@ -49,7 +49,11 @@ angular.module('iwildfire', ['ionic', 'iwildfire.controllers', 'iwildfire.servic
 
 .config(function($stateProvider, $urlRouterProvider, $ionicConfigProvider) {
 
+    /**
+     * by default, the tabs are put into top for wechat android.
+     */
     $ionicConfigProvider.tabs.position( 'bottom' );
+
     /**
      * more about ui-router
      * http://angular-ui.github.io/ui-router/site/
@@ -81,10 +85,10 @@ angular.module('iwildfire', ['ionic', 'iwildfire.controllers', 'iwildfire.servic
         }
     })
 
-    .state('tab.index.topic', {
+    .state('tab.topic', {
         url: '/topic/:id',
         views: {
-            'menuContent': {
+            'tab-index': {
                 templateUrl: 'templates/topic.html',
                 controller: 'TopicCtrl'
             }

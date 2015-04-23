@@ -21,13 +21,12 @@ $ionicons-font-path: "../fonts" !default;
   display: block;
   top: 0;
   left: 0;
-  background: url(../images/badge/qx.png) no-repeat top left;
 }
-.goods-badge.qx{background-image: url(../images/badge/qx.png);}
-.goods-badge.hx{background-image: url(../images/badge/hx.png);}
-.goods-badge.wh{background-image: url(../images/badge/wh.png);}
-.goods-badge.sy{background-image: url(../images/badge/sy.png);}
-.goods-badge.ny{background-image: url(../images/badge/ny.png);}
+.goods-badge.qx{background-image: url(../images/badge/qx.png) no-repeat top left;}
+.goods-badge.hx{background-image: url(../images/badge/hx.png) no-repeat top left;}
+.goods-badge.wh{background-image: url(../images/badge/wh.png) no-repeat top left;}
+.goods-badge.sy{background-image: url(../images/badge/sy.png) no-repeat top left;}
+.goods-badge.ny{background-image: url(../images/badge/ny.png) no-repeat top left;}
 
 .topic-name-menu{
   padding: 0;

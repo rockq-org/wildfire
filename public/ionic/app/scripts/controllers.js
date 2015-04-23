@@ -202,42 +202,43 @@ angular.module('iwildfire.controllers', [])
     };
 
     setupLocation();
-    function setupLocation() {
-        if (wechat_signature) {
-            wechat_signature.jsApiList = ['getLocation', 'openLocation'];
-            wx.config(wechat_signature);
-            wx.error(function(err) {
-                alert(err);
-            });
-            wx.ready(function() {
-                wx.getLocation({
-                    success: function (res) {
-                        var latitude = res.latitude; // 纬度，浮点数，范围为90 ~ -90
-                        var longitude = res.longitude; // 经度，浮点数，范围为180 ~ -180。
-                        var speed = res.speed; // 速度，以米/每秒计
-                        var accuracy = res.accuracy; // 位置精度
 
-                        $scope.latitude = latitude;
-                        $scope.longitude = longitude;
-                        // Create the modal that we will use later
-                        $ionicModal.fromTemplateUrl('templates/changeLocationModal.html', {
-                            longitude: longitude,
-                            latitude: latitude,
-                            scope: $scope
-                        }).then(function(modal) {
-                            $scope.changeLocationModal = modal;
-                            modal.show();
-                        });
-                    }
+    function setupLocation() {
+            if (wechat_signature) {
+                wechat_signature.jsApiList = ['getLocation', 'openLocation'];
+                wx.config(wechat_signature);
+                wx.error(function(err) {
+                    alert(err);
                 });
-            });
-        } else {
-            $log.debug('app url: {0}. wechat_signature is not available while setup location.'.f(window.location.href.split('#')[0]));
+                wx.ready(function() {
+                    wx.getLocation({
+                        success: function(res) {
+                            var latitude = res.latitude; // 纬度，浮点数，范围为90 ~ -90
+                            var longitude = res.longitude; // 经度，浮点数，范围为180 ~ -180。
+                            var speed = res.speed; // 速度，以米/每秒计
+                            var accuracy = res.accuracy; // 位置精度
+
+                            $scope.latitude = latitude;
+                            $scope.longitude = longitude;
+                            // Create the modal that we will use later
+                            $ionicModal.fromTemplateUrl('templates/changeLocationModal.html', {
+                                longitude: longitude,
+                                latitude: latitude,
+                                scope: $scope
+                            }).then(function(modal) {
+                                $scope.changeLocationModal = modal;
+                                modal.show();
+                            });
+                        }
+                    });
+                });
+            } else {
+                $log.debug('app url: {0}. wechat_signature is not available while setup location.'.f(window.location.href.split('#')[0]));
+            }
         }
-    }
-    /**
-     * 验证表单字段
-     */
+        /**
+         * 验证表单字段
+         */
     function validateForm(params) {
         return !_.some([params.title, params.content, params.tab,
             params.quality, params.goods_pre_price, params.goods_now_price
@@ -311,7 +312,7 @@ angular.module('iwildfire.controllers', [])
     webq, myTopics) {
     $log.debug(JSON.stringify(myTopics));
     // load user profile from localStorage
-    var userProfile = store.getUserProfile() || {};
+    var userProfile = store.getUserProfile();
     var onGoingStuffs = [];
     var offShelfStuffs = [];
     var favoritesStuffs = [];
@@ -319,6 +320,9 @@ angular.module('iwildfire.controllers', [])
     if (!userProfile && !cfg.debug) {
         // change to wechat uaa page
         window.location.href = '{0}/auth/wechat/embedded'.f(cfg.server);
+    } else if (cfg.debug) {
+        // ensure dummy data for local debugging
+        userProfile = {};
     }
 
     /**
@@ -355,6 +359,8 @@ angular.module('iwildfire.controllers', [])
                 return x.goods_status === '下架';
             });
 
+            // #Todo Issue 78
+            // https://github.com/arrking/wildfire/issues/78
             favoritesStuffs = _.filter(myTopics, function(x) {
                 return x.goods_status === '收藏';
             });

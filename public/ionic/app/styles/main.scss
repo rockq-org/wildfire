@@ -35,3 +35,24 @@ $ionicons-font-path: "../fonts" !default;
   display: block;
   width: 100%;
 }
+.dot-line{
+  border-top: 1px dashed #ccc;
+  margin: 10px 0;
+}
+.float-left{
+  float: left;
+}
+.float-right{
+  float: right;
+}
+.update-time{
+  font-size: 80%;
+}
+.price{
+  padding: 10px 0 0;
+  del{
+    color: #ccc;
+    font-weight: normal;
+    font-size: 90%;
+  }
+}

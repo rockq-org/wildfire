@@ -67,4 +67,45 @@ angular.module('iwildfire.directives', [])
       div.height( height - 100 );
       init( div[0] );
     };
-  })
+})
+
+.directive('chooseLocation', function () {
+    var init = function(element, centerDiv, attrs) {
+        //初始化地图
+        var map = new qq.maps.Map(element, {
+            // 地图的中心地理坐标
+            center: new qq.maps.LatLng(attrs.latitude, attrs.longitude),
+            zoom: 17
+        });
+
+        //创建自定义控件
+        var middleControl = document.createElement("div");
+        middleControl.style.left="184px";
+        middleControl.style.top="232px";
+        middleControl.style.position="relative";
+        middleControl.style.width="36px";
+        middleControl.style.height="36px";
+        middleControl.style.zIndex="100000";
+        middleControl.innerHTML ='<img src="https://www.cdlhome.com.sg/mobile_assets/images/icon-location.png" />';
+        element.appendChild(middleControl);
+
+        var geocoder = new qq.maps.Geocoder({
+            complete : function(result){
+                centerDiv.innerHTML = result.detail.location + result.detail.address;
+            }
+        });
+
+        //返回地图当前中心点地理坐标
+        centerDiv.innerHTML = "latlng:" + map.getCenter();
+        //当地图中心属性更改时触发事件
+        qq.maps.event.addListener(map, 'center_changed', function() {
+            var latLng = map.getCenter();
+            geocoder.getAddress(latLng);
+        });
+    }
+
+    return function (scope, element, attrs) {
+      var div = angular.element(element).find('div');
+      init( div[0], div[1], attrs );
+    };
+})

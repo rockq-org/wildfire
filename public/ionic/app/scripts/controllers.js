@@ -228,7 +228,6 @@ angular.module('iwildfire.controllers', [])
                             $scope.changeLocationModal = modal;
                             modal.show();
                         });
-
                     }
                 });
             });

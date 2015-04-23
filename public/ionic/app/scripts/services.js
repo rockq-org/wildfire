@@ -2,6 +2,9 @@ angular.module('iwildfire.services', ['ngResource'])
 
 .factory('Tabs', function() {
     return [{
+        value: 'all',
+        label: '全部'
+    }, {
         value: 'books',
         label: '教材书籍'
     }, {
@@ -403,34 +406,6 @@ angular.module('iwildfire.services', ['ngResource'])
 
 })
 
-
-.factory('Tabs', function() {
-    return [{
-        value: 'all',
-        label: '全部'
-    }, {
-        value: 'books',
-        label: '教材书籍'
-    }, {
-        value: 'transports',
-        label: '代步工具'
-    }, {
-        value: 'electronics',
-        label: '数码电器'
-    }, {
-        value: 'supplies',
-        label: '生活用品'
-    }, {
-        value: 'healthcare',
-        label: '运动健身'
-    }, {
-        value: 'clothes',
-        label: '衣帽饰物'
-    }, {
-        value: 'others',
-        label: '其它'
-    }];
-})
 /**
  * Manage Topics
  * Creating a CRUD App in Minutes with Angular’s $resource

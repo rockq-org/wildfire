@@ -76,6 +76,39 @@ angular.module('iwildfire.controllers', [])
         $scope.currentTab = Topics.currentTab($stateParams.tab);
         $scope.doRefresh();
     }
+
+    /***********************************
+     * Topic Detail Page Modal
+     ***********************************/
+    $scope.detailTopic = null;
+    $ionicModal.fromTemplateUrl('templates/modal-topic.html', {
+        scope: $scope,
+        animation: 'slide-in-up'
+    }).then(function(modal) {
+        $scope.detailTopicModal = modal;
+    });
+
+    $scope.popupDetailTopicModal = function() {
+        $scope.detailTopicModal.show();
+    }
+
+    $scope.closeDetailTopicModal = function() {
+        $scope.detailTopicModal.hide();
+    }
+
+    // open a topic detail page
+    $scope.handleListViewClickTopicEvent = function(topicId) {
+        $scope.detailTopic = _.find($scope.topics, function(x) {
+            return x.id == topicId;
+        });
+        $log.debug("Open Topic Details: " + JSON.stringify($scope.detailTopic));
+        $scope.popupDetailTopicModal();
+    }
+
+    /***********************************
+     * End of Topic Detail Page Modal
+     ***********************************/
+
 })
 
 /**
@@ -634,152 +667,4 @@ angular.module('iwildfire.controllers', [])
     }
 })
 
-.controller('TopicCtrl', function(
-    $scope,
-    $rootScope,
-    $stateParams,
-    $timeout,
-    $ionicLoading,
-    $ionicActionSheet,
-    $ionicScrollDelegate,
-    $log,
-    Topics,
-    Topic
-) {
-    var User = {}; // should be real model later
-    $log.debug('topic ctrl', $stateParams);
-    var id = $stateParams.id;
-    var topic = Topics.getById(id);
-    $scope.topic = topic;
-
-    // before enter view event
-    $scope.$on('$ionicView.beforeEnter', function() {
-        // track view
-        if (window.analytics) {
-            window.analytics.trackView('topic view');
-        }
-    });
-
-    // load topic data
-    $scope.loadTopic = function(reload) {
-        var topicResource;
-        if (reload === true) {
-            topicResource = Topic.get(id);
-        } else {
-            topicResource = Topic.getById(id);
-        }
-        return topicResource.$promise.then(function(response) {
-            $scope.topic = response.data;
-        }, $rootScope.requestErrorHandler({
-            noBackdrop: true
-        }, function() {
-            $scope.loadError = true;
-        }));
-    };
-    $scope.loadTopic();
-
-    // detect if user has collected this topic
-    // var currentUser = User.getCurrentUser();
-    // $scope.isCollected = false;
-    // angular.forEach(currentUser.collect_topics, function(topics) {
-    //     if (topics.id === id) {
-    //         $scope.isCollected = true;
-    //     }
-    // });
-
-    // do refresh
-    $scope.doRefresh = function() {
-        return $scope.loadTopic(true).then(function(response) {
-            $log.debug('do refresh complete');
-        }, function() {}).finally(function() {
-            $scope.$broadcast('scroll.refreshComplete');
-        });
-    };
-
-    $scope.replyData = {
-        content: ''
-    };
-
-    // save reply
-    $scope.saveReply = function() {
-        $log.debug('new reply data:', $scope.replyData);
-        $ionicLoading.show();
-        Topic.saveReply(id, $scope.replyData).$promise.then(function(response) {
-            $ionicLoading.hide();
-            $scope.replyData.content = '';
-            $log.debug('post reply response:', response);
-            $scope.loadTopic(true).then(function() {
-                $ionicScrollDelegate.scrollBottom();
-            });
-        }, $rootScope.requestErrorHandler);
-    };
-
-    // show actions
-    $scope.showActions = function(reply) {
-        var currentUser = User.getCurrentUser();
-        if (currentUser.loginname === undefined || currentUser.loginname === reply.author.loginname) {
-            return;
-        }
-        $log.debug('action reply:', reply);
-        var upLabel = '赞';
-        // detect if current user already do up
-        if (reply.ups.indexOf(currentUser.id) !== -1) {
-            upLabel = '已赞';
-        }
-        var replyContent = '@' + reply.author.loginname;
-        $ionicActionSheet.show({
-            buttons: [{
-                text: '回复'
-            }, {
-                text: upLabel
-            }],
-            titleText: replyContent,
-            cancel: function() {},
-            buttonClicked: function(index) {
-
-                // reply to someone
-                if (index === 0) {
-                    $scope.replyData.content = replyContent + ' ';
-                    $scope.replyData.reply_id = reply.id;
-                    $timeout(function() {
-                        document.querySelector('.reply-new input').focus();
-                    }, 1);
-                }
-
-                // up reply
-                if (index === 1) {
-                    Topic.upReply(reply.id).$promise.then(function(response) {
-                        $log.debug('up reply response:', response);
-                        $ionicLoading.show({
-                            noBackdrop: true,
-                            template: response.action === 'up' ? '点赞成功' : '点赞已取消',
-                            duration: 1000
-                        });
-                    }, $rootScope.requestErrorHandler({
-                        noBackdrop: true,
-                    }));
-                }
-                return true;
-            }
-        });
-    };
-
-    // collect topic
-    $scope.collectTopic = function() {
-        if ($scope.isCollected) {
-            Topic.deCollectTopic(id).$promise.then(function(response) {
-                if (response.success) {
-                    $scope.isCollected = false;
-                    User.deCollectTopic(id);
-                }
-            });
-        } else {
-            Topic.collectTopic(id).$promise.then(function(response) {
-                if (response.success) {
-                    $scope.isCollected = true;
-                    User.collectTopic(id);
-                }
-            });
-        }
-    };
-});
+;

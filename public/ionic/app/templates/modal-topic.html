@@ -1,0 +1,30 @@
+<ion-modal-view>
+    <ion-header-bar class="bar-dark">
+        <h1 class="title">{{detailTopic.title}}</h1>
+        <div class="buttons">
+            <button class="button button-icon ion-ios7-close-empty" ng-click="closeDetailTopicModal()"></button>
+        </div>
+    </ion-header-bar>
+    <ion-content>
+        <!-- http://ionicframework.com/docs/api/directive/ionSlideBox/ -->
+        <ion-slide-box show-pager="true" auto-play="true" does-continue="true">
+            <!-- http://ionicframework.com/docs/api/directive/collectionRepeat/ -->
+            <!-- Note, The iOS webview has a performance bottleneck when switching out <img src> attributes. To increase performance of images on iOS, cache your images in advance and, if possible, lower the number of unique images. We're working on a solution. -->
+            <ion-slide style="width:100%;height:300px" ng-if="detailTopic.goods_pics.length > 0">
+                <img ng-src="{{detailTopic.goods_pics[0]}}">
+            </ion-slide>
+            <ion-slide ng-if="detailTopic.goods_pics.length > 1">
+                <img ng-src="{{detailTopic.goods_pics[1]}}">
+            </ion-slide>
+            <ion-slide ng-if="detailTopic.goods_pics.length > 2">
+                <img ng-src="{{detailTopic.goods_pics[2]}}">
+            </ion-slide>
+            <ion-slide ng-if="detailTopic.goods_pics.length > 3">
+                <img ng-src="{{detailTopic.goods_pics[3]}}">
+            </ion-slide>
+            <ion-slide ng-if="detailTopic.goods_pics.length > 4">
+                <img ng-src="{{detailTopic.goods_pics[4]}}">
+            </ion-slide>
+        </ion-slide-box>
+    </ion-content>
+</ion-modal-view>

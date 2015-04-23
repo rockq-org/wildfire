@@ -166,7 +166,8 @@ exports.checkPhoneVerifyCode = function(req, res, next) {
 exports.getMyTopics = function(req, res, next) {
     var user = req.user;
     TopicProxy.getFullTopicsByQuery({
-        author_id: user._id
+        author_id: user._id,
+        deleted: false
     }, function(err, docs) {
         if (err) {
             requestUtil.okJsonResponse({

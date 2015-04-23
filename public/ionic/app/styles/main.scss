@@ -13,7 +13,7 @@ $ionicons-font-path: "../fonts" !default;
 .topics-title{
   text-decoration: none;
 }
-.goods-new{
+.goods-badge{
   width: 75px;
   height: 75px;
   position: absolute;
@@ -21,8 +21,14 @@ $ionicons-font-path: "../fonts" !default;
   display: block;
   top: 0;
   left: 0;
-  background: url(../images/new.png) no-repeat top left;
+  background: url(../images/badge/qx.png) no-repeat top left;
 }
+.goods-badge.qx{background-image: url(../images/badge/qx.png);}
+.goods-badge.hx{background-image: url(../images/badge/hx.png);}
+.goods-badge.wh{background-image: url(../images/badge/wh.png);}
+.goods-badge.sy{background-image: url(../images/badge/sy.png);}
+.goods-badge.ny{background-image: url(../images/badge/ny.png);}
+
 .topic-name-menu{
   padding: 0;
   a{

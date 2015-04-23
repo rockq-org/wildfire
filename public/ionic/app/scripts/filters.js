@@ -1,6 +1,24 @@
 'use strict';
 angular.module('iwildfire.filters', [])
 
+.filter('badge', function() {
+  return function(input) {
+    input = input || '全新';
+    var out;
+    var list = {
+        '全新' : 'qx',
+        '很新' : 'hx',
+        '完好' : 'wh',
+        '适用' : 'sy',
+        '能用' : 'ny'
+    };
+    if ( list[ input ] ) {
+        out = 'goods-badge ' + list[ input ];
+    }
+    return out;
+  };
+})
+
 .filter('link', function($sce) {
     return function(content) {
         if (typeof content === 'string') {

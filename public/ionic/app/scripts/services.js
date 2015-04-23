@@ -411,7 +411,7 @@ angular.module('iwildfire.services', ['ngResource'])
     this.getUserProfileResolve = function() {
         var deferred = $q.defer();
         // attempt to get user profile data with cookie
-        webq.getAccessToken()
+        this.getAccessToken()
             .then(function(data) {
                 // accessToken is retrieved.
                 store.setAccessToken(data.accesstoken);

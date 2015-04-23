@@ -21,6 +21,25 @@ angular.module('iwildfire', ['ionic', 'iwildfire.controllers', 'iwildfire.servic
             // org.apache.cordova.statusbar required
             StatusBar.styleLightContent();
         }
+
+        // attempt to get user profile data with cookie
+        webq.getAccessToken()
+            .then(function(data) {
+                // accessToken is retrieved.
+                store.setAccessToken(data.accesstoken);
+                return webq.getUserProfile();
+            }, function(err) {
+                // handle err
+                $log.error('getAccessToken throws an error.');
+                $log.error(err);
+            })
+            .then(function(data2) {
+                store.setUserProfile(data2);
+            }, function(err2) {
+                // body...
+                $log.error('getUserProfile throws an error.');
+                $log.error(err2);
+            });
     });
 
     // error handler
@@ -52,7 +71,7 @@ angular.module('iwildfire', ['ionic', 'iwildfire.controllers', 'iwildfire.servic
     /**
      * by default, the tabs are put into top for wechat android.
      */
-    $ionicConfigProvider.tabs.position( 'bottom' );
+    $ionicConfigProvider.tabs.position('bottom');
 
     /**
      * more about ui-router

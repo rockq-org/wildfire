@@ -1,6 +1,17 @@
 angular.module('iwildfire.controllers', [])
 
-.controller('IndexCtrl', function($scope, $rootScope, $stateParams, $ionicLoading, $ionicModal, $timeout, $state, $location, $log, Topics, Tabs, cfg) {
+.controller('IndexCtrl', function($scope, $rootScope,
+    $stateParams,
+    $ionicLoading,
+    $ionicModal,
+    $timeout,
+    $state,
+    $location,
+    $log,
+    Topics,
+    Tabs,
+    cfg,
+    userProfileResolve) {
 
     $scope.sideMenus = Tabs;
     $scope.menuTitle = '全部';

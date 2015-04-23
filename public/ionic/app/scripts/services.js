@@ -404,6 +404,32 @@ angular.module('iwildfire.services', ['ngResource'])
         return deferred.promise;
     }
 
+    /**
+     * get user profile as resolve state
+     * @return {[type]} [description]
+     */
+    this.getUserProfileResolve = function() {
+        var deferred = $q.defer();
+        // attempt to get user profile data with cookie
+        webq.getAccessToken()
+            .then(function(data) {
+                // accessToken is retrieved.
+                store.setAccessToken(data.accesstoken);
+                return webq.getUserProfile();
+            })
+            .then(function(data2) {
+                store.setUserProfile(data2);
+                deferred.resolve();
+            })
+            .catch(function(err) {
+                $log.warn('getUserProfileResolve');
+                $log.warn(err);
+                deferred.resolve();
+            });
+
+        return deferred.promise;
+    }
+
 })
 
 /**

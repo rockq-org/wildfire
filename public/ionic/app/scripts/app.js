@@ -22,24 +22,6 @@ angular.module('iwildfire', ['ionic', 'iwildfire.controllers', 'iwildfire.servic
             StatusBar.styleLightContent();
         }
 
-        // attempt to get user profile data with cookie
-        webq.getAccessToken()
-            .then(function(data) {
-                // accessToken is retrieved.
-                store.setAccessToken(data.accesstoken);
-                return webq.getUserProfile();
-            }, function(err) {
-                // handle err
-                $log.error('getAccessToken throws an error.');
-                $log.error(err);
-            })
-            .then(function(data2) {
-                store.setUserProfile(data2);
-            }, function(err2) {
-                // body...
-                $log.error('getUserProfile throws an error.');
-                $log.error(err2);
-            });
     });
 
     // error handler
@@ -99,7 +81,12 @@ angular.module('iwildfire', ['ionic', 'iwildfire.controllers', 'iwildfire.servic
         views: {
             'tab-index': {
                 templateUrl: 'templates/tab-index.html',
-                controller: 'IndexCtrl'
+                controller: 'IndexCtrl',
+                resolve: {
+                    userProfileResolve: function(webq) {
+                        return webq.getUserProfileResolve();
+                    }
+                }
             }
         }
     })

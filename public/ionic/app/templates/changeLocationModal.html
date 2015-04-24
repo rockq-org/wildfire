@@ -1,17 +1,19 @@
 <div class="modal">
   <ion-header-bar>
     <div class="buttons">
-      <button class="button button-clear" ng-click="changeLocationModal.hide()">关闭</button>
+      <button class="button button-clear" ng-click="closeChangeLocationModal()">关闭</button>
     </div>
-    <h1 class="title">选择位置</h1>
+    <h1 class="title">
+      <span class="location-address">{{locationDetail.address}}</span>
+      <input type="text" class="user-add-txt" placeholder="输入具体楼号" ng-model="locationDetail.user_add_txt" />
+    </h1>
     <div class="buttons">
-      <button class="button button-clear button-positive" ng-click="saveNewLocation()" >提交</button>
+      <button class="button button-clear button-positive" ng-click="closeChangeLocationModal(true)" >提交</button>
     </div>
   </ion-header-bar>
-  <ion-content>
-    <div choose-location latitude="{{latitude}}" longitude="{{longitude}}">
-      <div class="container" style="width:100%;height:500px;"></div>
-      <div class="centerDiv"></div>
+  <ion-content scroll="false">
+    <div choose-location>
+      <div class="container"></div>
     </div>
   </ion-content>
 </div>

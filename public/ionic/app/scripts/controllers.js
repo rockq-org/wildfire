@@ -121,14 +121,14 @@ angular.module('iwildfire.controllers', [])
  * @param  {[type]} wechat_signature [description]
  * @return {[type]}                  [description]
  */
-.controller('PostCtrl', function($scope, $log, $q, cfg, store, webq, wechat_signature, Tabs, $ionicModal) {
+.controller('PostCtrl', function($scope, $log, $q, cfg, store, webq, wechat_signature, Tabs, $ionicModal, $timeout) {
 
     // if not contains profile and accesstoken, just naviagte
     // to user authentication page.
     // if (!store.getAccessToken()) {
     //     window.location.href = '{0}/auth/wechat/embedded'.f(cfg.server);
     // }
-
+    $scope.locationDetail = {};
     $scope.params = {
         // 标题5到10个字
         title: null,
@@ -142,7 +142,7 @@ angular.module('iwildfire.controllers', [])
         // dummy data
         goods_exchange_location: {
             user_add_txt: '',
-            address: '北京市海淀区西二旗中路6号1区4号楼', // user input text
+            address: '北京市海淀区西二旗中路6号1区4号楼',
             lat: '40.056961', // latitude
             lng: '116.318857' // longitude
         },
@@ -245,6 +245,34 @@ angular.module('iwildfire.controllers', [])
         }
     };
 
+    // testSetupLocation();
+    // function testSetupLocation(){
+    //     $scope.locationDetail = {
+    //         address: '',
+    //         user_add_txt: '',
+    //         latitude: '39.916527',
+    //         longitude: '116.397128'
+    //     };
+    //     $ionicModal.fromTemplateUrl('templates/changeLocationModal.html', {
+    //         scope: $scope
+    //     }).then(function(modal) {
+    //         $scope.changeLocationModal = modal;
+    //         // modal.show();
+    //     });
+    // }
+
+    $scope.closeChangeLocationModal = function(isSubmit){
+        if (isSubmit) {
+            $timeout(function(){
+                $scope.params.goods_exchange_location.address = $scope.locationDetail.address;
+                $scope.params.goods_exchange_location.user_add_txt = $scope.locationDetail.user_add_txt;
+                $scope.params.goods_exchange_location.lat = $scope.locationDetail.latitude;
+                $scope.params.goods_exchange_location.lng = $scope.locationDetail.longitude;
+                console.log($scope.params.goods_exchange_location);
+            });
+        }
+        $scope.changeLocationModal.hide();
+    }
     setupLocation();
 
     function setupLocation() {
@@ -262,12 +290,15 @@ angular.module('iwildfire.controllers', [])
                         var speed = res.speed; // 速度，以米/每秒计
                         var accuracy = res.accuracy; // 位置精度
 
-                        $scope.latitude = latitude;
-                        $scope.longitude = longitude;
+                        $scope.locationDetail = {
+                            address: '',
+                            user_add_txt: '',
+                            latitude: latitude,
+                            longitude: longitude
+                        };
+
                         // Create the modal that we will use later
                         $ionicModal.fromTemplateUrl('templates/changeLocationModal.html', {
-                            longitude: longitude,
-                            latitude: latitude,
                             scope: $scope
                         }).then(function(modal) {
                             $scope.changeLocationModal = modal;

@@ -69,19 +69,18 @@ angular.module('iwildfire.directives', [])
     };
 })
 
-.directive('chooseLocation', function () {
-    var init = function(element, centerDiv, attrs) {
+.directive('chooseLocation', function ($timeout, $document) {
+    var init = function(element, attrs, scope, width, height) {
         //初始化地图
         var map = new qq.maps.Map(element, {
             // 地图的中心地理坐标
-            center: new qq.maps.LatLng(attrs.latitude, attrs.longitude),
+            center: new qq.maps.LatLng(scope.locationDetail.latitude, scope.locationDetail.longitude),
             zoom: 17
         });
-
         //创建自定义控件
         var middleControl = document.createElement("div");
-        middleControl.style.left="184px";
-        middleControl.style.top="232px";
+        middleControl.style.left= (width - 36 )/2 + "px";
+        middleControl.style.top= (height - 36)/2 + "px";
         middleControl.style.position="relative";
         middleControl.style.width="36px";
         middleControl.style.height="36px";
@@ -89,27 +88,34 @@ angular.module('iwildfire.directives', [])
         middleControl.innerHTML ='<img src="https://www.cdlhome.com.sg/mobile_assets/images/icon-location.png" />';
         element.appendChild(middleControl);
 
+        //当地图中心属性更改时触发事件
+        qq.maps.event.addListener(map, 'center_changed', center_changed);
+
+        function center_changed(){
+            var latLng = map.getCenter();
+            geocoder.getAddress(latLng);
+        }
         var geocoder = new qq.maps.Geocoder({
             complete : function(result){
-                centerDiv.innerHTML = result.detail.location + result.detail.address;
+                $timeout(function(){
+                    scope.$parent.$parent.locationDetail.address = result.detail.address;
+                    scope.$parent.$parent.locationDetail.latitude = result.detail.location.lat;
+                    scope.$parent.$parent.locationDetail.longitude = result.detail.location.lng;
+                });
             }
         });
 
-        //返回地图当前中心点地理坐标
-        centerDiv.innerHTML = "latlng:" + map.getCenter();
-        //当地图中心属性更改时触发事件
-        qq.maps.event.addListener(map, 'center_changed', function() {
-            var latLng = map.getCenter();
-            geocoder.getAddress(latLng);
-        });
+        center_changed();
     }
 
     return function (scope, element, attrs) {
-      var div = angular.element(element).find('div');
-      init( div[0], div[1], attrs );
+        $timeout(function(){
+            var width = $document.width();
+            var height = $document.height() - 44;
+            var div = angular.element(element).find('div');
+            div.width( width );
+            div.height( height );
+            init( div[0], attrs, scope, width, height );
+        });
     };
-})
-
-.directive('goodsBadge', function () {
-
 })

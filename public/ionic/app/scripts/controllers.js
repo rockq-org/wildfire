@@ -10,12 +10,12 @@ angular.module('iwildfire.controllers', [])
     $log,
     Topics,
     Tabs,
-    cfg,
-    userProfileResolve) {
+    cfg
+    ) {
 
-    $scope.sideMenus = Tabs;
-    $scope.menuTitle = '全部';
-    $stateParams.tab = 'all';
+    $scope.sideMenus = Tabs.getList();
+    $stateParams.tab = $stateParams.tab || 'all';
+    $scope.menuTitle = Tabs.getLabel( $stateParams.tab );
     $scope.img_prefix = cfg.server;
 
     $scope.currentTab = Topics.currentTab();
@@ -32,13 +32,14 @@ angular.module('iwildfire.controllers', [])
     // pagination
     $scope.hasNextPage = Topics.hasNextPage();
     $scope.loadError = false;
-    $log.debug('page load, has next page ? ', $scope.hasNextPage);
+    // $log.debug('page load, has next page ? ', $scope.hasNextPage);
     $scope.doRefresh = function() {
         Topics.currentTab($stateParams.tab);
         $log.debug('do refresh');
         Topics.refresh().$promise.then(function(response) {
             $log.debug('do refresh complete');
             $scope.topics = response.data;
+            console.log(response.data);
             $scope.hasNextPage = true;
             $scope.loadError = false;
         }, $rootScope.requestErrorHandler({
@@ -70,6 +71,7 @@ angular.module('iwildfire.controllers', [])
     };
 
     $scope.changeSelected = function(item) {
+        $state.go('tab.index', {tab: item.value});
         $scope.menuTitle = item.label;
         $stateParams.tab = item.value;
 
@@ -77,37 +79,37 @@ angular.module('iwildfire.controllers', [])
         $scope.doRefresh();
     }
 
-    /***********************************
-     * Topic Detail Page Modal
-     ***********************************/
-    $scope.detailTopic = null;
-    $ionicModal.fromTemplateUrl('templates/modal-topic.html', {
-        scope: $scope,
-        animation: 'slide-in-up'
-    }).then(function(modal) {
-        $scope.detailTopicModal = modal;
-    });
+    // /***********************************
+    //  * Topic Detail Page Modal
+    //  ***********************************/
+    // $scope.detailTopic = null;
+    // $ionicModal.fromTemplateUrl('templates/modal-topic.html', {
+    //     scope: $scope,
+    //     animation: 'slide-in-up'
+    // }).then(function(modal) {
+    //     $scope.detailTopicModal = modal;
+    // });
 
-    $scope.popupDetailTopicModal = function() {
-        $scope.detailTopicModal.show();
-    }
+    // $scope.popupDetailTopicModal = function() {
+    //     $scope.detailTopicModal.show();
+    // }
 
-    $scope.closeDetailTopicModal = function() {
-        $scope.detailTopicModal.hide();
-    }
+    // $scope.closeDetailTopicModal = function() {
+    //     $scope.detailTopicModal.hide();
+    // }
 
-    // open a topic detail page
-    $scope.handleListViewClickTopicEvent = function(topicId) {
-        $scope.detailTopic = _.find($scope.topics, function(x) {
-            return x.id == topicId;
-        });
-        $log.debug("Open Topic Details: " + JSON.stringify($scope.detailTopic));
-        $scope.popupDetailTopicModal();
-    }
+    // // open a topic detail page
+    // $scope.handleListViewClickTopicEvent = function(topicId) {
+    //     $scope.detailTopic = _.find($scope.topics, function(x) {
+    //         return x.id == topicId;
+    //     });
+    //     $log.debug("Open Topic Details: " + JSON.stringify($scope.detailTopic));
+    //     $scope.popupDetailTopicModal();
+    // }
 
-    /***********************************
-     * End of Topic Detail Page Modal
-     ***********************************/
+    // /***********************************
+    //  * End of Topic Detail Page Modal
+    //  ***********************************/
 
 })
 
@@ -150,7 +152,7 @@ angular.module('iwildfire.controllers', [])
         goods_status: '在售'
     };
 
-    $scope.tagList = Tabs;
+    $scope.tagList = Tabs.getList();
 
     $scope.qualityList = ['全新', '很新', '完好', '适用', '能用'];
 

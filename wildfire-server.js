@@ -158,7 +158,7 @@ passport.use(new GitHubStrategy(config.GITHUB_OAUTH, githubStrategyMiddleware));
 passport.use(new WechatStrategy({
     appid: wxConfig.appId,
     appsecret: wxConfig.appSecret,
-    callbackURL: util.format('http://%s/auth/wechat/embedded/callback', config.host),
+    callbackURL: util.format('http://%s/auth/wechat/embedded/callback', config.client_host),
     scope: 'snsapi_userinfo',
     passReqToCallback: true,
     state: true

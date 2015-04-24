@@ -269,33 +269,6 @@ angular.module('iwildfire.services', ['ngResource'])
         return deferred.promise;
     }
 
-    // get access token, assume the browser has contained valid cookie.
-    this.getAccessToken = function() {
-        var deferred = $q.defer();
-        $http.get('{0}/accesstoken'.f(cfg.api))
-            .success(function(data) {
-                if (typeof(data) === 'object' && data.rc == 0) {
-                    // https://github.com/arrking/wildfire/issues/63
-                    /**
-                     * {
-            rc: 0,
-            loginname: req.session.user.loginname,
-            avatar_url: req.session.user.avatar_url,
-            id: req.session.user.id,
-            accesstoken: req.session.user.accessToken
-        }
-                     */
-                    deferred.resolve(data);
-                } else {
-                    deferred.reject(data);
-                }
-            })
-            .error(function(err) {
-                deferred.reject(err);
-            });
-        return deferred.promise;
-    }
-
     this.getUserProfile = function() {
         var deferred = $q.defer();
         $http.post('{0}/accesstoken'.f(cfg.api), {
@@ -411,12 +384,7 @@ angular.module('iwildfire.services', ['ngResource'])
     this.getUserProfileResolve = function() {
         var deferred = $q.defer();
         // attempt to get user profile data with cookie
-        this.getAccessToken()
-            .then(function(data) {
-                // accessToken is retrieved.
-                store.setAccessToken(data.accesstoken);
-                return webq.getUserProfile();
-            })
+        this.getUserProfile()
             .then(function(data2) {
                 store.setUserProfile(data2);
                 deferred.resolve();

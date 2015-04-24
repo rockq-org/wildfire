@@ -158,7 +158,7 @@ passport.use(new GitHubStrategy(config.GITHUB_OAUTH, githubStrategyMiddleware));
 passport.use(new WechatStrategy({
     appid: wxConfig.appId,
     appsecret: wxConfig.appSecret,
-    callbackURL: util.format('http://%s/auth/wechat/embedded/callback', config.host),
+    callbackURL: util.format('http://%s/auth/wechat/embedded/callback', config.client_host),
     scope: 'snsapi_userinfo',
     passReqToCallback: true,
     state: true
@@ -223,10 +223,10 @@ app.get('/auth/wechat/embedded/callback', function(req, res, next) {
         }
         if (!user.phone_number) {
             // force user input phone number
-            res.redirect(util.format('http://%s/public/ionic/www/#/bind-mobile-phone/%s', config.host, user.accessToken));
+            res.redirect(util.format('http://%s/#/bind-mobile-phone/%s', config.client_host, user.accessToken));
         } else {
-            // pass user id into redirect url
-            res.redirect(util.format('http://%s/public/ionic/www', config.host));
+            // pass user accesstoken into client
+            res.redirect(util.format('http://%s/#/bind-access-token/%s', config.client_host, user.accessToken));
         }
     })(req, res, next);
 });

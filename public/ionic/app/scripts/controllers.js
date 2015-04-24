@@ -123,6 +123,7 @@ angular.module('iwildfire.controllers', [])
  */
 .controller('PostCtrl', function($scope, $log, $q, cfg, store, webq, wechat_signature, Tabs, $ionicModal, $timeout) {
 
+    // #TODO comment out for debugging
     // if not contains profile and accesstoken, just naviagte
     // to user authentication page.
     // if (!store.getAccessToken()) {
@@ -312,9 +313,9 @@ angular.module('iwildfire.controllers', [])
         }
     }
 
-        /**
-         * 验证表单字段
-         */
+    /**
+     * 验证表单字段
+     */
     function validateForm(params) {
         return !_.some([params.title, params.content, params.tab,
             params.quality, params.goods_pre_price, params.goods_now_price
@@ -697,6 +698,30 @@ angular.module('iwildfire.controllers', [])
             _fixVerifyCodeInputPlaceholder('验证码格式不正确，重新输入');
         }
     }
+})
+
+/**
+ * Add loading spinner when requesting user profile
+ * @IMPORTANT@ the accesstoken is passed in here.
+ * @param  {[type]} $log           [description]
+ * @param  {[type]} $stateParams   [description]
+ * @param  {[type]} $scope         [description]
+ * @param  {[type]} $ionicLoading) {               } [description]
+ * @return {[type]}                [description]
+ */
+.controller('BindAccessTokenCtrl', function($log, $stateParams,
+    $scope,
+    $state,
+    store) {
+
+    var accesstoken = $stateParams.accessToken;
+    $log.debug('Get accesstoken ' + accesstoken);
+
+    if (accesstoken) {
+        store.setAccessToken($stateParams.accessToken);
+    }
+
+    $state.go('tab.index');
 })
 
 ;

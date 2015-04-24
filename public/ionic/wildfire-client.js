@@ -10,7 +10,7 @@ var path = require('path');
 var app = express();
 
 // all environments
-app.set('port', process.env.PORT || 3456);
+app.set('port', process.env.WILDFIRE_CLIENT_PORT || 8100);
 app.use(express.favicon());
 app.use(express.logger('dev'));
 app.use(express.json());

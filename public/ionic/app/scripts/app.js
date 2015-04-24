@@ -156,6 +156,12 @@ angular.module('iwildfire', ['ionic', 'iwildfire.controllers', 'iwildfire.servic
         url: '/bind-mobile-phone/:accessToken',
         templateUrl: 'templates/bind-mobile-phone.html',
         controller: 'BindMobilePhoneCtrl'
+    })
+
+    .state('bind-access-token', {
+        url: '/bind-access-token/:accessToken',
+        templateUrl: 'templates/bind-access-token.html',
+        controller: 'BindAccessTokenCtrl'
     });
 
     // if none of the above states are matched, use this as the fallback

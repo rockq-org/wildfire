@@ -61,3 +61,20 @@ $ionicons-font-path: "../fonts" !default;
     font-size: 90%;
   }
 }
+
+input.user-add-txt,
+input.location-address{
+  float: left;
+  font-size: 100%;
+  width: 30%;
+  height:44px;
+  padding:0;
+  line-height:44px;
+  vertical-align: baseline;
+}
+.location-address,
+input.location-address{
+  float: left;
+  text-align: right;
+  width: 70%;
+}

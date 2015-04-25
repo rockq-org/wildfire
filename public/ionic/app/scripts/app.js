@@ -80,12 +80,22 @@ angular.module('iwildfire', ['ionic', 'iwildfire.controllers', 'iwildfire.servic
         views: {
             'tab-index': {
                 templateUrl: 'templates/tab-index.html',
-                controller: 'IndexCtrl',
-                resolve: {
-                    userProfileResolve: function(webq) {
-                        return webq.getUserProfileResolve();
-                    }
-                }
+                controller: 'IndexCtrl'
+                // ,
+                // resolve: {
+                //     userProfileResolve: function(webq) {
+                //         return webq.getUserProfileResolve();
+                //     }
+                // }
+            }
+        }
+    })
+    .state('tab.item', {
+        url: '/item/:itemId',
+        views: {
+            'tab-index': {
+                templateUrl: 'templates/item.html',
+                controller: 'ItemCtrl'
             }
         }
     })

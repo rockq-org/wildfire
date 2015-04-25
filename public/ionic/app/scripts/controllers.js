@@ -10,12 +10,12 @@ angular.module('iwildfire.controllers', [])
     $log,
     Topics,
     Tabs,
-    cfg,
-    userProfileResolve) {
+    cfg
+    ) {
 
-    $scope.sideMenus = Tabs;
-    $scope.menuTitle = '全部';
-    $stateParams.tab = 'all';
+    $scope.sideMenus = Tabs.getList();
+    $stateParams.tab = $stateParams.tab || 'all';
+    $scope.menuTitle = Tabs.getLabel( $stateParams.tab );
     $scope.img_prefix = cfg.server;
 
     $scope.currentTab = Topics.currentTab();
@@ -32,13 +32,14 @@ angular.module('iwildfire.controllers', [])
     // pagination
     $scope.hasNextPage = Topics.hasNextPage();
     $scope.loadError = false;
-    $log.debug('page load, has next page ? ', $scope.hasNextPage);
+    // $log.debug('page load, has next page ? ', $scope.hasNextPage);
     $scope.doRefresh = function() {
         Topics.currentTab($stateParams.tab);
         $log.debug('do refresh');
         Topics.refresh().$promise.then(function(response) {
             $log.debug('do refresh complete');
             $scope.topics = response.data;
+            console.log(response.data);
             $scope.hasNextPage = true;
             $scope.loadError = false;
         }, $rootScope.requestErrorHandler({
@@ -70,6 +71,7 @@ angular.module('iwildfire.controllers', [])
     };
 
     $scope.changeSelected = function(item) {
+        $state.go('tab.index', {tab: item.value});
         $scope.menuTitle = item.label;
         $stateParams.tab = item.value;
 
@@ -77,37 +79,37 @@ angular.module('iwildfire.controllers', [])
         $scope.doRefresh();
     }
 
-    /***********************************
-     * Topic Detail Page Modal
-     ***********************************/
-    $scope.detailTopic = null;
-    $ionicModal.fromTemplateUrl('templates/modal-topic.html', {
-        scope: $scope,
-        animation: 'slide-in-up'
-    }).then(function(modal) {
-        $scope.detailTopicModal = modal;
-    });
+    // /***********************************
+    //  * Topic Detail Page Modal
+    //  ***********************************/
+    // $scope.detailTopic = null;
+    // $ionicModal.fromTemplateUrl('templates/modal-topic.html', {
+    //     scope: $scope,
+    //     animation: 'slide-in-up'
+    // }).then(function(modal) {
+    //     $scope.detailTopicModal = modal;
+    // });
 
-    $scope.popupDetailTopicModal = function() {
-        $scope.detailTopicModal.show();
-    }
+    // $scope.popupDetailTopicModal = function() {
+    //     $scope.detailTopicModal.show();
+    // }
 
-    $scope.closeDetailTopicModal = function() {
-        $scope.detailTopicModal.hide();
-    }
+    // $scope.closeDetailTopicModal = function() {
+    //     $scope.detailTopicModal.hide();
+    // }
 
-    // open a topic detail page
-    $scope.handleListViewClickTopicEvent = function(topicId) {
-        $scope.detailTopic = _.find($scope.topics, function(x) {
-            return x.id == topicId;
-        });
-        $log.debug("Open Topic Details: " + JSON.stringify($scope.detailTopic));
-        $scope.popupDetailTopicModal();
-    }
+    // // open a topic detail page
+    // $scope.handleListViewClickTopicEvent = function(topicId) {
+    //     $scope.detailTopic = _.find($scope.topics, function(x) {
+    //         return x.id == topicId;
+    //     });
+    //     $log.debug("Open Topic Details: " + JSON.stringify($scope.detailTopic));
+    //     $scope.popupDetailTopicModal();
+    // }
 
-    /***********************************
-     * End of Topic Detail Page Modal
-     ***********************************/
+    // /***********************************
+    //  * End of Topic Detail Page Modal
+    //  ***********************************/
 
 })
 
@@ -121,7 +123,7 @@ angular.module('iwildfire.controllers', [])
  * @param  {[type]} wechat_signature [description]
  * @return {[type]}                  [description]
  */
-.controller('PostCtrl', function($scope, $log, $q, cfg, store, webq, wechat_signature, Tabs, $ionicModal) {
+.controller('PostCtrl', function($scope, $log, $q, cfg, store, webq, wechat_signature, Tabs, $ionicModal, $timeout) {
 
     // #TODO comment out for debugging
     // if not contains profile and accesstoken, just naviagte
@@ -129,7 +131,7 @@ angular.module('iwildfire.controllers', [])
     // if (!store.getAccessToken()) {
     //     window.location.href = '{0}/auth/wechat/embedded'.f(cfg.server);
     // }
-
+    $scope.locationDetail = {};
     $scope.params = {
         // 标题5到10个字
         title: null,
@@ -143,14 +145,14 @@ angular.module('iwildfire.controllers', [])
         // dummy data
         goods_exchange_location: {
             user_add_txt: '',
-            address: '北京市海淀区西二旗中路6号1区4号楼', // user input text
+            address: '北京市海淀区西二旗中路6号1区4号楼',
             lat: '40.056961', // latitude
             lng: '116.318857' // longitude
         },
         goods_status: '在售'
     };
 
-    $scope.tagList = Tabs;
+    $scope.tagList = Tabs.getList();
 
     $scope.qualityList = ['全新', '很新', '完好', '适用', '能用'];
 
@@ -246,6 +248,34 @@ angular.module('iwildfire.controllers', [])
         }
     };
 
+    // testSetupLocation();
+    // function testSetupLocation(){
+    //     $scope.locationDetail = {
+    //         address: '',
+    //         user_add_txt: '',
+    //         latitude: '39.916527',
+    //         longitude: '116.397128'
+    //     };
+    //     $ionicModal.fromTemplateUrl('templates/changeLocationModal.html', {
+    //         scope: $scope
+    //     }).then(function(modal) {
+    //         $scope.changeLocationModal = modal;
+    //         // modal.show();
+    //     });
+    // }
+
+    $scope.closeChangeLocationModal = function(isSubmit){
+        if (isSubmit) {
+            $timeout(function(){
+                $scope.params.goods_exchange_location.address = $scope.locationDetail.address;
+                $scope.params.goods_exchange_location.user_add_txt = $scope.locationDetail.user_add_txt;
+                $scope.params.goods_exchange_location.lat = $scope.locationDetail.latitude;
+                $scope.params.goods_exchange_location.lng = $scope.locationDetail.longitude;
+                console.log($scope.params.goods_exchange_location);
+            });
+        }
+        $scope.changeLocationModal.hide();
+    }
     setupLocation();
 
     function setupLocation() {
@@ -263,12 +293,15 @@ angular.module('iwildfire.controllers', [])
                         var speed = res.speed; // 速度，以米/每秒计
                         var accuracy = res.accuracy; // 位置精度
 
-                        $scope.latitude = latitude;
-                        $scope.longitude = longitude;
+                        $scope.locationDetail = {
+                            address: '',
+                            user_add_txt: '',
+                            latitude: latitude,
+                            longitude: longitude
+                        };
+
                         // Create the modal that we will use later
                         $ionicModal.fromTemplateUrl('templates/changeLocationModal.html', {
-                            longitude: longitude,
-                            latitude: latitude,
                             scope: $scope
                         }).then(function(modal) {
                             $scope.changeLocationModal = modal;

@@ -1,31 +1,46 @@
 angular.module('iwildfire.services', ['ngResource'])
 
 .factory('Tabs', function() {
-    return [{
-        value: 'all',
-        label: '全部'
-    }, {
-        value: 'books',
-        label: '教材书籍'
-    }, {
-        value: 'transports',
-        label: '代步工具'
-    }, {
-        value: 'electronics',
-        label: '数码电器'
-    }, {
-        value: 'supplies',
-        label: '生活用品'
-    }, {
-        value: 'healthcare',
-        label: '运动健身'
-    }, {
-        value: 'clothes',
-        label: '衣帽饰物'
-    }, {
-        value: 'others',
-        label: '其它'
-    }];
+    var _Tabs = {};
+    var list = [{
+            value: 'all',
+            label: '全部'
+        }, {
+            value: 'books',
+            label: '教材书籍'
+        }, {
+            value: 'transports',
+            label: '代步工具'
+        }, {
+            value: 'electronics',
+            label: '数码电器'
+        }, {
+            value: 'supplies',
+            label: '生活用品'
+        }, {
+            value: 'healthcare',
+            label: '运动健身'
+        }, {
+            value: 'clothes',
+            label: '衣帽饰物'
+        }, {
+            value: 'others',
+            label: '其它'
+        }];
+
+    _Tabs.getList = function(){
+        return list;
+    };
+
+    _Tabs.getLabel = function( value ){
+        for( i in list ){
+            if ( list[i]['value'] == value ) {
+                return list[i]['label'];
+            }
+        }
+    };
+
+    return _Tabs;
 })
 
 .factory('Messages', function() {

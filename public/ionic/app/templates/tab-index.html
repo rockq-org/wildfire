@@ -27,7 +27,7 @@
                           <span class="{{topic.goods_quality_degree | badge}}">{{topic.goods_quality_degree}}</span>
                         </a>
                         <div class="text-left padding-left padding-right padding-top">
-                            <a href="javascript:void(0)" class="topics-title"> <h3> {{topic.title}} </h3></a>
+                          <a ui-sref="tab.item({itemId: topic.id})" class="topics-title"> <h3> {{topic.title}} </h3></a>
                           <h3 class="price">
                             <span class="assertive">￥ {{topic.goods_now_price}}</span>
                             &nbsp;

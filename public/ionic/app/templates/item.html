@@ -1,10 +1,43 @@
-<ion-view view-title="详情">
-  <ion-nav-buttons side="right">
-  <button class="button button-icon icon ion-star" ng-class="{'topic-collected': isCollected}" ng-click="collectTopic()"></button>
-  </ion-nav-buttons>
+<ion-view view-title="{{topic.title}}">
   <ion-content class="has-header">
     <ion-refresher pulling-text="下拉刷新..." on-refresh="doRefresh()" refreshing-icon="ion-loading-c">
     </ion-refresher>
+
+    <div>
+      <ion-slide-box style="width:414px;" does-continue="true" auto-play="true" slide-interval="1000">
+          <ion-slide ng-repeat="pic in topic.goods_pics">
+              <img ng-src="{{img_prefix}}{{pic}}" style="width:414px;height:200px"  />
+          </ion-slide>
+          <ion-slide ng-repeat="pic in topic.goods_pics">
+              <img ng-src="{{img_prefix}}/api/v1/file/image-anonymous/5537c98ade18237343129d66" style="width:414px;height:200px"  />
+          </ion-slide>
+          <ion-slide ng-repeat="pic in topic.goods_pics">
+              <img ng-src="{{img_prefix}}/api/v1/file/image-anonymous/5536575c42825b3a02ded117" style="width:414px;height:200px"  />
+          </ion-slide>
+      </ion-slide-box>
+      <span class="{{topic.goods_quality_degree | badge}}">{{topic.goods_quality_degree}}</span>
+    </div>
+
+    <div class="row">
+      <div class="float-left price col col50">
+        <span class="assertive">￥ {{topic.goods_now_price}}</span>
+        &nbsp;
+        <del>￥ {{topic.goods_pre_price}}</del>
+        <br />
+        <button class="button button-assertive button-small">接受侃价</button>
+        <br />
+        <a class="button button-clear button-assertive">
+          <i class=" icon ion-ios-heart-outline"> </i> {{topic.collect_count + 0}}
+        </a>
+        &nbsp;<span class="visit-count">浏览 {{topic.visit_count + 0}}</span>
+      </div>
+      <div class="float-right col col50 text-right">
+        <div class="name-avatar">
+          <img ng-src='{{topic.author.avatar}}' />
+          <span>{{topic.author.name}}</span>
+        </div>
+      </div>
+    </div>
     <div class="row topic">
       <div class="col col90">
         <h4 class="title">{{topic.title}}</h4>

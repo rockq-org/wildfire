@@ -82,20 +82,20 @@ var show = function(req, res, next) {
             });
         }
         topic = _.pick(topic, ['id', 'author_id', 'tab', 'content', 'title', 'last_reply_at',
-            'goods_pre_price', 'goods_now_price',
+            'goods_pre_price', 'goods_now_price', 'goods_pre_price', 'update_at', 'goods_pics', 'goods_quality_degree',
             'good', 'top', 'reply_count', 'visit_count', 'create_at', 'author'
         ]);
 
         if (mdrender) {
             topic.content = renderHelper.markdown(at.linkUsers(topic.content));
         }
-        topic.author = _.pick(author, ['loginname', 'avatar_url']);
+        topic.author = _.pick(author, ['name', 'avatar']);
 
         topic.replies = replies.map(function(reply) {
             if (mdrender) {
                 reply.content = renderHelper.markdown(at.linkUsers(reply.content));
             }
-            reply.author = _.pick(reply.author, ['loginname', 'avatar_url']);
+            reply.author = _.pick(reply.author, ['name', 'avatar']);
             reply = _.pick(reply, ['id', 'author', 'content', 'ups', 'create_at']);
             return reply;
         });

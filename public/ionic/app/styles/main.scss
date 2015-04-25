@@ -78,3 +78,19 @@ input.location-address{
   text-align: right;
   width: 70%;
 }
+.visit-count{
+  line-height: 45px;
+  vertical-align: baseline;
+  color: #999;
+}
+.name-avatar{
+  img{
+    border-radius: 30px;
+    width: 40px;
+    height: 40px;
+  }
+  span{
+    line-height: 40px;
+    vertical-align: top;
+  }
+}

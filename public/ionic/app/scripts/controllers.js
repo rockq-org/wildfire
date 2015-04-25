@@ -93,12 +93,15 @@ angular.module('iwildfire.controllers', [])
   $log,
   Topics,
   Topic,
+  cfg,
   User
 ) {
   $log.debug('topic ctrl', $stateParams);
   var id = $stateParams.itemId;
   var topic = Topics.getById(id);
   $scope.topic = topic;
+  $scope.img_prefix = cfg.server;
+  $scope.avatar_prefix = cfg.api + '/avatar/';
 
   // before enter view event
   $scope.$on('$ionicView.beforeEnter', function() {

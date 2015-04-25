@@ -11,11 +11,11 @@ angular.module('iwildfire.controllers', [])
     Topics,
     Tabs,
     cfg
-    ) {
+) {
 
     $scope.sideMenus = Tabs.getList();
     $stateParams.tab = $stateParams.tab || 'all';
-    $scope.menuTitle = Tabs.getLabel( $stateParams.tab );
+    $scope.menuTitle = Tabs.getLabel($stateParams.tab);
     $scope.img_prefix = cfg.server;
 
     $scope.currentTab = Topics.currentTab();
@@ -71,45 +71,15 @@ angular.module('iwildfire.controllers', [])
     };
 
     $scope.changeSelected = function(item) {
-        $state.go('tab.index', {tab: item.value});
+        $state.go('tab.index', {
+            tab: item.value
+        });
         $scope.menuTitle = item.label;
         $stateParams.tab = item.value;
 
         $scope.currentTab = Topics.currentTab($stateParams.tab);
         $scope.doRefresh();
     }
-
-    // /***********************************
-    //  * Topic Detail Page Modal
-    //  ***********************************/
-    // $scope.detailTopic = null;
-    // $ionicModal.fromTemplateUrl('templates/modal-topic.html', {
-    //     scope: $scope,
-    //     animation: 'slide-in-up'
-    // }).then(function(modal) {
-    //     $scope.detailTopicModal = modal;
-    // });
-
-    // $scope.popupDetailTopicModal = function() {
-    //     $scope.detailTopicModal.show();
-    // }
-
-    // $scope.closeDetailTopicModal = function() {
-    //     $scope.detailTopicModal.hide();
-    // }
-
-    // // open a topic detail page
-    // $scope.handleListViewClickTopicEvent = function(topicId) {
-    //     $scope.detailTopic = _.find($scope.topics, function(x) {
-    //         return x.id == topicId;
-    //     });
-    //     $log.debug("Open Topic Details: " + JSON.stringify($scope.detailTopic));
-    //     $scope.popupDetailTopicModal();
-    // }
-
-    // /***********************************
-    //  * End of Topic Detail Page Modal
-    //  ***********************************/
 
 })
 
@@ -264,9 +234,9 @@ angular.module('iwildfire.controllers', [])
     //     });
     // }
 
-    $scope.closeChangeLocationModal = function(isSubmit){
+    $scope.closeChangeLocationModal = function(isSubmit) {
         if (isSubmit) {
-            $timeout(function(){
+            $timeout(function() {
                 $scope.params.goods_exchange_location.address = $scope.locationDetail.address;
                 $scope.params.goods_exchange_location.user_add_txt = $scope.locationDetail.user_add_txt;
                 $scope.params.goods_exchange_location.lat = $scope.locationDetail.latitude;
@@ -388,20 +358,20 @@ angular.module('iwildfire.controllers', [])
 })
 
 .controller('AccountCtrl', function($scope, $ionicModal, $log, store, cfg,
-    webq, myTopics) {
-    $log.debug(JSON.stringify(myTopics));
+    webq, myProfile, myTopics) {
+    $log.debug("myProfile" + JSON.stringify(myProfile));
+    $log.debug("myTopics: " + JSON.stringify(myTopics));
     // load user profile from localStorage
-    var userProfile = store.getUserProfile();
     var onGoingStuffs = [];
     var offShelfStuffs = [];
     var favoritesStuffs = [];
 
-    if (!userProfile && !cfg.debug) {
+    if (!myProfile && !cfg.debug) {
         // change to wechat uaa page
-        window.location.href = '{0}/auth/wechat/embedded'.f(cfg.server);
+        window.location = '{0}/auth/wechat/embedded'.f(cfg.server);
     } else if (cfg.debug) {
         // ensure dummy data for local debugging
-        userProfile = {};
+        myProfile = {};
     }
 
     /**
@@ -449,9 +419,9 @@ angular.module('iwildfire.controllers', [])
 
     function _resetScopeData() {
         $scope.data = {
-            name: userProfile.name || 'foo' /* the default values for debugging usage.*/ ,
-            avatar: userProfile.avatar || 'images/dummy-avatar.jpg',
-            phone: userProfile.phone_number || 'bar',
+            name: myProfile.name || 'foo' /* the default values for debugging usage.*/ ,
+            avatar: myProfile.avatar || 'images/dummy-avatar.jpg',
+            phone: myProfile.phone_number || 'bar',
             title: '我的呱呱',
             onGoingStuffs: onGoingStuffs,
             onGoingStuffsBadge: onGoingStuffs.length,

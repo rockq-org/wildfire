@@ -396,13 +396,13 @@ angular.module('iwildfire.services', ['ngResource'])
      * get user profile as resolve state
      * @return {[type]} [description]
      */
-    this.getUserProfileResolve = function() {
+    this.getMyProfileResolve = function() {
         var deferred = $q.defer();
         // attempt to get user profile data with cookie
         this.getUserProfile()
             .then(function(data2) {
                 store.setUserProfile(data2);
-                deferred.resolve();
+                deferred.resolve(data2);
             })
             .catch(function(err) {
                 $log.warn('getUserProfileResolve');

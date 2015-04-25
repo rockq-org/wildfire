@@ -76,29 +76,23 @@ angular.module('iwildfire', ['ionic', 'iwildfire.controllers', 'iwildfire.servic
 
     // Each tab has its own nav history stack:
     .state('tab.index', {
-        url: '/index/:tab',
-        views: {
-            'tab-index': {
-                templateUrl: 'templates/tab-index.html',
-                controller: 'IndexCtrl'
-                // ,
-                // resolve: {
-                //     userProfileResolve: function(webq) {
-                //         return webq.getUserProfileResolve();
-                //     }
-                // }
+            url: '/index/:tab',
+            views: {
+                'tab-index': {
+                    templateUrl: 'templates/tab-index.html',
+                    controller: 'IndexCtrl'
+                }
             }
-        }
-    })
-    .state('tab.item', {
-        url: '/item/:itemId',
-        views: {
-            'tab-index': {
-                templateUrl: 'templates/item.html',
-                controller: 'ItemCtrl'
+        })
+        .state('tab.item', {
+            url: '/item/:itemId',
+            views: {
+                'tab-index': {
+                    templateUrl: 'templates/item.html',
+                    controller: 'ItemCtrl'
+                }
             }
-        }
-    })
+        })
 
     .state('tab.post', {
         url: '/post',
@@ -154,6 +148,9 @@ angular.module('iwildfire', ['ionic', 'iwildfire.controllers', 'iwildfire.servic
                 templateUrl: 'templates/tab-account.html',
                 controller: 'AccountCtrl',
                 resolve: {
+                    myProfile: function(webq) {
+                        return webq.getMyProfileResolve();
+                    },
                     myTopics: function(webq) {
                         return webq.getMyTopicsResolve();
                     }

@@ -183,6 +183,8 @@ exports.newOrUpdate = function(profile) {
             user.accessToken = uuid.v4();
             user.passport = 'wechat';
             user.profile = profile;
+            user.subscribe_type = profile.subscribe_type;
+            user.subscribe_source_identifier = profile.subscribe_source_identifier;
             user.save(function(err, doc) {
                 if (err) {
                     deferred.reject({

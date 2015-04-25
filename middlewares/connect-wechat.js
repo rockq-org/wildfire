@@ -13,6 +13,7 @@ var redisq = require('../persistence/redisq');
 var wxCfg = config.wechat_gzh;
 var fileStorage = require('../api/v1/fileStorage');
 var UserProxy = require('../proxy').User;
+var minimatch = require('minimatch');
 
 
 /**
@@ -42,11 +43,12 @@ function _downloadWechatServerImage(userId, serverId) {
 
 /**
  * create user account by restrieving user profile data 
- * by openId
- * @param  {[type]} openId [description]
+ * by msg
+ * @param  {[type]} msg [description]
  * @return {[type]}        [description]
  */
-function _createUserAccountByOpenId(openId) {
+function _createUserAccountByOpenId(msg) {
+    var openId = msg.FromUserName;
     logger.debug('_saveUserProfileDataByOpenId', 'start to save OpenID: ' + openId);
     var defer = Q.defer();
     _getWxAccessTokenFromRedis()
@@ -64,7 +66,12 @@ function _createUserAccountByOpenId(openId) {
                         logger.debug(JSON.stringify(resp));
                         // create user account by user proxy
                         logger.debug('_createUserAccountByOpenId', JSON.stringify(resp.body));
-                        UserProxy.newOrUpdate(resp.body);
+                        var userProfile = resp.body;
+                        if (minimatch(msg.EventKey, 'qrscene*')) {
+                            userProfile.subscribe_type = 'scan_qr';
+                            userProfile.subscribe_source_identifier = msg.Ticket;
+                        }
+                        UserProxy.newOrUpdate(userProfile);
                     }
                 });
         })
@@ -78,7 +85,7 @@ function _createUserAccountByOpenId(openId) {
 
 function onSubscribe(msg, res) {
     // get user profile data with RESt API
-    _createUserAccountByOpenId(msg.FromUserName);
+    _createUserAccountByOpenId(msg);
     res.reply([{
         title: '注册账号',
         description: '使用微信登陆呱呱叫，未注册用户可浏览二手物品信息。',

@@ -1,0 +1,16 @@
+{
+  "gQE_7zoAAAAAAAAAASxodHRwOi8vd2VpeGluLnFxLmNvbS9xL3pVem1wZi1sQmt0LW83TTVxbVJGAAIEejQ7VQMEAAAAAA==": {
+    "metadata": {
+      "action_name": "QR_LIMIT_STR_SCENE",
+      "action_info": {
+        "scene": {
+          "scene_str": "1",
+          "scene_id": 1
+        }
+      }
+    },
+    "channel_key": "北邮拓展代理",
+    "channel_stakeholder": "张三",
+    "channel_stakeholder_phone": "100000"
+  }
+}

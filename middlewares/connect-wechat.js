@@ -12,6 +12,7 @@ var wxSign = require("weixin-signature").sign;
 var redisq = require('../persistence/redisq');
 var wxCfg = config.wechat_gzh;
 var fileStorage = require('../api/v1/fileStorage');
+var userProxy = require('../proxy').User;
 
 
 /**
@@ -40,11 +41,12 @@ function _downloadWechatServerImage(userId, serverId) {
 }
 
 /**
- * [_saveUserProfileDataByOpenId description]
+ * create user account by restrieving user profile data 
+ * by openId
  * @param  {[type]} openId [description]
  * @return {[type]}        [description]
  */
-function _saveUserProfileDataByOpenId(openId) {
+function _createUserAccountByOpenId(openId) {
     logger.debug('_saveUserProfileDataByOpenId', 'start to save OpenID: ' + openId);
     var defer = Q.defer();
     _getWxAccessTokenFromRedis()
@@ -60,14 +62,8 @@ function _saveUserProfileDataByOpenId(openId) {
                         throw new Error('Can not get profile data.');
                     } else {
                         logger.debug(JSON.stringify(resp));
-                        /**
-                         * Get an error POST /collections/WXUsers 400 when
-                         * an user unscribe first, and later subscribe again.
-                         * #TODO need to handle this error with reflux's promise
-                         * There are two solution, check user by UnionID before post
-                         * or change to put after getting the duplicated key error.
-                         */
-                        reflux.post('/collections/WXUsers', resp.body);
+                        // #TODO create user account by user proxy
+                        logger.debug('_createUserAccountByOpenId', JSON.stringify(resp.body));
                     }
                 });
         })
@@ -81,7 +77,7 @@ function _saveUserProfileDataByOpenId(openId) {
 
 function onSubscribe(msg, res) {
     // get user profile data with RESt API
-    // _saveUserProfileDataByOpenId(msg.FromUserName);
+    _createUserAccountByOpenId(msg.FromUserName);
     res.reply([{
         title: '注册账号',
         description: '使用微信登陆呱呱叫，未注册用户可浏览二手物品信息。',

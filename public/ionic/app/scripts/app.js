@@ -90,6 +90,7 @@ angular.module('iwildfire', ['ionic', 'iwildfire.controllers', 'iwildfire.servic
             }
         }
     })
+
     .state('tab.item', {
         url: '/item/:itemId',
         views: {

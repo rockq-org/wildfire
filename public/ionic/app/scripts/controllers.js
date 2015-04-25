@@ -11,11 +11,11 @@ angular.module('iwildfire.controllers', [])
     Topics,
     Tabs,
     cfg
-    ) {
+) {
 
     $scope.sideMenus = Tabs.getList();
     $stateParams.tab = $stateParams.tab || 'all';
-    $scope.menuTitle = Tabs.getLabel( $stateParams.tab );
+    $scope.menuTitle = Tabs.getLabel($stateParams.tab);
     $scope.img_prefix = cfg.server;
 
     $scope.currentTab = Topics.currentTab();
@@ -71,7 +71,9 @@ angular.module('iwildfire.controllers', [])
     };
 
     $scope.changeSelected = function(item) {
-        $state.go('tab.index', {tab: item.value});
+        $state.go('tab.index', {
+            tab: item.value
+        });
         $scope.menuTitle = item.label;
         $stateParams.tab = item.value;
 
@@ -263,10 +265,10 @@ angular.module('iwildfire.controllers', [])
         goods_is_bargain: true,
         // dummy data
         goods_exchange_location: {
-            user_add_txt: '',
-            address: '北京市海淀区西二旗中路6号1区4号楼',
-            lat: '40.056961', // latitude
-            lng: '116.318857' // longitude
+            user_add_txt: null,
+            address: null,
+            lat: null, // latitude
+            lng: null // longitude
         },
         goods_status: '在售'
     };
@@ -383,9 +385,9 @@ angular.module('iwildfire.controllers', [])
     //     });
     // }
 
-    $scope.closeChangeLocationModal = function(isSubmit){
+    $scope.closeChangeLocationModal = function(isSubmit) {
         if (isSubmit) {
-            $timeout(function(){
+            $timeout(function() {
                 $scope.params.goods_exchange_location.address = $scope.locationDetail.address;
                 $scope.params.goods_exchange_location.user_add_txt = $scope.locationDetail.user_add_txt;
                 $scope.params.goods_exchange_location.lat = $scope.locationDetail.latitude;
@@ -395,7 +397,6 @@ angular.module('iwildfire.controllers', [])
         }
         $scope.changeLocationModal.hide();
     }
-    setupLocation();
 
     function setupLocation() {
         if (wechat_signature) {
@@ -509,20 +510,24 @@ angular.module('iwildfire.controllers', [])
 })
 
 .controller('AccountCtrl', function($scope, $ionicModal, $log, store, cfg,
-    webq, myTopics) {
-    $log.debug(JSON.stringify(myTopics));
+    webq, myProfile, myTopics) {
+    $log.debug("myProfile" + JSON.stringify(myProfile));
+    $log.debug("myTopics: " + JSON.stringify(myTopics));
     // load user profile from localStorage
-    var userProfile = store.getUserProfile();
     var onGoingStuffs = [];
     var offShelfStuffs = [];
     var favoritesStuffs = [];
 
-    if (!userProfile && !cfg.debug) {
+    if (!myProfile && !cfg.debug) {
         // change to wechat uaa page
-        window.location.href = '{0}/auth/wechat/embedded'.f(cfg.server);
+        window.location = '{0}/auth/wechat/embedded'.f(cfg.server);
+        // Just to avoid myProfile = null
+        // In that case, the script would throw an error. Even
+        // it does not crash the app, but it is not friendly.
+        myProfile = {};
     } else if (cfg.debug) {
         // ensure dummy data for local debugging
-        userProfile = {};
+        myProfile = {};
     }
 
     /**
@@ -570,9 +575,9 @@ angular.module('iwildfire.controllers', [])
 
     function _resetScopeData() {
         $scope.data = {
-            name: userProfile.name || 'foo' /* the default values for debugging usage.*/ ,
-            avatar: userProfile.avatar || 'images/dummy-avatar.jpg',
-            phone: userProfile.phone_number || 'bar',
+            name: myProfile.name || '未登录' /* the default values for debugging usage.*/ ,
+            avatar: myProfile.avatar || 'images/dummy/avatar.jpg',
+            phone: myProfile.phone_number || '未绑定',
             title: '我的呱呱',
             onGoingStuffs: onGoingStuffs,
             onGoingStuffsBadge: onGoingStuffs.length,
@@ -611,26 +616,6 @@ angular.module('iwildfire.controllers', [])
             default:
                 break;
         }
-    }
-
-
-    /**
-     * settings modal
-     * @return {[type]} [description]
-     */
-    $ionicModal.fromTemplateUrl('templates/modal-settings.html', {
-        scope: $scope,
-        animation: 'slide-in-up'
-    }).then(function(modal) {
-        $scope.settingsModal = modal;
-    });
-
-    $scope.popupSettings = function() {
-        $scope.settingsModal.show();
-    }
-
-    $scope.closePopupSettings = function() {
-        $scope.settingsModal.hide();
     }
 
     /**
@@ -836,15 +821,23 @@ angular.module('iwildfire.controllers', [])
     $scope,
     $state,
     store) {
-
     var accesstoken = $stateParams.accessToken;
     $log.debug('Get accesstoken ' + accesstoken);
-
     if (accesstoken) {
         store.setAccessToken($stateParams.accessToken);
     }
-
     $state.go('tab.index');
+})
+
+.controller('SettingsCtrl', function($log, $scope, $state, store) {
+    $log.debug('SettingsCtrl ...');
+    $scope.goBackProfile = function() {
+        $state.go('tab.account');
+    }
+
+    $scope.goBackSettings = function () {
+        $state.go('settings');
+    }
 })
 
 ;

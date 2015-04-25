@@ -76,17 +76,12 @@ angular.module('iwildfire', ['ionic', 'iwildfire.controllers', 'iwildfire.servic
 
     // Each tab has its own nav history stack:
     .state('tab.index', {
-        url: '/index/:tab',
-        views: {
-            'tab-index': {
-                templateUrl: 'templates/tab-index.html',
-                controller: 'IndexCtrl'
-                // ,
-                // resolve: {
-                //     userProfileResolve: function(webq) {
-                //         return webq.getUserProfileResolve();
-                //     }
-                // }
+            url: '/index/:tab',
+            views: {
+                'tab-index': {
+                    templateUrl: 'templates/tab-index.html',
+                    controller: 'IndexCtrl'
+                }
             }
         }
     })
@@ -155,12 +150,45 @@ angular.module('iwildfire', ['ionic', 'iwildfire.controllers', 'iwildfire.servic
                 templateUrl: 'templates/tab-account.html',
                 controller: 'AccountCtrl',
                 resolve: {
+                    myProfile: function(webq) {
+                        return webq.getMyProfileResolve();
+                    },
                     myTopics: function(webq) {
                         return webq.getMyTopicsResolve();
                     }
                 }
             }
         }
+    })
+
+    .state('settings', {
+        url: '/settings',
+        templateUrl: 'templates/settings/index.html',
+        controller: 'SettingsCtrl'
+    })
+
+    .state('service-agreement', {
+        url: '/service-agreement',
+        templateUrl: 'templates/settings/service-agreement.html',
+        controller: 'SettingsCtrl'
+    })
+
+    .state('feedback', {
+        url: '/feedback',
+        templateUrl: 'templates/settings/feedback.html',
+        controller: 'SettingsCtrl'
+    })
+
+    .state('about', {
+        url: '/about',
+        templateUrl: 'templates/settings/about.html',
+        controller: 'SettingsCtrl'
+    })
+
+    .state('help', {
+        url: '/help',
+        templateUrl: 'templates/settings/help.html',
+        controller: 'SettingsCtrl'
     })
 
     .state('bind-mobile-phone', {

@@ -114,10 +114,10 @@ angular.module('iwildfire.controllers', [])
         goods_is_bargain: true,
         // dummy data
         goods_exchange_location: {
-            user_add_txt: '',
-            address: '北京市海淀区西二旗中路6号1区4号楼',
-            lat: '40.056961', // latitude
-            lng: '116.318857' // longitude
+            user_add_txt: null,
+            address: null,
+            lat: null, // latitude
+            lng: null // longitude
         },
         goods_status: '在售'
     };

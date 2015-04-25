@@ -369,6 +369,10 @@ angular.module('iwildfire.controllers', [])
     if (!myProfile && !cfg.debug) {
         // change to wechat uaa page
         window.location = '{0}/auth/wechat/embedded'.f(cfg.server);
+        // Just to avoid myProfile = null
+        // In that case, the script would throw an error. Even 
+        // it does not crash the app, but it is not friendly.
+        myProfile = {};
     } else if (cfg.debug) {
         // ensure dummy data for local debugging
         myProfile = {};
@@ -419,9 +423,9 @@ angular.module('iwildfire.controllers', [])
 
     function _resetScopeData() {
         $scope.data = {
-            name: myProfile.name || 'foo' /* the default values for debugging usage.*/ ,
-            avatar: myProfile.avatar || 'images/dummy-avatar.jpg',
-            phone: myProfile.phone_number || 'bar',
+            name: myProfile.name || '未登录' /* the default values for debugging usage.*/ ,
+            avatar: myProfile.avatar || 'images/dummy/avatar.jpg',
+            phone: myProfile.phone_number || '未绑定',
             title: '我的呱呱',
             onGoingStuffs: onGoingStuffs,
             onGoingStuffsBadge: onGoingStuffs.length,

@@ -159,6 +159,36 @@ angular.module('iwildfire', ['ionic', 'iwildfire.controllers', 'iwildfire.servic
         }
     })
 
+    .state('settings', {
+        url: '/settings',
+        templateUrl: 'templates/settings/index.html',
+        controller: 'SettingsCtrl'
+    })
+
+    .state('service-agreement', {
+        url: '/service-agreement',
+        templateUrl: 'templates/settings/service-agreement.html',
+        controller: 'SettingsCtrl'
+    })
+
+    .state('feedback', {
+        url: '/feedback',
+        templateUrl: 'templates/settings/feedback.html',
+        controller: 'SettingsCtrl'
+    })
+
+    .state('about', {
+        url: '/about',
+        templateUrl: 'templates/settings/about.html',
+        controller: 'SettingsCtrl'
+    })
+
+    .state('help', {
+        url: '/help',
+        templateUrl: 'templates/settings/help.html',
+        controller: 'SettingsCtrl'
+    })
+
     .state('bind-mobile-phone', {
         url: '/bind-mobile-phone/:accessToken',
         templateUrl: 'templates/bind-mobile-phone.html',

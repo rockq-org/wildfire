@@ -246,7 +246,7 @@ angular.module('iwildfire.controllers', [])
         }
         $scope.changeLocationModal.hide();
     }
-    
+
     function setupLocation() {
         if (wechat_signature) {
             wechat_signature.jsApiList = ['getLocation', 'openLocation'];
@@ -465,26 +465,6 @@ angular.module('iwildfire.controllers', [])
         }
     }
 
-
-    /**
-     * settings modal
-     * @return {[type]} [description]
-     */
-    $ionicModal.fromTemplateUrl('templates/modal-settings.html', {
-        scope: $scope,
-        animation: 'slide-in-up'
-    }).then(function(modal) {
-        $scope.settingsModal = modal;
-    });
-
-    $scope.popupSettings = function() {
-        $scope.settingsModal.show();
-    }
-
-    $scope.closePopupSettings = function() {
-        $scope.settingsModal.hide();
-    }
-
     /**
      * 下架
      * tab: onGoingStuffs
@@ -688,15 +668,23 @@ angular.module('iwildfire.controllers', [])
     $scope,
     $state,
     store) {
-
     var accesstoken = $stateParams.accessToken;
     $log.debug('Get accesstoken ' + accesstoken);
-
     if (accesstoken) {
         store.setAccessToken($stateParams.accessToken);
     }
-
     $state.go('tab.index');
+})
+
+.controller('SettingsCtrl', function($log, $scope, $state, store) {
+    $log.debug('SettingsCtrl ...');
+    $scope.goBackProfile = function() {
+        $state.go('tab.account');
+    }
+
+    $scope.goBackSettings = function () {
+        $state.go('settings');
+    }
 })
 
 ;

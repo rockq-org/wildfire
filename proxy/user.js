@@ -158,6 +158,7 @@ exports.newOrUpdate = function(profile) {
             doc.name = profile.nickname;
             doc.avatar = profile.headimgurl;
             doc.profile = profile;
+            doc.markModified('profile');
             doc.save(function(err) {
                 if (err) {
                     deferred.reject({

@@ -12,7 +12,7 @@ var wxSign = require("weixin-signature").sign;
 var redisq = require('../persistence/redisq');
 var wxCfg = config.wechat_gzh;
 var fileStorage = require('../api/v1/fileStorage');
-var userProxy = require('../proxy').User;
+var UserProxy = require('../proxy').User;
 
 
 /**
@@ -62,8 +62,9 @@ function _createUserAccountByOpenId(openId) {
                         throw new Error('Can not get profile data.');
                     } else {
                         logger.debug(JSON.stringify(resp));
-                        // #TODO create user account by user proxy
+                        // create user account by user proxy
                         logger.debug('_createUserAccountByOpenId', JSON.stringify(resp.body));
+                        UserProxy.newOrUpdate(resp.body);
                     }
                 });
         })
@@ -141,7 +142,7 @@ function onDefault(msg, res) {
     // body...
     logger.warn('onDefault', msg);
     res.reply({
-        content: '我们收到了您的消息，本回复为自动回复。您的请求正在由服务人员处理，稍后与您联系。',
+        content: 'We have no help desk，您闲的蛋疼吗？',
         type: 'text'
     });
 }

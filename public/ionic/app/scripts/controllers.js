@@ -398,6 +398,7 @@ angular.module('iwildfire.controllers', [])
         $scope.changeLocationModal.hide();
     }
 
+    setupLocation();
     function setupLocation() {
         if (wechat_signature) {
             wechat_signature.jsApiList = ['getLocation', 'openLocation'];

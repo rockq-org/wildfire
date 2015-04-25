@@ -83,7 +83,6 @@ angular.module('iwildfire', ['ionic', 'iwildfire.controllers', 'iwildfire.servic
                     controller: 'IndexCtrl'
                 }
             }
-        }
     })
 
     .state('tab.item', {

@@ -416,6 +416,7 @@ angular.module('iwildfire.services', ['ngResource'])
     var currentTab = 'all';
     var nextPage = 1;
     var hasNextPage = true;
+    var text = null;
     var resource = $resource(cfg.api + '/topics', {}, {
         query: {
             method: 'get',
@@ -428,10 +429,11 @@ angular.module('iwildfire.services', ['ngResource'])
             timeout: 20000
         }
     });
-    var getTopics = function(tab, page, callback) {
+    var getTopics = function(tab, page, text, callback) {
         return resource.query({
             tab: tab,
-            page: page
+            page: page,
+            text: text
         }, function(r) {
             $log.debug('get topics tab:', tab, 'page:', page, 'data:', r.data);
             return callback && callback(r);
@@ -439,14 +441,14 @@ angular.module('iwildfire.services', ['ngResource'])
     };
     return {
         refresh: function() {
-            return getTopics(currentTab, 1, function(response) {
+            return getTopics(currentTab, 1, text, function(response) {
                 nextPage = 2;
                 hasNextPage = true;
                 topics = response.data;
             });
         },
         pagination: function() {
-            return getTopics(currentTab, nextPage, function(response) {
+            return getTopics(currentTab, nextPage, text, function(response) {
                 if (response.data.length < 10) {
                     $log.debug('response data length', response.data.length);
                     hasNextPage = false;
@@ -469,11 +471,15 @@ angular.module('iwildfire.services', ['ngResource'])
         },
         resetData: function() {
             topics = [];
+            text = {};
             nextPage = 1;
             hasNextPage = true;
         },
         getTopics: function() {
             return topics;
+        },
+        setQuery: function(query) {
+            text = query
         },
         getById: function(id) {
 

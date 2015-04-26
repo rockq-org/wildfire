@@ -78,6 +78,28 @@ angular.module('iwildfire.controllers', [])
     }
 
     /***********************************
+     * Search
+     ***********************************/
+    $scope.tabTitle = '首页';
+    $scope.SearchText = '搜索';
+    $scope.showSearch = false;
+    $scope.doSearch = function(query){
+        if(!($scope.showSearch)){
+            $scope.showSearch = true;
+            $log.debug('showSearch');
+            return;
+        }
+        if(!query) return;
+        $log.debug('doSearch');
+        $scope.topics.splice(0,1);
+        $log.debug('searchText', query);
+        $scope.tabTitle = query;
+    }
+    $scope.endSearch = function(){
+        $scope.showSearch = false;
+    }
+
+    /***********************************
      * Topic Detail Page Modal
      ***********************************/
     $scope.detailTopic = null;

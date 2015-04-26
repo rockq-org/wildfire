@@ -6,8 +6,9 @@
               <div class="buttons">
                   <button class="button button-icon ion-navicon" menu-toggle="left"> {{menuTitle}}</button>
               </div>
-              <h1 class="title">首页</h1>
-              <a class="button button-icon icon ion-ios7-search" ng-click="search()"></a>
+              <h1 class="title" ng-click="endSearch()">{{tabTitle}}</h1>
+              <input class="searchbox" ng-class="showSearch?'expanded':''" ng-model="query" type="text" placeholder="">
+              <a class="button button-icon icon ion-ios7-search pull-right" ng-click="doSearch(query)"></a>
           </ion-header-bar>
           <ion-nav-view name="menuContent">
               <ion-content class="has-header">

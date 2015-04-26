@@ -93,11 +93,11 @@ angular.module('iwildfire.controllers', [])
             $log.debug('showSearch');
             return;
         }
-        if(!query) return;
         $log.debug('doSearch');
-        $scope.topics.splice(0,1);
+        Topics.setQuery(query);
+        $scope.doRefresh();
         $log.debug('searchText', query);
-        $scope.tabTitle = query;
+        $scope.tabTitle = query||'首页';
     }
     $scope.endSearch = function(){
         $scope.showSearch = false;

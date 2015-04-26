@@ -1,31 +1,46 @@
 angular.module('iwildfire.services', ['ngResource'])
 
 .factory('Tabs', function() {
-    return [{
-        value: 'all',
-        label: '全部'
-    }, {
-        value: 'books',
-        label: '教材书籍'
-    }, {
-        value: 'transports',
-        label: '代步工具'
-    }, {
-        value: 'electronics',
-        label: '数码电器'
-    }, {
-        value: 'supplies',
-        label: '生活用品'
-    }, {
-        value: 'healthcare',
-        label: '运动健身'
-    }, {
-        value: 'clothes',
-        label: '衣帽饰物'
-    }, {
-        value: 'others',
-        label: '其它'
-    }];
+    var _Tabs = {};
+    var list = [{
+            value: 'all',
+            label: '全部'
+        }, {
+            value: 'books',
+            label: '教材书籍'
+        }, {
+            value: 'transports',
+            label: '代步工具'
+        }, {
+            value: 'electronics',
+            label: '数码电器'
+        }, {
+            value: 'supplies',
+            label: '生活用品'
+        }, {
+            value: 'healthcare',
+            label: '运动健身'
+        }, {
+            value: 'clothes',
+            label: '衣帽饰物'
+        }, {
+            value: 'others',
+            label: '其它'
+        }];
+
+    _Tabs.getList = function(){
+        return list;
+    };
+
+    _Tabs.getLabel = function( value ){
+        for( i in list ){
+            if ( list[i]['value'] == value ) {
+                return list[i]['label'];
+            }
+        }
+    };
+
+    return _Tabs;
 })
 
 .factory('Messages', function() {
@@ -381,13 +396,13 @@ angular.module('iwildfire.services', ['ngResource'])
      * get user profile as resolve state
      * @return {[type]} [description]
      */
-    this.getUserProfileResolve = function() {
+    this.getMyProfileResolve = function() {
         var deferred = $q.defer();
         // attempt to get user profile data with cookie
         this.getUserProfile()
             .then(function(data2) {
                 store.setUserProfile(data2);
-                deferred.resolve();
+                deferred.resolve(data2);
             })
             .catch(function(err) {
                 $log.warn('getUserProfileResolve');
@@ -592,4 +607,100 @@ angular.module('iwildfire.services', ['ngResource'])
             });
         }
     };
-});
+})
+
+.factory('Storage', function($log) {
+
+  return {
+    set: function(key, data) {
+      return window.localStorage.setItem(key, window.JSON.stringify(data));
+    },
+    get: function(key) {
+      return window.JSON.parse(window.localStorage.getItem(key));
+    },
+    remove: function(key) {
+      return window.localStorage.removeItem(key);
+    }
+  };
+})
+
+.factory('User', function(cfg, $resource, $log, $q, Storage) {
+  var storageKey = 'user';
+  var resource = $resource(cfg.api + '/accesstoken');
+  var userResource = $resource(cfg.api + '/user/:loginname', {
+    loginname: ''
+  });
+  var user = Storage.get(storageKey) || {};
+  return {
+    login: function(accesstoken) {
+      var $this = this;
+      return resource.save({
+        accesstoken: accesstoken
+      }, null, function(response) {
+        $log.debug('post accesstoken:', response);
+        user.accesstoken = accesstoken;
+        $this.getByLoginName(response.loginname).$promise.then(function(r) {
+          user = r.data;
+          user.id = response.id;
+          user.accesstoken = accesstoken;
+
+          // set alias for jpush
+          // Push.setAlias(user.id);
+
+          Storage.set(storageKey, user);
+        });
+        user.loginname = response.loginname;
+      });
+    },
+    logout: function() {
+      user = {};
+      Storage.remove(storageKey);
+
+      // unset alias for jpush
+      // Push.setAlias('');
+    },
+    getCurrentUser: function() {
+      $log.debug('current user:', user);
+      return user;
+    },
+    getByLoginName: function(loginName) {
+      if (user && loginName === user.loginname) {
+        var userDefer = $q.defer();
+        $log.debug('get user info from storage:', user);
+        userDefer.resolve({
+          data: user
+        });
+        return {
+          $promise: userDefer.promise
+        };
+      }
+      return this.get(loginName);
+    },
+    get: function(loginName) {
+      return userResource.get({
+        loginname: loginName
+      }, function(response) {
+        $log.debug('get user info:', response);
+        if (user && user.loginname === loginName) {
+          angular.extend(user, response.data);
+
+          Storage.set(storageKey, user);
+        }
+      });
+    },
+    collectTopic: function(topicId) {
+      user.collect_topics.push({
+        id: topicId
+      });
+      Storage.set(storageKey, user);
+    },
+    deCollectTopic: function(topicId) {
+      angular.forEach(user.collect_topics, function(topic, key) {
+        if (topic.id === topicId) {
+          user.collect_topics.splice(key, 1);
+        }
+      });
+      Storage.set(storageKey, user);
+    }
+  };
+})

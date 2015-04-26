@@ -61,6 +61,7 @@ $ionicons-font-path: "../fonts" !default;
     font-size: 90%;
   }
 }
+
 .searchbox {
   width:0px;
   padding: 0;
@@ -75,4 +76,37 @@ $ionicons-font-path: "../fonts" !default;
 .searchbox.expanded {
   width:30% !important;
   padding:5px 10px !important;
+}
+
+input.user-add-txt,
+input.location-address{
+  float: left;
+  font-size: 100%;
+  width: 30%;
+  height:44px;
+  padding:0;
+  line-height:44px;
+  vertical-align: baseline;
+}
+.location-address,
+input.location-address{
+  float: left;
+  text-align: right;
+  width: 70%;
+}
+.visit-count{
+  line-height: 45px;
+  vertical-align: baseline;
+  color: #999;
+}
+.name-avatar{
+  img{
+    border-radius: 30px;
+    width: 40px;
+    height: 40px;
+  }
+  span{
+    line-height: 40px;
+    vertical-align: top;
+  }
 }

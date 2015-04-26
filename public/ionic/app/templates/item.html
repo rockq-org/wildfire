@@ -1,0 +1,95 @@
+<ion-view view-title="{{topic.title}}">
+  <ion-content class="has-header">
+    <ion-refresher pulling-text="下拉刷新..." on-refresh="doRefresh()" refreshing-icon="ion-loading-c">
+    </ion-refresher>
+
+    <div>
+      <ion-slide-box style="width:414px;" does-continue="true" auto-play="true" slide-interval="1000">
+          <ion-slide ng-repeat="pic in topic.goods_pics">
+              <img ng-src="{{img_prefix}}{{pic}}" style="width:414px;height:200px"  />
+          </ion-slide>
+          <ion-slide ng-repeat="pic in topic.goods_pics">
+              <img ng-src="{{img_prefix}}/api/v1/file/image-anonymous/5537c98ade18237343129d66" style="width:414px;height:200px"  />
+          </ion-slide>
+          <ion-slide ng-repeat="pic in topic.goods_pics">
+              <img ng-src="{{img_prefix}}/api/v1/file/image-anonymous/5536575c42825b3a02ded117" style="width:414px;height:200px"  />
+          </ion-slide>
+      </ion-slide-box>
+      <span class="{{topic.goods_quality_degree | badge}}">{{topic.goods_quality_degree}}</span>
+    </div>
+
+    <div class="row">
+      <div class="float-left price col col50">
+        <span class="assertive">￥ {{topic.goods_now_price}}</span>
+        &nbsp;
+        <del>￥ {{topic.goods_pre_price}}</del>
+        <br />
+        <button class="button button-assertive button-small">接受侃价</button>
+        <br />
+        <a class="button button-clear button-assertive">
+          <i class=" icon ion-ios-heart-outline"> </i> {{topic.collect_count + 0}}
+        </a>
+        &nbsp;<span class="visit-count">浏览 {{topic.visit_count + 0}}</span>
+      </div>
+      <div class="float-right col col50 text-right">
+        <div class="name-avatar">
+          <img ng-src='{{topic.author.avatar}}' />
+          <span>{{topic.author.name}}</span>
+        </div>
+      </div>
+    </div>
+    <div class="row topic">
+      <div class="col col90">
+        <h4 class="title">{{topic.title}}</h4>
+        <div class="summary">
+          <strong>
+            <a href="#/user/{{topic.author.loginname}}">
+              <img ng-src="{{topic.author.avatar_url | protocol}}" class="avatar">
+              {{topic.author.loginname}}</a>
+          </strong>
+          <span class="item-note" am-time-ago="topic.last_reply_at"></span>
+        </div>
+        <div class="topic-content" ng-bind-html="topic.content | link">
+        </div>
+      </div>
+    </div>
+    <ion-list class="replies">
+      <ion-item class="item-loading" ng-if="topic.replies == undefined">
+        <span ng-if="!loadError">
+          加载中...
+        </span>
+        <span ng-if="loadError">
+          加载失败
+        </span>
+      </ion-item>
+      <ion-item ng-if="topic.replies.length == 0">
+        暂无评论
+      </ion-item>
+      <ion-item class="item-avatar" ng-repeat="reply in topic.replies" ng-click="showActions(reply)">
+        <img ng-src="{{reply.author.avatar_url | protocol}}" ng-if="!settings.saverMode">
+        <p>
+          <a href="#/user/{{reply.author.loginname}}" ng-class="{'bold': reply.author.loginname == topic.author.loginname}">
+            {{reply.author.loginname}}
+          </a>
+          <span class="item-note" am-time-ago="reply.create_at">
+          </span>
+          <span class="item-note cnode" ng-if="reply.ups.length > 0">
+            <i class="icon ion-thumbsup"></i>
+            {{reply.ups.length}}
+            &nbsp;
+          </span>
+        </p>
+        <div class="reply-content" ng-bind-html="reply.content | link"></div>
+      </ion-item>
+    </ion-list>
+    <br />
+  </ion-content>
+  <ion-footer-bar align-title="left" class="bar-light reply-new" keyboard-attach>
+    <label class="item-input-wrapper">
+      <input type="text" placeholder="回复" ng-model="replyData.content" ng-disabled="loginName == null">
+    </label>
+    <button class="button button-small button-clear button-positive" ng-click="saveReply()" ng-class="{'disabled':loginName == null || replyData.content == ''}">
+      提交
+    </button>
+  </ion-footer-bar>
+</ion-view>

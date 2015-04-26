@@ -10,12 +10,12 @@ angular.module('iwildfire.controllers', [])
     $log,
     Topics,
     Tabs,
-    cfg,
-    userProfileResolve) {
+    cfg
+) {
 
-    $scope.sideMenus = Tabs;
-    $scope.menuTitle = '全部';
-    $stateParams.tab = 'all';
+    $scope.sideMenus = Tabs.getList();
+    $stateParams.tab = $stateParams.tab || 'all';
+    $scope.menuTitle = Tabs.getLabel($stateParams.tab);
     $scope.img_prefix = cfg.server;
 
     $scope.currentTab = Topics.currentTab();
@@ -32,13 +32,14 @@ angular.module('iwildfire.controllers', [])
     // pagination
     $scope.hasNextPage = Topics.hasNextPage();
     $scope.loadError = false;
-    $log.debug('page load, has next page ? ', $scope.hasNextPage);
+    // $log.debug('page load, has next page ? ', $scope.hasNextPage);
     $scope.doRefresh = function() {
         Topics.currentTab($stateParams.tab);
         $log.debug('do refresh');
         Topics.refresh().$promise.then(function(response) {
             $log.debug('do refresh complete');
             $scope.topics = response.data;
+            console.log(response.data);
             $scope.hasNextPage = true;
             $scope.loadError = false;
         }, $rootScope.requestErrorHandler({
@@ -70,6 +71,9 @@ angular.module('iwildfire.controllers', [])
     };
 
     $scope.changeSelected = function(item) {
+        $state.go('tab.index', {
+            tab: item.value
+        });
         $scope.menuTitle = item.label;
         $stateParams.tab = item.value;
 
@@ -98,39 +102,161 @@ angular.module('iwildfire.controllers', [])
     $scope.endSearch = function(){
         $scope.showSearch = false;
     }
+})
 
-    /***********************************
-     * Topic Detail Page Modal
-     ***********************************/
-    $scope.detailTopic = null;
-    $ionicModal.fromTemplateUrl('templates/modal-topic.html', {
-        scope: $scope,
-        animation: 'slide-in-up'
-    }).then(function(modal) {
-        $scope.detailTopicModal = modal;
+.controller('ItemCtrl', function(
+  $scope,
+  $rootScope,
+  $stateParams,
+  $timeout,
+  $ionicLoading,
+  $ionicActionSheet,
+  $ionicScrollDelegate,
+  $log,
+  Topics,
+  Topic,
+  cfg,
+  User
+) {
+  $log.debug('topic ctrl', $stateParams);
+  var id = $stateParams.itemId;
+  var topic = Topics.getById(id);
+  $scope.topic = topic;
+  $scope.img_prefix = cfg.server;
+  $scope.avatar_prefix = cfg.api + '/avatar/';
+
+  // before enter view event
+  $scope.$on('$ionicView.beforeEnter', function() {
+    // track view
+    if (window.analytics) {
+      window.analytics.trackView('topic view');
+    }
+  });
+
+  // load topic data
+  $scope.loadTopic = function(reload) {
+    var topicResource;
+    if (reload === true) {
+      topicResource = Topic.get(id);
+    } else {
+      topicResource = Topic.getById(id);
+    }
+    return topicResource.$promise.then(function(response) {
+        $scope.topic = response.data;
+      }, $rootScope.requestErrorHandler({
+        noBackdrop: true
+      }, function() {
+        $scope.loadError = true;
+      })
+    );
+  };
+  $scope.loadTopic();
+
+  // detect if user has collected this topic
+  var currentUser = User.getCurrentUser();
+  $scope.isCollected = false;
+  angular.forEach(currentUser.collect_topics, function(topics) {
+    if (topics.id === id) {
+      $scope.isCollected = true;
+    }
+  });
+
+  // do refresh
+  $scope.doRefresh = function() {
+    return $scope.loadTopic(true).then(function(response) {
+        $log.debug('do refresh complete');
+      }, function() {
+      }).finally(function() {
+        $scope.$broadcast('scroll.refreshComplete');
+      });
+  };
+
+  $scope.replyData = {
+    content: ''
+  };
+
+  // save reply
+  $scope.saveReply = function() {
+    $log.debug('new reply data:', $scope.replyData);
+    $ionicLoading.show();
+    Topic.saveReply(id, $scope.replyData).$promise.then(function(response) {
+      $ionicLoading.hide();
+      $scope.replyData.content = '';
+      $log.debug('post reply response:', response);
+      $scope.loadTopic(true).then(function() {
+        $ionicScrollDelegate.scrollBottom();
+      });
+    }, $rootScope.requestErrorHandler);
+  };
+
+  // show actions
+  $scope.showActions = function(reply) {
+    var currentUser = User.getCurrentUser();
+    if (currentUser.loginname === undefined || currentUser.loginname === reply.author.loginname) {
+      return;
+    }
+    $log.debug('action reply:', reply);
+    var upLabel = '赞';
+    // detect if current user already do up
+    if (reply.ups.indexOf(currentUser.id) !== -1) {
+      upLabel = '已赞';
+    }
+    var replyContent = '@' + reply.author.loginname;
+    $ionicActionSheet.show({
+      buttons: [
+        {text: '回复'},
+        {text: upLabel}
+      ],
+      titleText: replyContent,
+      cancel: function() {
+      },
+      buttonClicked: function(index) {
+
+        // reply to someone
+        if (index === 0) {
+          $scope.replyData.content = replyContent + ' ';
+          $scope.replyData.reply_id = reply.id;
+          $timeout(function() {
+            document.querySelector('.reply-new input').focus();
+          }, 1);
+        }
+
+        // up reply
+        if (index === 1) {
+          Topic.upReply(reply.id).$promise.then(function(response) {
+            $log.debug('up reply response:', response);
+            $ionicLoading.show({
+              noBackdrop: true,
+              template: response.action === 'up' ? '点赞成功' : '点赞已取消',
+              duration: 1000
+            });
+          }, $rootScope.requestErrorHandler({
+            noBackdrop: true,
+          }));
+        }
+        return true;
+      }
     });
+  };
 
-    $scope.popupDetailTopicModal = function() {
-        $scope.detailTopicModal.show();
+  // collect topic
+  $scope.collectTopic = function () {
+    if ($scope.isCollected) {
+      Topic.deCollectTopic(id).$promise.then(function(response) {
+        if (response.success) {
+          $scope.isCollected = false;
+          User.deCollectTopic(id);
+        }
+      });
+    } else {
+      Topic.collectTopic(id).$promise.then(function(response) {
+        if (response.success) {
+          $scope.isCollected = true;
+          User.collectTopic(id);
+        }
+      });
     }
-
-    $scope.closeDetailTopicModal = function() {
-        $scope.detailTopicModal.hide();
-    }
-
-    // open a topic detail page
-    $scope.handleListViewClickTopicEvent = function(topicId) {
-        $scope.detailTopic = _.find($scope.topics, function(x) {
-            return x.id == topicId;
-        });
-        $log.debug("Open Topic Details: " + JSON.stringify($scope.detailTopic));
-        $scope.popupDetailTopicModal();
-    }
-
-    /***********************************
-     * End of Topic Detail Page Modal
-     ***********************************/
-
+  };
 })
 
 /**
@@ -143,7 +269,7 @@ angular.module('iwildfire.controllers', [])
  * @param  {[type]} wechat_signature [description]
  * @return {[type]}                  [description]
  */
-.controller('PostCtrl', function($scope, $log, $q, cfg, store, webq, wechat_signature, Tabs, $ionicModal) {
+.controller('PostCtrl', function($scope, $log, $q, cfg, store, webq, wechat_signature, Tabs, $ionicModal, $timeout) {
 
     // #TODO comment out for debugging
     // if not contains profile and accesstoken, just naviagte
@@ -151,7 +277,7 @@ angular.module('iwildfire.controllers', [])
     // if (!store.getAccessToken()) {
     //     window.location.href = '{0}/auth/wechat/embedded'.f(cfg.server);
     // }
-
+    $scope.locationDetail = {};
     $scope.params = {
         // 标题5到10个字
         title: null,
@@ -164,15 +290,15 @@ angular.module('iwildfire.controllers', [])
         goods_is_bargain: true,
         // dummy data
         goods_exchange_location: {
-            user_add_txt: '',
-            address: '北京市海淀区西二旗中路6号1区4号楼', // user input text
-            lat: '40.056961', // latitude
-            lng: '116.318857' // longitude
+            user_add_txt: null,
+            address: null,
+            lat: null, // latitude
+            lng: null // longitude
         },
         goods_status: '在售'
     };
 
-    $scope.tagList = Tabs;
+    $scope.tagList = Tabs.getList();
 
     $scope.qualityList = ['全新', '很新', '完好', '适用', '能用'];
 
@@ -268,14 +394,43 @@ angular.module('iwildfire.controllers', [])
         }
     };
 
-    setupLocation();
+    // testSetupLocation();
+    // function testSetupLocation(){
+    //     $scope.locationDetail = {
+    //         address: '',
+    //         user_add_txt: '',
+    //         latitude: '39.916527',
+    //         longitude: '116.397128'
+    //     };
+    //     $ionicModal.fromTemplateUrl('templates/changeLocationModal.html', {
+    //         scope: $scope
+    //     }).then(function(modal) {
+    //         $scope.changeLocationModal = modal;
+    //         // modal.show();
+    //     });
+    // }
 
+    $scope.closeChangeLocationModal = function(isSubmit) {
+        if (isSubmit) {
+            $timeout(function() {
+                $scope.params.goods_exchange_location.address = $scope.locationDetail.address;
+                $scope.params.goods_exchange_location.user_add_txt = $scope.locationDetail.user_add_txt;
+                $scope.params.goods_exchange_location.lat = $scope.locationDetail.latitude;
+                $scope.params.goods_exchange_location.lng = $scope.locationDetail.longitude;
+                console.log($scope.params.goods_exchange_location);
+            });
+        }
+        $scope.changeLocationModal.hide();
+    }
+
+    setupLocation();
     function setupLocation() {
         if (wechat_signature) {
             wechat_signature.jsApiList = ['getLocation', 'openLocation'];
             wx.config(wechat_signature);
             wx.error(function(err) {
-                alert(err);
+                console.log('error', err);
+                // alert(err);
             });
             wx.ready(function() {
                 wx.getLocation({
@@ -285,16 +440,20 @@ angular.module('iwildfire.controllers', [])
                         var speed = res.speed; // 速度，以米/每秒计
                         var accuracy = res.accuracy; // 位置精度
 
-                        $scope.latitude = latitude;
-                        $scope.longitude = longitude;
+                        $scope.locationDetail = {
+                            address: '',
+                            user_add_txt: '',
+                            latitude: latitude,
+                            longitude: longitude
+                        };
+
                         // Create the modal that we will use later
                         $ionicModal.fromTemplateUrl('templates/changeLocationModal.html', {
-                            longitude: longitude,
-                            latitude: latitude,
                             scope: $scope
                         }).then(function(modal) {
                             $scope.changeLocationModal = modal;
-                            modal.show();
+                            console.log(modal);
+                            // modal.show();
                         });
                     }
                 });
@@ -377,20 +536,24 @@ angular.module('iwildfire.controllers', [])
 })
 
 .controller('AccountCtrl', function($scope, $ionicModal, $log, store, cfg,
-    webq, myTopics) {
-    $log.debug(JSON.stringify(myTopics));
+    webq, myProfile, myTopics) {
+    $log.debug("myProfile" + JSON.stringify(myProfile));
+    $log.debug("myTopics: " + JSON.stringify(myTopics));
     // load user profile from localStorage
-    var userProfile = store.getUserProfile();
     var onGoingStuffs = [];
     var offShelfStuffs = [];
     var favoritesStuffs = [];
 
-    if (!userProfile && !cfg.debug) {
+    if (!myProfile && !cfg.debug) {
         // change to wechat uaa page
-        window.location.href = '{0}/auth/wechat/embedded'.f(cfg.server);
+        window.location = '{0}/auth/wechat/embedded'.f(cfg.server);
+        // Just to avoid myProfile = null
+        // In that case, the script would throw an error. Even
+        // it does not crash the app, but it is not friendly.
+        myProfile = {};
     } else if (cfg.debug) {
         // ensure dummy data for local debugging
-        userProfile = {};
+        myProfile = {};
     }
 
     /**
@@ -438,9 +601,9 @@ angular.module('iwildfire.controllers', [])
 
     function _resetScopeData() {
         $scope.data = {
-            name: userProfile.name || 'foo' /* the default values for debugging usage.*/ ,
-            avatar: userProfile.avatar || 'images/dummy-avatar.jpg',
-            phone: userProfile.phone_number || 'bar',
+            name: myProfile.name || '未登录' /* the default values for debugging usage.*/ ,
+            avatar: myProfile.avatar || 'images/dummy/avatar.jpg',
+            phone: myProfile.phone_number || '未绑定',
             title: '我的呱呱',
             onGoingStuffs: onGoingStuffs,
             onGoingStuffsBadge: onGoingStuffs.length,
@@ -479,26 +642,6 @@ angular.module('iwildfire.controllers', [])
             default:
                 break;
         }
-    }
-
-
-    /**
-     * settings modal
-     * @return {[type]} [description]
-     */
-    $ionicModal.fromTemplateUrl('templates/modal-settings.html', {
-        scope: $scope,
-        animation: 'slide-in-up'
-    }).then(function(modal) {
-        $scope.settingsModal = modal;
-    });
-
-    $scope.popupSettings = function() {
-        $scope.settingsModal.show();
-    }
-
-    $scope.closePopupSettings = function() {
-        $scope.settingsModal.hide();
     }
 
     /**
@@ -704,15 +847,23 @@ angular.module('iwildfire.controllers', [])
     $scope,
     $state,
     store) {
-
     var accesstoken = $stateParams.accessToken;
     $log.debug('Get accesstoken ' + accesstoken);
-
     if (accesstoken) {
         store.setAccessToken($stateParams.accessToken);
     }
-
     $state.go('tab.index');
+})
+
+.controller('SettingsCtrl', function($log, $scope, $state, store) {
+    $log.debug('SettingsCtrl ...');
+    $scope.goBackProfile = function() {
+        $state.go('tab.account');
+    }
+
+    $scope.goBackSettings = function () {
+        $state.go('settings');
+    }
 })
 
 ;

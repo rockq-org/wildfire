@@ -158,6 +158,7 @@ exports.newOrUpdate = function(profile) {
             doc.name = profile.nickname;
             doc.avatar = profile.headimgurl;
             doc.profile = profile;
+            doc.markModified('profile');
             doc.save(function(err) {
                 if (err) {
                     deferred.reject({
@@ -182,6 +183,8 @@ exports.newOrUpdate = function(profile) {
             user.accessToken = uuid.v4();
             user.passport = 'wechat';
             user.profile = profile;
+            user.subscribe_type = profile.subscribe_type;
+            user.subscribe_source_identifier = profile.subscribe_source_identifier;
             user.save(function(err, doc) {
                 if (err) {
                     deferred.reject({

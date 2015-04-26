@@ -22,13 +22,13 @@
                     collection-item-height="315"
                     collection-item-width="'50%'"
                     >
-                      <div class="item item-image" ng-click="handleListViewClickTopicEvent(topic.id)">
-                        <a href="javascript:void(0)">
+                      <div class="item item-image">
+                        <a ui-sref="tab.item({itemId: topic.id})">
                           <img class="full-image " ng-src="{{img_prefix}}{{pic}}" ng-repeat="pic in topic.goods_pics" width="170px" height="194px" />
                           <span class="{{topic.goods_quality_degree | badge}}">{{topic.goods_quality_degree}}</span>
                         </a>
                         <div class="text-left padding-left padding-right padding-top">
-                            <a href="javascript:void(0)" class="topics-title"> <h3> {{topic.title}} </h3></a>
+                          <a ui-sref="tab.item({itemId: topic.id})" class="topics-title"> <h3> {{topic.title}} </h3></a>
                           <h3 class="price">
                             <span class="assertive">￥ {{topic.goods_now_price}}</span>
                             &nbsp;
@@ -46,6 +46,7 @@
                       </div>
                   </ion-item>
                 </ion-list>
+                <h1 class="text-center" ng-if="true">oops ... 还没有记录</h1>
 
                 <!--
                   Loading icon of infinte-scroll not showing with collection-repeat

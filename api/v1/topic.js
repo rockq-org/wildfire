@@ -28,8 +28,11 @@ var index = function(req, res, next) {
             query.tab = tab;
         }
     }
-    if(req.query.text)
-        query.$text = { $search: req.query.text, $language: 'english'};
+    if(req.query.text){
+        var text = new RegExp(req.query.text);
+        query.$or = [{title: text},{content: text}];
+    }
+
     query.deleted = false;
     var options = {
         skip: (page - 1) * limit,

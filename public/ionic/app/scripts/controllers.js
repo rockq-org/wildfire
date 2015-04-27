@@ -861,11 +861,23 @@ angular.module('iwildfire.controllers', [])
     webq) {
     $log.debug('SettingsCtrl ...');
 
+
+    // resolve user phone
+    function _getUserPhone() {
+        var userProfile = store.getUserProfile();
+        if (userProfile) {
+            return userProfile.phone_number;
+        }
+        return '未绑定';
+    }
+
+
     $scope.data = {
         feedback: {
             title: '我要吐槽',
             content: ''
-        }
+        },
+        phone: _getUserPhone()
     };
 
     $scope.goBackProfile = function() {

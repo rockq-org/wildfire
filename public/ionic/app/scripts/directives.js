@@ -1,10 +1,10 @@
 angular.module('iwildfire.directives', [])
 
-.directive('map', function () {
-    var searchService,map,markers = [];
+.directive('map', function() {
+    var searchService, map, markers = [];
     var init = function(element) {
-        var center = new qq.maps.LatLng(39.936273,116.44004334);
-        map = new qq.maps.Map( element, {
+        var center = new qq.maps.LatLng(39.936273, 116.44004334);
+        map = new qq.maps.Map(element, {
             center: center,
             zoom: 13,
             // zoomControl: false,
@@ -12,12 +12,12 @@ angular.module('iwildfire.directives', [])
             mapTypeControl: false
         });
         new qq.maps.Circle({
-            center:new qq.maps.LatLng(39.936273,116.44004334),
+            center: new qq.maps.LatLng(39.936273, 116.44004334),
             radius: 2000,
             map: map
         });
         searchService = new qq.maps.SearchService({
-            complete : function(results){
+            complete: function(results) {
                 //设置回调函数参数
                 var pois = results.detail.pois;
                 var infoWin = new qq.maps.InfoWindow({
@@ -54,22 +54,22 @@ angular.module('iwildfire.directives', [])
     function searchKeyword() {
         // var keyword = document.getElementById("keyword").value;
         var keyword = '酒店';
-        region = new qq.maps.LatLng(39.936273,116.44004334);
+        region = new qq.maps.LatLng(39.936273, 116.44004334);
 
         searchService.setPageCapacity(5);
         searchService.searchNearBy(keyword, region, 2000);
     }
 
-    return function (scope, element, attrs) {
-      scope.searchKeyword = searchKeyword;
-      var height = angular.element(element).parent().parent().height();
-      var div = angular.element(element).find('div');
-      div.height( height - 100 );
-      init( div[0] );
+    return function(scope, element, attrs) {
+        scope.searchKeyword = searchKeyword;
+        var height = angular.element(element).parent().parent().height();
+        var div = angular.element(element).find('div');
+        div.height(height - 100);
+        init(div[0]);
     };
 })
 
-.directive('chooseLocation', function ($timeout, $document) {
+.directive('chooseLocation', function($timeout, $document) {
     var init = function(element, attrs, scope, width, height) {
         //初始化地图
         var map = new qq.maps.Map(element, {
@@ -79,25 +79,25 @@ angular.module('iwildfire.directives', [])
         });
         //创建自定义控件
         var middleControl = document.createElement("div");
-        middleControl.style.left= (width - 36 )/2 + "px";
-        middleControl.style.top= (height - 36)/2 + "px";
-        middleControl.style.position="relative";
-        middleControl.style.width="36px";
-        middleControl.style.height="36px";
-        middleControl.style.zIndex="100000";
-        middleControl.innerHTML ='<img src="https://www.cdlhome.com.sg/mobile_assets/images/icon-location.png" />';
+        middleControl.style.left = (width - 36) / 2 + "px";
+        middleControl.style.top = (height - 36) / 2 + "px";
+        middleControl.style.position = "relative";
+        middleControl.style.width = "36px";
+        middleControl.style.height = "36px";
+        middleControl.style.zIndex = "100000";
+        middleControl.innerHTML = '<img src="https://www.cdlhome.com.sg/mobile_assets/images/icon-location.png" />';
         element.appendChild(middleControl);
 
         //当地图中心属性更改时触发事件
         qq.maps.event.addListener(map, 'center_changed', center_changed);
 
-        function center_changed(){
+        function center_changed() {
             var latLng = map.getCenter();
             geocoder.getAddress(latLng);
         }
         var geocoder = new qq.maps.Geocoder({
-            complete : function(result){
-                $timeout(function(){
+            complete: function(result) {
+                $timeout(function() {
                     scope.$parent.$parent.locationDetail.address = result.detail.address;
                     scope.$parent.$parent.locationDetail.latitude = result.detail.location.lat;
                     scope.$parent.$parent.locationDetail.longitude = result.detail.location.lng;
@@ -108,14 +108,16 @@ angular.module('iwildfire.directives', [])
         center_changed();
     }
 
-    return function (scope, element, attrs) {
-        $timeout(function(){
+    return function(scope, element, attrs) {
+        $timeout(function() {
             var width = $document.width();
             var height = $document.height() - 44;
             var div = angular.element(element).find('div');
-            div.width( width );
-            div.height( height );
-            init( div[0], attrs, scope, width, height );
+            div.width(width);
+            div.height(height);
+            init(div[0], attrs, scope, width, height);
         });
     };
 })
+
+;

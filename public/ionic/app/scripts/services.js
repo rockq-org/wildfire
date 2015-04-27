@@ -445,6 +445,22 @@ angular.module('iwildfire.services', ['ngResource'])
         return deferred.promise;
     }
 
+    // get user service agreements in markdown format
+    this.getUserServiceAgreements = function() {
+        var defer = $q.defer();
+        $http({
+            method: 'GET',
+            url: '{0}/public/markdowns/user-service-agreements.md'.f(cfg.server)
+        }).success(function(data, status, headers, config) {
+            var converter = new Showdown.converter();
+            defer.resolve(converter.makeHtml(data));
+        }).error(function(err, status) {
+            $log.error('Can not get /public/md/user-service-agreements.md from server.');
+            defer.reject(err);
+        });
+        return defer.promise;
+    };
+
 })
 
 /**

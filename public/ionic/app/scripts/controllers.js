@@ -854,10 +854,11 @@ angular.module('iwildfire.controllers', [])
     $state.go('tab.index');
 })
 
-.controller('SettingsCtrl', function($log, $scope, $state,
+.controller('SettingsCtrl', function($log, $scope,
+    $timeout,
+    $state,
     store,
-    webq,
-    $timeout) {
+    webq) {
     $log.debug('SettingsCtrl ...');
 
     $scope.data = {
@@ -891,6 +892,15 @@ angular.module('iwildfire.controllers', [])
                 $scope.data.feedback.title = '我要吐槽';
             }, 3000);
         }
+    }
+
+    if ($state.is('service-agreement')) {
+        webq.getUserServiceAgreements()
+            .then(function(data) {
+                $scope.data.service_agreements = data;
+            }, function(err) {
+                $scope.data.service_agreements = '服务器抽疯了，木有返回数据。';
+            });
     }
 })
 

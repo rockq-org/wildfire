@@ -82,7 +82,7 @@ app.enable('trust proxy');
 
 // 静态资源
 app.use(Loader.less(__dirname));
-app.use('/public', express.static(staticDir));
+app.use('/public', cors(), express.static(staticDir));
 app.use('/agent', proxyMiddleware.proxy);
 
 // 每日访问限制

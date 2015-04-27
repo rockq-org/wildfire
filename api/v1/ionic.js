@@ -10,8 +10,16 @@ var common = require('../../common'),
     _ = require('lodash'),
     minimatch = require("minimatch"),
     wx = require('../../middlewares/connect-wechat'),
+    Feedback = require('../../models').Feedback,
     config = require('../../config'),
     wxConfig = config.wechat_gzh;
+
+function _saveFeedback(userId, content, callback) {
+    var feedback = new Feedback();
+    feedback.author = userId;
+    feedback.content = content;
+    feedback.save(callback);
+}
 
 /**
  * get wechat signature
@@ -105,6 +113,33 @@ exports.getWechatImages = function(req, res, next) {
         requestUtil.okJsonResponse({
             rc: 1,
             msg: 'serverIds are required.'
+        }, res);
+    }
+}
+
+/**
+ * handle feedback events
+ */
+exports.saveFeedback = function(req, res, next) {
+    var content = req.body.content;
+    if (content) {
+        _saveFeedback(req.user._id, content, function(err, doc) {
+            if (err) {
+                requestUtil.okJsonResponse({
+                    rc: 2,
+                    msg: err
+                }, res);
+            } else {
+                requestUtil.okJsonResponse({
+                    rc: 0,
+                    msg: 'Success.'
+                }, res);
+            }
+        });
+    } else {
+        requestUtil.okJsonResponse({
+            rc: 1,
+            msg: 'Feedback content is required.'
         }, res);
     }
 }

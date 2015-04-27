@@ -55,4 +55,9 @@ router.get('/file/image-anonymous/:id', fileStorageController.displayAnonymousIm
 router.post('/ionic/wechat-signature', middleware.auth, ionicController.getWechatSignature);
 router.post('/ionic/wechat-images', middleware.auth, ionicController.getWechatImages);
 
+/**
+ * Save user feedback
+ */
+router.post('/ionic/feedback', middleware.auth, ionicController.saveFeedback);
+
 module.exports = router;

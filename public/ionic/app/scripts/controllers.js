@@ -854,11 +854,17 @@ angular.module('iwildfire.controllers', [])
     $state.go('tab.index');
 })
 
-.controller('SettingsCtrl', function($log, $scope, $state, store) {
+.controller('SettingsCtrl', function($log, $scope, $state,
+    store,
+    webq,
+    $timeout) {
     $log.debug('SettingsCtrl ...');
 
     $scope.data = {
-        feedbackTxt: null
+        feedback: {
+            title: '我要吐槽',
+            content: ''
+        }
     };
 
     $scope.goBackProfile = function() {
@@ -870,11 +876,20 @@ angular.module('iwildfire.controllers', [])
     }
 
     $scope.submitFeedback = function() {
-        $log.debug('feedbackTxt:' + $scope.data.feedbackTxt);
-        if ($scope.data.feedbackTxt) {
-
+        $log.debug('feedbackTxt:' + $scope.data.feedback.content);
+        if ($scope.data.feedback.content) {
+            webq.submitFeedback($scope.data.feedback.content)
+                .then(function() {
+                    alert('感谢您对我们的支持，一直在努力，不放弃治疗。');
+                    $scope.goBackSettings();
+                }, function() {
+                    alert('吐槽失败，看来是槽点太多。');
+                });
         } else {
-          
+            $scope.data.feedback.title = '反馈内容不可为空';
+            $timeout(function() {
+                $scope.data.feedback.title = '我要吐槽';
+            }, 3000);
         }
     }
 })

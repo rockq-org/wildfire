@@ -28,9 +28,14 @@ var index = function(req, res, next) {
             query.tab = tab;
         }
     }
-    if(req.query.text) {
+
+    if (req.query.text) {
         var text = new RegExp(req.query.text);
-        query.$or = [{title: text},{content: text}];
+        query.$or = [{
+            title: text
+        }, {
+            content: text
+        }];
     }
     if(req.query.lng && req.query.lat) {
         var lng = parseFloat(req.query.lng);
@@ -397,5 +402,58 @@ exports.update = function(req, res, next) {
                 });
             }
         });
+    }
+}
+
+
+
+/**
+ * Ding my topic
+ */
+exports.ding = function(req, res, next) {
+    var topicId = req.body.topicId;
+    if (topicId) {
+        TopicProxy.getFullTopic(topicId, function(err, messages, topic, author, replies) {
+            if (err) {
+                logger.debug('ding', err);
+                requestUtil.okJsonResponse({
+                    rc: 2,
+                    msg: err
+                }, res);
+            } else if (typeof(topic) !== 'object') {
+                requestUtil.okJsonResponse({
+                    rc: 5,
+                    msg: 'Topic is null.'
+                }, res);
+            } else if (
+                // if user is not the author and not an admin
+                (!topic.author_id.equals(req.user._id)) &&
+                (!req.user.is_admin)) {
+                requestUtil.okJsonResponse({
+                    rc: 3,
+                    msg: 'Permission Error, the request must be sent by admin or author.'
+                }, res);
+            } else {
+                topic.update_at = Date.now();
+                topic.save(function(err, doc) {
+                    if (err) {
+                        requestUtil.okJsonResponse({
+                            rc: 4,
+                            msg: err
+                        }, res);
+                    } else {
+                        requestUtil.okJsonResponse({
+                            rc: 0,
+                            msg: 'success.'
+                        }, res);
+                    }
+                });
+            }
+        });
+    } else {
+        requestUtil.okJsonResponse({
+            rc: 1,
+            msg: 'topicId is required.'
+        }, res);
     }
 }

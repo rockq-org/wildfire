@@ -81,6 +81,35 @@ angular.module('iwildfire.controllers', [])
         $scope.doRefresh();
     }
 
+    function getLocation() {
+        if (typeof(wechat_signature) != 'undefined') {
+            wechat_signature.jsApiList = ['getLocation'];
+            wx.config(wechat_signature);
+            wx.error(function(err) {
+                console.log('error', err);
+                // alert(err);
+            });
+            wx.ready(function() {
+                wx.getLocation({
+                    success: function(res) {
+                        var latitude = res.latitude; // 纬度，浮点数，范围为90 ~ -90
+                        var longitude = res.longitude; // 经度，浮点数，范围为180 ~ -180。
+                        var speed = res.speed; // 速度，以米/每秒计
+                        var accuracy = res.accuracy; // 位置精度
+
+                        $scope.setGeom(res);
+                        //$scope.tabTitle = res.accuracy;
+                        $scope.doRefresh();
+
+                    }
+                });
+            });
+        } else {
+            $log.debug('app url: {0}. wechat_signature is not available while setup location.'.f(window.location.href.split('#')[0]));
+        }
+    }
+    getLocation();
+
     /***********************************
      * Search
      ***********************************/
@@ -645,6 +674,21 @@ angular.module('iwildfire.controllers', [])
     }
 
     /**
+     * 顶
+     * 更新topic的 update_at 值
+     * @param  {[type]} topic [description]
+     * @return {[type]}       [description]
+     */
+    $scope.editDingOnShelf = function(topic) {
+        webq.dingMyTopic(topic)
+            .then(function() {
+                alert('恭喜，成功置顶！');
+            }, function() {
+                alert('没有成功，什么情况，稍候再试 ?');
+            });
+    }
+
+    /**
      * 下架
      * tab: onGoingStuffs
      * @param  {[type]} topic [description]
@@ -862,11 +906,23 @@ angular.module('iwildfire.controllers', [])
     webq) {
     $log.debug('SettingsCtrl ...');
 
+
+    // resolve user phone
+    function _getUserPhone() {
+        var userProfile = store.getUserProfile();
+        if (userProfile) {
+            return userProfile.phone_number;
+        }
+        return '未绑定';
+    }
+
+
     $scope.data = {
         feedback: {
             title: '我要吐槽',
             content: ''
-        }
+        },
+        phone: _getUserPhone()
     };
 
     $scope.goBackProfile = function() {

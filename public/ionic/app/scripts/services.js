@@ -461,6 +461,35 @@ angular.module('iwildfire.services', ['ngResource'])
         return defer.promise;
     };
 
+
+    /**
+     * Ding my topic
+     * Update update_at value, so the record would 
+     * display at top in index page.
+     */
+    this.dingMyTopic = function(topic) {
+        var deferred = $q.defer();
+
+        $http.post('{0}/topic/ding'.f(cfg.api), {
+                accesstoken: store.getAccessToken(),
+                // accesstoken: 'e26b54f0-6ca2-4eb7-97ae-a52c6af268dc',
+                topicId: topic._id
+            })
+            .success(function(data) {
+                if (typeof(data) == 'object' &&
+                    data.rc == 0) {
+                    deferred.resolve();
+                } else {
+                    deferred.reject();
+                }
+            })
+            .error(function(err) {
+                deferred.reject();
+            });
+
+        return deferred.promise;
+    }
+
 })
 
 /**
@@ -549,8 +578,8 @@ angular.module('iwildfire.services', ['ngResource'])
             text = query
         },
         setGeom: function(geom) {
-            lng = geom.lng;
-            lat = geom.lat;
+            lng = geom.longitude;
+            lat = geom.latitude;
         },
         getById: function(id) {
 

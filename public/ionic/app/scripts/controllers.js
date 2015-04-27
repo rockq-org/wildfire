@@ -644,6 +644,21 @@ angular.module('iwildfire.controllers', [])
     }
 
     /**
+     * 顶
+     * 更新topic的 update_at 值
+     * @param  {[type]} topic [description]
+     * @return {[type]}       [description]
+     */
+    $scope.editDingOnShelf = function(topic) {
+        webq.dingMyTopic(topic)
+            .then(function() {
+                alert('恭喜，成功置顶！');
+            }, function() {
+                alert('没有成功，什么情况，稍候再试 ?');
+            });
+    }
+
+    /**
      * 下架
      * tab: onGoingStuffs
      * @param  {[type]} topic [description]

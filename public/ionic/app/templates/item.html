@@ -1,5 +1,5 @@
 <ion-view view-title="{{topic.title}}">
-  <ion-content class="has-header">
+  <ion-content>
     <ion-refresher pulling-text="下拉刷新..." on-refresh="doRefresh()" refreshing-icon="ion-loading-c">
     </ion-refresher>
 
@@ -20,10 +20,11 @@
 
     <div class="row">
       <div class="float-left price col col50">
+        <h3>
         <span class="assertive">￥ {{topic.goods_now_price}}</span>
         &nbsp;
         <del>￥ {{topic.goods_pre_price}}</del>
-        <br />
+        </h3>
         <button class="button button-assertive button-small">接受侃价</button>
         <br />
         <a class="button button-clear button-assertive">
@@ -36,23 +37,27 @@
           <img ng-src='{{topic.author.avatar}}' />
           <span>{{topic.author.name}}</span>
         </div>
+        <p><i class="icon ion-ios7-location mr5"></i>{{topic.goods_exchange_location.address}}</p>
+        <p>
+          距离1.5公里 <br />
+          <span am-time-ago="topic.update_at"></span>
+        </p>
       </div>
     </div>
     <div class="row topic">
       <div class="col col90">
-        <h4 class="title">{{topic.title}}</h4>
-        <div class="summary">
-          <strong>
-            <a href="#/user/{{topic.author.loginname}}">
-              <img ng-src="{{topic.author.avatar_url | protocol}}" class="avatar">
-              {{topic.author.loginname}}</a>
-          </strong>
-          <span class="item-note" am-time-ago="topic.last_reply_at"></span>
-        </div>
-        <div class="topic-content" ng-bind-html="topic.content | link">
-        </div>
+        <h5>宝贝详情</h4>
+        <div class="topic-content" ng-bind-html="topic.content | link"></div>
       </div>
     </div>
+
+    <div class="row">
+      <div class="tabs tabs-light">
+        <a class="tab-item active ">出价（5）</a>
+        <a class="tab-item"> 留言（30）</a>
+      </div>
+    </div>
+
     <ion-list class="replies">
       <ion-item class="item-loading" ng-if="topic.replies == undefined">
         <span ng-if="!loadError">
@@ -82,13 +87,14 @@
         <div class="reply-content" ng-bind-html="reply.content | link"></div>
       </ion-item>
     </ion-list>
-    <br />
+
   </ion-content>
+
   <ion-footer-bar align-title="left" class="bar-light reply-new" keyboard-attach>
     <label class="item-input-wrapper">
-      <input type="text" placeholder="回复" ng-model="replyData.content" ng-disabled="loginName == null">
+      <input type="text" placeholder="回复" ng-model="replyData.content" ng-disabled="false && loginName == null">
     </label>
-    <button class="button button-small button-clear button-positive" ng-click="saveReply()" ng-class="{'disabled':loginName == null || replyData.content == ''}">
+    <button class="button button-small button-clear button-positive" ng-click="saveReply()" ng-class="{'disabled':loginName !== null || replyData.content == ''}">
       提交
     </button>
   </ion-footer-bar>

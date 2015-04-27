@@ -85,10 +85,10 @@ angular.module('iwildfire', ['ionic', 'iwildfire.controllers', 'iwildfire.servic
             }
     })
 
-    .state('tab.item', {
+    .state('item', {
         url: '/item/:itemId',
         views: {
-            'tab-index': {
+            '': {
                 templateUrl: 'templates/item.html',
                 controller: 'ItemCtrl'
             }

@@ -82,7 +82,7 @@ var show = function(req, res, next) {
             });
         }
         topic = _.pick(topic, ['id', 'author_id', 'tab', 'content', 'title', 'last_reply_at',
-            'goods_pre_price', 'goods_now_price', 'goods_pre_price', 'update_at', 'goods_pics', 'goods_quality_degree',
+            'goods_pre_price', 'goods_now_price', 'goods_pre_price', 'update_at', 'goods_pics', 'goods_quality_degree', 'goods_exchange_location',
             'good', 'top', 'reply_count', 'visit_count', 'create_at', 'author'
         ]);
 

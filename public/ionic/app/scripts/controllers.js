@@ -80,161 +80,211 @@ angular.module('iwildfire.controllers', [])
         $scope.currentTab = Topics.currentTab($stateParams.tab);
         $scope.doRefresh();
     }
+
+    function getLocation() {
+        if (typeof(wechat_signature) != 'undefined') {
+            wechat_signature.jsApiList = ['getLocation'];
+            wx.config(wechat_signature);
+            wx.error(function(err) {
+                console.log('error', err);
+                // alert(err);
+            });
+            wx.ready(function() {
+                wx.getLocation({
+                    success: function(res) {
+                        var latitude = res.latitude; // 纬度，浮点数，范围为90 ~ -90
+                        var longitude = res.longitude; // 经度，浮点数，范围为180 ~ -180。
+                        var speed = res.speed; // 速度，以米/每秒计
+                        var accuracy = res.accuracy; // 位置精度
+
+                        $scope.setGeom(res);
+                        //$scope.tabTitle = res.accuracy;
+                        $scope.doRefresh();
+
+                    }
+                });
+            });
+        } else {
+            $log.debug('app url: {0}. wechat_signature is not available while setup location.'.f(window.location.href.split('#')[0]));
+        }
+    }
+    getLocation();
+
+    /***********************************
+     * Search
+     ***********************************/
+    $scope.tabTitle = '首页';
+    $scope.SearchText = '搜索';
+    $scope.showSearch = false;
+    $scope.doSearch = function(query) {
+        if (!($scope.showSearch)) {
+            $scope.showSearch = true;
+            $log.debug('showSearch');
+            return;
+        }
+        $log.debug('doSearch');
+        Topics.setQuery(query);
+        Topics.setGeom({lng:140,lat:40.4});
+        $scope.doRefresh();
+        $log.debug('searchText', query);
+        $scope.tabTitle = query || '首页';
+    }
+    $scope.endSearch = function() {
+        $scope.showSearch = false;
+    }
 })
 
 .controller('ItemCtrl', function(
-  $scope,
-  $rootScope,
-  $stateParams,
-  $timeout,
-  $ionicLoading,
-  $ionicActionSheet,
-  $ionicScrollDelegate,
-  $log,
-  Topics,
-  Topic,
-  cfg,
-  User
+    $scope,
+    $rootScope,
+    $stateParams,
+    $timeout,
+    $ionicLoading,
+    $ionicActionSheet,
+    $ionicScrollDelegate,
+    $log,
+    Topics,
+    Topic,
+    cfg,
+    User
 ) {
-  $log.debug('topic ctrl', $stateParams);
-  var id = $stateParams.itemId;
-  var topic = Topics.getById(id);
-  $scope.topic = topic;
-  $scope.img_prefix = cfg.server;
-  $scope.avatar_prefix = cfg.api + '/avatar/';
+    $log.debug('topic ctrl', $stateParams);
+    var id = $stateParams.itemId;
+    var topic = Topics.getById(id);
+    $scope.topic = topic;
+    $scope.img_prefix = cfg.server;
+    $scope.avatar_prefix = cfg.api + '/avatar/';
 
-  // before enter view event
-  $scope.$on('$ionicView.beforeEnter', function() {
-    // track view
-    if (window.analytics) {
-      window.analytics.trackView('topic view');
-    }
-  });
-
-  // load topic data
-  $scope.loadTopic = function(reload) {
-    var topicResource;
-    if (reload === true) {
-      topicResource = Topic.get(id);
-    } else {
-      topicResource = Topic.getById(id);
-    }
-    return topicResource.$promise.then(function(response) {
-        $scope.topic = response.data;
-      }, $rootScope.requestErrorHandler({
-        noBackdrop: true
-      }, function() {
-        $scope.loadError = true;
-      })
-    );
-  };
-  $scope.loadTopic();
-
-  // detect if user has collected this topic
-  var currentUser = User.getCurrentUser();
-  $scope.isCollected = false;
-  angular.forEach(currentUser.collect_topics, function(topics) {
-    if (topics.id === id) {
-      $scope.isCollected = true;
-    }
-  });
-
-  // do refresh
-  $scope.doRefresh = function() {
-    return $scope.loadTopic(true).then(function(response) {
-        $log.debug('do refresh complete');
-      }, function() {
-      }).finally(function() {
-        $scope.$broadcast('scroll.refreshComplete');
-      });
-  };
-
-  $scope.replyData = {
-    content: ''
-  };
-
-  // save reply
-  $scope.saveReply = function() {
-    $log.debug('new reply data:', $scope.replyData);
-    $ionicLoading.show();
-    Topic.saveReply(id, $scope.replyData).$promise.then(function(response) {
-      $ionicLoading.hide();
-      $scope.replyData.content = '';
-      $log.debug('post reply response:', response);
-      $scope.loadTopic(true).then(function() {
-        $ionicScrollDelegate.scrollBottom();
-      });
-    }, $rootScope.requestErrorHandler);
-  };
-
-  // show actions
-  $scope.showActions = function(reply) {
-    var currentUser = User.getCurrentUser();
-    if (currentUser.loginname === undefined || currentUser.loginname === reply.author.loginname) {
-      return;
-    }
-    $log.debug('action reply:', reply);
-    var upLabel = '赞';
-    // detect if current user already do up
-    if (reply.ups.indexOf(currentUser.id) !== -1) {
-      upLabel = '已赞';
-    }
-    var replyContent = '@' + reply.author.loginname;
-    $ionicActionSheet.show({
-      buttons: [
-        {text: '回复'},
-        {text: upLabel}
-      ],
-      titleText: replyContent,
-      cancel: function() {
-      },
-      buttonClicked: function(index) {
-
-        // reply to someone
-        if (index === 0) {
-          $scope.replyData.content = replyContent + ' ';
-          $scope.replyData.reply_id = reply.id;
-          $timeout(function() {
-            document.querySelector('.reply-new input').focus();
-          }, 1);
+    // before enter view event
+    $scope.$on('$ionicView.beforeEnter', function() {
+        // track view
+        if (window.analytics) {
+            window.analytics.trackView('topic view');
         }
-
-        // up reply
-        if (index === 1) {
-          Topic.upReply(reply.id).$promise.then(function(response) {
-            $log.debug('up reply response:', response);
-            $ionicLoading.show({
-              noBackdrop: true,
-              template: response.action === 'up' ? '点赞成功' : '点赞已取消',
-              duration: 1000
-            });
-          }, $rootScope.requestErrorHandler({
-            noBackdrop: true,
-          }));
-        }
-        return true;
-      }
     });
-  };
 
-  // collect topic
-  $scope.collectTopic = function () {
-    if ($scope.isCollected) {
-      Topic.deCollectTopic(id).$promise.then(function(response) {
-        if (response.success) {
-          $scope.isCollected = false;
-          User.deCollectTopic(id);
+    // load topic data
+    $scope.loadTopic = function(reload) {
+        var topicResource;
+        if (reload === true) {
+            topicResource = Topic.get(id);
+        } else {
+            topicResource = Topic.getById(id);
         }
-      });
-    } else {
-      Topic.collectTopic(id).$promise.then(function(response) {
-        if (response.success) {
-          $scope.isCollected = true;
-          User.collectTopic(id);
+        return topicResource.$promise.then(function(response) {
+            $scope.topic = response.data;
+        }, $rootScope.requestErrorHandler({
+            noBackdrop: true
+        }, function() {
+            $scope.loadError = true;
+        }));
+    };
+    $scope.loadTopic();
+
+    // detect if user has collected this topic
+    var currentUser = User.getCurrentUser();
+    $scope.isCollected = false;
+    angular.forEach(currentUser.collect_topics, function(topics) {
+        if (topics.id === id) {
+            $scope.isCollected = true;
         }
-      });
-    }
-  };
+    });
+
+    // do refresh
+    $scope.doRefresh = function() {
+        return $scope.loadTopic(true).then(function(response) {
+            $log.debug('do refresh complete');
+        }, function() {}).finally(function() {
+            $scope.$broadcast('scroll.refreshComplete');
+        });
+    };
+
+    $scope.replyData = {
+        content: ''
+    };
+
+    // save reply
+    $scope.saveReply = function() {
+        $log.debug('new reply data:', $scope.replyData);
+        $ionicLoading.show();
+        Topic.saveReply(id, $scope.replyData).$promise.then(function(response) {
+            $ionicLoading.hide();
+            $scope.replyData.content = '';
+            $log.debug('post reply response:', response);
+            $scope.loadTopic(true).then(function() {
+                $ionicScrollDelegate.scrollBottom();
+            });
+        }, $rootScope.requestErrorHandler);
+    };
+
+    // show actions
+    $scope.showActions = function(reply) {
+        var currentUser = User.getCurrentUser();
+        if (currentUser.loginname === undefined || currentUser.loginname === reply.author.loginname) {
+            return;
+        }
+        $log.debug('action reply:', reply);
+        var upLabel = '赞';
+        // detect if current user already do up
+        if (reply.ups.indexOf(currentUser.id) !== -1) {
+            upLabel = '已赞';
+        }
+        var replyContent = '@' + reply.author.loginname;
+        $ionicActionSheet.show({
+            buttons: [{
+                text: '回复'
+            }, {
+                text: upLabel
+            }],
+            titleText: replyContent,
+            cancel: function() {},
+            buttonClicked: function(index) {
+
+                // reply to someone
+                if (index === 0) {
+                    $scope.replyData.content = replyContent + ' ';
+                    $scope.replyData.reply_id = reply.id;
+                    $timeout(function() {
+                        document.querySelector('.reply-new input').focus();
+                    }, 1);
+                }
+
+                // up reply
+                if (index === 1) {
+                    Topic.upReply(reply.id).$promise.then(function(response) {
+                        $log.debug('up reply response:', response);
+                        $ionicLoading.show({
+                            noBackdrop: true,
+                            template: response.action === 'up' ? '点赞成功' : '点赞已取消',
+                            duration: 1000
+                        });
+                    }, $rootScope.requestErrorHandler({
+                        noBackdrop: true,
+                    }));
+                }
+                return true;
+            }
+        });
+    };
+
+    // collect topic
+    $scope.collectTopic = function() {
+        if ($scope.isCollected) {
+            Topic.deCollectTopic(id).$promise.then(function(response) {
+                if (response.success) {
+                    $scope.isCollected = false;
+                    User.deCollectTopic(id);
+                }
+            });
+        } else {
+            Topic.collectTopic(id).$promise.then(function(response) {
+                if (response.success) {
+                    $scope.isCollected = true;
+                    User.collectTopic(id);
+                }
+            });
+        }
+    };
 })
 
 /**
@@ -402,6 +452,7 @@ angular.module('iwildfire.controllers', [])
     }
 
     setupLocation();
+
     function setupLocation() {
         if (wechat_signature) {
             wechat_signature.jsApiList = ['getLocation', 'openLocation'];
@@ -623,6 +674,21 @@ angular.module('iwildfire.controllers', [])
     }
 
     /**
+     * 顶
+     * 更新topic的 update_at 值
+     * @param  {[type]} topic [description]
+     * @return {[type]}       [description]
+     */
+    $scope.editDingOnShelf = function(topic) {
+        webq.dingMyTopic(topic)
+            .then(function() {
+                alert('恭喜，成功置顶！');
+            }, function() {
+                alert('没有成功，什么情况，稍候再试 ?');
+            });
+    }
+
+    /**
      * 下架
      * tab: onGoingStuffs
      * @param  {[type]} topic [description]
@@ -833,14 +899,65 @@ angular.module('iwildfire.controllers', [])
     $state.go('tab.index');
 })
 
-.controller('SettingsCtrl', function($log, $scope, $state, store) {
+.controller('SettingsCtrl', function($log, $scope,
+    $timeout,
+    $state,
+    store,
+    webq) {
     $log.debug('SettingsCtrl ...');
+
+
+    // resolve user phone
+    function _getUserPhone() {
+        var userProfile = store.getUserProfile();
+        if (userProfile) {
+            return userProfile.phone_number;
+        }
+        return '未绑定';
+    }
+
+
+    $scope.data = {
+        feedback: {
+            title: '我要吐槽',
+            content: ''
+        },
+        phone: _getUserPhone()
+    };
+
     $scope.goBackProfile = function() {
         $state.go('tab.account');
     }
 
-    $scope.goBackSettings = function () {
+    $scope.goBackSettings = function() {
         $state.go('settings');
+    }
+
+    $scope.submitFeedback = function() {
+        $log.debug('feedbackTxt:' + $scope.data.feedback.content);
+        if ($scope.data.feedback.content) {
+            webq.submitFeedback($scope.data.feedback.content)
+                .then(function() {
+                    alert('感谢您对我们的支持，一直在努力，不放弃治疗。');
+                    $scope.goBackSettings();
+                }, function() {
+                    alert('吐槽失败，看来是槽点太多。');
+                });
+        } else {
+            $scope.data.feedback.title = '反馈内容不可为空';
+            $timeout(function() {
+                $scope.data.feedback.title = '我要吐槽';
+            }, 3000);
+        }
+    }
+
+    if ($state.is('service-agreement')) {
+        webq.getUserServiceAgreements()
+            .then(function(data) {
+                $scope.data.service_agreements = data;
+            }, function(err) {
+                $scope.data.service_agreements = '服务器抽疯了，木有返回数据。';
+            });
     }
 })
 

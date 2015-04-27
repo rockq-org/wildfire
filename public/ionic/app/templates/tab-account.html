@@ -1,6 +1,6 @@
 <ion-view hide-nav-bar="true">
     <ion-header-bar class="bar-dark">
-        <h1 class="title">我的呱呱</h1>
+        <h1 class="title">我的呱呱二手</h1>
         <div class="buttons">
             <a class="button button-clear button-icon ion-ios7-gear-outline" ui-sref="settings"></a>
         </div>
@@ -44,6 +44,9 @@ Orders fake tab
                         <i class="icon ion-ios7-heart-outline" style="color:red">{{item.collect_count}}</i>
                         <!-- need a filter to process create_at  -->
                         <span>{{item.create_at | relativets}} </span>
+                        <ion-option-button class="button-calm" ng-click="editDingOnShelf(item)" ng-if="item.goods_status === '在售'">
+                            顶
+                        </ion-option-button>
                         <ion-option-button class="button-stable" ng-click="editOffShelf(item)" ng-if="item.goods_status === '在售'">
                             下架
                         </ion-option-button>

@@ -8,10 +8,16 @@
 
 var config = require('./config');
 var appInit = require('./appinit.js');
+var revision = require('git-rev');
 
 if (!config.debug) {
     require('newrelic');
 }
+// get git reverison for better tracking builds
+revision.short(function(gitRevision) {
+
+process.env['wildfire_git_revision'] = gitRevision;
+
 var util = require('util');
 var path = require('path');
 var Loader = require('loader');
@@ -76,7 +82,7 @@ app.enable('trust proxy');
 
 // 静态资源
 app.use(Loader.less(__dirname));
-app.use('/public', express.static(staticDir));
+app.use('/public', cors(), express.static(staticDir));
 app.use('/agent', proxyMiddleware.proxy);
 
 // 每日访问限制
@@ -262,3 +268,6 @@ app.listen(config.port, function() {
 
 
 module.exports = app;
+
+
+});

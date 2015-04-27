@@ -3,38 +3,38 @@ angular.module('iwildfire.services', ['ngResource'])
 .factory('Tabs', function() {
     var _Tabs = {};
     var list = [{
-            value: 'all',
-            label: '全部'
-        }, {
-            value: 'books',
-            label: '教材书籍'
-        }, {
-            value: 'transports',
-            label: '代步工具'
-        }, {
-            value: 'electronics',
-            label: '数码电器'
-        }, {
-            value: 'supplies',
-            label: '生活用品'
-        }, {
-            value: 'healthcare',
-            label: '运动健身'
-        }, {
-            value: 'clothes',
-            label: '衣帽饰物'
-        }, {
-            value: 'others',
-            label: '其它'
-        }];
+        value: 'all',
+        label: '全部'
+    }, {
+        value: 'books',
+        label: '教材书籍'
+    }, {
+        value: 'transports',
+        label: '代步工具'
+    }, {
+        value: 'electronics',
+        label: '数码电器'
+    }, {
+        value: 'supplies',
+        label: '生活用品'
+    }, {
+        value: 'healthcare',
+        label: '运动健身'
+    }, {
+        value: 'clothes',
+        label: '衣帽饰物'
+    }, {
+        value: 'others',
+        label: '其它'
+    }];
 
-    _Tabs.getList = function(){
+    _Tabs.getList = function() {
         return list;
     };
 
-    _Tabs.getLabel = function( value ){
-        for( i in list ){
-            if ( list[i]['value'] == value ) {
+    _Tabs.getLabel = function(value) {
+        for (i in list) {
+            if (list[i]['value'] == value) {
                 return list[i]['label'];
             }
         }
@@ -413,6 +413,83 @@ angular.module('iwildfire.services', ['ngResource'])
         return deferred.promise;
     }
 
+
+    /**
+     * submit feedback
+     */
+    this.submitFeedback = function(content) {
+        var deferred = $q.defer();
+        $http.post('{0}/ionic/feedback'.f(cfg.api), {
+                accesstoken: store.getAccessToken(),
+                content: content
+            }, {
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
+                }
+            })
+            .success(function(data) {
+                $log.debug('Get feedback response: ' + JSON.stringify(data));
+                if (data && data.rc === 0) {
+                    deferred.resolve();
+                } else {
+                    deferred.reject();
+                }
+            })
+            .error(function(err) {
+                $log.error('Get error response when submitting feedback.');
+                $log.error(err);
+                deferred.reject();
+            });
+
+        return deferred.promise;
+    }
+
+    // get user service agreements in markdown format
+    this.getUserServiceAgreements = function() {
+        var defer = $q.defer();
+        $http({
+            method: 'GET',
+            url: '{0}/public/markdowns/user-service-agreements.md'.f(cfg.server)
+        }).success(function(data, status, headers, config) {
+            var converter = new Showdown.converter();
+            defer.resolve(converter.makeHtml(data));
+        }).error(function(err, status) {
+            $log.error('Can not get /public/md/user-service-agreements.md from server.');
+            defer.reject(err);
+        });
+        return defer.promise;
+    };
+
+
+    /**
+     * Ding my topic
+     * Update update_at value, so the record would 
+     * display at top in index page.
+     */
+    this.dingMyTopic = function(topic) {
+        var deferred = $q.defer();
+
+        $http.post('{0}/topic/ding'.f(cfg.api), {
+                accesstoken: store.getAccessToken(),
+                // accesstoken: 'e26b54f0-6ca2-4eb7-97ae-a52c6af268dc',
+                topicId: topic._id
+            })
+            .success(function(data) {
+                if (typeof(data) == 'object' &&
+                    data.rc == 0) {
+                    deferred.resolve();
+                } else {
+                    deferred.reject();
+                }
+            })
+            .error(function(err) {
+                deferred.reject();
+            });
+
+        return deferred.promise;
+    }
+
 })
 
 /**
@@ -431,6 +508,9 @@ angular.module('iwildfire.services', ['ngResource'])
     var currentTab = 'all';
     var nextPage = 1;
     var hasNextPage = true;
+    var text = null;
+    var lng = null;
+    var lat = null;
     var resource = $resource(cfg.api + '/topics', {}, {
         query: {
             method: 'get',
@@ -443,10 +523,13 @@ angular.module('iwildfire.services', ['ngResource'])
             timeout: 20000
         }
     });
-    var getTopics = function(tab, page, callback) {
+    var getTopics = function(tab, page, text, callback) {
         return resource.query({
             tab: tab,
-            page: page
+            page: page,
+            text: text,
+            lng: lng,
+            lat: lat
         }, function(r) {
             $log.debug('get topics tab:', tab, 'page:', page, 'data:', r.data);
             return callback && callback(r);
@@ -454,14 +537,14 @@ angular.module('iwildfire.services', ['ngResource'])
     };
     return {
         refresh: function() {
-            return getTopics(currentTab, 1, function(response) {
+            return getTopics(currentTab, 1, text, function(response) {
                 nextPage = 2;
                 hasNextPage = true;
                 topics = response.data;
             });
         },
         pagination: function() {
-            return getTopics(currentTab, nextPage, function(response) {
+            return getTopics(currentTab, nextPage, text, function(response) {
                 if (response.data.length < 10) {
                     $log.debug('response data length', response.data.length);
                     hasNextPage = false;
@@ -484,11 +567,19 @@ angular.module('iwildfire.services', ['ngResource'])
         },
         resetData: function() {
             topics = [];
+            text = {};
             nextPage = 1;
             hasNextPage = true;
         },
         getTopics: function() {
             return topics;
+        },
+        setQuery: function(query) {
+            text = query
+        },
+        setGeom: function(geom) {
+            lng = geom.longitude;
+            lat = geom.latitude;
         },
         getById: function(id) {
 
@@ -605,96 +696,96 @@ angular.module('iwildfire.services', ['ngResource'])
 
 .factory('Storage', function($log) {
 
-  return {
-    set: function(key, data) {
-      return window.localStorage.setItem(key, window.JSON.stringify(data));
-    },
-    get: function(key) {
-      return window.JSON.parse(window.localStorage.getItem(key));
-    },
-    remove: function(key) {
-      return window.localStorage.removeItem(key);
-    }
-  };
+    return {
+        set: function(key, data) {
+            return window.localStorage.setItem(key, window.JSON.stringify(data));
+        },
+        get: function(key) {
+            return window.JSON.parse(window.localStorage.getItem(key));
+        },
+        remove: function(key) {
+            return window.localStorage.removeItem(key);
+        }
+    };
 })
 
 .factory('User', function(cfg, $resource, $log, $q, Storage) {
-  var storageKey = 'user';
-  var resource = $resource(cfg.api + '/accesstoken');
-  var userResource = $resource(cfg.api + '/user/:loginname', {
-    loginname: ''
-  });
-  var user = Storage.get(storageKey) || {};
-  return {
-    login: function(accesstoken) {
-      var $this = this;
-      return resource.save({
-        accesstoken: accesstoken
-      }, null, function(response) {
-        $log.debug('post accesstoken:', response);
-        user.accesstoken = accesstoken;
-        $this.getByLoginName(response.loginname).$promise.then(function(r) {
-          user = r.data;
-          user.id = response.id;
-          user.accesstoken = accesstoken;
+    var storageKey = 'user';
+    var resource = $resource(cfg.api + '/accesstoken');
+    var userResource = $resource(cfg.api + '/user/:loginname', {
+        loginname: ''
+    });
+    var user = Storage.get(storageKey) || {};
+    return {
+        login: function(accesstoken) {
+            var $this = this;
+            return resource.save({
+                accesstoken: accesstoken
+            }, null, function(response) {
+                $log.debug('post accesstoken:', response);
+                user.accesstoken = accesstoken;
+                $this.getByLoginName(response.loginname).$promise.then(function(r) {
+                    user = r.data;
+                    user.id = response.id;
+                    user.accesstoken = accesstoken;
 
-          // set alias for jpush
-          // Push.setAlias(user.id);
+                    // set alias for jpush
+                    // Push.setAlias(user.id);
 
-          Storage.set(storageKey, user);
-        });
-        user.loginname = response.loginname;
-      });
-    },
-    logout: function() {
-      user = {};
-      Storage.remove(storageKey);
+                    Storage.set(storageKey, user);
+                });
+                user.loginname = response.loginname;
+            });
+        },
+        logout: function() {
+            user = {};
+            Storage.remove(storageKey);
 
-      // unset alias for jpush
-      // Push.setAlias('');
-    },
-    getCurrentUser: function() {
-      $log.debug('current user:', user);
-      return user;
-    },
-    getByLoginName: function(loginName) {
-      if (user && loginName === user.loginname) {
-        var userDefer = $q.defer();
-        $log.debug('get user info from storage:', user);
-        userDefer.resolve({
-          data: user
-        });
-        return {
-          $promise: userDefer.promise
-        };
-      }
-      return this.get(loginName);
-    },
-    get: function(loginName) {
-      return userResource.get({
-        loginname: loginName
-      }, function(response) {
-        $log.debug('get user info:', response);
-        if (user && user.loginname === loginName) {
-          angular.extend(user, response.data);
+            // unset alias for jpush
+            // Push.setAlias('');
+        },
+        getCurrentUser: function() {
+            $log.debug('current user:', user);
+            return user;
+        },
+        getByLoginName: function(loginName) {
+            if (user && loginName === user.loginname) {
+                var userDefer = $q.defer();
+                $log.debug('get user info from storage:', user);
+                userDefer.resolve({
+                    data: user
+                });
+                return {
+                    $promise: userDefer.promise
+                };
+            }
+            return this.get(loginName);
+        },
+        get: function(loginName) {
+            return userResource.get({
+                loginname: loginName
+            }, function(response) {
+                $log.debug('get user info:', response);
+                if (user && user.loginname === loginName) {
+                    angular.extend(user, response.data);
 
-          Storage.set(storageKey, user);
+                    Storage.set(storageKey, user);
+                }
+            });
+        },
+        collectTopic: function(topicId) {
+            user.collect_topics.push({
+                id: topicId
+            });
+            Storage.set(storageKey, user);
+        },
+        deCollectTopic: function(topicId) {
+            angular.forEach(user.collect_topics, function(topic, key) {
+                if (topic.id === topicId) {
+                    user.collect_topics.splice(key, 1);
+                }
+            });
+            Storage.set(storageKey, user);
         }
-      });
-    },
-    collectTopic: function(topicId) {
-      user.collect_topics.push({
-        id: topicId
-      });
-      Storage.set(storageKey, user);
-    },
-    deCollectTopic: function(topicId) {
-      angular.forEach(user.collect_topics, function(topic, key) {
-        if (topic.id === topicId) {
-          user.collect_topics.splice(key, 1);
-        }
-      });
-      Storage.set(storageKey, user);
-    }
-  };
+    };
 })

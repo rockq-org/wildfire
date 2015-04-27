@@ -87,8 +87,8 @@ function onSubscribe(msg, res) {
     // get user profile data with RESt API
     _createUserAccountByOpenId(msg);
     res.reply([{
-        title: '注册账号',
-        description: '使用微信登陆呱呱叫，未注册用户可浏览二手物品信息。',
+        title: '绑定手机号',
+        description: '绑定后可发布信息，未绑定状态可浏览信息。',
         picurl: u.format('http://%s/public/images/frog-icon.png', config.host),
         url: u.format('http://%s/auth/wechat/embedded', config.host)
     }]);

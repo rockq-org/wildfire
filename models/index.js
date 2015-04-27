@@ -8,6 +8,7 @@ require('./reply');
 require('./topic_collect');
 require('./message');
 require('./fileStorage');
+require('./feedback');
 
 exports.User = mongoose.model('User');
 exports.Topic = mongoose.model('Topic');
@@ -17,3 +18,4 @@ exports.Message = mongoose.model('Message');
 
 // use GridFS to manage files
 exports.FileStorage = mongoose.model('FileStorage');
+exports.Feedback = mongoose.model('Feedback');

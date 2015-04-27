@@ -480,6 +480,8 @@ angular.module('iwildfire.services', ['ngResource'])
     var nextPage = 1;
     var hasNextPage = true;
     var text = null;
+    var lng = null;
+    var lat = null;
     var resource = $resource(cfg.api + '/topics', {}, {
         query: {
             method: 'get',
@@ -496,7 +498,9 @@ angular.module('iwildfire.services', ['ngResource'])
         return resource.query({
             tab: tab,
             page: page,
-            text: text
+            text: text,
+            lng: lng,
+            lat: lat
         }, function(r) {
             $log.debug('get topics tab:', tab, 'page:', page, 'data:', r.data);
             return callback && callback(r);
@@ -543,6 +547,10 @@ angular.module('iwildfire.services', ['ngResource'])
         },
         setQuery: function(query) {
             text = query
+        },
+        setGeom: function(geom) {
+            lng = geom.lng;
+            lat = geom.lat;
         },
         getById: function(id) {
 

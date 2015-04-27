@@ -28,11 +28,26 @@ var index = function(req, res, next) {
             query.tab = tab;
         }
     }
-    if(req.query.text){
+    if(req.query.text) {
         var text = new RegExp(req.query.text);
         query.$or = [{title: text},{content: text}];
     }
+    if(req.query.lng && req.query.lat) {
+        var lng = parseFloat(req.query.lng);
+        var lat = parseFloat(req.query.lat);
+        var dist = 3000;//parseFloat(req.query.dist || 3000)
 
+        query.geom = {
+            $nearSphere: {
+                $geometry: {
+                    type: 'Point',
+                    coordinates: [lng, lat]
+                },
+                $maxDistance: 3000
+            }
+        }
+    }
+    //console.log('query',query);
     query.deleted = false;
     var options = {
         skip: (page - 1) * limit,
@@ -359,6 +374,10 @@ exports.update = function(req, res, next) {
                 topic.goods_is_bargain = topicInRequest.goods_is_bargain;
                 topic.goods_quality_degree = topicInRequest.goods_quality_degree;
                 topic.goods_exchange_location = topicInRequest.goods_exchange_location;
+                topic.geom = {
+                    type: 'Point',
+                    coordinates: [opicInRequest.goods_exchange_location.lng,opicInRequest.goods_exchange_location.lnt]
+                };
                 topic.markModified('goods_exchange_location');
                 topic.goods_status = topicInRequest.goods_status;
                 topic.save(function(err, doc) {

@@ -95,6 +95,7 @@ angular.module('iwildfire.controllers', [])
         }
         $log.debug('doSearch');
         Topics.setQuery(query);
+        Topics.setGeom({lng:140,lat:40.4});
         $scope.doRefresh();
         $log.debug('searchText', query);
         $scope.tabTitle = query || '首页';

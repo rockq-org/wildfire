@@ -297,7 +297,7 @@ angular.module('iwildfire.controllers', [])
  * @param  {[type]} wechat_signature [description]
  * @return {[type]}                  [description]
  */
-.controller('PostCtrl', function($scope, $log, $q, cfg, store, webq, wechat_signature, Tabs, $ionicModal, $timeout) {
+.controller('PostCtrl', function($scope, $state, $stateParams, $log, $q, cfg, store, webq, wechat_signature, Tabs, $ionicModal, $timeout) {
 
     // #TODO comment out for debugging
     // if not contains profile and accesstoken, just naviagte
@@ -326,6 +326,10 @@ angular.module('iwildfire.controllers', [])
         goods_status: '在售'
     };
 
+    $scope.pageModel = {};
+    $scope.pageModel.tagValue = 'books';
+    $scope.pageModel.quality = '全新';
+
     $scope.tagList = Tabs.getList();
 
     $scope.qualityList = ['全新', '很新', '完好', '适用', '能用'];
@@ -338,6 +342,10 @@ angular.module('iwildfire.controllers', [])
     $scope.changeQuality = function(value) {
         $scope.params.quality = value;
         $log.debug('params: {0}'.f(JSON.stringify($scope.params)));
+    }
+
+    $scope.save = function () {
+        $state.go('tab.post');
     }
 
     /**

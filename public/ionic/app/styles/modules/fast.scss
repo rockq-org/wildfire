@@ -19,6 +19,9 @@
 }
 
 .border-dashed {
-	border-bottom: 1px dashed #aaa!important;
-	margin-bottom: 1px!important;
+	border-style: dashed!important;
+}
+
+.noborder {
+	border: none;
 }

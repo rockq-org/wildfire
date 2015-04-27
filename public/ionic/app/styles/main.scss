@@ -110,3 +110,22 @@ input.location-address{
     vertical-align: top;
   }
 }
+
+.tab-item {
+	overflow: visible;
+}
+
+.tab-item .frog-icon {
+	background-size: 100% auto!important;
+	height: 60px;
+	position: relative;
+	top: -10px;
+}
+
+.tab-item .frog-logo-on {
+	background: url(../images/frog-logo-2.png);
+}
+
+.frog-logo-off {
+	background: url(../images/frog-logo-1.png);
+}

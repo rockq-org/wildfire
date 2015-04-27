@@ -112,6 +112,23 @@ angular.module('iwildfire', ['ionic', 'iwildfire.controllers', 'iwildfire.servic
         }
     })
 
+    .state('tab.post-describe', {
+        url: '/post/describe',
+        views: {
+            'tab-post': {
+                templateUrl: 'templates/post-describe.html',
+                controller: 'PostCtrl',
+                // https://github.com/angular-ui/ui-router/wiki#resolve
+                resolve: {
+                    wechat_signature: function(webq) {
+                        // check the accesstoken
+                        return webq.getWechatSignature();
+                    }
+                }
+            }
+        }
+    })
+
     .state('tab.maps', {
         url: '/maps',
         views: {

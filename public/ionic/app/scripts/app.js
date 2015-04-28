@@ -71,7 +71,7 @@ angular.module('iwildfire', ['ionic', 'iwildfire.controllers', 'iwildfire.servic
     $stateProvider
 
     // setup an abstract state for the tabs directive
-        .state('tab', {
+    .state('tab', {
         url: "/tab",
         abstract: true,
         templateUrl: "templates/tabs.html"
@@ -122,7 +122,12 @@ angular.module('iwildfire', ['ionic', 'iwildfire.controllers', 'iwildfire.servic
         views: {
             'tab-maps': {
                 templateUrl: 'templates/tab-maps.html',
-                controller: 'MapsCtrl'
+                controller: 'MapsCtrl',
+                resolve: {
+                    wxWrapper: function(webq) {
+                        return webq.getWxWrapper();
+                    }
+                }
             }
         }
     })

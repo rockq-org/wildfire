@@ -61,6 +61,7 @@ angular.module('iwildfire.directives', [])
     }
 
     return function(scope, element, attrs) {
+        console.log('lyman 64', JSON.stringify(scope));
         scope.searchKeyword = searchKeyword;
         var height = angular.element(element).parent().parent().height();
         var div = angular.element(element).find('div');

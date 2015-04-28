@@ -101,6 +101,7 @@ angular.module('iwildfire', ['ionic', 'iwildfire.controllers', 'iwildfire.servic
     })
 
     .state('tab.post', {
+        cache: false,
         url: '/post',
         views: {
             'tab-post': {
@@ -165,42 +166,49 @@ angular.module('iwildfire', ['ionic', 'iwildfire.controllers', 'iwildfire.servic
     })
 
     .state('settings', {
+        cache: false,
         url: '/settings',
         templateUrl: 'templates/settings/index.html',
         controller: 'SettingsCtrl'
     })
 
     .state('service-agreement', {
+        cache: false,
         url: '/service-agreement',
         templateUrl: 'templates/settings/service-agreement.html',
         controller: 'SettingsCtrl'
     })
 
     .state('feedback', {
+        cache: false,
         url: '/feedback',
         templateUrl: 'templates/settings/feedback.html',
         controller: 'SettingsCtrl'
     })
 
     .state('about', {
+        cache: false,
         url: '/about',
         templateUrl: 'templates/settings/about.html',
         controller: 'SettingsCtrl'
     })
 
     .state('help', {
+        cache: false,
         url: '/help',
         templateUrl: 'templates/settings/help.html',
         controller: 'SettingsCtrl'
     })
 
     .state('bind-mobile-phone', {
+        cache: false,
         url: '/bind-mobile-phone/:accessToken',
         templateUrl: 'templates/bind-mobile-phone.html',
         controller: 'BindMobilePhoneCtrl'
     })
 
     .state('bind-access-token', {
+        cache: false,
         url: '/bind-access-token/:accessToken',
         templateUrl: 'templates/bind-access-token.html',
         controller: 'BindAccessTokenCtrl'

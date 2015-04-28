@@ -5,21 +5,13 @@
   <ion-content class="has-header has-footer">
     <ion-refresher pulling-text="下拉刷新..." on-refresh="doRefresh()" refreshing-icon="ion-loading-c">
     </ion-refresher>
-
-    <div>
-      <ion-slide-box style="width:414px;" does-continue="true" auto-play="true" slide-interval="1000">
-          <ion-slide ng-repeat="pic in topic.goods_pics">
-              <img ng-src="{{img_prefix}}{{pic}}" style="width:414px;height:200px"  />
-          </ion-slide>
-          <ion-slide ng-repeat="pic in topic.goods_pics">
-              <img ng-src="{{img_prefix}}/api/v1/file/image-anonymous/5537c98ade18237343129d66" style="width:414px;height:200px"  />
-          </ion-slide>
-          <ion-slide ng-repeat="pic in topic.goods_pics">
-              <img ng-src="{{img_prefix}}/api/v1/file/image-anonymous/5536575c42825b3a02ded117" style="width:414px;height:200px"  />
-          </ion-slide>
-      </ion-slide-box>
-      <span class="{{topic.goods_quality_degree | badge}}">{{topic.goods_quality_degree}}</span>
-    </div>
+    
+    <ion-slide-box style="height: 200px;" does-continue="true" auto-play="true" slide-interval="1000">
+        <ion-slide ng-repeat="pic in topic.goods_pics">
+          <div style="width:100%; height:100%; background:url('{{img_prefix}}{{pic}}') center no-repeat; background-size:cover"></div>
+        </ion-slide>
+    </ion-slide-box>
+    <span class="{{topic.goods_quality_degree | badge}}">{{topic.goods_quality_degree}}</span>
 
     <div class="row">
       <div class="price col col50">

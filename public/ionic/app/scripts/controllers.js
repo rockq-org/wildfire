@@ -94,7 +94,7 @@ angular.module('iwildfire.controllers', [])
         }
     }
 
-    if (wxWrapper) {
+    if (typeof(wxWrapper) != 'undefined') {
         wxWrapper.getLocation({
             success: function(res) {
                 var longitude = res.longitude;
@@ -156,6 +156,7 @@ angular.module('iwildfire.controllers', [])
     $ionicLoading,
     $ionicActionSheet,
     $ionicScrollDelegate,
+    $ionicSlideBoxDelegate,
     $log,
     Topics,
     Topic,
@@ -188,6 +189,7 @@ angular.module('iwildfire.controllers', [])
         }
         return topicResource.$promise.then(function(response) {
             $scope.topic = response.data;
+            $ionicSlideBoxDelegate.update();
             console.log($scope.topic);
         }, $rootScope.requestErrorHandler({
             noBackdrop: true

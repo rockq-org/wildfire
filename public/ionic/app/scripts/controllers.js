@@ -7,6 +7,7 @@ angular.module('iwildfire.controllers', [])
     $timeout,
     $state,
     $location,
+    wechat_signature,
     $log,
     Topics,
     Tabs,
@@ -82,7 +83,8 @@ angular.module('iwildfire.controllers', [])
     }
 
     function getLocation() {
-        if (typeof(wechat_signature) != 'undefined') {
+        console.log(wechat_signature,'zzz');
+        if ( wechat_signature ) {
             wechat_signature.jsApiList = ['getLocation'];
             wx.config(wechat_signature);
             wx.error(function(err) {
@@ -92,13 +94,10 @@ angular.module('iwildfire.controllers', [])
             wx.ready(function() {
                 wx.getLocation({
                     success: function(res) {
-                        var latitude = res.latitude; // 纬度，浮点数，范围为90 ~ -90
-                        var longitude = res.longitude; // 经度，浮点数，范围为180 ~ -180。
-                        var speed = res.speed; // 速度，以米/每秒计
-                        var accuracy = res.accuracy; // 位置精度
-
-                        $scope.setGeom(res);
-                        //$scope.tabTitle = res.accuracy;
+                        var title = '';
+                        console.log(res);
+                        $scope.tabTitle = title;
+                        Topics.setGeom(res);
                         $scope.doRefresh();
 
                     }
@@ -124,7 +123,7 @@ angular.module('iwildfire.controllers', [])
         }
         $log.debug('doSearch');
         Topics.setQuery(query);
-        Topics.setGeom({lng:140,lat:40.4});
+        // Topics.setGeom({lng:140,lat:40.4});
         $scope.doRefresh();
         $log.debug('searchText', query);
         $scope.tabTitle = query || '首页';

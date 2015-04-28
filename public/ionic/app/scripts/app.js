@@ -68,7 +68,7 @@ angular.module('iwildfire', ['ionic', 'iwildfire.controllers', 'iwildfire.servic
     $stateProvider
 
     // setup an abstract state for the tabs directive
-        .state('tab', {
+    .state('tab', {
         url: "/tab",
         abstract: true,
         templateUrl: "templates/tabs.html"
@@ -80,7 +80,13 @@ angular.module('iwildfire', ['ionic', 'iwildfire.controllers', 'iwildfire.servic
         views: {
             'tab-index': {
                 templateUrl: 'templates/tab-index.html',
-                controller: 'IndexCtrl'
+                controller: 'IndexCtrl',
+                resolve: {
+                    wechat_signature: function(webq) {
+                        // check the accesstoken
+                        return webq.getWechatSignature();
+                    }
+                }
             }
         }
     })

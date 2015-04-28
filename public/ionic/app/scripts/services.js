@@ -464,7 +464,7 @@ angular.module('iwildfire.services', ['ngResource'])
 
     /**
      * Ding my topic
-     * Update update_at value, so the record would 
+     * Update update_at value, so the record would
      * display at top in index page.
      */
     this.dingMyTopic = function(topic) {
@@ -489,7 +489,6 @@ angular.module('iwildfire.services', ['ngResource'])
 
         return deferred.promise;
     }
-
 })
 
 /**

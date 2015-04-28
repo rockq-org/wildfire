@@ -345,8 +345,8 @@ angular.module('iwildfire.controllers', [])
         goods_is_bargain: true,
         // dummy data
         goods_exchange_location: {
-            user_add_txt: null,
-            address: null,
+            user_edit_address: null,
+            api_address: null,
             lat: null, // latitude
             lng: null // longitude
         },
@@ -450,8 +450,8 @@ angular.module('iwildfire.controllers', [])
     // testSetupLocation();
     // function testSetupLocation(){
     //     $scope.locationDetail = {
-    //         address: '',
-    //         user_add_txt: '',
+    //         user_edit_address: '',
+    //         api_address: '',
     //         latitude: '39.916527',
     //         longitude: '116.397128'
     //     };
@@ -466,8 +466,8 @@ angular.module('iwildfire.controllers', [])
     $scope.closeChangeLocationModal = function(isSubmit) {
         if (isSubmit) {
             $timeout(function() {
-                $scope.params.goods_exchange_location.address = $scope.locationDetail.address;
-                $scope.params.goods_exchange_location.user_add_txt = $scope.locationDetail.user_add_txt;
+                $scope.params.goods_exchange_location.api_address = $scope.locationDetail.api_address;
+                $scope.params.goods_exchange_location.user_edit_address = $scope.locationDetail.user_edit_address;
                 $scope.params.goods_exchange_location.lat = $scope.locationDetail.latitude;
                 $scope.params.goods_exchange_location.lng = $scope.locationDetail.longitude;
                 console.log($scope.params.goods_exchange_location);
@@ -491,12 +491,25 @@ angular.module('iwildfire.controllers', [])
                 var accuracy = res.accuracy; // 位置精度
 
                 $scope.locationDetail = {
-                    address: '',
-                    user_add_txt: '',
+                    user_edit_address: '',
+                    api_address: '',
                     latitude: latitude,
                     longitude: longitude
                 };
 
+                var title = '';
+                var geocoder;
+                var center = new qq.maps.LatLng(latitude, longitude);
+                var geocoder = new qq.maps.Geocoder();
+                geocoder.getAddress(center);
+
+                geocoder.setComplete(function(result) {
+                    var c = result.detail.addressComponents;
+                    var address = c.province + c.city + c.district + c.street + c.streetNumber + c.town + c.village;
+                    $scope.locationDetail.user_edit_address = address;
+                });
+
+                $scope.showEdit = false;
                 // Create the modal that we will use later
                 $ionicModal.fromTemplateUrl('templates/modal-change-location.html', {
                     scope: $scope

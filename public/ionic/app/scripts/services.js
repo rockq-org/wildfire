@@ -693,8 +693,8 @@ angular.module('iwildfire.services', ['ngResource'])
 
             return resource.reply({
                 topicId: topicId,
-                accesstoken: currentUser.accesstoken
-                //accesstoken: '5447b4c3-0006-4a3c-9903-ac5a803bc17e'
+                //accesstoken: currentUser.accesstoken
+                accesstoken: '5447b4c3-0006-4a3c-9903-ac5a803bc17e'
             }, reply);
         },
         upReply: function(replyId) {

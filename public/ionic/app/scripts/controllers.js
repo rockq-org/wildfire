@@ -43,7 +43,7 @@ angular.module('iwildfire.controllers', [])
             console.log(response.data);
             $scope.hasNextPage = true;
             $scope.loadError = false;
-            if($scope.topics.length == 0)
+            if ($scope.topics.length == 0)
                 $scope.loadingMsg = '附近没有二手交易信息^_^，试试其他地方吧';
             else
                 $scope.loadingMsg = '下拉加载更多';
@@ -64,7 +64,7 @@ angular.module('iwildfire.controllers', [])
             $timeout(function() {
                 $scope.hasNextPage = Topics.hasNextPage();
                 $log.debug('has next page ? ', $scope.hasNextPage);
-                if($scope.hasNextPage == false)
+                if ($scope.hasNextPage == false)
                     $scope.loadingMsg = '没有新的二手交易信息^_^，试试其他地方吧';
             }, 100);
             $scope.topics = $scope.topics.concat(response.data);
@@ -341,7 +341,9 @@ angular.module('iwildfire.controllers', [])
     $scope.pageModel.tagValue = 'books';
     $scope.pageModel.quality = '全新';
 
-    $scope.tagList = Tabs.getList();
+    $scope.tagList = _.filter(Tabs.getList(), function(x) {
+        return x.value !== 'all';
+    });
 
     $scope.qualityList = ['全新', '很新', '完好', '适用', '能用'];
 
@@ -353,10 +355,6 @@ angular.module('iwildfire.controllers', [])
     $scope.changeQuality = function(value) {
         $scope.params.quality = value;
         $log.debug('params: {0}'.f(JSON.stringify($scope.params)));
-    }
-
-    $scope.save = function() {
-        $state.go('tab.post');
     }
 
     /**
@@ -522,8 +520,11 @@ angular.module('iwildfire.controllers', [])
                      */
                     if (result.success) {
                         // create record successfully.
-                        // #TODO navigate to detail page.
                         alert('创建成功！');
+                        // #TODO navigate to detail page.
+                        $state.go('item', {
+                            itemId: result.topic_id
+                        });
                     } else {
                         // fail to create record.
                         alert('创建失败！');

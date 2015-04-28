@@ -465,8 +465,8 @@ angular.module('iwildfire.controllers', [])
             wechat_signature.jsApiList = ['getLocation', 'openLocation'];
             wx.config(wechat_signature);
             wx.error(function(err) {
-                console.log('error', err);
-                // alert(err);
+                // console.log('error', err);
+                alert(err);
             });
             wx.ready(function() {
                 wx.getLocation({
@@ -484,7 +484,7 @@ angular.module('iwildfire.controllers', [])
                         };
 
                         // Create the modal that we will use later
-                        $ionicModal.fromTemplateUrl('templates/changeLocationModal.html', {
+                        $ionicModal.fromTemplateUrl('templates/modal-change-location.html', {
                             scope: $scope
                         }).then(function(modal) {
                             $scope.changeLocationModal = modal;

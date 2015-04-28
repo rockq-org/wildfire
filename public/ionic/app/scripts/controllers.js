@@ -159,6 +159,7 @@ angular.module('iwildfire.controllers', [])
     $scope.topic = topic;
     $scope.img_prefix = cfg.server;
     $scope.avatar_prefix = cfg.api + '/avatar/';
+    $scope.showReply = false;
 
     // before enter view event
     $scope.$on('$ionicView.beforeEnter', function() {
@@ -178,6 +179,7 @@ angular.module('iwildfire.controllers', [])
         }
         return topicResource.$promise.then(function(response) {
             $scope.topic = response.data;
+        console.log($scope.topic);
         }, $rootScope.requestErrorHandler({
             noBackdrop: true
         }, function() {
@@ -194,7 +196,6 @@ angular.module('iwildfire.controllers', [])
             $scope.isCollected = true;
         }
     });
-
     // do refresh
     $scope.doRefresh = function() {
         return $scope.loadTopic(true).then(function(response) {
@@ -219,6 +220,7 @@ angular.module('iwildfire.controllers', [])
             $scope.loadTopic(true).then(function() {
                 $ionicScrollDelegate.scrollBottom();
             });
+            $scope.showReply = false;
         }, $rootScope.requestErrorHandler);
     };
 

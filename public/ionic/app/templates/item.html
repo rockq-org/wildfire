@@ -91,7 +91,7 @@
         <input type="text" placeholder="给个好评呗" ng-model="replyData.content">
       </label>
       <button class="button button-small button-clear button-positive" ng-click="saveReply()">
-        提交
+        {{ replyData.content == ""? "取消" : "提交" }}
       </button>
   </div>
 </ion-view>

@@ -180,6 +180,9 @@ angular.module('iwildfire.controllers', [])
             window.analytics.trackView('topic view');
         }
     });
+    $scope.$on('$ionicView.afterLeave', function() {
+        $scope.showReply = false;
+    });
 
     // load topic data
     $scope.loadTopic = function(reload) {

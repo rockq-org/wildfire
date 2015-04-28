@@ -7,7 +7,6 @@ angular.module('iwildfire.controllers', [])
     $timeout,
     $state,
     $location,
-    wechat_signature,
     $log,
     Topics,
     Tabs,
@@ -82,32 +81,29 @@ angular.module('iwildfire.controllers', [])
         $scope.doRefresh();
     }
 
-    function getLocation() {
-        console.log(wechat_signature,'zzz');
-        if ( wechat_signature ) {
-            wechat_signature.jsApiList = ['getLocation'];
-            wx.config(wechat_signature);
-            wx.error(function(err) {
-                console.log('error', err);
-                // alert(err);
-            });
-            wx.ready(function() {
-                wx.getLocation({
-                    success: function(res) {
-                        var title = '';
-                        console.log(res);
-                        $scope.tabTitle = title;
-                        Topics.setGeom(res);
-                        $scope.doRefresh();
+    // if(wechat_signature){
+    //     wechat_signature.jsApiList = ['getLocation'];
+    //     wx.config(wechat_signature);
+    //     wx.error(function(err) {
+    //         alert('获取用户地理位置信息失败！'); alert(err);
+    //     });
+    //     wx.ready(function() {
+    //         wx.getLocation({
+    //             success: function(res) {
 
-                    }
-                });
-            });
-        } else {
-            $log.debug('app url: {0}. wechat_signature is not available while setup location.'.f(window.location.href.split('#')[0]));
-        }
-    }
-    getLocation();
+    //                 console.log( JSON.stringify( res ) );
+    //                 // var locationDetail = res.detail;
+    //                 // console.log(locationDetail);
+    //                 // var title = '';
+    //                 // console.log(res);
+    //                 // $scope.tabTitle = title;
+    //                 // Topics.setGeom(res);
+    //                 // $scope.doRefresh();
+    //             }
+    //         });
+    //     });
+    // };
+
 
     /***********************************
      * Search

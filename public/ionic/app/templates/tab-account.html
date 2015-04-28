@@ -2,7 +2,7 @@
     <ion-header-bar class="bar-dark">
         <h1 class="title">我的呱呱二手</h1>
         <div class="buttons">
-            <a class="button button-clear button-icon ion-ios7-gear-outline" ui-sref="settings"></a>
+            <a class="button button-clear button-icon ion-ios-gear-outline" ui-sref="settings"></a>
         </div>
     </ion-header-bar>
     <ion-content has-header="true">
@@ -15,15 +15,15 @@
             <!-- example https://gist.github.com/Samurais/3cb9498588575f342f1e# -->
             <ion-tabs class="tabs-striped tabs-color-assertive">
                 <!--  title="在售" -->
-                <ion-tab title="" icon-on="ion-ios7-filing" icon-off="ion-ios7-filing-outline" badge="data.onGoingStuffsBadge" badge-style="badge-light" on-select="onTabSelected('onGoingStuffs')" on-deselect="onTabDeselected('onGoingStuffs')">
+                <ion-tab title="" icon-on="ion-ios-filing" icon-off="ion-ios-filing-outline" badge="data.onGoingStuffsBadge" badge-style="badge-light" on-select="onTabSelected('onGoingStuffs')" on-deselect="onTabDeselected('onGoingStuffs')">
                     <!-- Tab 1 content -->
                 </ion-tab>
                 <!--  title="下架" -->
-                <ion-tab title="" icon-on="ion-ios7-box" icon-off="ion-ios7-box-outline" badge="data.offShelfStuffsBadge" badge-style="badge-light" on-select="onTabSelected('offShelfStuffs')" on-deselect="onTabDeselected('offShelfStuffs')">
+                <ion-tab title="" icon-on="ion-ios-box" icon-off="ion-ios-box-outline" badge="data.offShelfStuffsBadge" badge-style="badge-light" on-select="onTabSelected('offShelfStuffs')" on-deselect="onTabDeselected('offShelfStuffs')">
                     <!-- Tab 2 content -->
                 </ion-tab>
                 <!--  title="收藏" -->
-                <ion-tab title="" icon-on="ion-ios7-bookmarks" icon-off="ion-ios7-bookmarks-outline" badge="data.favoritesStuffsBadge" badge-style="badge-light" on-select="onTabSelected('favoritesStuffs')" on-deselect="onTabDeselected('favoritesStuffs')">
+                <ion-tab title="" icon-on="ion-ios-bookmarks" icon-off="ion-ios-bookmarks-outline" badge="data.favoritesStuffsBadge" badge-style="badge-light" on-select="onTabSelected('favoritesStuffs')" on-deselect="onTabDeselected('favoritesStuffs')">
                     <!-- Tab 3 content -->
                 </ion-tab>
             </ion-tabs>
@@ -43,8 +43,8 @@ Orders fake tab
                         <img src="{{item.goods_pics[0]}}">
                         <h2>{{item.title}}</h2>
                         <p>¥ {{item.goods_now_price}}</p>
-                        <i class="icon ion-ios7-chatbubble-outline" style="color:red">{{item.reply_count}}</i>
-                        <i class="icon ion-ios7-heart-outline" style="color:red">{{item.collect_count}}</i>
+                        <i class="icon ion-ios-chatbubble-outline" style="color:red">{{item.reply_count}}</i>
+                        <i class="icon ion-ios-heart-outline" style="color:red">{{item.collect_count}}</i>
                         <!-- need a filter to process create_at  -->
                         <span>{{item.create_at | relativets}} </span>
                         <ion-option-button class="button-calm" ng-click="editDingOnShelf(item)" ng-if="item.goods_status === '在售'">

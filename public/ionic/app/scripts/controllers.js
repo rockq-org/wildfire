@@ -24,11 +24,12 @@ angular.module('iwildfire.controllers', [])
 
     //cheat solution
     function loadDataAfterGetLocation() {
-        $scope.loadingMsg = '正在获取您的位置...';
+        $scope.loadingMsg = '正在搜索您附近得二手信息...';
         // check if tab is changed
         if ($stateParams.tab !== Topics.currentTab()) {
             $scope.currentTab = Topics.currentTab($stateParams.tab);
             // reset data if tab is changed
+            console.log('reset Data');
             Topics.resetData();
         }
 
@@ -106,16 +107,17 @@ angular.module('iwildfire.controllers', [])
                 geocoder.getAddress(center);
 
                 geocoder.setComplete(function(result) {
-                    // console.log('result', JSON.stringify(result));
-                    var c = result.detail.addressComponents;
-                    console.log('result', JSON.stringify(c));
-                    // var address = c.city + c.district + c.street + c.streetNumber + c.town + c.village;
-                    var address = c.street + c.streetNumber + c.town + c.village;
-                    $scope.address = address;
-                    $scope.tabTitle = address;
-                    Topics.setGeom(res);
-                    loadDataAfterGetLocation();
-                    // $scope.doRefresh();
+                    $timeout(function(){
+                        var c = result.detail.addressComponents;
+                        console.log('getLocation at line 112', JSON.stringify(c));
+                        // var address = c.city + c.district + c.street + c.streetNumber + c.town + c.village;
+                        var address = c.street + c.streetNumber + c.town + c.village;
+                        $scope.address = address;
+                        $scope.tabTitle = address;
+                        Topics.setGeom(res);
+                        loadDataAfterGetLocation();
+                        // $scope.doRefresh();
+                    });
                 });
             }
         });
@@ -354,6 +356,7 @@ angular.module('iwildfire.controllers', [])
         },
         goods_status: '在售'
     };
+
 
     $scope.pageModel = {};
     $scope.pageModel.tagValue = 'books';

@@ -613,6 +613,7 @@ angular.module('iwildfire.services', ['ngResource'])
             text = query
         },
         setGeom: function(geom) {
+            console.log('setGeom', JSON.stringify(geom));
             lng = geom.longitude;
             lat = geom.latitude;
         },

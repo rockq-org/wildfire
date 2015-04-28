@@ -275,6 +275,7 @@ exports.newAndSave = function(title, content, tab, authorId,
     goods_is_bargain,
     goods_quality_degree,
     goods_exchange_location,
+    goods_exchange_geom,
     goods_status,
     callback) {
     var topic = new Topic();
@@ -289,6 +290,7 @@ exports.newAndSave = function(title, content, tab, authorId,
     topic.goods_is_bargain = goods_is_bargain;
     topic.goods_quality_degree = goods_quality_degree;
     topic.goods_exchange_location = goods_exchange_location;
+    topic.goods_exchange_geom = goods_exchange_geom;
     topic.goods_status = goods_status;
     topic.save(callback);
 };

@@ -42,7 +42,7 @@ var index = function(req, res, next) {
         var lat = parseFloat(req.query.lat);
         var dist = 3000;//parseFloat(req.query.dist || 3000)
 
-        query.geom = {
+        query.goods_exchange_geom = {
             $nearSphere: {
                 $geometry: {
                     type: 'Point',
@@ -195,9 +195,9 @@ var create = function(req, res, next) {
         });
     }
 
-    var geom = {
+    var goods_exchange_geom = {
         type: 'Point',
-        coordinates: [goods_exchange_location.lng,goods_exchange_location.lnt]
+        coordinates: [goods_exchange_location.lng,goods_exchange_location.lat]
     };
 
     TopicProxy.newAndSave(title,
@@ -211,7 +211,7 @@ var create = function(req, res, next) {
         goods_is_bargain,
         goods_quality_degree,
         goods_exchange_location,
-        geom,
+        goods_exchange_geom,
         goods_status,
         function(err, topic) {
             if (err) {

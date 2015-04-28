@@ -95,6 +95,7 @@ var TopicSchema = new Schema({
    * @type {Object}
    */
   goods_exchange_location: {type: Schema.Types.Mixed, required: true},
+  goods_exchange_geom: {type: Schema.Types.Mixed, required: true},
   /**
    * 交易物品状态
    * @type [被举报，在售，下架，售出]

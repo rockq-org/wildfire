@@ -476,13 +476,10 @@ angular.module('iwildfire.controllers', [])
         $scope.changeLocationModal.hide();
     }
 
-    initGoodsExchangeLocation();
-
     function initGoodsExchangeLocation() {
         // check if wxWrapper exists or not.
         if (!wxWrapper)
             return;
-
         wxWrapper.getLocation({
             success: function(res) {
                 var latitude = res.latitude; // 纬度，浮点数，范围为90 ~ -90
@@ -502,10 +499,10 @@ angular.module('iwildfire.controllers', [])
                 var center = new qq.maps.LatLng(latitude, longitude);
                 var geocoder = new qq.maps.Geocoder();
                 geocoder.getAddress(center);
-
                 geocoder.setComplete(function(result) {
                     var c = result.detail.addressComponents;
                     var address = c.province + c.city + c.district + c.street + c.streetNumber + c.town + c.village;
+                    $scope.locationDetail.api_address = address;
                     $scope.locationDetail.user_edit_address = address;
                 });
 
@@ -520,6 +517,7 @@ angular.module('iwildfire.controllers', [])
             }
         });
     }
+    initGoodsExchangeLocation();
 
     /**
      * 验证表单字段

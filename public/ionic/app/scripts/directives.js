@@ -1,9 +1,12 @@
 angular.module('iwildfire.directives', [])
 
-.directive('map', function() {
+.directive('map', function($document) {
     var searchService, map, markers = [];
-    var init = function(element) {
-        var center = new qq.maps.LatLng(39.936273, 116.44004334);
+    var center;
+    var init = function(element, attrs, scope, width, height) {
+        // var center = new qq.maps.LatLng(scope.latitude, scope.longitude);
+        console.log('lyman 7', JSON.stringify(scope.locationDetail.latitude));
+        center = new qq.maps.LatLng(scope.locationDetail.latitude, scope.locationDetail.longitude);
         map = new qq.maps.Map(element, {
             center: center,
             zoom: 13,
@@ -12,10 +15,42 @@ angular.module('iwildfire.directives', [])
             mapTypeControl: false
         });
         new qq.maps.Circle({
-            center: new qq.maps.LatLng(39.936273, 116.44004334),
+            center: center,
             radius: 2000,
             map: map
         });
+
+        //创建自定义控件
+        var middleControl = document.createElement("div");
+        middleControl.style.left = (width - 36) / 2 + "px";
+        middleControl.style.top = (height - 36) / 2 + "px";
+        middleControl.style.position = "relative";
+        middleControl.style.width = "36px";
+        middleControl.style.height = "36px";
+        middleControl.style.zIndex = "100000";
+        middleControl.innerHTML = '<img src="https://www.cdlhome.com.sg/mobile_assets/images/icon-location.png" />';
+        element.appendChild(middleControl);
+        // qq.maps.event.addListener(middleControl, 'click', function(){
+        //     info.open();
+        //     info.setContent('<div style="text-align:center;white-space:nowrap;'+
+        //     'margin:10px;">' + address + '</div>');
+        //     info.setPosition(center);
+        // });
+
+        var resetControl = document.createElement("div");
+        resetControl.style.left = 15 + "px";
+        resetControl.style.top = height - 200 + "px";
+        resetControl.style.position = "relative";
+        resetControl.style.width = "36px";
+        resetControl.style.height = "36px";
+        resetControl.style.zIndex = "100000";
+        resetControl.innerHTML = '<img src="https://www.cdlhome.com.sg/mobile_assets/images/icon-location.png" />';
+        element.appendChild(resetControl);
+        qq.maps.event.addListener(resetControl, 'click', function() {
+            console.log('here!');
+            map.panTo( center );
+        });
+
         searchService = new qq.maps.SearchService({
             complete: function(results) {
                 //设置回调函数参数
@@ -24,6 +59,13 @@ angular.module('iwildfire.directives', [])
                     map: map
                 });
                 var latlngBounds = new qq.maps.LatLngBounds();
+
+                var marker = new qq.maps.Marker({
+                    map: map
+                });
+                marker.setPosition(center);
+                markers.push(marker);
+
                 for (var i = 0, l = pois.length; i < l; i++) {
                     var poi = pois[i];
                     //扩展边界范围，用来包含搜索到的Poi点
@@ -57,16 +99,16 @@ angular.module('iwildfire.directives', [])
         region = new qq.maps.LatLng(39.936273, 116.44004334);
 
         searchService.setPageCapacity(5);
-        searchService.searchNearBy(keyword, region, 2000);
+        searchService.searchNearBy(keyword, center, 2000);
     }
 
     return function(scope, element, attrs) {
-        console.log('lyman 64', JSON.stringify(scope.locationDetail));
-        scope.searchKeyword = searchKeyword;
-        var height = angular.element(element).parent().parent().height();
+        var width = $document.width();
+        var height = $document.height() - 44 - 50;
         var div = angular.element(element).find('div');
+        div.width(width);
         div.height(height);
-        init(div[0]);
+        init(div[0], attrs, scope, width, height);
     };
 })
 

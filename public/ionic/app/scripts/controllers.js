@@ -636,39 +636,8 @@ angular.module('iwildfire.controllers', [])
 })
 
 .controller('MapsCtrl', function($scope, locationDetail) {
-    console.log('lyman 639', locationDetail);
+    console.log('lyman 639', JSON.stringify( locationDetail ) );
     $scope.locationDetail = locationDetail;
-    // wxWrapper.getLocation({
-    //     success: function(res) {
-    //         var latitude = res.latitude; // 纬度，浮点数，范围为90 ~ -90
-    //         var longitude = res.longitude; // 经度，浮点数，范围为180 ~ -180。
-    //         var speed = res.speed; // 速度，以米/每秒计
-    //         var accuracy = res.accuracy; // 位置精度
-    //         console.log('lyman 644', JSON.stringify(res));
-
-    //         $scope.locationDetail = {
-    //             user_edit_address: '',
-    //             api_address: '',
-    //             latitude: latitude,
-    //             longitude: longitude
-    //         };
-    //         var title = '';
-    //         var geocoder;
-    //         var center = new qq.maps.LatLng(latitude, longitude);
-    //         var geocoder = new qq.maps.Geocoder();
-    //         geocoder.getAddress(center);
-    //         geocoder.setComplete(function(result) {
-    //             $timeout(function(){
-    //                 var c = result.detail.addressComponents;
-    //                 var address = c.province + c.city + c.district + c.street + c.streetNumber + c.town + c.village;
-    //                 $scope.locationDetail.api_address = address;
-    //                 $scope.locationDetail.user_edit_address = address;
-    //                 console.log('lyman 663', JSON.stringify($scope.locationDetail));
-    //             });
-    //         });
-    //     }
-    // });
-
 })
 
 .controller('InboxCtrl', function($scope, Messages) {

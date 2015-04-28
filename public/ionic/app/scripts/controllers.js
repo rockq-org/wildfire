@@ -506,6 +506,7 @@ angular.module('iwildfire.controllers', [])
                     var address = c.province + c.city + c.district + c.street + c.streetNumber + c.town + c.village;
                     $scope.locationDetail.api_address = address;
                     $scope.locationDetail.user_edit_address = address;
+                    $scope.params.goods_exchange_location.user_edit_address = address;
                 });
 
                 $scope.showEdit = false;

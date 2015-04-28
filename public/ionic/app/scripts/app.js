@@ -71,7 +71,7 @@ angular.module('iwildfire', ['ionic', 'iwildfire.controllers', 'iwildfire.servic
     $stateProvider
 
     // setup an abstract state for the tabs directive
-        .state('tab', {
+    .state('tab', {
         url: "/tab",
         abstract: true,
         templateUrl: "templates/tabs.html"
@@ -122,7 +122,39 @@ angular.module('iwildfire', ['ionic', 'iwildfire.controllers', 'iwildfire.servic
         views: {
             'tab-maps': {
                 templateUrl: 'templates/tab-maps.html',
-                controller: 'MapsCtrl'
+                controller: 'MapsCtrl',
+                resolve: {
+                    wxWrapper: function(webq) {
+                        return webq.getWxWrapper();
+                    },
+                    locationDetail: function($q, wxWrapper){
+                         var deferred = $q.defer();
+                         var locationDetail = {};
+                         wxWrapper.getLocation({
+                            success: function(res) {
+                                var latitude = res.latitude; // 纬度，浮点数，范围为90 ~ -90
+                                var longitude = res.longitude; // 经度，浮点数，范围为180 ~ -180。
+                                var speed = res.speed; // 速度，以米/每秒计
+                                var accuracy = res.accuracy; // 位置精度
+                                console.log('lyman 138', JSON.stringify(res));
+                                var geocoder;
+                                var center = new qq.maps.LatLng(latitude, longitude);
+                                var geocoder = new qq.maps.Geocoder();
+                                geocoder.getAddress(center);
+                                geocoder.setComplete(function(result) {
+                                    var c = result.detail.addressComponents;
+                                    var address = c.province + c.city + c.district + c.street + c.streetNumber + c.town + c.village;
+                                    locationDetail.api_address = address;
+                                    locationDetail.user_edit_address = address;
+                                    locationDetail.latitude = latitude;
+                                    locationDetail.longitude = longitude;
+                                    console.log('lyman 151', JSON.stringify(locationDetail));
+                                });
+                            }
+                        });
+                        return deferred.promise;
+                     }
+                }
             }
         }
     })

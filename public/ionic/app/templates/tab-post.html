@@ -1,77 +1,83 @@
 <ion-view view-title="发布">
-  <ion-content class="wf-post-form">
-    <div class="row wf-img-upload">
-      <div class="col box">
-      </div>
-      <div class="col group nopadding">
-        <div class="row nopadding">
-          <div class="col box">
-            <img ng-if="params.goods_pics.length > 1" ng-src="{{params.goods_pics[1]}}"/>
-          </div>
-          <div class="col box">
-            <img ng-if="params.goods_pics.length > 2" ng-src="{{params.goods_pics[2]}}"/>
-          </div>
+    <ion-content class="wf-post-form">
+        <div class="row wf-img-upload">
+            <div class="col box">
+                <img ng-if="params.goods_pics.length > 0" ng-src="{{params.goods_pics[0]}}" />
+            </div>
+            <div class="col group nopadding">
+                <div class="row nopadding">
+                    <div class="col box">
+                        <img ng-if="params.goods_pics.length > 1" ng-src="{{params.goods_pics[1]}}" />
+                    </div>
+                    <div class="col box">
+                        <img ng-if="params.goods_pics.length > 2" ng-src="{{params.goods_pics[2]}}" />
+                    </div>
+                </div>
+                <div class="row nopadding">
+                    <div class="col box">
+                        <img ng-if="params.goods_pics.length > 3" ng-src="{{params.goods_pics[3]}}" />
+                    </div>
+                    <div class="col box" ng-if="params.goods_pics.length > 4">
+                        <img ng-src="{{params.goods_pics[4]}}" />
+                    </div>
+                    <!-- at most, there are five images -->
+                    <!-- if reach five images, hide the upload button -->
+                    <div ng-if="params.goods_pics.length < 5" class="col box upload" id="uploadImg" ng-click="uploadImage()">
+                        <i class="icon ion-plus"></i>
+                    </div>
+                </div>
+            </div>
         </div>
-        <div class="row nopadding">
-          <div class="col box">
-            <img ng-if="params.goods_pics.length > 3" ng-src="{{params.goods_pics[3]}}"/>
-          </div>
-          <div class="col box upload" id="uploadImg" ng-click="uploadImage()">
-            <i class="icon ion-plus"></i>
-          </div>
+        <ion-list>
+            <ion-item>
+                <ul class="tag-list">
+                    <li ng-repeat="item in tagList" ng-class="item.value === params.tab ? 'active' : ''">
+                        <a href="javascript:void(0)" ng-click="changeTab(item.value)">{{item.label}}</a>
+                    </li>
+                </ul>
+            </ion-item>
+            <ion-item class="border-dashed">
+                <ul class="quality-list">
+                    <li ng-repeat="item in qualityList" ng-class="item === params.quality ? 'active' : ''">
+                        <a href="javascript:void(0)" ng-click="changeQuality(item)">{{item}}</a>
+                    </li>
+                </ul>
+            </ion-item>
+        </ion-list>
+        <ion-list type="list-inset">
+            <ion-item class="item-input">
+                <span class="input-label">转让价</span>
+                <input type="text" placeholder="￥" ng-model="params.goods_now_price">
+            </ion-item>
+            <ion-item class="item-input">
+                <span class="input-label">原价</span>
+                <input type="text" placeholder="￥" ng-model="params.goods_pre_price">
+            </ion-item>
+            <ion-item class="item-input">
+                <span class="input-label">宝贝名称</span>
+                <input ng-model="params.title" type="text" placeholder="宝贝名称">
+            </ion-item>
+            <ion-item class="item-toggle">
+                <span>是否接受侃价：</span>
+                <label class="toggle">
+                    <input type="checkbox" ng-model="params.goods_is_bargain">
+                    <div class="track">
+                        <div class="handle"></div>
+                    </div>
+                </label>
+            </ion-item>
+            <ion-item class="item-icon-right" ng-click="openGoodsDespModal()">
+                <span>描述{{params.content}}</span>
+                <i class="icon ion-ios7-arrow-forward"></i>
+            </ion-item>
+            <ion-item class="item-icon-left item-icon-right" href="javascript:void(0)" ng-click="changeLocationModal.show()">
+                <i class="icon ion-ios7-location"></i>
+                <span>{{params.goods_exchange_location.address || '地点'}}</span>
+                <i class="icon ion-ios7-arrow-forward"></i>
+            </ion-item>
+        </ion-list>
+        <div class="padding">
+            <button class="button button-block button-dark" ng-click="submitGoods()">确定发布</button>
         </div>
-      </div>
-    </div>
-    <ion-list>
-      <ion-item>
-        <ul class="tag-list">
-          <li ng-repeat="item in tagList" ng-class="item.value === params.tab ? 'active' : ''">
-            <a href="javascript:void(0)" ng-click="changeTag(item.value)">{{item.label}}</a>
-          </li>
-        </ul>
-      </ion-item>
-      <ion-item class="border-dashed">
-        <ul class="quality-list">
-          <li ng-repeat="item in qualityList" ng-class="item === params.quality ? 'active' : ''">
-            <a href="javascript:void(0)" ng-click="changeQuality(item)">{{item}}</a>
-          </li>
-        </ul>
-      </ion-item>
-    </ion-list>
-    <ion-list type="list-inset">
-      <ion-item class="item-input">
-        <span class="input-label">转让价</span>
-        <input type="text" placeholder="￥" ng-model="params.goods_now_price">
-      </ion-item>
-      <ion-item class="item-input">
-        <span class="input-label">原价</span>
-        <input type="text" placeholder="￥" ng-model="params.goods_pre_price">
-      </ion-item>
-      <ion-item class="item-input">
-        <span class="input-label">宝贝名称</span>
-        <input type="text" placeholder="宝贝名称">
-      </ion-item>
-      <ion-item class="item-toggle">
-        <span>是否接受侃价：</span>
-        <label class="toggle">
-          <input type="checkbox">
-          <div class="track">
-            <div class="handle"></div>
-          </div>
-        </label>
-      </ion-item>
-      <ion-item class="item-icon-right" href="#/tab/post/describe">
-        <span>描述{{params.content}}</span>
-        <i class="icon ion-ios7-arrow-forward"></i>
-      </ion-item>
-      <ion-item class="item-icon-left item-icon-right" ng-click="changeLocationModal.show()">
-        <i class="icon ion-ios7-location"></i>
-        <span>{{params.goods_exchange_location.address || '地点'}}</span>
-        <i class="icon ion-ios7-arrow-forward"></i>
-      </ion-item>
-    </ion-list>
-    <div class="padding">
-      <button class="button button-block button-dark" ng-click="submitGoods()">确定发布</button>
-    </div>
-  </ion-content>
+    </ion-content>
 </ion-view>

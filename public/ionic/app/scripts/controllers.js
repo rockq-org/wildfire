@@ -7,7 +7,6 @@ angular.module('iwildfire.controllers', [])
     $timeout,
     $state,
     $location,
-    wechat_signature,
     $log,
     Topics,
     Tabs,
@@ -83,8 +82,7 @@ angular.module('iwildfire.controllers', [])
     }
 
     function getLocation() {
-        console.log(wechat_signature,'zzz');
-        if ( wechat_signature ) {
+        if (wechat_signature) {
             wechat_signature.jsApiList = ['getLocation'];
             wx.config(wechat_signature);
             wx.error(function(err) {
@@ -99,7 +97,6 @@ angular.module('iwildfire.controllers', [])
                         $scope.tabTitle = title;
                         Topics.setGeom(res);
                         $scope.doRefresh();
-
                     }
                 });
             });
@@ -296,7 +293,17 @@ angular.module('iwildfire.controllers', [])
  * @param  {[type]} wechat_signature [description]
  * @return {[type]}                  [description]
  */
-.controller('PostCtrl', function($scope, $state, $stateParams, $log, $q, cfg, store, webq, wechat_signature, Tabs, $ionicModal, $timeout) {
+.controller('PostCtrl', function($scope, $state,
+    $stateParams,
+    $ionicModal,
+    $timeout,
+    $log,
+    $q,
+    cfg,
+    store,
+    webq,
+    wxWrapper,
+    Tabs) {
 
     // #TODO comment out for debugging
     // if not contains profile and accesstoken, just naviagte
@@ -333,7 +340,7 @@ angular.module('iwildfire.controllers', [])
 
     $scope.qualityList = ['全新', '很新', '完好', '适用', '能用'];
 
-    $scope.changeTag = function(value) {
+    $scope.changeTab = function(value) {
         $scope.params.tab = value;
         $log.debug('params: {0}'.f(JSON.stringify($scope.params)));
     };
@@ -343,7 +350,7 @@ angular.module('iwildfire.controllers', [])
         $log.debug('params: {0}'.f(JSON.stringify($scope.params)));
     }
 
-    $scope.save = function () {
+    $scope.save = function() {
         $state.go('tab.post');
     }
 
@@ -361,7 +368,7 @@ angular.module('iwildfire.controllers', [])
             }
             var resId = resIds.pop();
             if (resId) {
-                wx.uploadImage({
+                wxWrapper.uploadImage({
                     localId: resId, // 需要上传的图片的本地ID，由chooseImage接口获得
                     isShowProgressTips: 1, // 默认为1，显示进度提示
                     success: function(res) {
@@ -381,52 +388,44 @@ angular.module('iwildfire.controllers', [])
         // setup weixin sdk
         // http://mp.weixin.qq.com/wiki/7/aaa137b55fb2e0456bf8dd9148dd613f.html#JSSDK.E4.BD.BF.E7.94.A8.E6.AD.A5.E9.AA.A4
 
-        // if APP URL is not belong to arrking.com ,
-        // wechat_signature is null.
-        if (wechat_signature) {
-            wechat_signature.jsApiList = ['chooseImage', 'previewImage', 'uploadImage', 'downloadImage'];
-            wx.config(wechat_signature);
-            wx.error(function(err) {
-                alert(err);
-            });
-            wx.ready(function() {
-                wx.chooseImage({
-                    success: function(res) {
-                        var localIds = res.localIds; // 返回选定照片的本地ID列表，localId可以作为img标签的src属性显示图片
-                        // can not upload multi-images at the same time.
-                        var deferred = $q.defer();
-                        _processWxImages(localIds, null, deferred);
-                        deferred.promise.then(function(data) {
-                                /**
-                                 * data is the serverIds array
-                                 * ServerIds can be used to download
-                                 * images from wechat server to local
-                                 * server, by default, the images are
-                                 * expired in three days.
-                                 * http://mp.weixin.qq.com/wiki/12/58bfcfabbd501c7cd77c19bd9cfa8354.html
-                                 * @param  {[type]} err [description]
-                                 * @return {[type]}     [description]
-                                 */
-                                return webq.uploadWechatImages(data)
-                            }, function(err) {
-                                alert(JSON.stringify(err));
-                            })
-                            .then(function(result) {
-                                // alert('succ:' + JSON.stringify(result));
-                                _.each(result, function(value, index) {
-                                    // insert the image url into goods metadata
-                                    $scope.params.goods_pics.push(value.imageUrl);
-                                });
+        // check if wxWrapper exists or not.
+        if (!wxWrapper)
+            return;
 
-                            }, function(err) {
-                                alert('fail:' + JSON.stringify(err));
-                            });
-                    }
-                });
-            });
-        } else {
-            $log.debug('app url: {0}. wechat_signature is not available.'.f(window.location.href.split('#')[0]));
-        }
+        wxWrapper.chooseImage({
+            success: function(res) {
+                var localIds = res.localIds; // 返回选定照片的本地ID列表，localId可以作为img标签的src属性显示图片
+                // can not upload multi-images at the same time.
+                var deferred = $q.defer();
+                _processWxImages(localIds, null, deferred);
+                deferred.promise.then(function(data) {
+                        /**
+                         * data is the serverIds array
+                         * ServerIds can be used to download
+                         * images from wechat server to local
+                         * server, by default, the images are
+                         * expired in three days.
+                         * http://mp.weixin.qq.com/wiki/12/58bfcfabbd501c7cd77c19bd9cfa8354.html
+                         * @param  {[type]} err [description]
+                         * @return {[type]}     [description]
+                         */
+                        return webq.uploadWechatImages(data)
+                    }, function(err) {
+                        alert(JSON.stringify(err));
+                    })
+                    .then(function(result) {
+                        // alert('succ:' + JSON.stringify(result));
+                        _.each(result, function(value, index) {
+                            // insert the image url into goods metadata
+                            $scope.params.goods_pics.push(value.imageUrl);
+                        });
+
+                    }, function(err) {
+                        alert('fail:' + JSON.stringify(err));
+                    });
+            }
+        });
+
     };
 
     // testSetupLocation();
@@ -437,10 +436,10 @@ angular.module('iwildfire.controllers', [])
     //         latitude: '39.916527',
     //         longitude: '116.397128'
     //     };
-    //     $ionicModal.fromTemplateUrl('templates/changeLocationModal.html', {
+    //     $ionicModal.fromTemplateUrl('templates/modal-change-location.html', {
     //         scope: $scope
     //     }).then(function(modal) {
-    //         $scope.changeLocationModal = modal;
+    //         $scope.modal-change-location = modal;
     //         // modal.show();
     //     });
     // }
@@ -458,45 +457,36 @@ angular.module('iwildfire.controllers', [])
         $scope.changeLocationModal.hide();
     }
 
-    setupLocation();
+    initGoodsExchangeLocation();
 
-    function setupLocation() {
-        if (wechat_signature) {
-            wechat_signature.jsApiList = ['getLocation', 'openLocation'];
-            wx.config(wechat_signature);
-            wx.error(function(err) {
-                // console.log('error', err);
-                alert(err);
-            });
-            wx.ready(function() {
-                wx.getLocation({
-                    success: function(res) {
-                        var latitude = res.latitude; // 纬度，浮点数，范围为90 ~ -90
-                        var longitude = res.longitude; // 经度，浮点数，范围为180 ~ -180。
-                        var speed = res.speed; // 速度，以米/每秒计
-                        var accuracy = res.accuracy; // 位置精度
+    function initGoodsExchangeLocation() {
+        // check if wxWrapper exists or not.
+        if (!wxWrapper)
+            return;
 
-                        $scope.locationDetail = {
-                            address: '',
-                            user_add_txt: '',
-                            latitude: latitude,
-                            longitude: longitude
-                        };
+        wxWrapper.getLocation({
+            success: function(res) {
+                var latitude = res.latitude; // 纬度，浮点数，范围为90 ~ -90
+                var longitude = res.longitude; // 经度，浮点数，范围为180 ~ -180。
+                var speed = res.speed; // 速度，以米/每秒计
+                var accuracy = res.accuracy; // 位置精度
 
-                        // Create the modal that we will use later
-                        $ionicModal.fromTemplateUrl('templates/modal-change-location.html', {
-                            scope: $scope
-                        }).then(function(modal) {
-                            $scope.changeLocationModal = modal;
-                            console.log(modal);
-                            // modal.show();
-                        });
-                    }
+                $scope.locationDetail = {
+                    address: '',
+                    user_add_txt: '',
+                    latitude: latitude,
+                    longitude: longitude
+                };
+
+                // Create the modal that we will use later
+                $ionicModal.fromTemplateUrl('templates/modal-change-location.html', {
+                    scope: $scope
+                }).then(function(modal) {
+                    $scope.changeLocationModal = modal;
+                    // modal.show();
                 });
-            });
-        } else {
-            $log.debug('app url: {0}. wechat_signature is not available while setup location.'.f(window.location.href.split('#')[0]));
-        }
+            }
+        });
     }
 
     /**
@@ -541,6 +531,38 @@ angular.module('iwildfire.controllers', [])
             alert('缺少信息。')
         }
     }
+
+
+    /*******************************************
+     * Modal View to input description of goods
+     *******************************************/
+    $ionicModal.fromTemplateUrl('templates/modal-post-goods-desp.html', {
+        scope: $scope,
+        animation: 'slide-in-up'
+    }).then(function(modal) {
+        $scope.GoodsDespModal = modal;
+    });
+
+    $scope.openGoodsDespModal = function() {
+        $scope.GoodsDespModal.show();
+    };
+    $scope.closeGoodsDespModal = function() {
+        $scope.GoodsDespModal.hide();
+    };
+
+    /*******************************************
+     * End of Modal View to input description of goods
+     *******************************************/
+
+    //Cleanup the modal when we're done with it!
+    $scope.$on('$destroy', function() {
+
+        if ($scope.GoodsDespModal)
+            $scope.GoodsDespModal.remove();
+
+        if ($scope.changeLocationModal)
+            $scope.changeLocationModal.remove()
+    });
 
 })
 

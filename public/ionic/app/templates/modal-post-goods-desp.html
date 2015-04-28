@@ -1,0 +1,18 @@
+<ion-modal-view>
+    <ion-header-bar class="bar-dark">
+        <h1 class="title">二手物品描述</h1>
+    </ion-header-bar>
+    <ion-content>
+        <div class="list">
+            <label class="item item-input">
+                <!-- focus-me does not work -->
+                <!-- http://forum.ionicframework.com/t/auto-focus-textbox-while-template-loads/6851/5 -->
+                <!-- needs more permission in config -->
+                <textarea ng-model="params.content" placeholder="您的宝贝的详细描述。" style="height:120px"></textarea>
+            </label>
+            <button class="button button-block button-balanced" ng-click="closeGoodsDespModal()">
+                保存
+            </button>
+        </div>
+    </ion-content>
+</ion-modal-view>

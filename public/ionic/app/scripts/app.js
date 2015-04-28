@@ -96,12 +96,8 @@ angular.module('iwildfire', ['ionic', 'iwildfire.controllers', 'iwildfire.servic
 
     .state('item', {
         url: '/item/:itemId',
-        views: {
-            '': {
-                templateUrl: 'templates/item.html',
-                controller: 'ItemCtrl'
-            }
-        }
+        templateUrl: 'templates/item.html',
+        controller: 'ItemCtrl'
     })
 
     .state('tab.post', {

@@ -1,4 +1,7 @@
 <ion-view view-title="{{topic.title}}">
+  <ion-nav-buttons side="left">
+    <a class="button button-icon icon ion-ios-arrow-back" href="#tab/index"></a>
+  </ion-nav-buttons>
   <ion-content>
     <ion-refresher pulling-text="下拉刷新..." on-refresh="doRefresh()" refreshing-icon="ion-loading-c">
     </ion-refresher>

@@ -19,6 +19,7 @@ angular.module('iwildfire.controllers', [])
     $scope.img_prefix = cfg.server;
 
     $scope.currentTab = Topics.currentTab();
+    $scope.loadingMsg = '正在加载...';
 
     // check if tab is changed
     if ($stateParams.tab !== Topics.currentTab()) {
@@ -42,6 +43,10 @@ angular.module('iwildfire.controllers', [])
             console.log(response.data);
             $scope.hasNextPage = true;
             $scope.loadError = false;
+            if($scope.topics.length == 0)
+                $scope.loadingMsg = '附近没有二手交易信息^_^，试试其他地方吧';
+            else
+                $scope.loadingMsg = '下拉加载更多';
         }, $rootScope.requestErrorHandler({
             noBackdrop: true
         }, function() {
@@ -59,6 +64,8 @@ angular.module('iwildfire.controllers', [])
             $timeout(function() {
                 $scope.hasNextPage = Topics.hasNextPage();
                 $log.debug('has next page ? ', $scope.hasNextPage);
+                if($scope.hasNextPage == false)
+                    $scope.loadingMsg = '没有新的二手交易信息^_^，试试其他地方吧';
             }, 100);
             $scope.topics = $scope.topics.concat(response.data);
         }, $rootScope.requestErrorHandler({

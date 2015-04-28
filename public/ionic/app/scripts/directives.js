@@ -98,8 +98,10 @@ angular.module('iwildfire.directives', [])
         var geocoder = new qq.maps.Geocoder({
             complete: function(result) {
                 $timeout(function() {
-                    // var address = c.city + c.district + c.street + c.streetNumber + c.town + c.village;
-                    scope.$parent.$parent.locationDetail.api_address = result.detail.api_address;
+                    var c = result.detail.addressComponents;
+                    var address = c.province + c.city + c.district + c.street + c.streetNumber + c.town + c.village;
+                    scope.$parent.$parent.locationDetail.api_address = result.detail.address;
+                    scope.$parent.$parent.locationDetail.user_edit_address = address;
                     scope.$parent.$parent.locationDetail.latitude = result.detail.location.lat;
                     scope.$parent.$parent.locationDetail.longitude = result.detail.location.lng;
                 });

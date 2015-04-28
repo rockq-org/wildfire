@@ -233,6 +233,35 @@ angular.module('iwildfire.services', ['ngResource'])
         return deferred.promise;
     }
 
+    this.getWeChatLocationDetail = function() {
+        var deferred = $q.defer();
+        this.getWechatSignature().then(function(wechat_signature) {
+            // return for local debugging
+            if (!wechat_signature)
+                return;
+
+            $log.debug(JSON.stringify(wechat_signature));
+
+
+            wechat_signature.jsApiList = ['getLocation'];
+            wx.config(wechat_signature);
+            wx.error(function(err) {
+                $log.debug(JSON.stringify(err));
+                deferred.reject(err);
+            });
+            wx.ready(function() {
+                wx.getLocation({
+                    success: function(res) {
+                        var locationDetail = res.detail;
+                        deferred.resolve(locationDetail);
+                    }
+                });
+            });
+        });
+
+        return deferred.promise;
+    }
+
     this.sendVerifyCode = function(phoneNumber) {
         var deferred = $q.defer();
         $http.post('{0}/user/bind_phone_number'.f(cfg.api), {
@@ -488,7 +517,8 @@ angular.module('iwildfire.services', ['ngResource'])
             });
 
         return deferred.promise;
-    }
+    };
+
 })
 
 /**

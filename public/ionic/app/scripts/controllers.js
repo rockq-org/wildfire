@@ -88,32 +88,28 @@ angular.module('iwildfire.controllers', [])
         $scope.doRefresh();
     }
 
-    function getLocation() {
-        if (typeof(wechat_signature) != 'undefined') {
-            wechat_signature.jsApiList = ['getLocation'];
-            wx.config(wechat_signature);
-            wx.error(function(err) {
-                console.log('error', err);
-                // alert(err);
-            });
-            wx.ready(function() {
-                wx.getLocation({
-                    success: function(res) {
-                        var title = '';
-                        console.log(res);
-                        $scope.tabTitle = title;
-                        Topics.setGeom(res);
-                        $scope.doRefresh();
-                    }
-                });
-            });
-        } else {
-            $scope.tabTitle = '首页';
-            $scope.doRefresh();
-            $log.debug('app url: {0}. wechat_signature is not available while setup location.'.f(window.location.href.split('#')[0]));
-        }
-    }
-    getLocation();
+    // if(wechat_signature){
+    //     wechat_signature.jsApiList = ['getLocation'];
+    //     wx.config(wechat_signature);
+    //     wx.error(function(err) {
+    //         alert('获取用户地理位置信息失败！'); alert(err);
+    //     });
+    //     wx.ready(function() {
+    //         wx.getLocation({
+    //             success: function(res) {
+
+    //                 console.log( JSON.stringify( res ) );
+    //                 // var locationDetail = res.detail;
+    //                 // console.log(locationDetail);
+    //                 // var title = '';
+    //                 // console.log(res);
+    //                 // $scope.tabTitle = title;
+    //                 // Topics.setGeom(res);
+    //                 // $scope.doRefresh();
+    //             }
+    //         });
+    //     });
+    // };
 
     /***********************************
      * Search

@@ -221,6 +221,7 @@ angular.module('iwildfire.controllers', [])
     // save reply
     $scope.saveReply = function() {
         $log.debug('new reply data:', $scope.replyData);
+        if($scope.replyData.content == '') return $scope.showReply = false;
         $ionicLoading.show();
         Topic.saveReply(id, $scope.replyData).$promise.then(function(response) {
             $ionicLoading.hide();

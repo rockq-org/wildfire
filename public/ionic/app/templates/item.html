@@ -2,7 +2,7 @@
   <ion-nav-buttons side="left">
     <a class="button button-icon icon ion-ios-arrow-back" href="#tab/index"></a>
   </ion-nav-buttons>
-  <ion-content>
+  <ion-content class="has-header has-footer">
     <ion-refresher pulling-text="下拉刷新..." on-refresh="doRefresh()" refreshing-icon="ion-loading-c">
     </ion-refresher>
 
@@ -91,15 +91,15 @@
 
   </ion-content>
 
-  <ion-footer-bar ng-show="!showReply" ng-disabled="false" style="padding:0;margin:0">
+  <div class="bar bar-footer" ng-show="!showReply" ng-disabled="false" style="padding:0;margin:0">
     <button ng-click="showReply = true" class="button button-full button-stable" style="padding:0;margin:0">我要留言</button>
-  </ion-footer-bar>
-  <ion-footer-bar ng-show="showReply" class="bar-stable" keyboard-attach>
+  </div>
+  <div class="bar bar-footer" ng-show="showReply" class="bar-stable" keyboard-attach>
       <label class="item-input-wrapper light-bg">
-        <input type="text" placeholder="回复" ng-model="replyData.content">
+        <input type="text" placeholder="给个好评呗" ng-model="replyData.content">
       </label>
       <button class="button button-small button-clear button-positive" ng-click="saveReply()">
         提交
       </button>
-  </ion-footer-bar>
+  </div>
 </ion-view>

@@ -82,7 +82,7 @@ angular.module('iwildfire.controllers', [])
     }
 
     function getLocation() {
-        if (wechat_signature) {
+        if (typeof(wechat_signature) != 'undefined') {
             wechat_signature.jsApiList = ['getLocation'];
             wx.config(wechat_signature);
             wx.error(function(err) {
@@ -101,6 +101,8 @@ angular.module('iwildfire.controllers', [])
                 });
             });
         } else {
+            $scope.tabTitle = '首页';
+            $scope.doRefresh();
             $log.debug('app url: {0}. wechat_signature is not available while setup location.'.f(window.location.href.split('#')[0]));
         }
     }

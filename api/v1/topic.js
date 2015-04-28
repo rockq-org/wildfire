@@ -48,10 +48,9 @@ var index = function(req, res, next) {
                     type: 'Point',
                     coordinates: [lng, lat]
                 },
-                $maxDistance: 3000
+                $maxDistance: dist
             }
         }
-        console.log('lyman', query.geom);
     }
     //console.log('query',query);
     query.deleted = false;
@@ -109,7 +108,8 @@ var show = function(req, res, next) {
             });
         }
         topic = _.pick(topic, ['id', 'author_id', 'tab', 'content', 'title', 'last_reply_at',
-            'goods_pre_price', 'goods_now_price', 'goods_pre_price', 'update_at', 'goods_pics', 'goods_quality_degree', 'goods_exchange_location',
+            'goods_pre_price', 'goods_now_price', 'goods_pre_price', 'update_at', 'goods_pics', 'goods_quality_degree', 
+            'goods_exchange_location', 'goods_exchange_geom',
             'good', 'top', 'reply_count', 'visit_count', 'create_at', 'author'
         ]);
 
@@ -387,7 +387,7 @@ exports.update = function(req, res, next) {
                 topic.goods_is_bargain = topicInRequest.goods_is_bargain;
                 topic.goods_quality_degree = topicInRequest.goods_quality_degree;
                 topic.goods_exchange_location = topicInRequest.goods_exchange_location;
-                topic.geom = {
+                topic.goods_exchange_geom = {
                     type: 'Point',
                     coordinates: [opicInRequest.goods_exchange_location.lng,opicInRequest.goods_exchange_location.lnt]
                 };

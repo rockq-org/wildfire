@@ -236,13 +236,17 @@ angular.module('iwildfire.services', ['ngResource'])
     this.getWeChatLocationDetail = function() {
         var deferred = $q.defer();
         this.getWechatSignature().then(function(wechat_signature) {
-            console.log('wechat');
-            console.log(JSON.stringify(wechat_signature));
+            // return for local debugging
+            if (!wechat_signature)
+                return;
+
+            $log.debug(JSON.stringify(wechat_signature));
+
 
             wechat_signature.jsApiList = ['getLocation'];
             wx.config(wechat_signature);
             wx.error(function(err) {
-                console.log(JSON.stringify(err));
+                $log.debug(JSON.stringify(err));
                 deferred.reject(err);
             });
             wx.ready(function() {

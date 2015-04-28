@@ -51,6 +51,7 @@ var index = function(req, res, next) {
                 $maxDistance: 3000
             }
         }
+        console.log('lyman', query.geom);
     }
     //console.log('query',query);
     query.deleted = false;
@@ -84,6 +85,7 @@ var index = function(req, res, next) {
                 ]);
             });
 
+            console.log('lyman', topics);
             res.send({
                 data: topics
             });

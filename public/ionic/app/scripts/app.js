@@ -71,7 +71,7 @@ angular.module('iwildfire', ['ionic', 'iwildfire.controllers', 'iwildfire.servic
     $stateProvider
 
     // setup an abstract state for the tabs directive
-    .state('tab', {
+        .state('tab', {
         url: "/tab",
         abstract: true,
         templateUrl: "templates/tabs.html"
@@ -83,12 +83,11 @@ angular.module('iwildfire', ['ionic', 'iwildfire.controllers', 'iwildfire.servic
         views: {
             'tab-index': {
                 templateUrl: 'templates/tab-index.html',
-                controller: 'IndexCtrl'
-                ,
+                controller: 'IndexCtrl',
+                // https://github.com/angular-ui/ui-router/wiki#resolve
                 resolve: {
-                    wechat_signature: function(webq) {
-                        // check the accesstoken
-                        return webq.getWechatSignature();
+                    wxWrapper: function(webq) {
+                        return webq.getWxWrapper();
                     }
                 }
             }
@@ -109,40 +108,8 @@ angular.module('iwildfire', ['ionic', 'iwildfire.controllers', 'iwildfire.servic
                 controller: 'PostCtrl',
                 // https://github.com/angular-ui/ui-router/wiki#resolve
                 resolve: {
-                    /**
-                     * inject wechat signature and return the wx object as
-                     * a wrapper after wechat config ready event.
-                     * Any thing bad happens, just resolve as undefined.
-                     * @param  {[type]} $log [description]
-                     * @param  {[type]} $q   [description]
-                     * @param  {[type]} webq [description]
-                     * @return {[type]}      [description]
-                     */
-                    wxWrapper: function($log, $q, webq) {
-                        var deferred = $q.defer();
-                        webq.getWechatSignature()
-                            .then(function(wechat_signature) {
-                                if (wechat_signature) {
-                                    wechat_signature.jsApiList = ['chooseImage',
-                                        'previewImage', 'uploadImage',
-                                        'downloadImage', 'getLocation',
-                                        'openLocation'
-                                    ];
-                                    wx.config(wechat_signature);
-                                    wx.error(function(err) {
-                                        alert(err);
-                                        deferred.resolve();
-                                    });
-                                    wx.ready(function() {
-                                        deferred.resolve(wx);
-                                    });
-                                } else {
-                                    deferred.resolve();
-                                }
-                            }, function() {
-                                deferred.resolve();
-                            })
-                        return deferred.promise;
+                    wxWrapper: function(webq) {
+                        return webq.getWxWrapper();
                     }
                 }
             }

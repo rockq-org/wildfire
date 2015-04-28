@@ -304,7 +304,7 @@ angular.module('iwildfire.services', ['ngResource'])
     this.createNewGoods = function(params) {
         var deferred = $q.defer();
         // https://github.com/arrking/wildfire/issues/53
-        $http.post('{0}/topics'.f(cfg.api), {
+        var postData = {
                 /*debug*/
                 // accesstoken: 'd8e60e1f-b4ba-4a1b-9eaa-56e9f6a8d5f0',
                 accesstoken: store.getAccessToken(),
@@ -318,11 +318,15 @@ angular.module('iwildfire.services', ['ngResource'])
                 goods_is_bargain: params.goods_is_bargain,
                 goods_exchange_location: params.goods_exchange_location,
                 goods_status: params.goods_status
-            })
+            };
+            console.log('lyman service 322', JSON.stringify(postData));
+        $http.post('{0}/topics'.f(cfg.api), postData)
             .success(function(data) {
+                console.log('lyman  success 325', JSON.stringify(data));
                 deferred.resolve(data);
             })
             .error(function(err) {
+                console.log('lyman error 325', JSON.stringify(data));
                 deferred.reject(err);
             });
         return deferred.promise;

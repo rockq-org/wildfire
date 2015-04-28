@@ -180,6 +180,9 @@ angular.module('iwildfire.controllers', [])
             window.analytics.trackView('topic view');
         }
     });
+    $scope.$on('$ionicView.afterLeave', function() {
+        $scope.showReply = false;
+    });
 
     // load topic data
     $scope.loadTopic = function(reload) {
@@ -357,6 +360,26 @@ angular.module('iwildfire.controllers', [])
         goods_status: '在售'
     };
 
+    $scope.params = {
+        // 标题5到10个字
+        title: 'testtitle',
+        content: 'test contenet',
+        tab: 'electronics',
+        quality: '全新',
+        goods_pics: [],
+        goods_pre_price: 33,
+        goods_now_price: 22,
+        goods_is_bargain: true,
+        // dummy data
+        goods_exchange_location: {
+            user_edit_address: null,
+            api_address: null,
+            lat: null, // latitude
+            lng: null // longitude
+        },
+        goods_status: '在售'
+    };
+
 
     $scope.pageModel = {};
     $scope.pageModel.tagValue = 'books';
@@ -475,7 +498,8 @@ angular.module('iwildfire.controllers', [])
                 $scope.params.goods_exchange_location.user_edit_address = $scope.locationDetail.user_edit_address;
                 $scope.params.goods_exchange_location.lat = $scope.locationDetail.latitude;
                 $scope.params.goods_exchange_location.lng = $scope.locationDetail.longitude;
-                console.log($scope.params.goods_exchange_location);
+                console.log('lyman 498', JSON.stringify($scope.locationDetail));
+                console.log('lyman 499', JSON.stringify($scope.params.goods_exchange_location));
             });
         }
         $scope.changeLocationModal.hide();
@@ -510,6 +534,9 @@ angular.module('iwildfire.controllers', [])
                     $scope.locationDetail.api_address = address;
                     $scope.locationDetail.user_edit_address = address;
                     $scope.params.goods_exchange_location.user_edit_address = address;
+                    $scope.params.goods_exchange_location.api_address = address;
+                    $scope.params.goods_exchange_location.lat = latitude;
+                    $scope.params.goods_exchange_location.lng = longitude;
                 });
 
                 $scope.showEdit = false;
@@ -542,7 +569,10 @@ angular.module('iwildfire.controllers', [])
      */
     $scope.submitGoods = function() {
         // validate data
+        console.log('lyman 565 submitGoods');
         if (validateForm($scope.params)) {
+            console.log('lyman 567 done with validateForm');
+
             webq.createNewGoods($scope.params)
                 .then(function(result) {
                     /**
@@ -563,7 +593,7 @@ angular.module('iwildfire.controllers', [])
                         alert('创建失败！');
                     }
                 }, function(err) {
-                    $log.error(err);
+                    console.log('lyman 566', JSON.stringify(err));
                     alert(err.error_msg);
                 });
         } else {
@@ -605,7 +635,45 @@ angular.module('iwildfire.controllers', [])
 
 })
 
-.controller('MapsCtrl', function($scope) {})
+.controller('MapsCtrl', function($scope, wxWrapper, $timeout) {
+    $scope.locationDetail = {
+        user_edit_address: '',
+        api_address: '',
+        latitude: '',
+        longitude: ''
+    };
+    wxWrapper.getLocation({
+        success: function(res) {
+            var latitude = res.latitude; // 纬度，浮点数，范围为90 ~ -90
+            var longitude = res.longitude; // 经度，浮点数，范围为180 ~ -180。
+            var speed = res.speed; // 速度，以米/每秒计
+            var accuracy = res.accuracy; // 位置精度
+            console.log('lyman 644', JSON.stringify(res));
+
+            $scope.locationDetail = {
+                user_edit_address: '',
+                api_address: '',
+                latitude: latitude,
+                longitude: longitude
+            };
+            var title = '';
+            var geocoder;
+            var center = new qq.maps.LatLng(latitude, longitude);
+            var geocoder = new qq.maps.Geocoder();
+            geocoder.getAddress(center);
+            geocoder.setComplete(function(result) {
+                $timeout(function(){
+                    var c = result.detail.addressComponents;
+                    var address = c.province + c.city + c.district + c.street + c.streetNumber + c.town + c.village;
+                    $scope.locationDetail.api_address = address;
+                    $scope.locationDetail.user_edit_address = address;
+                    console.log('lyman 663', JSON.stringify($scope.locationDetail));
+                });
+            });
+        }
+    });
+
+})
 
 .controller('InboxCtrl', function($scope, Messages) {
     $scope.messages = Messages.all();

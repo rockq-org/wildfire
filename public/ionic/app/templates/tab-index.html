@@ -11,20 +11,16 @@
               <a class="button button-icon icon ion-ios7-search pull-right" ng-click="doSearch(query)"></a>
           </ion-header-bar>
           <ion-nav-view name="menuContent">
-              <ion-content class="has-header">
+              <ion-content>
 
                 <ion-refresher ng-if="topics.length > 0 || loadError" pulling-text="下拉刷新..." on-refresh="doRefresh()" refreshing-icon="ion-loading-c">
                 </ion-refresher>
 
-                <ion-list class="topics">
-                  <ion-item class="col col-50 no-border"
-                    collection-repeat="topic in topics"
-                    collection-item-height="315"
-                    collection-item-width="'50%'"
-                    >
+                <div class="list topics">
+                  <div class="item col col-50 no-border" style="height:315px; float:left" ng-repeat="topic in topics">
                       <div class="item item-image">
                         <a ui-sref="item({itemId: topic.id})">
-                          <img class="full-image " ng-src="{{img_prefix}}{{pic}}" ng-repeat="pic in topic.goods_pics" width="170px" height="194px" />
+                          <img class="full-image " ng-src="{{img_prefix}}{{topic.goods_pics[0]}}" width="170px" height="194px" />
                           <span class="{{topic.goods_quality_degree | badge}}">{{topic.goods_quality_degree}}</span>
                         </a>
                         <div class="text-left padding-left padding-right padding-top">
@@ -44,9 +40,8 @@
                           </div>
                         </div>
                       </div>
-                  </ion-item>
-                </ion-list>
-                <h1 class="text-center" ng-if="true">oops ... 还没有记录</h1>
+                  </div>
+                </div>
 
                 <!--
                   Loading icon of infinte-scroll not showing with collection-repeat
@@ -54,6 +49,9 @@
                 -->
                 <ion-infinite-scroll on-infinite="loadMore()" distance="10%" icon="ion-loading-c" ng-if="hasNextPage && !loadError">
                 </ion-infinite-scroll>
+                <div class="item text-center padding">
+                  <p>{{loadingMsg}}</p>                  
+                </div>
               </ion-content>
           </ion-nav-view>
         </ion-side-menu-content>

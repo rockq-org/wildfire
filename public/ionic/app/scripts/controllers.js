@@ -8,7 +8,7 @@ angular.module('iwildfire.controllers', [])
     $state,
     $location,
     $log,
-    wechat_signature,
+    //wechat_signature,
     Topics,
     Tabs,
     cfg
@@ -95,7 +95,7 @@ angular.module('iwildfire.controllers', [])
         }
     }
 
-    if (wechat_signature) {
+    if (typeof(wechat_signature) != 'undefined') {
         wechat_signature.jsApiList = ['getLocation'];
         wx.config(wechat_signature);
         wx.error(function(err) {
@@ -128,7 +128,9 @@ angular.module('iwildfire.controllers', [])
                 }
             });
         });
-    };
+    } else {
+        loadDataAfterGetLocation();
+    }
 
     /***********************************
      * Search
@@ -162,6 +164,7 @@ angular.module('iwildfire.controllers', [])
     $ionicLoading,
     $ionicActionSheet,
     $ionicScrollDelegate,
+    $ionicSlideBoxDelegate,
     $log,
     Topics,
     Topic,
@@ -194,6 +197,7 @@ angular.module('iwildfire.controllers', [])
         }
         return topicResource.$promise.then(function(response) {
             $scope.topic = response.data;
+            $ionicSlideBoxDelegate.update();
             console.log($scope.topic);
         }, $rootScope.requestErrorHandler({
             noBackdrop: true

@@ -83,14 +83,14 @@ angular.module('iwildfire', ['ionic', 'iwildfire.controllers', 'iwildfire.servic
         views: {
             'tab-index': {
                 templateUrl: 'templates/tab-index.html',
-                controller: 'IndexCtrl'
+                controller: 'IndexCtrl'/*
                 ,
                 resolve: {
                     wechat_signature: function(webq) {
                         // check the accesstoken
                         return webq.getWechatSignature();
                     }
-                }
+                }*/
             }
         }
     })

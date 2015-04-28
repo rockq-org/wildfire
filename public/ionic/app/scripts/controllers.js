@@ -8,6 +8,7 @@ angular.module('iwildfire.controllers', [])
     $state,
     $location,
     $log,
+    wechat_signature,
     Topics,
     Tabs,
     cfg
@@ -19,97 +20,115 @@ angular.module('iwildfire.controllers', [])
     $scope.img_prefix = cfg.server;
 
     $scope.currentTab = Topics.currentTab();
-    $scope.loadingMsg = '正在加载...';
+    $scope.loadingMsg = '正在获取您的位置...';
 
-    // check if tab is changed
-    if ($stateParams.tab !== Topics.currentTab()) {
-        $scope.currentTab = Topics.currentTab($stateParams.tab);
-        // reset data if tab is changed
-        Topics.resetData();
+    //cheat solution
+    function loadDataAfterGetLocation() {
+        $scope.loadingMsg = '正在获取用户位置...';
+        // check if tab is changed
+        if ($stateParams.tab !== Topics.currentTab()) {
+            $scope.currentTab = Topics.currentTab($stateParams.tab);
+            // reset data if tab is changed
+            Topics.resetData();
+        }
+
+
+        $scope.topics = Topics.getTopics();
+
+        // pagination
+        $scope.hasNextPage = Topics.hasNextPage();
+        $scope.loadError = false;
+        // $log.debug('page load, has next page ? ', $scope.hasNextPage);
+        $scope.doRefresh = function() {
+            Topics.currentTab($stateParams.tab);
+            $log.debug('do refresh');
+            Topics.refresh().$promise.then(function(response) {
+                $log.debug('do refresh complete');
+                $scope.topics = response.data;
+                console.log(response.data);
+                $scope.hasNextPage = true;
+                $scope.loadError = false;
+                if ($scope.topics.length == 0)
+                    $scope.loadingMsg = '附近没有二手交易信息^_^，试试其他地方吧';
+                else
+                    $scope.loadingMsg = '下拉加载更多';
+            }, $rootScope.requestErrorHandler({
+                noBackdrop: true
+            }, function() {
+                $scope.loadError = true;
+            })).finally(function() {
+                $scope.$broadcast('scroll.refreshComplete');
+            });
+        };
+        $scope.loadMore = function() {
+            $log.debug('load more');
+            Topics.pagination().$promise.then(function(response) {
+                $log.debug('load more complete');
+                $scope.hasNextPage = false;
+                $scope.loadError = false;
+                $timeout(function() {
+                    $scope.hasNextPage = Topics.hasNextPage();
+                    $log.debug('has next page ? ', $scope.hasNextPage);
+                    if ($scope.hasNextPage == false)
+                        $scope.loadingMsg = '您附近（' + $scope.address + '）没有二手交易信息^_^，试试其他地方吧';
+
+                }, 100);
+                $scope.topics = $scope.topics.concat(response.data);
+            }, $rootScope.requestErrorHandler({
+                noBackdrop: true
+            }, function() {
+                $scope.loadError = true;
+            })).finally(function() {
+                $scope.$broadcast('scroll.infiniteScrollComplete');
+            });
+        };
+
+        $scope.changeSelected = function(item) {
+            $state.go('tab.index', {
+                tab: item.value
+            });
+            $scope.menuTitle = item.label;
+            $stateParams.tab = item.value;
+
+            $scope.currentTab = Topics.currentTab($stateParams.tab);
+            $scope.doRefresh();
+        }
     }
 
-    $scope.topics = Topics.getTopics();
+    if (wechat_signature) {
+        wechat_signature.jsApiList = ['getLocation'];
+        wx.config(wechat_signature);
+        wx.error(function(err) {
+            alert('获取用户地理位置信息失败！');
+            alert(JSON.stringify(err));
+        });
+        wx.ready(function() {
+            wx.getLocation({
+                success: function(res) {
+                    var longitude = res.longitude;
+                    var latitude = res.latitude;
+                    var title = '';
+                    var geocoder;
+                    var center = new qq.maps.LatLng(latitude, longitude);
+                    var geocoder = new qq.maps.Geocoder();
+                    geocoder.getAddress(center);
 
-    // pagination
-    $scope.hasNextPage = Topics.hasNextPage();
-    $scope.loadError = false;
-    // $log.debug('page load, has next page ? ', $scope.hasNextPage);
-    $scope.doRefresh = function() {
-        Topics.currentTab($stateParams.tab);
-        $log.debug('do refresh');
-        Topics.refresh().$promise.then(function(response) {
-            $log.debug('do refresh complete');
-            $scope.topics = response.data;
-            console.log(response.data);
-            $scope.hasNextPage = true;
-            $scope.loadError = false;
-            if ($scope.topics.length == 0)
-                $scope.loadingMsg = '附近没有二手交易信息^_^，试试其他地方吧';
-            else
-                $scope.loadingMsg = '下拉加载更多';
-        }, $rootScope.requestErrorHandler({
-            noBackdrop: true
-        }, function() {
-            $scope.loadError = true;
-        })).finally(function() {
-            $scope.$broadcast('scroll.refreshComplete');
+                    geocoder.setComplete(function(result) {
+                        // console.log('result', JSON.stringify(result));
+                        var c = result.detail.addressComponents;
+                        console.log('result', JSON.stringify(c));
+                        // var address = c.city + c.district + c.street + c.streetNumber + c.town + c.village;
+                        var address = c.street + c.streetNumber + c.town + c.village;
+                        $scope.address = address;
+                        $scope.tabTitle = address;
+                        Topics.setGeom(res);
+                        loadDataAfterGetLocation();
+                        // $scope.doRefresh();
+                    });
+                }
+            });
         });
     };
-    $scope.loadMore = function() {
-        $log.debug('load more');
-        Topics.pagination().$promise.then(function(response) {
-            $log.debug('load more complete');
-            $scope.hasNextPage = false;
-            $scope.loadError = false;
-            $timeout(function() {
-                $scope.hasNextPage = Topics.hasNextPage();
-                $log.debug('has next page ? ', $scope.hasNextPage);
-                if ($scope.hasNextPage == false)
-                    $scope.loadingMsg = '没有新的二手交易信息^_^，试试其他地方吧';
-            }, 100);
-            $scope.topics = $scope.topics.concat(response.data);
-        }, $rootScope.requestErrorHandler({
-            noBackdrop: true
-        }, function() {
-            $scope.loadError = true;
-        })).finally(function() {
-            $scope.$broadcast('scroll.infiniteScrollComplete');
-        });
-    };
-
-    $scope.changeSelected = function(item) {
-        $state.go('tab.index', {
-            tab: item.value
-        });
-        $scope.menuTitle = item.label;
-        $stateParams.tab = item.value;
-
-        $scope.currentTab = Topics.currentTab($stateParams.tab);
-        $scope.doRefresh();
-    }
-
-    // if(wechat_signature){
-    //     wechat_signature.jsApiList = ['getLocation'];
-    //     wx.config(wechat_signature);
-    //     wx.error(function(err) {
-    //         alert('获取用户地理位置信息失败！'); alert(err);
-    //     });
-    //     wx.ready(function() {
-    //         wx.getLocation({
-    //             success: function(res) {
-
-    //                 console.log( JSON.stringify( res ) );
-    //                 // var locationDetail = res.detail;
-    //                 // console.log(locationDetail);
-    //                 // var title = '';
-    //                 // console.log(res);
-    //                 // $scope.tabTitle = title;
-    //                 // Topics.setGeom(res);
-    //                 // $scope.doRefresh();
-    //             }
-    //         });
-    //     });
-    // };
 
     /***********************************
      * Search
@@ -155,6 +174,7 @@ angular.module('iwildfire.controllers', [])
     $scope.topic = topic;
     $scope.img_prefix = cfg.server;
     $scope.avatar_prefix = cfg.api + '/avatar/';
+    $scope.showReply = false;
 
     // before enter view event
     $scope.$on('$ionicView.beforeEnter', function() {
@@ -174,6 +194,7 @@ angular.module('iwildfire.controllers', [])
         }
         return topicResource.$promise.then(function(response) {
             $scope.topic = response.data;
+            console.log($scope.topic);
         }, $rootScope.requestErrorHandler({
             noBackdrop: true
         }, function() {
@@ -190,7 +211,6 @@ angular.module('iwildfire.controllers', [])
             $scope.isCollected = true;
         }
     });
-
     // do refresh
     $scope.doRefresh = function() {
         return $scope.loadTopic(true).then(function(response) {
@@ -215,6 +235,7 @@ angular.module('iwildfire.controllers', [])
             $scope.loadTopic(true).then(function() {
                 $ionicScrollDelegate.scrollBottom();
             });
+            $scope.showReply = false;
         }, $rootScope.requestErrorHandler);
     };
 

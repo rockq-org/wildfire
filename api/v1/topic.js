@@ -120,7 +120,7 @@ var show = function(req, res, next) {
             if (mdrender) {
                 reply.content = renderHelper.markdown(at.linkUsers(reply.content));
             }
-            reply.author = _.pick(reply.author, ['name', 'avatar']);
+            reply.author = _.pick(reply.author, ['name', 'avatar','loginname']);
             reply = _.pick(reply, ['id', 'author', 'content', 'ups', 'create_at']);
             return reply;
         });
@@ -193,6 +193,11 @@ var create = function(req, res, next) {
         });
     }
 
+    var geom = {
+        type: 'Point',
+        coordinates: [goods_exchange_location.lng,goods_exchange_location.lnt]
+    };
+
     TopicProxy.newAndSave(title,
         content,
         tab,
@@ -204,6 +209,7 @@ var create = function(req, res, next) {
         goods_is_bargain,
         goods_quality_degree,
         goods_exchange_location,
+        geom,
         goods_status,
         function(err, topic) {
             if (err) {

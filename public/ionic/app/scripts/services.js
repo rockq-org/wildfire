@@ -138,7 +138,6 @@ angular.module('iwildfire.services', ['ngResource'])
  * @return {[type]}       [description]
  */
 .service('webq', function($http, $q, $log, cfg, store) {
-
     /**
      * upload wechat images
      * @return {[type]} [description]
@@ -229,35 +228,6 @@ angular.module('iwildfire.services', ['ngResource'])
             // APP_URL is not belong to arrking.com.
             deferred.resolve();
         }
-
-        return deferred.promise;
-    }
-
-    this.getWeChatLocationDetail = function() {
-        var deferred = $q.defer();
-        this.getWechatSignature().then(function(wechat_signature) {
-            // return for local debugging
-            if (!wechat_signature)
-                return;
-
-            $log.debug(JSON.stringify(wechat_signature));
-
-
-            wechat_signature.jsApiList = ['getLocation'];
-            wx.config(wechat_signature);
-            wx.error(function(err) {
-                $log.debug(JSON.stringify(err));
-                deferred.reject(err);
-            });
-            wx.ready(function() {
-                wx.getLocation({
-                    success: function(res) {
-                        var locationDetail = res.detail;
-                        deferred.resolve(locationDetail);
-                    }
-                });
-            });
-        });
 
         return deferred.promise;
     }
@@ -631,8 +601,8 @@ angular.module('iwildfire.services', ['ngResource'])
     };
 })
 
-.factory('Topic', function(cfg, $resource, $log, $q) {
-    var User = {};
+.factory('Topic', function(cfg, $resource, $log, $q, User) {
+    //var User = {};
     var Settings = {};
     var topic;
     var resource = $resource(cfg.api + '/topic/:id', {
@@ -678,13 +648,11 @@ angular.module('iwildfire.services', ['ngResource'])
         saveReply: function(topicId, replyData) {
             var reply = angular.extend({}, replyData);
             var currentUser = User.getCurrentUser();
-            // add send from
-            if (Settings.getSettings().sendFrom) {
-                reply.content = replyData.content + '\n 自豪地采用 [CNodeJS ionic](https://github.com/lanceli/cnodejs-ionic)';
-            }
+
             return resource.reply({
                 topicId: topicId,
                 accesstoken: currentUser.accesstoken
+                //accesstoken: '5447b4c3-0006-4a3c-9903-ac5a803bc17e'//currentUser.accesstoken
             }, reply);
         },
         upReply: function(replyId) {

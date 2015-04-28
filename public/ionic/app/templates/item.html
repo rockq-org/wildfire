@@ -22,7 +22,7 @@
     </div>
 
     <div class="row">
-      <div class="float-left price col col50">
+      <div class="price col col50">
         <h3>
         <span class="assertive">￥ {{topic.goods_now_price}}</span>
         &nbsp;
@@ -35,16 +35,16 @@
         </a>
         &nbsp;<span class="visit-count">浏览 {{topic.visit_count + 0}}</span>
       </div>
-      <div class="float-right col col50 text-right">
+      <div class="col col50 text-right">
         <div class="name-avatar">
           <img ng-src='{{topic.author.avatar}}' />
           <span>{{topic.author.name}}</span>
         </div>
-        <p><i class="icon ion-ios7-location mr5"></i>{{topic.goods_exchange_location.address}}</p>
-        <p>
-          距离1.5公里 <br />
+        <div class="item-content"><i class="icon ion-ios7-location mr5"></i>{{topic.goods_exchange_location.address}}</div>
+        <div class="item-note">
+          距离1.5公里<br />
           <span am-time-ago="topic.update_at"></span>
-        </p>
+        </div>
       </div>
     </div>
     <div class="row topic">
@@ -53,12 +53,10 @@
         <div class="topic-content" ng-bind-html="topic.content | link"></div>
       </div>
     </div>
-
-    <div class="row">
-      <div class="tabs tabs-light">
-        <a class="tab-item active ">出价（5）</a>
-        <a class="tab-item"> 留言（30）</a>
-      </div>
+    
+    <div class="button-bar">
+      <a class="button button-outline button-small ">出价（5）</a>
+      <a class="button button-outline button-small active"> 留言（{{topic.replies.length}}）</a>
     </div>
 
     <ion-list class="replies">
@@ -74,16 +72,16 @@
         暂无评论
       </ion-item>
       <ion-item class="item-avatar" ng-repeat="reply in topic.replies" ng-click="showActions(reply)">
-        <img ng-src="{{reply.author.avatar_url | protocol}}" ng-if="!settings.saverMode">
+        <img ng-src="{{reply.author.avatar}}">
         <p>
-          <a href="#/user/{{reply.author.loginname}}" ng-class="{'bold': reply.author.loginname == topic.author.loginname}">
-            {{reply.author.loginname}}
-          </a>
+          <span ng-class="{'bold': reply.author.loginname == topic.author.loginname}">
+            {{reply.author.name}}
+          </span>
           <span class="item-note" am-time-ago="reply.create_at">
           </span>
-          <span class="item-note cnode" ng-if="reply.ups.length > 0">
+          <span class="item-note cnode">
             <i class="icon ion-thumbsup"></i>
-            {{reply.ups.length}}
+            <span ng-if="reply.ups.length > 0">{{reply.ups.length}}</span>
             &nbsp;
           </span>
         </p>
@@ -93,12 +91,15 @@
 
   </ion-content>
 
-  <ion-footer-bar align-title="left" class="bar-light reply-new" keyboard-attach>
-    <label class="item-input-wrapper">
-      <input type="text" placeholder="回复" ng-model="replyData.content" ng-disabled="false && loginName == null">
-    </label>
-    <button class="button button-small button-clear button-positive" ng-click="saveReply()" ng-class="{'disabled':loginName !== null || replyData.content == ''}">
-      提交
-    </button>
+  <ion-footer-bar ng-show="!showReply" ng-disabled="false" style="padding:0;margin:0">
+    <button ng-click="showReply = true" class="button button-full button-stable" style="padding:0;margin:0">我要留言</button>
+  </ion-footer-bar>
+  <ion-footer-bar ng-show="showReply" class="bar-stable" keyboard-attach>
+      <label class="item-input-wrapper light-bg">
+        <input type="text" placeholder="回复" ng-model="replyData.content">
+      </label>
+      <button class="button button-small button-clear button-positive" ng-click="saveReply()">
+        提交
+      </button>
   </ion-footer-bar>
 </ion-view>

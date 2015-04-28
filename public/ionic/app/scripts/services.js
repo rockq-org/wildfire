@@ -138,7 +138,6 @@ angular.module('iwildfire.services', ['ngResource'])
  * @return {[type]}       [description]
  */
 .service('webq', function($http, $q, $log, cfg, store) {
-
     /**
      * upload wechat images
      * @return {[type]} [description]
@@ -229,35 +228,6 @@ angular.module('iwildfire.services', ['ngResource'])
             // APP_URL is not belong to arrking.com.
             deferred.resolve();
         }
-
-        return deferred.promise;
-    }
-
-    this.getWeChatLocationDetail = function() {
-        var deferred = $q.defer();
-        this.getWechatSignature().then(function(wechat_signature) {
-            // return for local debugging
-            if (!wechat_signature)
-                return;
-
-            $log.debug(JSON.stringify(wechat_signature));
-
-
-            wechat_signature.jsApiList = ['getLocation'];
-            wx.config(wechat_signature);
-            wx.error(function(err) {
-                $log.debug(JSON.stringify(err));
-                deferred.reject(err);
-            });
-            wx.ready(function() {
-                wx.getLocation({
-                    success: function(res) {
-                        var locationDetail = res.detail;
-                        deferred.resolve(locationDetail);
-                    }
-                });
-            });
-        });
 
         return deferred.promise;
     }
@@ -678,7 +648,7 @@ angular.module('iwildfire.services', ['ngResource'])
         saveReply: function(topicId, replyData) {
             var reply = angular.extend({}, replyData);
             var currentUser = User.getCurrentUser();
-            
+
             return resource.reply({
                 topicId: topicId,
                 accesstoken: currentUser.accesstoken

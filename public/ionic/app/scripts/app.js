@@ -46,11 +46,6 @@ angular.module('iwildfire', ['ionic', 'iwildfire.controllers', 'iwildfire.servic
             return callback && callback();
         };
     };
-
-    //get wechat user location
-    webq.getWeChatLocationDetail().then(function(locationDetail){
-        console.log( JSON.stringify( locationDetail ) );
-    },function(err){ alert('获取用户地理位置信息失败!'); alert(err); });
 })
 
 // global config for uniform ui for different platform
@@ -89,13 +84,13 @@ angular.module('iwildfire', ['ionic', 'iwildfire.controllers', 'iwildfire.servic
             'tab-index': {
                 templateUrl: 'templates/tab-index.html',
                 controller: 'IndexCtrl'
-                // ,
-                // resolve: {
-                //     wechat_signature: function(webq) {
-                //         // check the accesstoken
-                //         return webq.getWechatSignature();
-                //     }
-                // }
+                ,
+                resolve: {
+                    wechat_signature: function(webq) {
+                        // check the accesstoken
+                        return webq.getWechatSignature();
+                    }
+                }
             }
         }
     })
@@ -115,7 +110,7 @@ angular.module('iwildfire', ['ionic', 'iwildfire.controllers', 'iwildfire.servic
                 // https://github.com/angular-ui/ui-router/wiki#resolve
                 resolve: {
                     /**
-                     * inject wechat signature and return the wx object as 
+                     * inject wechat signature and return the wx object as
                      * a wrapper after wechat config ready event.
                      * Any thing bad happens, just resolve as undefined.
                      * @param  {[type]} $log [description]

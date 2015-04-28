@@ -15,7 +15,7 @@
 
                 <ion-refresher ng-if="topics.length > 0 || loadError" pulling-text="下拉刷新..." on-refresh="doRefresh()" refreshing-icon="ion-loading-c">
                 </ion-refresher>
-
+                <div id="container" style="width:100px;height:100px;"></div>
                 <div class="list topics">
                   <div class="item col col-50 no-border" style="height:315px; float:left" ng-repeat="topic in topics">
                       <div class="item item-image">
@@ -50,7 +50,7 @@
                 <ion-infinite-scroll on-infinite="loadMore()" distance="10%" icon="ion-loading-c" ng-if="hasNextPage && !loadError">
                 </ion-infinite-scroll>
                 <div class="item text-center padding">
-                  <p>{{loadingMsg}}</p>                  
+                  <p>{{loadingMsg}}</p>
                 </div>
               </ion-content>
           </ion-nav-view>

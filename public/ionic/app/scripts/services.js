@@ -489,6 +489,42 @@ angular.module('iwildfire.services', ['ngResource'])
         return deferred.promise;
     };
 
+
+    /**
+     * inject wechat signature and return the wx object as
+     * a wrapper after wechat config ready event.
+     * Any thing bad happens, just resolve as undefined.
+     * @param  {[type]} $log [description]
+     * @param  {[type]} $q   [description]
+     * @param  {[type]} webq [description]
+     * @return {[type]}      [description]
+     */
+    this.getWxWrapper = function() {
+        var deferred = $q.defer();
+        this.getWechatSignature()
+            .then(function(wechat_signature) {
+                if (wechat_signature) {
+                    wechat_signature.jsApiList = ['chooseImage',
+                        'previewImage', 'uploadImage',
+                        'downloadImage', 'getLocation',
+                        'openLocation'
+                    ];
+                    wx.config(wechat_signature);
+                    wx.error(function(err) {
+                        alert(err);
+                        deferred.resolve();
+                    });
+                    wx.ready(function() {
+                        deferred.resolve(wx);
+                    });
+                } else {
+                    deferred.resolve();
+                }
+            }, function() {
+                deferred.resolve();
+            })
+        return deferred.promise;
+    }
 })
 
 /**
@@ -652,7 +688,7 @@ angular.module('iwildfire.services', ['ngResource'])
             return resource.reply({
                 topicId: topicId,
                 accesstoken: currentUser.accesstoken
-                //accesstoken: '5447b4c3-0006-4a3c-9903-ac5a803bc17e'//currentUser.accesstoken
+                    //accesstoken: '5447b4c3-0006-4a3c-9903-ac5a803bc17e'//currentUser.accesstoken
             }, reply);
         },
         upReply: function(replyId) {

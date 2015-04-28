@@ -8,6 +8,7 @@ angular.module('iwildfire.controllers', [])
     $state,
     $location,
     $log,
+    wechat_signature,
     Topics,
     Tabs,
     cfg
@@ -19,14 +20,18 @@ angular.module('iwildfire.controllers', [])
     $scope.img_prefix = cfg.server;
 
     $scope.currentTab = Topics.currentTab();
-    $scope.loadingMsg = '正在加载...';
+    $scope.loadingMsg = '正在获取您的位置...';
 
+//cheat solution
+function loadDataAfterGetLocation(){
+    $scope.loadingMsg = '正在获取用户位置...';
     // check if tab is changed
     if ($stateParams.tab !== Topics.currentTab()) {
         $scope.currentTab = Topics.currentTab($stateParams.tab);
         // reset data if tab is changed
         Topics.resetData();
     }
+
 
     $scope.topics = Topics.getTopics();
 
@@ -65,7 +70,7 @@ angular.module('iwildfire.controllers', [])
                 $scope.hasNextPage = Topics.hasNextPage();
                 $log.debug('has next page ? ', $scope.hasNextPage);
                 if($scope.hasNextPage == false)
-                    $scope.loadingMsg = '没有新的二手交易信息^_^，试试其他地方吧';
+                    $scope.loadingMsg = '您附近（' + $scope.address + '）没有二手交易信息^_^，试试其他地方吧';
             }, 100);
             $scope.topics = $scope.topics.concat(response.data);
         }, $rootScope.requestErrorHandler({
@@ -87,29 +92,41 @@ angular.module('iwildfire.controllers', [])
         $scope.currentTab = Topics.currentTab($stateParams.tab);
         $scope.doRefresh();
     }
+}
 
-    // if(wechat_signature){
-    //     wechat_signature.jsApiList = ['getLocation'];
-    //     wx.config(wechat_signature);
-    //     wx.error(function(err) {
-    //         alert('获取用户地理位置信息失败！'); alert(err);
-    //     });
-    //     wx.ready(function() {
-    //         wx.getLocation({
-    //             success: function(res) {
+    if(wechat_signature){
+        wechat_signature.jsApiList = ['getLocation'];
+        wx.config(wechat_signature);
+        wx.error(function(err) {
+            alert('获取用户地理位置信息失败！'); alert(JSON.stringify(err));
+        });
+        wx.ready(function() {
+            wx.getLocation({
+                success: function(res) {
+                    var longitude = res.longitude;
+                    var latitude = res.latitude;
+                    var title = '';
+                    var geocoder;
+                    var center = new qq.maps.LatLng(latitude, longitude);
+                    var geocoder = new qq.maps.Geocoder();
+                    geocoder.getAddress(center);
 
-    //                 console.log( JSON.stringify( res ) );
-    //                 // var locationDetail = res.detail;
-    //                 // console.log(locationDetail);
-    //                 // var title = '';
-    //                 // console.log(res);
-    //                 // $scope.tabTitle = title;
-    //                 // Topics.setGeom(res);
-    //                 // $scope.doRefresh();
-    //             }
-    //         });
-    //     });
-    // };
+                    geocoder.setComplete(function(result) {
+                        // console.log('result', JSON.stringify(result));
+                        var c = result.detail.addressComponents;
+                        console.log('result', JSON.stringify(c));
+                        // var address = c.city + c.district + c.street + c.streetNumber + c.town + c.village;
+                        var address = c.street + c.streetNumber + c.town + c.village;
+                        $scope.address = address;
+                        $scope.tabTitle = address;
+                        Topics.setGeom(res);
+                        loadDataAfterGetLocation();
+                        // $scope.doRefresh();
+                    });
+                }
+            });
+        });
+    };
 
     /***********************************
      * Search

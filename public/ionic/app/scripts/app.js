@@ -46,6 +46,11 @@ angular.module('iwildfire', ['ionic', 'iwildfire.controllers', 'iwildfire.servic
             return callback && callback();
         };
     };
+
+    //get wechat user location
+    webq.getWeChatLocationDetail().then(function(locationDetail){
+        console.log( JSON.stringify( locationDetail ) );
+    },function(err){ alert('获取用户地理位置信息失败!'); alert(err); });
 })
 
 .config(function($stateProvider, $urlRouterProvider, $ionicConfigProvider) {
@@ -80,13 +85,14 @@ angular.module('iwildfire', ['ionic', 'iwildfire.controllers', 'iwildfire.servic
         views: {
             'tab-index': {
                 templateUrl: 'templates/tab-index.html',
-                controller: 'IndexCtrl',
-                resolve: {
-                    wechat_signature: function(webq) {
-                        // check the accesstoken
-                        return webq.getWechatSignature();
-                    }
-                }
+                controller: 'IndexCtrl'
+                // ,
+                // resolve: {
+                //     wechat_signature: function(webq) {
+                //         // check the accesstoken
+                //         return webq.getWechatSignature();
+                //     }
+                // }
             }
         }
     })

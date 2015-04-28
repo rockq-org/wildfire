@@ -24,7 +24,7 @@ angular.module('iwildfire.controllers', [])
 
     //cheat solution
     function loadDataAfterGetLocation() {
-        $scope.loadingMsg = '正在获取用户位置...';
+        $scope.loadingMsg = '正在获取您的位置...';
         // check if tab is changed
         if ($stateParams.tab !== Topics.currentTab()) {
             $scope.currentTab = Topics.currentTab($stateParams.tab);
@@ -69,7 +69,7 @@ angular.module('iwildfire.controllers', [])
                     $scope.hasNextPage = Topics.hasNextPage();
                     $log.debug('has next page ? ', $scope.hasNextPage);
                     if ($scope.hasNextPage == false)
-                        $scope.loadingMsg = '您附近（' + $scope.address + '）没有二手交易信息^_^，试试其他地方吧';
+                        $scope.loadingMsg = '附近没有新的二手交易信息^_^，试试其他地方吧';
 
                 }, 100);
                 $scope.topics = $scope.topics.concat(response.data);

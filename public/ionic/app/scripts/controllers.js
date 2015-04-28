@@ -8,11 +8,7 @@ angular.module('iwildfire.controllers', [])
     $state,
     $location,
     $log,
-<<<<<<< HEAD
-    //wechat_signature,
-=======
     wxWrapper,
->>>>>>> 130d800fc28eb72773004f801dcefb78ebccd598
     Topics,
     Tabs,
     cfg
@@ -98,45 +94,7 @@ angular.module('iwildfire.controllers', [])
         }
     }
 
-<<<<<<< HEAD
-    if (typeof(wechat_signature) != 'undefined') {
-        wechat_signature.jsApiList = ['getLocation'];
-        wx.config(wechat_signature);
-        wx.error(function(err) {
-            alert('获取用户地理位置信息失败！');
-            alert(JSON.stringify(err));
-        });
-        wx.ready(function() {
-            wx.getLocation({
-                success: function(res) {
-                    var longitude = res.longitude;
-                    var latitude = res.latitude;
-                    var title = '';
-                    var geocoder;
-                    var center = new qq.maps.LatLng(latitude, longitude);
-                    var geocoder = new qq.maps.Geocoder();
-                    geocoder.getAddress(center);
-
-                    geocoder.setComplete(function(result) {
-                        // console.log('result', JSON.stringify(result));
-                        var c = result.detail.addressComponents;
-                        console.log('result', JSON.stringify(c));
-                        // var address = c.city + c.district + c.street + c.streetNumber + c.town + c.village;
-                        var address = c.street + c.streetNumber + c.town + c.village;
-                        $scope.address = address;
-                        $scope.tabTitle = address;
-                        Topics.setGeom(res);
-                        loadDataAfterGetLocation();
-                        // $scope.doRefresh();
-                    });
-                }
-            });
-        });
-    } else {
-        loadDataAfterGetLocation();
-    }
-=======
-    if (wxWrapper) {
+    if (typeof(wxWrapper) != 'undefined') {
         wxWrapper.getLocation({
             success: function(res) {
                 var longitude = res.longitude;
@@ -165,7 +123,6 @@ angular.module('iwildfire.controllers', [])
         // load pages from local browser for debugging
         loadDataAfterGetLocation();
     };
->>>>>>> 130d800fc28eb72773004f801dcefb78ebccd598
 
     /***********************************
      * Search

@@ -637,8 +637,9 @@ angular.module('iwildfire.services', ['ngResource'])
     };
 })
 
-.factory('Topic', function(cfg, $resource, $log, $q, User) {
+.factory('Topic', function(cfg, $resource, $log, $q, webq) {
     //var User = {};
+    var currentUser = webq.getMyProfileResolve()//User.getCurrentUser();
     var Settings = {};
     var topic;
     var resource = $resource(cfg.api + '/topic/:id', {
@@ -654,7 +655,8 @@ angular.module('iwildfire.services', ['ngResource'])
         },
         reply: {
             method: 'post',
-            url: cfg.api + '/topic/:topicId/replies'
+            url: cfg.api + '/topic/:topicId/replies',
+            timeout: 2000
         },
         upReply: {
             method: 'post',
@@ -683,12 +685,11 @@ angular.module('iwildfire.services', ['ngResource'])
         },
         saveReply: function(topicId, replyData) {
             var reply = angular.extend({}, replyData);
-            var currentUser = User.getCurrentUser();
 
             return resource.reply({
                 topicId: topicId,
                 accesstoken: currentUser.accesstoken
-                    //accesstoken: '5447b4c3-0006-4a3c-9903-ac5a803bc17e'//currentUser.accesstoken
+                //accesstoken: '5447b4c3-0006-4a3c-9903-ac5a803bc17e'
             }, reply);
         },
         upReply: function(replyId) {
@@ -707,6 +708,8 @@ angular.module('iwildfire.services', ['ngResource'])
                             }
                         }
                     });
+                } else {
+                    $log(response);
                 }
             });
         },

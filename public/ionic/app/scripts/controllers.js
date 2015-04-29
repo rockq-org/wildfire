@@ -499,6 +499,13 @@ angular.module('iwildfire.controllers', [])
                 // $scope.params.goods_exchange_location.user_edit_address = $scope.locationDetail.user_edit_address;
                 // $scope.locationDetail = $scope.params.goods_exchange_location;
                 // console.log(JSON.stringify($scope.locationDetail));
+
+                // $scope.params.goods_exchange_location.api_address = $scope.locationDetail.api_address;
+                // $scope.params.goods_exchange_location.user_edit_address = $scope.locationDetail.user_edit_address;
+                // $scope.params.goods_exchange_location.lat = $scope.locationDetail.lat;
+                // $scope.params.goods_exchange_location.lng = $scope.locationDetail.lng;
+                // console.log('lyman 498', JSON.stringify($scope.locationDetail));
+                // console.log('lyman 499', JSON.stringify($scope.params.goods_exchange_location));
             });
         }
         $scope.changeLocationModal.hide();

@@ -137,7 +137,7 @@ angular.module('iwildfire.directives', [])
         middleControl.style.width = "36px";
         middleControl.style.height = "36px";
         middleControl.style.zIndex = "100000";
-        middleControl.innerHTML = '<img src="https://www.cdlhome.com.sg/mobile_assets/images/icon-location.png" />';
+        middleControl.innerHTML = '<img src="/images/map/2.png" />';
         element.appendChild(middleControl);
         // qq.maps.event.addListener(middleControl, 'click', function(){
         //     info.open();
@@ -153,7 +153,7 @@ angular.module('iwildfire.directives', [])
         resetControl.style.width = "36px";
         resetControl.style.height = "36px";
         resetControl.style.zIndex = "100000";
-        resetControl.innerHTML = '<img src="https://www.cdlhome.com.sg/mobile_assets/images/icon-location.png" />';
+        resetControl.innerHTML = '<img src="/images/map/3.png" />';
         element.appendChild(resetControl);
         qq.maps.event.addListener(resetControl, 'click', function() {
             console.log('here!');

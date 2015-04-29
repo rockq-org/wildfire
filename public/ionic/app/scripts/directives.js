@@ -10,7 +10,7 @@ angular.module('iwildfire.directives', [])
         map = new qq.maps.Map(element, {
             center: center,
             zoom: 13,
-            // zoomControl: false,
+            zoomControl: false,
             // panControl: false,
             mapTypeControl: false
         });
@@ -22,13 +22,13 @@ angular.module('iwildfire.directives', [])
 
         //创建自定义控件
         var middleControl = document.createElement("div");
-        middleControl.style.left = (width - 36) / 2 + "px";
-        middleControl.style.top = (height - 36) / 2 + "px";
+        middleControl.style.left = 15 + "px";
+        middleControl.style.top = height - 64 + "px";
         middleControl.style.position = "relative";
         middleControl.style.width = "36px";
         middleControl.style.height = "36px";
         middleControl.style.zIndex = "100000";
-        middleControl.innerHTML = '<img src="https://www.cdlhome.com.sg/mobile_assets/images/icon-location.png" />';
+        middleControl.innerHTML = '<img src="/images/map/2.png" />';
         element.appendChild(middleControl);
         // qq.maps.event.addListener(middleControl, 'click', function(){
         //     info.open();
@@ -38,13 +38,13 @@ angular.module('iwildfire.directives', [])
         // });
 
         var resetControl = document.createElement("div");
-        resetControl.style.left = 15 + "px";
-        resetControl.style.top = height - 200 + "px";
+        resetControl.style.left = 60 + "px";
+        resetControl.style.top = height - 100 + "px";
         resetControl.style.position = "relative";
         resetControl.style.width = "36px";
         resetControl.style.height = "36px";
         resetControl.style.zIndex = "100000";
-        resetControl.innerHTML = '<img src="https://www.cdlhome.com.sg/mobile_assets/images/icon-location.png" />';
+        resetControl.innerHTML = '<img src="/images/map/3.png" />';
         element.appendChild(resetControl);
         qq.maps.event.addListener(resetControl, 'click', function() {
             console.log('here!');
@@ -72,10 +72,22 @@ angular.module('iwildfire.directives', [])
                     latlngBounds.extend(poi.latLng);
 
                     (function(n) {
+
                         var marker = new qq.maps.Marker({
                             map: map
                         });
                         marker.setPosition(pois[n].latLng);
+
+                        var anchor = new qq.maps.Point(0, 39),
+                            size = new qq.maps.Size(36, 36),
+                            origin = new qq.maps.Point(0, 0),
+                            markerIcon = new qq.maps.MarkerImage(
+                                 "/images/map/1.png",
+                                 size,
+                                 origin,
+                                 anchor
+                               );
+                        marker.setIcon(markerIcon);
 
                         marker.setTitle(i + 1);
                         markers.push(marker);

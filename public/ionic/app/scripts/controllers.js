@@ -107,7 +107,7 @@ angular.module('iwildfire.controllers', [])
                 geocoder.getAddress(center);
 
                 geocoder.setComplete(function(result) {
-                    $timeout(function(){
+                    $timeout(function() {
                         var c = result.detail.addressComponents;
                         console.log('getLocation at line 112', JSON.stringify(c));
                         // var address = c.city + c.district + c.street + c.streetNumber + c.town + c.village;
@@ -228,7 +228,7 @@ angular.module('iwildfire.controllers', [])
     // save reply
     $scope.saveReply = function() {
         $log.debug('new reply data:', $scope.replyData);
-        if($scope.replyData.content == '') return $scope.showReply = false;
+        if ($scope.replyData.content == '') return $scope.showReply = false;
         $ionicLoading.show();
         Topic.saveReply(id, $scope.replyData).$promise.then(function(response) {
             $ionicLoading.hide();
@@ -324,6 +324,7 @@ angular.module('iwildfire.controllers', [])
 .controller('PostCtrl', function($scope, $state,
     $stateParams,
     $ionicModal,
+    $ionicPopup,
     $timeout,
     $log,
     $q,
@@ -474,6 +475,37 @@ angular.module('iwildfire.controllers', [])
         });
 
     };
+
+    /**
+     * 删除 goods pic
+     * 
+     * @param  {[type]} srcValue [description]
+     * @return {[type]}          [description]
+     */
+    $scope.removeGoodsPic = function(srcValue) {
+        // A confirm dialog
+        var confirmPopup = $ionicPopup.confirm({
+            title: '提示',
+            template: '确定删除这张配图?',
+            okText: '是',
+            okType: 'button-balanced',
+            cancelText: '否',
+            cancelType: 'button-default'
+        });
+        confirmPopup.then(function(res) {
+            if (res) {
+                $scope.params.goods_pics = _.filter($scope.params.goods_pics,
+                    function(x) {
+                        return x !== srcValue;
+                    });
+
+                $log.debug('Goods Pics ' + JSON.stringify($scope.params.goods_pics));
+            } else {
+                // cancelled
+            }
+        });
+
+    }
 
     // testSetupLocation();
     // function testSetupLocation(){

@@ -4,8 +4,7 @@ angular.module('iwildfire.directives', [])
     var searchService, map, markers = [];
     var center;
     var init = function(element, attrs, scope, width, height) {
-        // var center = new qq.maps.LatLng(scope.latitude, scope.longitude);
-        console.log('lyman 7', JSON.stringify(scope.locationDetail.latitude));
+        console.log('lyman 7', JSON.stringify(scope.locationDetail));
         center = new qq.maps.LatLng(scope.locationDetail.latitude, scope.locationDetail.longitude);
         map = new qq.maps.Map(element, {
             center: center,

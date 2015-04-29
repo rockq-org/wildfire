@@ -138,47 +138,12 @@ angular.module('iwildfire.services', ['ngResource'])
  * @return {[type]}       [description]
  */
 .service('webq', function($http, $q, $log, cfg, store) {
-    /**
-     * upload wechat images
-     * @return {[type]} [description]
-     */
-    this.uploadWechatImages = function(serverIds) {
-        var deferred = $q.defer();
-        $http.post('{0}/ionic/wechat-images'.f(cfg.api), {
-                accesstoken: store.getAccessToken(),
-                serverIds: serverIds
-            }, {
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Accept': 'application/json'
-                }
-            })
-            .success(function(result) {
-                // get the result in
-                // https://github.com/arrking/wildfire/issues/54
-                if (result.rc == 0) {
-                    /**
-                     * msg
-                     * [{serverId, imageUrl}]
-                     */
-                    deferred.resolve(result.msg);
-                } else {
-                    deferred.reject(result);
-                }
-            })
-            .error(function(err) {
-                deferred.reject(err);
-            });
-
-        return deferred.promise;
-    }
-
     this.getWechatSignature = function() {
         var deferred = $q.defer();
         // should not use encodeURIComponent
         var app_url = window.location.href.split('#')[0];
         var accesstoken = store.getAccessToken();
-
+        console.log('lyman 146', accesstoken);
         // when the server domain is registered in
         // wechat plaform. If not, the signature can be
         // generated with this app url.
@@ -228,6 +193,41 @@ angular.module('iwildfire.services', ['ngResource'])
             // APP_URL is not belong to arrking.com.
             deferred.resolve();
         }
+
+        return deferred.promise;
+    }
+
+    /**
+     * upload wechat images
+     * @return {[type]} [description]
+     */
+    this.uploadWechatImages = function(serverIds) {
+        var deferred = $q.defer();
+        $http.post('{0}/ionic/wechat-images'.f(cfg.api), {
+                accesstoken: store.getAccessToken(),
+                serverIds: serverIds
+            }, {
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
+                }
+            })
+            .success(function(result) {
+                // get the result in
+                // https://github.com/arrking/wildfire/issues/54
+                if (result.rc == 0) {
+                    /**
+                     * msg
+                     * [{serverId, imageUrl}]
+                     */
+                    deferred.resolve(result.msg);
+                } else {
+                    deferred.reject(result);
+                }
+            })
+            .error(function(err) {
+                deferred.reject(err);
+            });
 
         return deferred.promise;
     }
@@ -522,13 +522,60 @@ angular.module('iwildfire.services', ['ngResource'])
                         deferred.resolve(wx);
                     });
                 } else {
-                    deferred.resolve();
+                    deferred.reject();
                 }
             }, function() {
-                deferred.resolve();
+                deferred.reject();
             })
         return deferred.promise;
-    }
+    };
+
+    this.getLocationDetail = function(){
+        var self = this;
+        var deferred = $q.defer();
+        if( self.locationDetail ){
+            console.log('lyman 537 return cached locationDetail', JSON.stringify(self.locationDetail));
+            deferred.resolve(self.locationDetail);
+            return deferred.promise;
+        }
+
+        self.getWxWrapper()
+            .then(function(wxWrapper) {
+                console.log('lyman 544', JSON.stringify(wxWrapper));
+                var locationDetail = {};
+                 wxWrapper.getLocation({
+                    success: function(res) {
+                        var latitude = res.latitude; // 纬度，浮点数，范围为90 ~ -90
+                        var longitude = res.longitude; // 经度，浮点数，范围为180 ~ -180。
+                        var speed = res.speed; // 速度，以米/每秒计
+                        var accuracy = res.accuracy; // 位置精度
+                        console.log('lyman 553', JSON.stringify(res));
+                        var geocoder;
+                        var center = new qq.maps.LatLng(latitude, longitude);
+                        var geocoder = new qq.maps.Geocoder();
+                        geocoder.getAddress(center);
+                        geocoder.setComplete(function(result) {
+                            var c = result.detail.addressComponents;
+                            var address = c.province + c.city + c.district + c.street + c.streetNumber + c.town + c.village;
+                            locationDetail.api_address = address;
+                            locationDetail.user_edit_address = address;
+                            locationDetail.latitude = latitude;
+                            locationDetail.longitude = longitude;
+
+                            console.log('lyman 557 get location first time!', JSON.stringify(locationDetail));
+                            self.locationDetail = locationDetail;
+                            deferred.resolve(locationDetail);
+                        });
+                    }
+                });
+            }, function() {
+                self.getLocationDetail().then(function(locationDetail){
+                    deferred.resolve(locationDetail);
+                });
+            });
+
+        return deferred.promise;
+    };
 })
 
 /**

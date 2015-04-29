@@ -6,14 +6,13 @@ angular.module('iwildfire.controllers', [])
     $ionicModal,
     $timeout,
     $state,
+    locationDetail,
     $location,
     $log,
-    wxWrapper,
     Topics,
     Tabs,
     cfg
 ) {
-
     $scope.sideMenus = Tabs.getList();
     $stateParams.tab = $stateParams.tab || 'all';
     $scope.menuTitle = Tabs.getLabel($stateParams.tab);
@@ -95,37 +94,6 @@ angular.module('iwildfire.controllers', [])
         }
     }
 
-    if (typeof(wxWrapper) != 'undefined') {
-        wxWrapper.getLocation({
-            success: function(res) {
-                var longitude = res.longitude;
-                var latitude = res.latitude;
-                var title = '';
-                var geocoder;
-                var center = new qq.maps.LatLng(latitude, longitude);
-                var geocoder = new qq.maps.Geocoder();
-                geocoder.getAddress(center);
-
-                geocoder.setComplete(function(result) {
-                    $timeout(function(){
-                        var c = result.detail.addressComponents;
-                        console.log('getLocation at line 112', JSON.stringify(c));
-                        // var address = c.city + c.district + c.street + c.streetNumber + c.town + c.village;
-                        var address = c.street + c.streetNumber + c.town + c.village;
-                        $scope.address = address;
-                        $scope.tabTitle = address;
-                        Topics.setGeom(res);
-                        loadDataAfterGetLocation();
-                        // $scope.doRefresh();
-                    });
-                });
-            }
-        });
-    } else {
-        // load pages from local browser for debugging
-        loadDataAfterGetLocation();
-    };
-
     /***********************************
      * Search
      ***********************************/
@@ -148,6 +116,19 @@ angular.module('iwildfire.controllers', [])
     $scope.endSearch = function() {
         $scope.showSearch = false;
     }
+
+
+    if (typeof(locationDetail) != 'undefined') {
+        console.log('lyman 122', JSON.stringify( locationDetail ) );
+        $scope.address = locationDetail.user_edit_address;
+        $scope.tabTitle = locationDetail.user_edit_address;
+        Topics.setGeom(locationDetail);
+        loadDataAfterGetLocation();
+    } else {
+        // load pages from local browser for debugging
+        loadDataAfterGetLocation();
+    };
+
 })
 
 .controller('ItemCtrl', function(
@@ -635,8 +616,10 @@ angular.module('iwildfire.controllers', [])
 
 })
 
-.controller('MapsCtrl', function($scope, locationDetail) {
-    console.log('lyman 639', JSON.stringify( locationDetail ) );
+.controller('MapsCtrl', function($scope, locationDetail, $timeout) {
+    if( !locationDetail ) {
+        alert('无法获得用户地理位置信息');
+    }
     $scope.locationDetail = locationDetail;
 })
 

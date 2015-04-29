@@ -125,6 +125,17 @@ angular.module('iwildfire.services', ['ngResource'])
         window.removeItem('WILDFIRE_USER_PROFILE');
     };
 
+    this.save = function(key, value) {
+        window.localStorage.setItem('WILDFIRE_' + key, JSON.stringify(value));
+    };
+    this.get = function(key) {
+        var raw = window.localStorage.getItem('WILDFIRE_' + key);
+        if (raw) {
+            return JSON.parse(raw);
+        } else {
+            return null;
+        }
+    };
 })
 
 
@@ -143,7 +154,14 @@ angular.module('iwildfire.services', ['ngResource'])
         // should not use encodeURIComponent
         var app_url = window.location.href.split('#')[0];
         var accesstoken = store.getAccessToken();
-        console.log('lyman 146', accesstoken);
+        var wechatSingnature = store.get('wechatSingnature');
+
+        //TODO: maybe add expire time stuff to refresh it
+        if( wechatSingnature ){
+            console.log('now the cache version of wechatSingnature', wechatSingnature);
+            deferred.resolve( wechatSingnature );
+            return deferred.promise;
+        }
         // when the server domain is registered in
         // wechat plaform. If not, the signature can be
         // generated with this app url.
@@ -180,6 +198,8 @@ angular.module('iwildfire.services', ['ngResource'])
                      */
                     if (typeof(data) == 'object' &&
                         data.rc == 0) {
+                        console.log('get wechatSingnature the first time', data);
+                        store.save('wechatSingnature', data.msg);
                         deferred.resolve(data.msg);
                     } else {
                         deferred.resolve();

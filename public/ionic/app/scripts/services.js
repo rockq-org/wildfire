@@ -460,13 +460,13 @@ angular.module('iwildfire.services', ['ngResource'])
         var wechatSingnature = store.get('wechatSingnature');
 
         //TODO: maybe add expire time stuff to refresh it
-        if( wechatSingnature ){
-            console.log('now get the cache version of wechatSingnature', JSON.stringify(wechatSingnature));
-            deferred.resolve( wechatSingnature );
-            return deferred.promise;
-        } else {
-            console.log('do not cache wechatSingnature yet', JSON.stringify(wechatSingnature));
-        }
+        // if( wechatSingnature ){
+        //     console.log('now get the cache version of wechatSingnature', JSON.stringify(wechatSingnature));
+        //     deferred.resolve( wechatSingnature );
+        //     return deferred.promise;
+        // } else {
+        //     console.log('do not cache wechatSingnature yet', JSON.stringify(wechatSingnature));
+        // }
         // when the server domain is registered in
         // wechat plaform. If not, the signature can be
         // generated with this app url.

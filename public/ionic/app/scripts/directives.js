@@ -1,10 +1,16 @@
 angular.module('iwildfire.directives', [])
 
-.directive('qqMap', function(cfg) {
-    var host = location.href.split('#')[0];
+.directive('qqMap', function(cfg, $timeout) {
+    var host = location.href.split('#')[0].split('?')[0];
     var markers = [];
     var center;
     var infoWin;
+    var tmpCenter = {
+        api_address: '',
+        user_edit_address: '',
+        lat: '',
+        lng: ''
+    };
 
     function addControl(container, style){
         var control = document.createElement("div");
@@ -20,26 +26,33 @@ angular.module('iwildfire.directives', [])
     }
 
     function updateTopicsMarkers(topics){
+        if (markers) {
+            for (i in markers) {
+                markers[i].setMap(null);
+            }
+            markers.length = 0;
+        }
+
         for(var i in topics){
             (function(n) {
                 var marker = new qq.maps.Marker({ map: map });
                 var position = {lat: 25.3518140000000010 + i * 0.003, lng: 118.7042859999999962 + i * 0.003};
                 position = new qq.maps.LatLng(position.lat, position.lng);
+                // position = new qq.maps.LatLng(topics[i].goods_exchange_location.lat, topics[i].goods_exchange_location.lng);
 
                 marker.setPosition( position );
 
                 var anchor = new qq.maps.Point(0, 36),
                     size = new qq.maps.Size(36, 36),
                     origin = new qq.maps.Point(0, 0),
-                    markerIcon = new qq.maps.MarkerImage( "/images/map/1.png", size, origin, anchor );
-
+                    markerIcon = new qq.maps.MarkerImage( host + "/images/map/1.png", size, origin, anchor );
+                    console.log(host + "/images/map/1.png");
                 marker.setIcon(markerIcon);
 
                 marker.setTitle(i + 1);
                 markers.push(marker);
 
                 qq.maps.event.addListener(marker, 'click', function() {
-                    console.log(topics[n].goods_pics[0]);
                     var content = '<div style="width:180px;height:180px;">';
                     content += topics[n].title;
                     content += '转卖价：' + topics[n].goods_now_price;
@@ -55,13 +68,15 @@ angular.module('iwildfire.directives', [])
     };
 
     function link(scope, element, attrs){
+        console.log(scope);
         var $wrap = element.parent().parent();
         var $element = angular.element( element );
         var container = $element.get(0);
-        var height = $wrap.height() - 44 - 50;
+        var width = $wrap.width();
+        var height = $wrap.height() - 44 - 49;
         center = new qq.maps.LatLng(scope.center.lat, scope.center.lng);
 
-        $element.width( $wrap.width() );
+        $element.width( width );
         $element.height( height );
 
         map = new qq.maps.Map( container, {
@@ -72,31 +87,45 @@ angular.module('iwildfire.directives', [])
         });
 
         infoWin = new qq.maps.InfoWindow({ map: map });
-        // add relocated control
-        var style = {
-            left: 15,
-            top: height - 64,
-            iconName: '2.png'
-        };
-        var relocatedControl = addControl(container, style);
-        qq.maps.event.addListener(relocatedControl, 'click', function(){
-            console.log('do the relocated stuff');
+
+        var circle = new qq.maps.Circle({
+            map: map,
+            center: center,
+            radius:3000
+        });
+
+        qq.maps.event.addListener(map, 'center_changed', center_changed);
+        function center_changed() {
+            var latLng = map.getCenter();
+            geocoder.getAddress(latLng);
+        }
+        var geocoder = new qq.maps.Geocoder({
+            complete: function(result) {
+                $timeout(function(){
+                    var c = result.detail.addressComponents;
+                    var address = c.city + c.district + c.street + c.streetNumber + c.town + c.village;
+
+                    scope.locationDetail.api_address = result.detail.address;
+                    scope.locationDetail.user_edit_address = address;
+                    scope.locationDetail.lat = result.detail.location.lat;
+                    scope.locationDetail.lng = result.detail.location.lng;
+                    var newCenter = new qq.maps.LatLng(scope.locationDetail.lat, scope.locationDetail.lng);
+
+                    circle.setCenter( newCenter );
+                })
+            }
         });
 
         // add reset control
         var style = {
-            left: 60,
-            top: height - 100,
+            left: 10,
+            top: height - 56,
             iconName: '3.png'
         };
         var resetControl = addControl(container, style);
         qq.maps.event.addListener(resetControl, 'click', function() {
             map.panTo( center );
         });
-
-        // center marker
-        var centerMarker = new qq.maps.Marker({ map: map });
-        centerMarker.setPosition(center);
 
         // topics markers
         scope.$watchCollection('topics', function(newData, oldData){
@@ -108,6 +137,7 @@ angular.module('iwildfire.directives', [])
         scope: {
             center: "=",
             zoom: "=",
+            locationDetail: "=",
             topics: "=*"
         },
         link: link

@@ -149,6 +149,7 @@ angular.module('iwildfire.controllers', [])
     cfg
 ){
     locationDetail = {
+        api_address: '仙游',
         user_edit_address: '仙游',
         lat: 25.3518140000000010, lng: 118.7042859999999962
     };
@@ -207,9 +208,7 @@ angular.module('iwildfire.controllers', [])
             Topics.currentTab($stateParams.tab);
             $log.debug('do refresh');
             Topics.refresh().$promise.then(function(response) {
-                $log.debug('do refresh complete');
                 $scope.topics = response.data;
-                console.log('get topics number ', response.data.length);
                 $scope.hasNextPage = true;
                 $scope.loadError = false;
                 if ($scope.topics.length == 0)
@@ -261,7 +260,15 @@ angular.module('iwildfire.controllers', [])
         $scope.doRefresh();
     };
 
-    $scope.map = { center: { lat: locationDetail.lat, lng: locationDetail.lng }, zoom: 15 };
+    $scope.$watchCollection('locationDetail', function(newValue, oldValue){
+        $scope.address = $scope.locationDetail.user_edit_address;
+        $scope.tabTitle = $scope.locationDetail.user_edit_address;
+        Topics.setGeom($scope.locationDetail);
+        loadDataAfterGetLocation();
+        $scope.doRefresh();
+    });
+
+    $scope.map = { center: { lat: locationDetail.lat, lng: locationDetail.lng }, zoom: 13 };
 })
 
 .controller('ItemCtrl', function(

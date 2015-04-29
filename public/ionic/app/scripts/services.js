@@ -158,7 +158,7 @@ angular.module('iwildfire.services', ['ngResource'])
 
         //TODO: maybe add expire time stuff to refresh it
         if( wechatSingnature ){
-            console.log('now the cache version of wechatSingnature', wechatSingnature);
+            console.log('now get the cache version of wechatSingnature', wechatSingnature);
             deferred.resolve( wechatSingnature );
             return deferred.promise;
         }
@@ -551,17 +551,16 @@ angular.module('iwildfire.services', ['ngResource'])
     };
 
     this.getLocationDetail = function(){
-        var self = this;
         var deferred = $q.defer();
-        if( self.locationDetail ){
-            console.log('lyman 537 return cached locationDetail', JSON.stringify(self.locationDetail));
-            deferred.resolve(self.locationDetail);
+        var locationDetail = store.get('locationDetail');
+        if( locationDetail ){
+            console.log('return cached locationDetail', locationDetail);
+            deferred.resolve(locationDetail);
             return deferred.promise;
         }
 
-        self.getWxWrapper()
+        this.getWxWrapper()
             .then(function(wxWrapper) {
-                console.log('lyman 544', JSON.stringify(wxWrapper));
                 var locationDetail = {};
                  wxWrapper.getLocation({
                     success: function(res) {
@@ -569,7 +568,7 @@ angular.module('iwildfire.services', ['ngResource'])
                         var longitude = res.longitude; // 经度，浮点数，范围为180 ~ -180。
                         var speed = res.speed; // 速度，以米/每秒计
                         var accuracy = res.accuracy; // 位置精度
-                        console.log('lyman 553', JSON.stringify(res));
+                        console.log('get latlng by wechat api', res);
                         var geocoder;
                         var center = new qq.maps.LatLng(latitude, longitude);
                         var geocoder = new qq.maps.Geocoder();
@@ -582,8 +581,8 @@ angular.module('iwildfire.services', ['ngResource'])
                             locationDetail.latitude = latitude;
                             locationDetail.longitude = longitude;
 
-                            console.log('lyman 557 get location first time!', JSON.stringify(locationDetail));
-                            self.locationDetail = locationDetail;
+                            console.log('get location first time! save it into store', locationDetail);
+                            store.save('locationDetail', locationDetail);
                             deferred.resolve(locationDetail);
                         });
                     }

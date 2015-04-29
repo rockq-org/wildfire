@@ -312,6 +312,7 @@ angular.module('iwildfire.controllers', [])
     cfg,
     store,
     webq,
+    locationDetail,
     wxWrapper,
     Tabs) {
 
@@ -322,6 +323,7 @@ angular.module('iwildfire.controllers', [])
     //     window.location.href = '{0}/auth/wechat/embedded'.f(cfg.server);
     // }
     $scope.locationDetail = {};
+
     // $scope.params = {
     //     // 标题5到10个字
     //     title: null,
@@ -513,59 +515,12 @@ angular.module('iwildfire.controllers', [])
                 $scope.params.goods_exchange_location.user_edit_address = $scope.locationDetail.user_edit_address;
                 $scope.params.goods_exchange_location.lat = $scope.locationDetail.latitude;
                 $scope.params.goods_exchange_location.lng = $scope.locationDetail.longitude;
-                console.log('lyman 498', JSON.stringify($scope.locationDetail));
-                console.log('lyman 499', JSON.stringify($scope.params.goods_exchange_location));
+                console.log($scope.locationDetail);
+                console.log($scope.params.goods_exchange_location);
             });
         }
         $scope.changeLocationModal.hide();
     }
-
-    function initGoodsExchangeLocation() {
-        // check if wxWrapper exists or not.
-        if (!wxWrapper)
-            return;
-        wxWrapper.getLocation({
-            success: function(res) {
-                var latitude = res.latitude; // 纬度，浮点数，范围为90 ~ -90
-                var longitude = res.longitude; // 经度，浮点数，范围为180 ~ -180。
-                var speed = res.speed; // 速度，以米/每秒计
-                var accuracy = res.accuracy; // 位置精度
-
-                $scope.locationDetail = {
-                    user_edit_address: '',
-                    api_address: '',
-                    latitude: latitude,
-                    longitude: longitude
-                };
-
-                var title = '';
-                var geocoder;
-                var center = new qq.maps.LatLng(latitude, longitude);
-                var geocoder = new qq.maps.Geocoder();
-                geocoder.getAddress(center);
-                geocoder.setComplete(function(result) {
-                    var c = result.detail.addressComponents;
-                    var address = c.province + c.city + c.district + c.street + c.streetNumber + c.town + c.village;
-                    $scope.locationDetail.api_address = address;
-                    $scope.locationDetail.user_edit_address = address;
-                    $scope.params.goods_exchange_location.user_edit_address = address;
-                    $scope.params.goods_exchange_location.api_address = address;
-                    $scope.params.goods_exchange_location.lat = latitude;
-                    $scope.params.goods_exchange_location.lng = longitude;
-                });
-
-                $scope.showEdit = false;
-                // Create the modal that we will use later
-                $ionicModal.fromTemplateUrl('templates/modal-change-location.html', {
-                    scope: $scope
-                }).then(function(modal) {
-                    $scope.changeLocationModal = modal;
-                    // modal.show();
-                });
-            }
-        });
-    }
-    initGoodsExchangeLocation();
 
     /**
      * 验证表单字段
@@ -615,6 +570,22 @@ angular.module('iwildfire.controllers', [])
             alert('缺少信息。')
         }
     }
+
+    $scope.locationDetail.api_address = locationDetail.api_address;
+    $scope.locationDetail.user_edit_address = locationDetail.user_edit_address;
+    $scope.params.goods_exchange_location.api_address = locationDetail.api_address;
+    $scope.params.goods_exchange_location.user_edit_address = locationDetail.user_edit_address;
+    $scope.params.goods_exchange_location.lat = locationDetail.latitude;
+    $scope.params.goods_exchange_location.lng = locationDetail.longitude;
+
+    $scope.showEdit = false;
+    // Create the modal that we will use later
+    $ionicModal.fromTemplateUrl('templates/modal-change-location.html', {
+        scope: $scope
+    }).then(function(modal) {
+        $scope.changeLocationModal = modal;
+        // modal.show();
+    });
 
 
     /*******************************************

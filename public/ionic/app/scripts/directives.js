@@ -1,8 +1,11 @@
 angular.module('iwildfire.directives', [])
 
-.directive('qqMap', function() {
+.directive('qqMap', function(cfg) {
     var host = location.href.split('#')[0];
     var markers = [];
+    var center;
+    var infoWin;
+
     function addControl(container, style){
         var control = document.createElement("div");
         control.style.left = style.left + "px";
@@ -18,11 +21,36 @@ angular.module('iwildfire.directives', [])
 
     function updateTopicsMarkers(topics){
         for(var i in topics){
-            console.log(i, topics[i]);
-            var marker = new qq.maps.Marker({ map: map });
-            // var position =
-            marker.setPosition(position);
-            markers.push(marker);
+            (function(n) {
+                var marker = new qq.maps.Marker({ map: map });
+                var position = {lat: 25.3518140000000010 + i * 0.003, lng: 118.7042859999999962 + i * 0.003};
+                position = new qq.maps.LatLng(position.lat, position.lng);
+
+                marker.setPosition( position );
+
+                var anchor = new qq.maps.Point(0, 36),
+                    size = new qq.maps.Size(36, 36),
+                    origin = new qq.maps.Point(0, 0),
+                    markerIcon = new qq.maps.MarkerImage( "/images/map/1.png", size, origin, anchor );
+
+                marker.setIcon(markerIcon);
+
+                marker.setTitle(i + 1);
+                markers.push(marker);
+
+                qq.maps.event.addListener(marker, 'click', function() {
+                    console.log(topics[n].goods_pics[0]);
+                    var content = '<div style="width:180px;height:180px;">';
+                    content += topics[n].title;
+                    content += '转卖价：' + topics[n].goods_now_price;
+                    content += '原价：' + topics[n].goods_pre_price;
+                    content += '<img height="100px" src="' + cfg.server + topics[n].goods_pics[0] + '" />';
+                    content += '<br /><a href="#/item/' + topics[n].id + '">点击查看详情</a></div>';
+                    infoWin.open();
+                    infoWin.setContent( content );
+                    infoWin.setPosition( position );
+                });
+            })(i);
         }
     };
 
@@ -31,7 +59,7 @@ angular.module('iwildfire.directives', [])
         var $element = angular.element( element );
         var container = $element.get(0);
         var height = $wrap.height() - 44 - 50;
-        var center = new qq.maps.LatLng(scope.center.lat, scope.center.lng);
+        center = new qq.maps.LatLng(scope.center.lat, scope.center.lng);
 
         $element.width( $wrap.width() );
         $element.height( height );
@@ -43,6 +71,7 @@ angular.module('iwildfire.directives', [])
             mapTypeControl: false
         });
 
+        infoWin = new qq.maps.InfoWindow({ map: map });
         // add relocated control
         var style = {
             left: 15,

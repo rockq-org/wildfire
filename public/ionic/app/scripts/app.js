@@ -148,7 +148,9 @@ angular.module('iwildfire', ['ionic', 'iwildfire.controllers', 'iwildfire.servic
                                     locationDetail.user_edit_address = address;
                                     locationDetail.latitude = latitude;
                                     locationDetail.longitude = longitude;
+
                                     console.log('lyman 151', JSON.stringify(locationDetail));
+                                    deferred.resolve(locationDetail);
                                 });
                             }
                         });

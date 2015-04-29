@@ -87,8 +87,8 @@ function onSubscribe(msg, res) {
     // get user profile data with RESt API
     _createUserAccountByOpenId(msg);
     res.reply([{
-        title: '绑定手机号',
-        description: '绑定后可发布信息，未绑定状态可浏览信息。',
+        title: '登陆链接',
+        description: '登陆后可发布信息，未登陆状态可浏览信息。',
         picurl: u.format('http://%s/public/images/frog-icon.png', config.host),
         url: u.format('http://%s/auth/wechat/embedded', config.host)
     }]);

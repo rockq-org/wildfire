@@ -124,3 +124,14 @@ input.location-address{
 .frog-logo-off {
 	background: url(../images/frog-logo-1.png);
 }
+
+
+.wf-post-form .goods-img-holder {
+  position: relative;
+}
+
+.wf-post-form .goods-img-holder span {
+    position: absolute;
+    left: 5px;
+    top: 5px;
+}

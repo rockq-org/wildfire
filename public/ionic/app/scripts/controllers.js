@@ -209,7 +209,7 @@ angular.module('iwildfire.controllers', [])
     // save reply
     $scope.saveReply = function() {
         $log.debug('new reply data:', $scope.replyData);
-        if($scope.replyData.content == '') return $scope.showReply = false;
+        if ($scope.replyData.content == '') return $scope.showReply = false;
         $ionicLoading.show();
         Topic.saveReply(id, $scope.replyData).$promise.then(function(response) {
             $ionicLoading.hide();
@@ -305,6 +305,7 @@ angular.module('iwildfire.controllers', [])
 .controller('PostCtrl', function($scope, $state,
     $stateParams,
     $ionicModal,
+    $ionicPopup,
     $timeout,
     $log,
     $q,
@@ -321,26 +322,28 @@ angular.module('iwildfire.controllers', [])
     //     window.location.href = '{0}/auth/wechat/embedded'.f(cfg.server);
     // }
     $scope.locationDetail = {};
-    $scope.params = {
-        // 标题5到10个字
-        title: null,
-        content: null,
-        tab: null,
-        quality: null,
-        goods_pics: [],
-        goods_pre_price: null,
-        goods_now_price: null,
-        goods_is_bargain: true,
-        // dummy data
-        goods_exchange_location: {
-            user_edit_address: null,
-            api_address: null,
-            lat: null, // latitude
-            lng: null // longitude
-        },
-        goods_status: '在售'
-    };
+    // $scope.params = {
+    //     // 标题5到10个字
+    //     title: null,
+    //     content: null,
+    //     tab: null,
+    //     quality: null,
+    //     goods_pics: ['http://img1.cache.netease.com/catchpic/9/95/95C6FAC0DC54FC2D8BFFE30EE14990DD.jpg',
+    //         'http://img1.cache.netease.com/catchpic/9/95/95C6FAC0DC54FC2D8BFFE30EE14990DD.jpg'],
+    //     goods_pre_price: null,
+    //     goods_now_price: null,
+    //     goods_is_bargain: true,
+    //     // dummy data
+    //     goods_exchange_location: {
+    //         user_edit_address: null,
+    //         api_address: null,
+    //         lat: null, // latitude
+    //         lng: null // longitude
+    //     },
+    //     goods_status: '在售'
+    // };
 
+    // #Todo this is dummy data for debugging
     $scope.params = {
         // 标题5到10个字
         title: 'testtitle',
@@ -455,6 +458,37 @@ angular.module('iwildfire.controllers', [])
         });
 
     };
+
+    /**
+     * 删除 goods pic
+     *
+     * @param  {[type]} srcValue [description]
+     * @return {[type]}          [description]
+     */
+    $scope.removeGoodsPic = function(srcValue) {
+        // A confirm dialog
+        var confirmPopup = $ionicPopup.confirm({
+            title: '提示',
+            template: '确定删除这张配图?',
+            okText: '是',
+            okType: 'button-balanced',
+            cancelText: '否',
+            cancelType: 'button-default'
+        });
+        confirmPopup.then(function(res) {
+            if (res) {
+                $scope.params.goods_pics = _.filter($scope.params.goods_pics,
+                    function(x) {
+                        return x !== srcValue;
+                    });
+
+                $log.debug('Goods Pics ' + JSON.stringify($scope.params.goods_pics));
+            } else {
+                // cancelled
+            }
+        });
+
+    }
 
     // testSetupLocation();
     // function testSetupLocation(){

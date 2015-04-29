@@ -56,8 +56,8 @@ var index = function(req, res, next) {
     // if the topic is marked as deleted, do not return it.
     query.deleted = false;
     // set the response data with descending order of topic.udpate_at
-    
-    
+
+
 
     var options = {
         skip: (page - 1) * limit,
@@ -84,12 +84,11 @@ var index = function(req, res, next) {
         ep.after('author', topics.length, function() {
             topics = topics.map(function(topic) {
                 return _.pick(topic, ['id', 'author_id', 'tab', 'content', 'title', 'last_reply_at',
-                    'collect_count', 'goods_now_price', 'goods_pre_price', 'update_at', 'goods_pics', 'goods_quality_degree',
+                    'collect_count', 'goods_now_price', 'goods_pre_price', 'update_at', 'goods_pics', 'goods_quality_degree', 'goods_exchange_location','goods_exchange_geom',
                     'good', 'top', 'reply_count', 'visit_count', 'create_at', 'author'
                 ]);
             });
 
-            console.log('lyman', topics);
             res.send({
                 data: topics
             });

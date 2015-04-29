@@ -1,124 +1,87 @@
 angular.module('iwildfire.directives', [])
 
-.directive('map', function($document) {
-    var searchService, map, markers = [];
-    var center;
-    var init = function(element, attrs, scope, width, height) {
-        center = new qq.maps.LatLng(scope.locationDetail.lat, scope.locationDetail.lng);
-        map = new qq.maps.Map(element, {
+.directive('qqMap', function() {
+    var host = location.href.split('#')[0];
+    var markers = [];
+    function addControl(container, style){
+        var control = document.createElement("div");
+        control.style.left = style.left + "px";
+        control.style.top = style.top + "px";
+        control.style.position = "relative";
+        control.style.width = "36px";
+        control.style.height = "36px";
+        control.style.zIndex = "100000";
+        control.innerHTML = '<img src="' + host + 'images/map/' + style.iconName + '" />';
+        container.appendChild(control);
+        return control;
+    }
+
+    function updateTopicsMarkers(topics){
+        for(var i in topics){
+            console.log(i, topics[i]);
+            var marker = new qq.maps.Marker({ map: map });
+            // var position =
+            marker.setPosition(position);
+            markers.push(marker);
+        }
+    };
+
+    function link(scope, element, attrs){
+        var $wrap = element.parent().parent();
+        var $element = angular.element( element );
+        var container = $element.get(0);
+        var height = $wrap.height() - 44 - 50;
+        var center = new qq.maps.LatLng(scope.center.lat, scope.center.lng);
+
+        $element.width( $wrap.width() );
+        $element.height( height );
+
+        map = new qq.maps.Map( container, {
             center: center,
-            zoom: 13,
+            zoom: scope.zoom,
             zoomControl: false,
             mapTypeControl: false
         });
-        // new qq.maps.Circle({
-        //     center: center,
-        //     radius: 2000,
-        //     map: map
-        // });
 
-        //创建自定义控件
-        var middleControl = document.createElement("div");
-        middleControl.style.left = 15 + "px";
-        middleControl.style.top = height - 64 + "px";
-        middleControl.style.position = "relative";
-        middleControl.style.width = "36px";
-        middleControl.style.height = "36px";
-        middleControl.style.zIndex = "100000";
-        middleControl.innerHTML = '<img src="/images/map/2.png" />';
-        element.appendChild(middleControl);
-        // qq.maps.event.addListener(middleControl, 'click', function(){
-        //     info.open();
-        //     info.setContent('<div style="text-align:center;white-space:nowrap;'+
-        //     'margin:10px;">' + address + '</div>');
-        //     info.setPosition(center);
-        // });
+        // add relocated control
+        var style = {
+            left: 15,
+            top: height - 64,
+            iconName: '2.png'
+        };
+        var relocatedControl = addControl(container, style);
+        qq.maps.event.addListener(relocatedControl, 'click', function(){
+            console.log('do the relocated stuff');
+        });
 
-        var resetControl = document.createElement("div");
-        resetControl.style.left = 60 + "px";
-        resetControl.style.top = height - 100 + "px";
-        resetControl.style.position = "relative";
-        resetControl.style.width = "36px";
-        resetControl.style.height = "36px";
-        resetControl.style.zIndex = "100000";
-        resetControl.innerHTML = '<img src="/images/map/3.png" />';
-        element.appendChild(resetControl);
+        // add reset control
+        var style = {
+            left: 60,
+            top: height - 100,
+            iconName: '3.png'
+        };
+        var resetControl = addControl(container, style);
         qq.maps.event.addListener(resetControl, 'click', function() {
-            console.log('here!');
             map.panTo( center );
         });
 
-        searchService = new qq.maps.SearchService({
-            complete: function(results) {
-                //设置回调函数参数
-                var pois = results.detail.pois;
-                var infoWin = new qq.maps.InfoWindow({
-                    map: map
-                });
-                var latlngBounds = new qq.maps.LatLngBounds();
+        // center marker
+        var centerMarker = new qq.maps.Marker({ map: map });
+        centerMarker.setPosition(center);
 
-                var marker = new qq.maps.Marker({
-                    map: map
-                });
-                marker.setPosition(center);
-                markers.push(marker);
-
-                for (var i = 0, l = pois.length; i < l; i++) {
-                    var poi = pois[i];
-                    //扩展边界范围，用来包含搜索到的Poi点
-                    latlngBounds.extend(poi.latLng);
-
-                    (function(n) {
-
-                        var marker = new qq.maps.Marker({
-                            map: map
-                        });
-                        marker.setPosition(pois[n].latLng);
-
-                        var anchor = new qq.maps.Point(0, 39),
-                            size = new qq.maps.Size(36, 36),
-                            origin = new qq.maps.Point(0, 0),
-                            markerIcon = new qq.maps.MarkerImage(
-                                 "/images/map/1.png",
-                                 size,
-                                 origin,
-                                 anchor
-                               );
-                        marker.setIcon(markerIcon);
-
-                        marker.setTitle(i + 1);
-                        markers.push(marker);
-
-                        qq.maps.event.addListener(marker, 'click', function() {
-                            infoWin.open();
-                            infoWin.setContent('<div style="width:180px;height:180px;">二手自行车卖啦转卖价：1000 原价：2000                              <img height="100px" src="http://img03.taobaocdn.com/imgextra/i3/691389747/TB2ppC1cpXXXXa1XpXXXXXXXXXX_!!691389747-0-fleamarket.jpg_728x728.jpg" /> <br /><a href="#">点击查看详情</a></div>');
-                            infoWin.setPosition(pois[n].latLng);
-                        });
-                    })(i);
-                }
-                map.fitBounds(latlngBounds);
-            }
+        // topics markers
+        scope.$watchCollection('topics', function(newData, oldData){
+            updateTopicsMarkers(newData);
         });
-        searchKeyword();
     }
 
-    function searchKeyword() {
-        // var keyword = document.getElementById("keyword").value;
-        var keyword = '酒店';
-        region = new qq.maps.LatLng(39.936273, 116.44004334);
-
-        searchService.setPageCapacity(5);
-        searchService.searchNearBy(keyword, center, 2000);
-    }
-
-    return function(scope, element, attrs) {
-        console.log(JSON.stringify(scope.topics));
-        var width = $document.width();
-        var height = $document.height() - 44 - 50;
-        var div = angular.element(element).find('div');
-        div.width(width);
-        div.height(height);
-        init(div[0], attrs, scope, width, height);
+    return {
+        scope: {
+            center: "=",
+            zoom: "=",
+            topics: "=*"
+        },
+        link: link
     };
 })
 

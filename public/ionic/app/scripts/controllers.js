@@ -132,6 +132,7 @@ angular.module('iwildfire.controllers', [])
 })
 
 
+
 .controller('MapsCtrl', function(
     $scope,
     $rootScope,
@@ -147,12 +148,12 @@ angular.module('iwildfire.controllers', [])
     Tabs,
     cfg
 ){
-    console.log('map ctrl here');
-    if( !locationDetail ) {
-        alert('无法获得用户地理位置信息');
-    }
-    $scope.locationDetail = locationDetail;
+    locationDetail = {
+        user_edit_address: '仙游',
+        lat: 25.3518140000000010, lng: 118.7042859999999962
+    };
 
+    $scope.locationDetail = locationDetail;
 
     $scope.sideMenus = Tabs.getList();
     $stateParams.tab = $stateParams.tab || 'all';
@@ -161,19 +162,46 @@ angular.module('iwildfire.controllers', [])
 
     $scope.currentTab = Topics.currentTab();
 
-    //cheat solution
+    $scope.changeSelected = function(item) {
+        $state.go('tab.maps', { tab: item.value });
+        $scope.menuTitle = item.label;
+        $stateParams.tab = item.value;
+
+        $scope.currentTab = Topics.currentTab($stateParams.tab);
+        $scope.doRefresh();
+    }
+
+    /***********************************
+     * Search
+     ***********************************/
+    $scope.tabTitle = '首页';
+    $scope.SearchText = '搜索';
+    $scope.showSearch = false;
+    $scope.doSearch = function(query) {
+        if (!($scope.showSearch)) {
+            $scope.showSearch = true;
+            $log.debug('showSearch');
+            return;
+        }
+        $log.debug('doSearch');
+        Topics.setQuery(query);
+        // Topics.setGeom({lng:140,lat:40.4});
+        $scope.doRefresh();
+        $log.debug('searchText', query);
+        $scope.tabTitle = query || '首页';
+    }
+    $scope.endSearch = function() {
+        $scope.showSearch = false;
+    }
+
     function loadDataAfterGetLocation() {
         $scope.loadingMsg = '正在搜索您附近得二手信息...';
-        // check if tab is changed
         if ($stateParams.tab !== Topics.currentTab()) {
             $scope.currentTab = Topics.currentTab($stateParams.tab);
-            // reset data if tab is changed
-            console.log('reset Data');
             Topics.resetData();
         }
 
         $scope.topics = Topics.getTopics();
-
         $scope.loadError = false;
         $scope.doRefresh = function() {
             Topics.currentTab($stateParams.tab);
@@ -181,7 +209,7 @@ angular.module('iwildfire.controllers', [])
             Topics.refresh().$promise.then(function(response) {
                 $log.debug('do refresh complete');
                 $scope.topics = response.data;
-                console.log(JSON.stringify(response.data));
+                console.log('get topics number ', response.data.length);
                 $scope.hasNextPage = true;
                 $scope.loadError = false;
                 if ($scope.topics.length == 0)
@@ -220,51 +248,20 @@ angular.module('iwildfire.controllers', [])
         };
     }
 
-    $scope.changeSelected = function(item) {
-        $state.go('tab.index', {
-            tab: item.value
-        });
-        $scope.menuTitle = item.label;
-        $stateParams.tab = item.value;
-
-        $scope.currentTab = Topics.currentTab($stateParams.tab);
-        $scope.doRefresh();
-    }
-
-    /***********************************
-     * Search
-     ***********************************/
-    $scope.tabTitle = '首页';
-    $scope.SearchText = '搜索';
-    $scope.showSearch = false;
-    $scope.doSearch = function(query) {
-        if (!($scope.showSearch)) {
-            $scope.showSearch = true;
-            $log.debug('showSearch');
-            return;
-        }
-        $log.debug('doSearch');
-        Topics.setQuery(query);
-        // Topics.setGeom({lng:140,lat:40.4});
-        $scope.doRefresh();
-        $log.debug('searchText', query);
-        $scope.tabTitle = query || '首页';
-    }
-    $scope.endSearch = function() {
-        $scope.showSearch = false;
-    }
-
-
+    // init here
     if (typeof(locationDetail) != 'undefined') {
-        console.log('lyman 122', JSON.stringify( locationDetail ) );
         $scope.address = locationDetail.user_edit_address;
         $scope.tabTitle = locationDetail.user_edit_address;
         Topics.setGeom(locationDetail);
         loadDataAfterGetLocation();
+        $scope.doRefresh();
     } else {
         // load pages from local browser for debugging
         loadDataAfterGetLocation();
+        $scope.doRefresh();
     };
+
+    $scope.map = { center: { lat: locationDetail.lat, lng: locationDetail.lng }, zoom: 15 };
 })
 
 .controller('ItemCtrl', function(

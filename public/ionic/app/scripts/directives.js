@@ -11,7 +11,6 @@ angular.module('iwildfire.directives', [])
             center: center,
             zoom: 13,
             zoomControl: false,
-            // panControl: false,
             mapTypeControl: false
         });
         new qq.maps.Circle({
@@ -134,6 +133,8 @@ angular.module('iwildfire.directives', [])
         var map = new qq.maps.Map(element, {
             // 地图的中心地理坐标
             center: center,
+            zoomControl: false,
+            mapTypeControl: false,
             zoom: 17
         });
         var address = locationDetail.api_address;
@@ -160,7 +161,7 @@ angular.module('iwildfire.directives', [])
 
         var resetControl = document.createElement("div");
         resetControl.style.left = 15 + "px";
-        resetControl.style.top = height - 200 + "px";
+        resetControl.style.top = height - 100 + "px";
         resetControl.style.position = "relative";
         resetControl.style.width = "36px";
         resetControl.style.height = "36px";

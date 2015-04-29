@@ -492,22 +492,6 @@ angular.module('iwildfire.controllers', [])
 
     }
 
-    // testSetupLocation();
-    // function testSetupLocation(){
-    //     $scope.locationDetail = {
-    //         user_edit_address: '',
-    //         api_address: '',
-    //         latitude: '39.916527',
-    //         longitude: '116.397128'
-    //     };
-    //     $ionicModal.fromTemplateUrl('templates/modal-change-location.html', {
-    //         scope: $scope
-    //     }).then(function(modal) {
-    //         $scope.modal-change-location = modal;
-    //         // modal.show();
-    //     });
-    // }
-
     $scope.closeChangeLocationModal = function(isSubmit) {
         if (isSubmit) {
             $timeout(function() {

@@ -525,20 +525,25 @@ angular.module('iwildfire.services', ['ngResource'])
      */
     this.getWxWrapper = function() {
         var deferred = $q.defer();
+        var wxWrapperIsReady = store.get('wxWrapperIsReady');
+        if( wxWrapperIsReady ){
+            deferred.resolve(wx);
+            return deferred.promise;
+        }
+
         this.getWechatSignature()
             .then(function(wechat_signature) {
+                console.log( JSON.stringify( wechat_signature ) );
                 if (wechat_signature) {
-                    wechat_signature.jsApiList = ['chooseImage',
-                        'previewImage', 'uploadImage',
-                        'downloadImage', 'getLocation',
-                        'openLocation'
-                    ];
                     wx.config(wechat_signature);
                     wx.error(function(err) {
                         alert(err);
                         deferred.resolve();
                     });
                     wx.ready(function() {
+                        //TODO: maybe add an expire time for this?
+                        //      or just clear up alllll store while user refresh our url?
+                        store.save('wxWrapperIsReady', 'true');
                         deferred.resolve(wx);
                     });
                 } else {

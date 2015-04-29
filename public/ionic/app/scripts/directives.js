@@ -4,7 +4,9 @@ angular.module('iwildfire.directives', [])
     var searchService, map, markers = [];
     var center;
     var init = function(element, attrs, scope, width, height) {
-        center = new qq.maps.LatLng(scope.locationDetail.latitude, scope.locationDetail.longitude);
+        // var center = new qq.maps.LatLng(scope.lat, scope.lng);
+        console.log('lyman 7', JSON.stringify(scope.locationDetail.lat));
+        center = new qq.maps.LatLng(scope.locationDetail.lat, scope.locationDetail.lng);
         map = new qq.maps.Map(element, {
             center: center,
             zoom: 13,
@@ -110,17 +112,19 @@ angular.module('iwildfire.directives', [])
     };
 })
 
-.directive('chooseLocation', function($timeout, $document) {
-    var init = function(element, attrs, scope, width, height) {
+.directive('chooseLocation', function($timeout, $document, webq) {
+    var init = function(element, attrs, scope, locationDetail, width, height) {
         //初始化地图
-        var center = new qq.maps.LatLng(scope.locationDetail.latitude, scope.locationDetail.longitude);
-        var newCenter = new qq.maps.LatLng(scope.locationDetail.latitude, scope.locationDetail.longitude);
+        console.log(scope.locationDetail.lat);
+        console.log(scope.locationDetail.lat);
+        var center = new qq.maps.LatLng(locationDetail.lat, locationDetail.lng);
+        var newCenter = new qq.maps.LatLng(locationDetail.lat, locationDetail.lng);
         var map = new qq.maps.Map(element, {
             // 地图的中心地理坐标
             center: center,
             zoom: 17
         });
-        var address = scope.locationDetail.api_address;
+        var address = locationDetail.api_address;
         var info = new qq.maps.InfoWindow({
             map: map
         });
@@ -170,8 +174,8 @@ angular.module('iwildfire.directives', [])
                     address = c.city + c.district + c.street + c.streetNumber + c.town + c.village;
                     scope.$parent.$parent.locationDetail.api_address = result.detail.address;
                     scope.$parent.$parent.locationDetail.user_edit_address = address;
-                    scope.$parent.$parent.locationDetail.latitude = result.detail.location.lat;
-                    scope.$parent.$parent.locationDetail.longitude = result.detail.location.lng;
+                    scope.$parent.$parent.locationDetail.lat = result.detail.location.lat;
+                    scope.$parent.$parent.locationDetail.lng = result.detail.location.lng;
                     newCenter = new qq.maps.LatLng(result.detail.location.lat, result.detail.location.lng);
                 });
             }
@@ -181,15 +185,13 @@ angular.module('iwildfire.directives', [])
     }
 
     return function(scope, element, attrs) {
-        $timeout(function() {
+        webq.getLocationDetail().then(function(locationDetail){
             var width = $document.width();
             var height = $document.height() - 44;
             var div = angular.element(element).find('div');
             div.width(width);
             div.height(height);
-            init(div[0], attrs, scope, width, height);
+            init(div[0], attrs, scope, locationDetail, width, height);
         });
     };
 })
-
-;

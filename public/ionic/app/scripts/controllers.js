@@ -44,7 +44,7 @@ angular.module('iwildfire.controllers', [])
             Topics.refresh().$promise.then(function(response) {
                 $log.debug('do refresh complete');
                 $scope.topics = response.data;
-                console.log(response.data);
+                console.log(JSON.stringify(response.data));
                 $scope.hasNextPage = true;
                 $scope.loadError = false;
                 if ($scope.topics.length == 0)
@@ -495,12 +495,10 @@ angular.module('iwildfire.controllers', [])
     $scope.closeChangeLocationModal = function(isSubmit) {
         if (isSubmit) {
             $timeout(function() {
-                $scope.params.goods_exchange_location.api_address = $scope.locationDetail.api_address;
-                $scope.params.goods_exchange_location.user_edit_address = $scope.locationDetail.user_edit_address;
-                $scope.params.goods_exchange_location.lat = $scope.locationDetail.latitude;
-                $scope.params.goods_exchange_location.lng = $scope.locationDetail.longitude;
-                console.log($scope.locationDetail);
-                console.log($scope.params.goods_exchange_location);
+                // $scope.params.goods_exchange_location = webq.getPostGoodsLocation();
+                // $scope.params.goods_exchange_location.user_edit_address = $scope.locationDetail.user_edit_address;
+                // $scope.locationDetail = $scope.params.goods_exchange_location;
+                // console.log(JSON.stringify($scope.locationDetail));
             });
         }
         $scope.changeLocationModal.hide();
@@ -555,13 +553,9 @@ angular.module('iwildfire.controllers', [])
         }
     }
 
-    $scope.locationDetail.api_address = locationDetail.api_address;
-    $scope.locationDetail.user_edit_address = locationDetail.user_edit_address;
-    $scope.params.goods_exchange_location.api_address = locationDetail.api_address;
-    $scope.params.goods_exchange_location.user_edit_address = locationDetail.user_edit_address;
-    $scope.params.goods_exchange_location.lat = locationDetail.latitude;
-    $scope.params.goods_exchange_location.lng = locationDetail.longitude;
-
+    $scope.locationDetail = locationDetail;
+    $scope.params.goods_exchange_location = locationDetail;
+    console.log(JSON.stringify(locationDetail));
     $scope.showEdit = false;
     // Create the modal that we will use later
     $ionicModal.fromTemplateUrl('templates/modal-change-location.html', {

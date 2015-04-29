@@ -136,6 +136,12 @@ angular.module('iwildfire.services', ['ngResource'])
             return null;
         }
     };
+    this.clear = function(){
+        console.log('clear all store except accesstoken');
+        var accesstoken = this.getAccessToken();
+        window.localStorage.clear();
+        this.setAccessToken(accesstoken);
+    }
 })
 
 
@@ -149,74 +155,6 @@ angular.module('iwildfire.services', ['ngResource'])
  * @return {[type]}       [description]
  */
 .service('webq', function($http, $q, $log, cfg, store) {
-    this.getWechatSignature = function() {
-        var deferred = $q.defer();
-        // should not use encodeURIComponent
-        var app_url = window.location.href.split('#')[0];
-        var accesstoken = store.getAccessToken();
-        var wechatSingnature = store.get('wechatSingnature');
-
-        //TODO: maybe add expire time stuff to refresh it
-        if( wechatSingnature ){
-            console.log('now get the cache version of wechatSingnature', wechatSingnature);
-            deferred.resolve( wechatSingnature );
-            return deferred.promise;
-        }
-        // when the server domain is registered in
-        // wechat plaform. If not, the signature can be
-        // generated with this app url.
-        if (!accesstoken) {
-            deferred.resolve();
-        } else if (S(cfg.server).contains('arrking.com')) {
-            $http.post('{0}/ionic/wechat-signature'.f(cfg.api), {
-                    accesstoken: accesstoken,
-                    app_url: app_url
-                }, {
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Accept': 'application/json'
-                    }
-                })
-                .success(function(data) {
-                    /**
-                     * data.rc: 0 --> succ; others --> fail
-                     * data.msg
-                     * >>
-                     * {
-                        debug: wxConfig.debug,
-                        appId: wxConfig.appId,
-                        timestamp: wxCredentials.timestamp,
-                        nonceStr: wxCredentials.noncestr,
-                        signature: wxCredentials.signature,
-                        // 附录2-所有JS接口列表
-                        // http://mp.weixin.qq.com/wiki/7/aaa137b55fb2e0456bf8dd9148dd613f.html#.E6.8B.8D.E7.85.A7.E6.88.96.E4.BB.8E.E6.89.8B.E6.9C.BA.E7.9B.B8.E5.86.8C.E4.B8.AD.E9.80.89.E5.9B.BE.E6.8E.A5.E5.8F.A3
-                        // jsApiList可以在客户端用的时候再调整
-                        jsApiList: ['scanQRCode', 'chooseImage', 'getLocation', 'openLocation']
-                    };
-                     * <<
-                     * jsApiList和debug 可以在客户端修改
-                     */
-                    if (typeof(data) == 'object' &&
-                        data.rc == 0) {
-                        console.log('get wechatSingnature the first time', data);
-                        store.save('wechatSingnature', data.msg);
-                        deferred.resolve(data.msg);
-                    } else {
-                        deferred.resolve();
-                    }
-                })
-                .error(function(err) {
-                    deferred.resolve();
-                })
-        } else {
-            // wechat signature is assigned to undefined if
-            // APP_URL is not belong to arrking.com.
-            deferred.resolve();
-        }
-
-        return deferred.promise;
-    }
-
     /**
      * upload wechat images
      * @return {[type]} [description]
@@ -346,7 +284,7 @@ angular.module('iwildfire.services', ['ngResource'])
                 deferred.resolve(data);
             })
             .error(function(err) {
-                console.log('lyman error 325', JSON.stringify(data));
+                console.log(JSON.stringify(err));
                 deferred.reject(err);
             });
         return deferred.promise;
@@ -514,6 +452,75 @@ angular.module('iwildfire.services', ['ngResource'])
     };
 
 
+    this.getWechatSignature = function() {
+        var deferred = $q.defer();
+        // should not use encodeURIComponent
+        var app_url = window.location.href.split('#')[0];
+        var accesstoken = store.getAccessToken();
+        var wechatSingnature = store.get('wechatSingnature');
+
+        //TODO: maybe add expire time stuff to refresh it
+        if( wechatSingnature ){
+            console.log('now get the cache version of wechatSingnature', JSON.stringify(wechatSingnature));
+            deferred.resolve( wechatSingnature );
+            return deferred.promise;
+        } else {
+            console.log('do not cache wechatSingnature yet', JSON.stringify(wechatSingnature));
+        }
+        // when the server domain is registered in
+        // wechat plaform. If not, the signature can be
+        // generated with this app url.
+        if (!accesstoken) {
+            deferred.resolve();
+        } else if (S(cfg.server).contains('arrking.com')) {
+            $http.post('{0}/ionic/wechat-signature'.f(cfg.api), {
+                    accesstoken: accesstoken,
+                    app_url: app_url
+                }, {
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    }
+                })
+                .success(function(data) {
+                    /**
+                     * data.rc: 0 --> succ; others --> fail
+                     * data.msg
+                     * >>
+                     * {
+                        debug: wxConfig.debug,
+                        appId: wxConfig.appId,
+                        timestamp: wxCredentials.timestamp,
+                        nonceStr: wxCredentials.noncestr,
+                        signature: wxCredentials.signature,
+                        // 附录2-所有JS接口列表
+                        // http://mp.weixin.qq.com/wiki/7/aaa137b55fb2e0456bf8dd9148dd613f.html#.E6.8B.8D.E7.85.A7.E6.88.96.E4.BB.8E.E6.89.8B.E6.9C.BA.E7.9B.B8.E5.86.8C.E4.B8.AD.E9.80.89.E5.9B.BE.E6.8E.A5.E5.8F.A3
+                        // jsApiList可以在客户端用的时候再调整
+                        jsApiList: ['scanQRCode', 'chooseImage', 'getLocation', 'openLocation']
+                    };
+                     * <<
+                     * jsApiList和debug 可以在客户端修改
+                     */
+                    if (typeof(data) == 'object' && data.rc == 0) {
+                        console.log('get wechatSingnature the first time', JSON.stringify(data));
+                        store.save('wechatSingnature', data.msg);
+                        deferred.resolve(data.msg);
+                    } else {
+                        deferred.resolve();
+                    }
+                })
+                .error(function(err) {
+                    deferred.resolve();
+                })
+        } else {
+            // wechat signature is assigned to undefined if
+            // APP_URL is not belong to arrking.com.
+            deferred.resolve();
+        }
+
+        return deferred.promise;
+    }
+
     /**
      * inject wechat signature and return the wx object as
      * a wrapper after wechat config ready event.
@@ -525,16 +532,21 @@ angular.module('iwildfire.services', ['ngResource'])
      */
     this.getWxWrapper = function() {
         var deferred = $q.defer();
-        var wxWrapperIsReady = store.get('wxWrapperIsReady');
-        if( wxWrapperIsReady ){
-            deferred.resolve(wx);
-            return deferred.promise;
-        }
+        // var wxWrapperIsReady = store.get('wxWrapperIsReady');
+        // if( wxWrapperIsReady ){
+        //     deferred.resolve(wx);
+        //     return deferred.promise;
+        // }
 
         this.getWechatSignature()
             .then(function(wechat_signature) {
                 console.log( JSON.stringify( wechat_signature ) );
                 if (wechat_signature) {
+                    wechat_signature.jsApiList = ['chooseImage',
+                        'previewImage', 'uploadImage',
+                        'downloadImage', 'getLocation',
+                        'openLocation'
+                    ];
                     wx.config(wechat_signature);
                     wx.error(function(err) {
                         alert(err);
@@ -543,7 +555,7 @@ angular.module('iwildfire.services', ['ngResource'])
                     wx.ready(function() {
                         //TODO: maybe add an expire time for this?
                         //      or just clear up alllll store while user refresh our url?
-                        store.save('wxWrapperIsReady', 'true');
+                        // store.save('wxWrapperIsReady', 'true');
                         deferred.resolve(wx);
                     });
                 } else {
@@ -557,6 +569,7 @@ angular.module('iwildfire.services', ['ngResource'])
 
     this.getLocationDetail = function(){
         var deferred = $q.defer();
+        var self = this;
         var locationDetail = store.get('locationDetail');
         if( locationDetail ){
             console.log('return cached locationDetail', locationDetail);
@@ -573,7 +586,7 @@ angular.module('iwildfire.services', ['ngResource'])
                         var longitude = res.longitude; // 经度，浮点数，范围为180 ~ -180。
                         var speed = res.speed; // 速度，以米/每秒计
                         var accuracy = res.accuracy; // 位置精度
-                        console.log('get latlng by wechat api', res);
+                        console.log('get latlng by wechat api', JSON.stringify(res));
                         var geocoder;
                         var center = new qq.maps.LatLng(latitude, longitude);
                         var geocoder = new qq.maps.Geocoder();
@@ -583,23 +596,34 @@ angular.module('iwildfire.services', ['ngResource'])
                             var address = c.province + c.city + c.district + c.street + c.streetNumber + c.town + c.village;
                             locationDetail.api_address = address;
                             locationDetail.user_edit_address = address;
-                            locationDetail.latitude = latitude;
-                            locationDetail.longitude = longitude;
+                            locationDetail.lat = latitude;
+                            locationDetail.lng = longitude;
 
                             console.log('get location first time! save it into store', locationDetail);
+                            if( locationDetail['nearPois'] ){
+                                locationDetail.nearPois = null;
+                            }
                             store.save('locationDetail', locationDetail);
                             deferred.resolve(locationDetail);
                         });
                     }
                 });
-            }, function() {
-                self.getLocationDetail().then(function(locationDetail){
-                    deferred.resolve(locationDetail);
-                });
+            }, function(err) {
+                console.log('can not get location', JSON.stringify(err));
+                deferred.resolve();
             });
 
         return deferred.promise;
     };
+    this.setPostGoodsLocation = function(postGoodsLocationDetail){
+        console.log('set post goods location detail', JSON.stringify(postGoodsLocationDetail));
+        this._postGoodsLocationDetail = postGoodsLocationDetail;
+    };
+    this.getPostGoodsLocation = function(){
+        console.log('get post goods location detail', JSON.stringify(this._postGoodsLocationDetail));
+        return this._postGoodsLocationDetail;
+    };
+
 })
 
 /**
@@ -689,8 +713,8 @@ angular.module('iwildfire.services', ['ngResource'])
         },
         setGeom: function(geom) {
             console.log('setGeom', JSON.stringify(geom));
-            lng = geom.longitude;
-            lat = geom.latitude;
+            lng = geom.lng;
+            lat = geom.lat;
         },
         getById: function(id) {
 

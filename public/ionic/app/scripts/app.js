@@ -106,10 +106,12 @@ angular.module('iwildfire', ['ionic', 'iwildfire.controllers', 'iwildfire.servic
             'tab-post': {
                 templateUrl: 'templates/tab-post.html',
                 controller: 'PostCtrl',
-                // https://github.com/angular-ui/ui-router/wiki#resolve
                 resolve: {
                     wxWrapper: function(webq) {
                         return webq.getWxWrapper();
+                    },
+                    locationDetail: function(webq){
+                        return webq.getLocationDetail();
                     }
                 }
             }

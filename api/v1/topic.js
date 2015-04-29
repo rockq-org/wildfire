@@ -37,10 +37,10 @@ var index = function(req, res, next) {
             content: text
         }];
     }
-    if(req.query.lng && req.query.lat) {
+    if (req.query.lng && req.query.lat) {
         var lng = parseFloat(req.query.lng);
         var lat = parseFloat(req.query.lat);
-        var dist = 3000;//parseFloat(req.query.dist || 3000)
+        var dist = 3000; //parseFloat(req.query.dist || 3000)
 
         query.goods_exchange_geom = {
             $nearSphere: {
@@ -108,7 +108,7 @@ var show = function(req, res, next) {
             });
         }
         topic = _.pick(topic, ['id', 'author_id', 'tab', 'content', 'title', 'last_reply_at',
-            'goods_pre_price', 'goods_now_price', 'goods_pre_price', 'update_at', 'goods_pics', 'goods_quality_degree', 
+            'goods_pre_price', 'goods_now_price', 'goods_pre_price', 'update_at', 'goods_pics', 'goods_quality_degree',
             'goods_exchange_location', 'goods_exchange_geom',
             'good', 'top', 'reply_count', 'visit_count', 'create_at', 'author'
         ]);
@@ -122,7 +122,7 @@ var show = function(req, res, next) {
             if (mdrender) {
                 reply.content = renderHelper.markdown(at.linkUsers(reply.content));
             }
-            reply.author = _.pick(reply.author, ['name', 'avatar','loginname']);
+            reply.author = _.pick(reply.author, ['name', 'avatar', 'loginname']);
             reply = _.pick(reply, ['id', 'author', 'content', 'ups', 'create_at']);
             return reply;
         });
@@ -197,7 +197,7 @@ var create = function(req, res, next) {
 
     var goods_exchange_geom = {
         type: 'Point',
-        coordinates: [goods_exchange_location.lng,goods_exchange_location.lat]
+        coordinates: [goods_exchange_location.lng, goods_exchange_location.lat]
     };
 
     TopicProxy.newAndSave(title,
@@ -389,7 +389,7 @@ exports.update = function(req, res, next) {
                 topic.goods_exchange_location = topicInRequest.goods_exchange_location;
                 topic.goods_exchange_geom = {
                     type: 'Point',
-                    coordinates: [opicInRequest.goods_exchange_location.lng,opicInRequest.goods_exchange_location.lnt]
+                    coordinates: [topicInRequest.goods_exchange_location.lng, topicInRequest.goods_exchange_location.lat]
                 };
                 topic.markModified('goods_exchange_location');
                 topic.goods_status = topicInRequest.goods_status;

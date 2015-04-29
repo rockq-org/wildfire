@@ -53,11 +53,16 @@ var index = function(req, res, next) {
         }
     }
     //console.log('query',query);
+    // if the topic is marked as deleted, do not return it.
     query.deleted = false;
+    // set the response data with descending order of topic.udpate_at
+    
+    
+
     var options = {
         skip: (page - 1) * limit,
         limit: limit,
-        sort: '-top -last_reply_at'
+        sort: '-top -update_at -last_reply_at'
     };
 
     var ep = new eventproxy();

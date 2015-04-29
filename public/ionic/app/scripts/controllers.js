@@ -341,26 +341,28 @@ angular.module('iwildfire.controllers', [])
     //     window.location.href = '{0}/auth/wechat/embedded'.f(cfg.server);
     // }
     $scope.locationDetail = {};
-    $scope.params = {
-        // 标题5到10个字
-        title: null,
-        content: null,
-        tab: null,
-        quality: null,
-        goods_pics: [],
-        goods_pre_price: null,
-        goods_now_price: null,
-        goods_is_bargain: true,
-        // dummy data
-        goods_exchange_location: {
-            user_edit_address: null,
-            api_address: null,
-            lat: null, // latitude
-            lng: null // longitude
-        },
-        goods_status: '在售'
-    };
+    // $scope.params = {
+    //     // 标题5到10个字
+    //     title: null,
+    //     content: null,
+    //     tab: null,
+    //     quality: null,
+    //     goods_pics: ['http://img1.cache.netease.com/catchpic/9/95/95C6FAC0DC54FC2D8BFFE30EE14990DD.jpg', 
+    //         'http://img1.cache.netease.com/catchpic/9/95/95C6FAC0DC54FC2D8BFFE30EE14990DD.jpg'],
+    //     goods_pre_price: null,
+    //     goods_now_price: null,
+    //     goods_is_bargain: true,
+    //     // dummy data
+    //     goods_exchange_location: {
+    //         user_edit_address: null,
+    //         api_address: null,
+    //         lat: null, // latitude
+    //         lng: null // longitude
+    //     },
+    //     goods_status: '在售'
+    // };
 
+    // #Todo this is dummy data for debugging
     $scope.params = {
         // 标题5到10个字
         title: 'testtitle',

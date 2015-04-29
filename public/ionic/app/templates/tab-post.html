@@ -2,23 +2,40 @@
     <ion-content class="wf-post-form">
         <div class="row wf-img-upload">
             <div class="col box">
-                <img ng-if="params.goods_pics.length > 0" ng-src="{{params.goods_pics[0]}}" ng-click="removeGoodsPic(params.goods_pics[0])" />
+                <div class="goods-img-holder" ng-if="params.goods_pics.length > 0">
+                    <img ng-src="{{params.goods_pics[0]}}" ng-click="removeGoodsPic(params.goods_pics[0])">
+                    </img>
+                    <span class="ion-backspace-outline button-balanced"></span>
+                </div>
+                <!-- <span class="goods-pic-del-badge" ng-if="params.goods_pics.length > 0"></span> -->
             </div>
             <div class="col group nopadding">
                 <div class="row nopadding">
                     <div class="col box">
-                        <img ng-if="params.goods_pics.length > 1" ng-src="{{params.goods_pics[1]}}" ng-click="removeGoodsPic(params.goods_pics[1])" />
+                        <div class="goods-img-holder" ng-if="params.goods_pics.length > 1">
+                            <img ng-src="{{params.goods_pics[1]}}" ng-click="removeGoodsPic(params.goods_pics[1])" />
+                            <span class="ion-backspace-outline button-balanced"></span>
+                        </div>
                     </div>
                     <div class="col box">
-                        <img ng-if="params.goods_pics.length > 2" ng-src="{{params.goods_pics[2]}}" ng-click="removeGoodsPic(params.goods_pics[2])" />
+                        <div class="goods-img-holder" ng-if="params.goods_pics.length > 2">
+                            <img ng-src="{{params.goods_pics[2]}}" ng-click="removeGoodsPic(params.goods_pics[2])" />
+                            <span class="ion-backspace-outline button-balanced"></span>
+                        </div>
                     </div>
                 </div>
                 <div class="row nopadding">
                     <div class="col box">
-                        <img ng-if="params.goods_pics.length > 3" ng-src="{{params.goods_pics[3]}}" ng-click="removeGoodsPic(params.goods_pics[3])" />
+                        <div class="goods-img-holder" ng-if="params.goods_pics.length > 3">
+                            <img ng-src="{{params.goods_pics[3]}}" ng-click="removeGoodsPic(params.goods_pics[3])" />
+                            <span class="ion-backspace-outline button-balanced"></span>
+                        </div>
                     </div>
                     <div class="col box" ng-if="params.goods_pics.length > 4">
-                        <img ng-src="{{params.goods_pics[4]}}" ng-click="removeGoodsPic(params.goods_pics[4])" />
+                        <div class="goods-img-holder">
+                            <img ng-src="{{params.goods_pics[4]}}" ng-click="removeGoodsPic(params.goods_pics[4])" />
+                            <span class="ion-backspace-outline button-balanced"></span>
+                        </div>
                     </div>
                     <!-- at most, there are five images -->
                     <!-- if reach five images, hide the upload button -->

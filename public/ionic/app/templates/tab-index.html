@@ -12,7 +12,6 @@
           </ion-header-bar>
           <ion-nav-view name="menuContent">
               <ion-content>
-
                 <ion-refresher ng-if="topics.length > 0 || loadError" pulling-text="下拉刷新..." on-refresh="doRefresh()" refreshing-icon="ion-loading-c">
                 </ion-refresher>
                 <div class="list topics">

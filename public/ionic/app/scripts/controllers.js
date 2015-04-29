@@ -131,6 +131,142 @@ angular.module('iwildfire.controllers', [])
 
 })
 
+
+.controller('MapsCtrl', function(
+    $scope,
+    $rootScope,
+    $stateParams,
+    $ionicLoading,
+    $ionicModal,
+    $timeout,
+    $state,
+    locationDetail,
+    $location,
+    $log,
+    Topics,
+    Tabs,
+    cfg
+){
+    console.log('map ctrl here');
+    if( !locationDetail ) {
+        alert('无法获得用户地理位置信息');
+    }
+    $scope.locationDetail = locationDetail;
+
+
+    $scope.sideMenus = Tabs.getList();
+    $stateParams.tab = $stateParams.tab || 'all';
+    $scope.menuTitle = Tabs.getLabel($stateParams.tab);
+    $scope.img_prefix = cfg.server;
+
+    $scope.currentTab = Topics.currentTab();
+
+    //cheat solution
+    function loadDataAfterGetLocation() {
+        $scope.loadingMsg = '正在搜索您附近得二手信息...';
+        // check if tab is changed
+        if ($stateParams.tab !== Topics.currentTab()) {
+            $scope.currentTab = Topics.currentTab($stateParams.tab);
+            // reset data if tab is changed
+            console.log('reset Data');
+            Topics.resetData();
+        }
+
+        $scope.topics = Topics.getTopics();
+
+        $scope.loadError = false;
+        $scope.doRefresh = function() {
+            Topics.currentTab($stateParams.tab);
+            $log.debug('do refresh');
+            Topics.refresh().$promise.then(function(response) {
+                $log.debug('do refresh complete');
+                $scope.topics = response.data;
+                console.log(JSON.stringify(response.data));
+                $scope.hasNextPage = true;
+                $scope.loadError = false;
+                if ($scope.topics.length == 0)
+                    $scope.loadingMsg = '附近没有二手交易信息^_^，试试其他地方吧';
+                else
+                    $scope.loadingMsg = '下拉加载更多';
+            }, $rootScope.requestErrorHandler({
+                noBackdrop: true
+            }, function() {
+                $scope.loadError = true;
+            })).finally(function() {
+                $scope.$broadcast('scroll.refreshComplete');
+            });
+        };
+        $scope.loadMore = function() {
+            $log.debug('load more');
+            Topics.pagination().$promise.then(function(response) {
+                $log.debug('load more complete');
+                $scope.hasNextPage = false;
+                $scope.loadError = false;
+                $timeout(function() {
+                    $scope.hasNextPage = Topics.hasNextPage();
+                    $log.debug('has next page ? ', $scope.hasNextPage);
+                    if ($scope.hasNextPage == false)
+                        $scope.loadingMsg = '附近没有新的二手交易信息^_^，试试其他地方吧';
+
+                }, 100);
+                $scope.topics = $scope.topics.concat(response.data);
+            }, $rootScope.requestErrorHandler({
+                noBackdrop: true
+            }, function() {
+                $scope.loadError = true;
+            })).finally(function() {
+                $scope.$broadcast('scroll.infiniteScrollComplete');
+            });
+        };
+    }
+
+    $scope.changeSelected = function(item) {
+        $state.go('tab.index', {
+            tab: item.value
+        });
+        $scope.menuTitle = item.label;
+        $stateParams.tab = item.value;
+
+        $scope.currentTab = Topics.currentTab($stateParams.tab);
+        $scope.doRefresh();
+    }
+
+    /***********************************
+     * Search
+     ***********************************/
+    $scope.tabTitle = '首页';
+    $scope.SearchText = '搜索';
+    $scope.showSearch = false;
+    $scope.doSearch = function(query) {
+        if (!($scope.showSearch)) {
+            $scope.showSearch = true;
+            $log.debug('showSearch');
+            return;
+        }
+        $log.debug('doSearch');
+        Topics.setQuery(query);
+        // Topics.setGeom({lng:140,lat:40.4});
+        $scope.doRefresh();
+        $log.debug('searchText', query);
+        $scope.tabTitle = query || '首页';
+    }
+    $scope.endSearch = function() {
+        $scope.showSearch = false;
+    }
+
+
+    if (typeof(locationDetail) != 'undefined') {
+        console.log('lyman 122', JSON.stringify( locationDetail ) );
+        $scope.address = locationDetail.user_edit_address;
+        $scope.tabTitle = locationDetail.user_edit_address;
+        Topics.setGeom(locationDetail);
+        loadDataAfterGetLocation();
+    } else {
+        // load pages from local browser for debugging
+        loadDataAfterGetLocation();
+    };
+})
+
 .controller('ItemCtrl', function(
     $scope,
     $rootScope,
@@ -604,13 +740,6 @@ angular.module('iwildfire.controllers', [])
             $scope.changeLocationModal.remove()
     });
 
-})
-
-.controller('MapsCtrl', function($scope, locationDetail, $timeout) {
-    if( !locationDetail ) {
-        alert('无法获得用户地理位置信息');
-    }
-    $scope.locationDetail = locationDetail;
 })
 
 .controller('InboxCtrl', function($scope, Messages) {

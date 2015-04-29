@@ -4,8 +4,6 @@ angular.module('iwildfire.directives', [])
     var searchService, map, markers = [];
     var center;
     var init = function(element, attrs, scope, width, height) {
-        // var center = new qq.maps.LatLng(scope.lat, scope.lng);
-        console.log('lyman 7', JSON.stringify(scope.locationDetail.lat));
         center = new qq.maps.LatLng(scope.locationDetail.lat, scope.locationDetail.lng);
         map = new qq.maps.Map(element, {
             center: center,
@@ -13,11 +11,11 @@ angular.module('iwildfire.directives', [])
             zoomControl: false,
             mapTypeControl: false
         });
-        new qq.maps.Circle({
-            center: center,
-            radius: 2000,
-            map: map
-        });
+        // new qq.maps.Circle({
+        //     center: center,
+        //     radius: 2000,
+        //     map: map
+        // });
 
         //创建自定义控件
         var middleControl = document.createElement("div");
@@ -114,6 +112,7 @@ angular.module('iwildfire.directives', [])
     }
 
     return function(scope, element, attrs) {
+        console.log(JSON.stringify(scope.topics));
         var width = $document.width();
         var height = $document.height() - 44 - 50;
         var div = angular.element(element).find('div');

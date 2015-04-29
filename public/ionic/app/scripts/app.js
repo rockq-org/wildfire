@@ -93,6 +93,16 @@ angular.module('iwildfire', ['ionic', 'iwildfire.controllers', 'iwildfire.servic
         }
     })
 
+    .state('tab.maps', {
+        url: '/maps/:tab',
+        views: {
+            'tab-maps': {
+                templateUrl: 'templates/tab-maps.html',
+                controller: 'MapsCtrl'
+            }
+        }
+    })
+
     .state('item', {
         url: '/item/:itemId',
         templateUrl: 'templates/item.html',
@@ -114,16 +124,6 @@ angular.module('iwildfire', ['ionic', 'iwildfire.controllers', 'iwildfire.servic
                         return webq.getLocationDetail();
                     }
                 }
-            }
-        }
-    })
-
-    .state('tab.maps', {
-        url: '/maps',
-        views: {
-            'tab-maps': {
-                templateUrl: 'templates/tab-maps.html',
-                controller: 'MapsCtrl'
             }
         }
     })

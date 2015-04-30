@@ -789,30 +789,44 @@ angular.module('iwildfire.controllers', [])
 
 })
 
-.controller('InboxCtrl', function($scope, Messages) {
-    $scope.messages = Messages.all();
-    $scope.remove = function(message) {
-        Messages.remove(message);
-    }
+.controller('InboxCtrl', function($scope, Messages, $log, $rootScope) {
+    Messages.getMessages().$promise.then(function(response) {
+      $scope.messages = response.data;
+      console.log(JSON.stringify($scope.messages));
+      if ($scope.messages.hasnot_read_messages.length === 0) {
+        $rootScope.$broadcast('messagesMarkedAsRead');
+      } else {
+        Messages.markAll().$promise.then(function(response) {
+          $log.debug('mark all response:', response);
+          if (response.success) {
+            $rootScope.$broadcast('messagesMarkedAsRead');
+          }
+        }, function(response) {
+          $log.debug('mark all response error:', response);
+        });
+      }
+    }, function(response) {
+      $log.debug('get messages response error:', response);
+    });
 })
 
-.controller('InboxDetailCtrl', function($scope, $stateParams, Messages) {
-    $scope.items = [{
-        id: 0,
-        price: '￥ 1000.00 （含运费0.00元）',
-        desc: '交易前聊一聊',
-        img: 'templates/tab-inbox-imgs/1.jpg'
-    }];
-    var userId = '00002'
-    $scope.itemClass = function(item) {
-        var itemClass = 'item-remove-animate item-avatar chat';
-        if (item.userId == userId) {
-            itemClass = 'item-remove-animate item-avatar-right chat  chat-right';
-        }
-        return itemClass;
-    }
-    $scope.messages = Messages.all();
-})
+// .controller('InboxDetailCtrl', function($scope, $stateParams, Messages) {
+//     $scope.items = [{
+//         id: 0,
+//         price: '￥ 1000.00 （含运费0.00元）',
+//         desc: '交易前聊一聊',
+//         img: 'templates/tab-inbox-imgs/1.jpg'
+//     }];
+//     var userId = '00002'
+//     $scope.itemClass = function(item) {
+//         var itemClass = 'item-remove-animate item-avatar chat';
+//         if (item.userId == userId) {
+//             itemClass = 'item-remove-animate item-avatar-right chat  chat-right';
+//         }
+//         return itemClass;
+//     }
+//     $scope.messages = Messages.all();
+// })
 
 .controller('AccountCtrl', function($scope, $ionicModal, $log, store, cfg,
     webq, myProfile, myTopics) {

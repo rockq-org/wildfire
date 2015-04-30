@@ -25,7 +25,7 @@ var index = function (req, res, next) {
           return !doc.is_invalid;
         });
         docs = docs.map(function (doc) {
-          doc.author = _.pick(doc.author, ['loginname', 'avatar_url']);
+          doc.author = _.pick(doc.author, ['loginname', 'name', 'avatar']);
           doc.topic = _.pick(doc.topic, ['id', 'author', 'title', 'last_reply_at']);
           doc.reply = _.pick(doc.reply, ['id', 'content', 'ups', 'create_at']);
           doc = _.pick(doc, ['id', 'type', 'has_read', 'author', 'topic', 'reply']);

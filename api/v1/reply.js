@@ -47,6 +47,7 @@ var create = function (req, res, next) {
         //发送at消息，并防止重复 at 作者
         var newContent = content.replace('@' + topicAuthor.loginname + ' ', '');
         at.sendMessageToMentionUsers(newContent, topic_id, req.user.id, reply._id);
+
       }));
     }));
 

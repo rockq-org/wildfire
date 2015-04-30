@@ -2,6 +2,7 @@
  * Wechat I/O Backend
  */
 var wechat = require('wechat');
+var EventProxy = require('eventproxy');
 var config = require('../config');
 var common = require('../common');
 var logger = common.loggerUtil.getLogger("connect-wechat");
@@ -13,6 +14,8 @@ var redisq = require('../persistence/redisq');
 var wxCfg = config.wechat_gzh;
 var fileStorage = require('../api/v1/fileStorage');
 var UserProxy = require('../proxy').User;
+var TopicProxy = require('../proxy').Topic;
+var ReplyProxy = require('../proxy').Reply;
 var minimatch = require('minimatch');
 
 
@@ -363,7 +366,94 @@ _getWxAccessTokenFromRedis().then(function(doc) {
 });
 
 
+/**
+ * provide method to send notification with message templates
+ * @param  {[type]} fromUserId [description]
+ * @param  {[type]} toUserId   [description]
+ * @param  {[type]} replyId    [description]
+ * @param  {[type]} link       [description]
+ * @param  {[type]} title      [description]
+ * @param  {[type]} date       [description]
+ * @return {[type]}            [description]
+ */
+function _pushReplyWithWechatTemplateAPI(toUserId, fromUserId, topicId, replyId) {
+    var proxy = new EventProxy();
+    var deferred = Q.defer();
+
+    proxy.all('fromUser', 'toUser', 'topic', 'reply', function(fromUser, toUser, topic, reply) {
+        // Post Data
+        _getWxAccessTokenFromRedis().then(function(doc) {
+            logger.debug('_pushReplyWithWechatTemplateAPI', 'get access token ' + doc);
+            superagent.post(u.format('https://api.weixin.qq.com/cgi-bin/message/template/send?access_token=%s', doc))
+                .send({
+                    touser: toUser.profile.openid,
+                    template_id: config.wechat_gzh.api.notify_template_id,
+                    url: u.format("http://%s/#/item/%s", config.client_host, topicId),
+                    topcolor: "#FF0000",
+                    data: {
+                        first: {
+                            value: topic.title,
+                            color: "#173177"
+                        },
+                        keyword1: {
+                            value: fromUser.name,
+                            color: "#173177"
+                        },
+                        keyword2: {
+                            value: reply.create_at,
+                            color: "#173177"
+                        },
+                        keyword3: {
+                            value: reply.content,
+                            color: "#173177"
+                        }
+                        // ,
+                        // remark: {
+                        //     value: "尾部文字！",
+                        //     color: "#173177"
+                        // }
+                    }
+                })
+                .set('Content-Type', 'application/json')
+                .set('Accept', 'application/json')
+                .end(function(err, res) {
+                    if (res.ok) {
+                        logger.debug('_pushReplyWithWechatTemplateAPI', 'send wechat message by api template successfully.');
+                        deferred.resolve(res.body);
+                    } else {
+                        logger.warn('_pushReplyWithWechatTemplateAPI', err);
+                        deferred.reject(err);
+                    }
+                });
+        });
+    });
+
+    proxy.fail(function(err) {
+        logger.warn('_pushReplyWithWechatTemplateAPI', err);
+        deferred.reject(err);
+    });
+
+    UserProxy.getUserById(fromUserId, proxy.done(function(user) {
+        proxy.emit('fromUser', user);
+    }));
+
+    UserProxy.getUserById(toUserId, proxy.done(function(user) {
+        proxy.emit('toUser', user);
+    }));
+
+    TopicProxy.getTopic(topicId, proxy.done(function(topic) {
+        proxy.emit('topic', topic);
+    }));
+
+    ReplyProxy.getReplyById(replyId, proxy.done(function(reply) {
+        proxy.emit('reply', reply);
+    }));
+
+    return deferred.promise;
+}
+
 exports.getWxAccessTokenFromRedis = _getWxAccessTokenFromRedis;
 exports.getWxJsapiTicketFromRedis = _getWxJsapiTicketFromRedis;
 exports.getSignatureByJspApiTicketAndUrl = _getSignatureByJspApiTicketAndUrl;
 exports.downloadWechatServerImage = _downloadWechatServerImage;
+exports.pushReplyWithWechatTemplateAPI = _pushReplyWithWechatTemplateAPI;

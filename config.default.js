@@ -148,6 +148,9 @@ var config = {
     wechat_gzh: {
         appId: "XXXXX",
         appSecret: "XXXXX",
+        api: {
+            notify_template_id: "hPn1p0aJukQmuos2e_9UKiWVeyd3PK22_ht_yeitznE"
+        },
         debug: true
     },
 

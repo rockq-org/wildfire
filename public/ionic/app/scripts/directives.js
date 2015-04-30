@@ -171,7 +171,7 @@ angular.module('iwildfire.directives', [])
         middleControl.style.width = "36px";
         middleControl.style.height = "36px";
         middleControl.style.zIndex = "100000";
-        middleControl.innerHTML = '<img src="/images/map/2.png" />';
+        middleControl.innerHTML = '<img src="/images/map/4.png" />';
         element.appendChild(middleControl);
         // qq.maps.event.addListener(middleControl, 'click', function(){
         //     info.open();

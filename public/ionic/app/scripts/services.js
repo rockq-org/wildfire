@@ -136,7 +136,7 @@ angular.module('iwildfire.services', ['ngResource'])
             return null;
         }
     };
-    this.clear = function(){
+    this.clear = function() {
         console.log('clear all store except accesstoken');
         var accesstoken = this.getAccessToken();
         window.localStorage.clear();
@@ -155,6 +155,8 @@ angular.module('iwildfire.services', ['ngResource'])
  * @return {[type]}       [description]
  */
 .service('webq', function($http, $q, $log, cfg, store) {
+
+    var self = this;
     /**
      * upload wechat images
      * @return {[type]} [description]
@@ -263,21 +265,21 @@ angular.module('iwildfire.services', ['ngResource'])
         var deferred = $q.defer();
         // https://github.com/arrking/wildfire/issues/53
         var postData = {
-                /*debug*/
-                // accesstoken: 'd8e60e1f-b4ba-4a1b-9eaa-56e9f6a8d5f0',
-                accesstoken: store.getAccessToken(),
-                title: params.title,
-                tab: params.tab,
-                content: params.content,
-                goods_pics: params.goods_pics,
-                goods_quality_degree: params.quality,
-                goods_pre_price: params.goods_pre_price,
-                goods_now_price: params.goods_now_price,
-                goods_is_bargain: params.goods_is_bargain,
-                goods_exchange_location: params.goods_exchange_location,
-                goods_status: params.goods_status
-            };
-            console.log('lyman service 322', JSON.stringify(postData));
+            /*debug*/
+            // accesstoken: 'd8e60e1f-b4ba-4a1b-9eaa-56e9f6a8d5f0',
+            accesstoken: store.getAccessToken(),
+            title: params.title,
+            tab: params.tab,
+            content: params.content,
+            goods_pics: params.goods_pics,
+            goods_quality_degree: params.quality,
+            goods_pre_price: params.goods_pre_price,
+            goods_now_price: params.goods_now_price,
+            goods_is_bargain: params.goods_is_bargain,
+            goods_exchange_location: params.goods_exchange_location,
+            goods_status: params.goods_status
+        };
+        console.log('lyman service 322', JSON.stringify(postData));
         $http.post('{0}/topics'.f(cfg.api), postData)
             .success(function(data) {
                 console.log('lyman  success 325', JSON.stringify(data));
@@ -352,6 +354,38 @@ angular.module('iwildfire.services', ['ngResource'])
             });
         return deferred.promise;
     }
+
+    /**
+     * GetMyProfileResolveWithLocalStorage.
+     * Reduce the internet requests.
+     * get user profile data when resolve,
+     * if can not get user profile, reject its promise.
+     * The reason why it can not get user profile is mostly 
+     * due to non log-in user, a good solution is navigating to
+     * wechat uaa page if get rejected.
+     * @return {[type]} [description]
+     */
+    // this.getMyProfileWithLocalStorage = function() {
+    //     var deferred = $q.defer();
+    //     if (store.getAccessToken() && store.getUserProfile()) {
+    //         // get access token and also local profile
+    //         deferred.resolve(store.getUserProfile());
+    //     } else if (store.getAccessToken() && (!store.getUserProfile())) {
+    //         // get access token but no local profile
+    //         self.getUserProfile()
+    //             .then(function(data) {
+    //                 store.setUserProfile(data);
+    //                 deferred.resolve(data);
+    //             }, function(err) {
+    //                 deferred.reject(err);
+    //             });
+    //     } else {
+    //         // no access token and no local profile
+    //         deferred.reject();
+    //     }
+
+    //     return deferred.promise;
+    // }
 
     /**
      * get user profile as resolve state
@@ -540,7 +574,7 @@ angular.module('iwildfire.services', ['ngResource'])
 
         this.getWechatSignature()
             .then(function(wechat_signature) {
-                console.log( JSON.stringify( wechat_signature ) );
+                console.log(JSON.stringify(wechat_signature));
                 if (wechat_signature) {
                     wechat_signature.jsApiList = ['chooseImage',
                         'previewImage', 'uploadImage',
@@ -567,11 +601,11 @@ angular.module('iwildfire.services', ['ngResource'])
         return deferred.promise;
     };
 
-    this.getLocationDetail = function(){
+    this.getLocationDetail = function() {
         var deferred = $q.defer();
         var self = this;
         var locationDetail = store.get('locationDetail');
-        if( locationDetail ){
+        if (locationDetail) {
             console.log('return cached locationDetail', locationDetail);
             deferred.resolve(locationDetail);
             return deferred.promise;
@@ -580,7 +614,7 @@ angular.module('iwildfire.services', ['ngResource'])
         this.getWxWrapper()
             .then(function(wxWrapper) {
                 var locationDetail = {};
-                 wxWrapper.getLocation({
+                wxWrapper.getLocation({
                     success: function(res) {
                         var latitude = res.latitude; // 纬度，浮点数，范围为90 ~ -90
                         var longitude = res.longitude; // 经度，浮点数，范围为180 ~ -180。
@@ -600,7 +634,7 @@ angular.module('iwildfire.services', ['ngResource'])
                             locationDetail.lng = longitude;
 
                             console.log('get location first time! save it into store', locationDetail);
-                            if( locationDetail['nearPois'] ){
+                            if (locationDetail['nearPois']) {
                                 locationDetail.nearPois = null;
                             }
                             store.save('locationDetail', locationDetail);
@@ -615,11 +649,11 @@ angular.module('iwildfire.services', ['ngResource'])
 
         return deferred.promise;
     };
-    this.setPostGoodsLocation = function(postGoodsLocationDetail){
+    this.setPostGoodsLocation = function(postGoodsLocationDetail) {
         console.log('set post goods location detail', JSON.stringify(postGoodsLocationDetail));
         this._postGoodsLocationDetail = postGoodsLocationDetail;
     };
-    this.getPostGoodsLocation = function(){
+    this.getPostGoodsLocation = function() {
         console.log('get post goods location detail', JSON.stringify(this._postGoodsLocationDetail));
         return this._postGoodsLocationDetail;
     };
@@ -737,9 +771,19 @@ angular.module('iwildfire.services', ['ngResource'])
     };
 })
 
-.factory('Topic', function(cfg, $resource, $log, $q, webq) {
+.factory('Topic', function(cfg, $resource, $log, $q, store) {
     //var User = {};
-    var currentUser = webq.getMyProfileResolve()//User.getCurrentUser();
+    // make sure the user is logged in
+    // before using saveReply.
+    var currentUser = store.getUserProfile();
+
+    /**
+     * Get current user from local store or resolve from server.
+     * But if there is no accessToken in store.getAccessToken(),
+     * it means there is none logged in user in current session.
+     * 
+     * @type {Object}
+     */
     var Settings = {};
     var topic;
     var resource = $resource(cfg.api + '/topic/:id', {
@@ -785,11 +829,10 @@ angular.module('iwildfire.services', ['ngResource'])
         },
         saveReply: function(topicId, replyData) {
             var reply = angular.extend({}, replyData);
-
             return resource.reply({
                 topicId: topicId,
-                //accesstoken: currentUser.accesstoken
-                accesstoken: '5447b4c3-0006-4a3c-9903-ac5a803bc17e'
+                accesstoken: currentUser.accesstoken
+                    // accesstoken: '5447b4c3-0006-4a3c-9903-ac5a803bc17e'
             }, reply);
         },
         upReply: function(replyId) {
@@ -830,28 +873,12 @@ angular.module('iwildfire.services', ['ngResource'])
     };
 })
 
-.factory('Storage', function($log) {
-
-    return {
-        set: function(key, data) {
-            return window.localStorage.setItem(key, window.JSON.stringify(data));
-        },
-        get: function(key) {
-            return window.JSON.parse(window.localStorage.getItem(key));
-        },
-        remove: function(key) {
-            return window.localStorage.removeItem(key);
-        }
-    };
-})
-
-.factory('User', function(cfg, $resource, $log, $q, Storage) {
-    var storageKey = 'user';
+.factory('User', function(cfg, $resource, $log, $q, store) {
     var resource = $resource(cfg.api + '/accesstoken');
     var userResource = $resource(cfg.api + '/user/:loginname', {
         loginname: ''
     });
-    var user = Storage.get(storageKey) || {};
+    var user = store.getUserProfile();
     return {
         login: function(accesstoken) {
             var $this = this;
@@ -861,14 +888,8 @@ angular.module('iwildfire.services', ['ngResource'])
                 $log.debug('post accesstoken:', response);
                 user.accesstoken = accesstoken;
                 $this.getByLoginName(response.loginname).$promise.then(function(r) {
-                    user = r.data;
-                    user.id = response.id;
-                    user.accesstoken = accesstoken;
-
-                    // set alias for jpush
-                    // Push.setAlias(user.id);
-
-                    Storage.set(storageKey, user);
+                    user = r.profile;
+                    store.setUserProfile(user);
                 });
                 user.loginname = response.loginname;
             });
@@ -905,7 +926,7 @@ angular.module('iwildfire.services', ['ngResource'])
                 if (user && user.loginname === loginName) {
                     angular.extend(user, response.data);
 
-                    Storage.set(storageKey, user);
+                    store.setUserProfile(user);
                 }
             });
         },
@@ -913,7 +934,7 @@ angular.module('iwildfire.services', ['ngResource'])
             user.collect_topics.push({
                 id: topicId
             });
-            Storage.set(storageKey, user);
+            store.setUserProfile(user);
         },
         deCollectTopic: function(topicId) {
             angular.forEach(user.collect_topics, function(topic, key) {
@@ -921,7 +942,7 @@ angular.module('iwildfire.services', ['ngResource'])
                     user.collect_topics.splice(key, 1);
                 }
             });
-            Storage.set(storageKey, user);
+            store.setUserProfile(user);
         }
     };
 })

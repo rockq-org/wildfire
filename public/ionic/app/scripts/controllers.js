@@ -119,7 +119,7 @@ angular.module('iwildfire.controllers', [])
 
 
     if (typeof(locationDetail) != 'undefined') {
-        console.log('lyman 122', JSON.stringify( locationDetail ) );
+        console.log('lyman 122', JSON.stringify(locationDetail));
         $scope.address = locationDetail.user_edit_address;
         $scope.tabTitle = locationDetail.user_edit_address;
         Topics.setGeom(locationDetail);
@@ -147,11 +147,12 @@ angular.module('iwildfire.controllers', [])
     Topics,
     Tabs,
     cfg
-){
+) {
     locationDetail = {
         api_address: '仙游',
         user_edit_address: '仙游',
-        lat: 25.3518140000000010, lng: 118.7042859999999962
+        lat: 25.3518140000000010,
+        lng: 118.7042859999999962
     };
 
     $scope.locationDetail = locationDetail;
@@ -164,7 +165,9 @@ angular.module('iwildfire.controllers', [])
     $scope.currentTab = Topics.currentTab();
 
     $scope.changeSelected = function(item) {
-        $state.go('tab.maps', { tab: item.value });
+        $state.go('tab.maps', {
+            tab: item.value
+        });
         $scope.menuTitle = item.label;
         $stateParams.tab = item.value;
 
@@ -260,7 +263,7 @@ angular.module('iwildfire.controllers', [])
         $scope.doRefresh();
     };
 
-    $scope.$watchCollection('locationDetail', function(newValue, oldValue){
+    $scope.$watchCollection('locationDetail', function(newValue, oldValue) {
         $scope.address = $scope.locationDetail.user_edit_address;
         $scope.tabTitle = $scope.locationDetail.user_edit_address;
         Topics.setGeom($scope.locationDetail);
@@ -268,7 +271,13 @@ angular.module('iwildfire.controllers', [])
         $scope.doRefresh();
     });
 
-    $scope.map = { center: { lat: locationDetail.lat, lng: locationDetail.lng }, zoom: 13 };
+    $scope.map = {
+        center: {
+            lat: locationDetail.lat,
+            lng: locationDetail.lng
+        },
+        zoom: 13
+    };
 })
 
 .controller('ItemCtrl', function(
@@ -277,6 +286,7 @@ angular.module('iwildfire.controllers', [])
     $stateParams,
     $timeout,
     $ionicLoading,
+    $ionicPopup,
     $ionicActionSheet,
     $ionicScrollDelegate,
     $ionicSlideBoxDelegate,
@@ -328,11 +338,15 @@ angular.module('iwildfire.controllers', [])
     // detect if user has collected this topic
     var currentUser = User.getCurrentUser();
     $scope.isCollected = false;
-    angular.forEach(currentUser.collect_topics, function(topics) {
-        if (topics.id === id) {
-            $scope.isCollected = true;
-        }
-    });
+
+    if (currentUser) {
+        angular.forEach(currentUser.collect_topics, function(topics) {
+            if (topics.id === id) {
+                $scope.isCollected = true;
+            }
+        });
+    }
+
     // do refresh
     $scope.doRefresh = function() {
         return $scope.loadTopic(true).then(function(response) {
@@ -345,6 +359,34 @@ angular.module('iwildfire.controllers', [])
     $scope.replyData = {
         content: ''
     };
+
+
+    // check if the current login or not.
+    // popup the login options if not.
+    $scope.isShownReplyInputBox = function() {
+        if (!currentUser) {
+            $log.warn('isShownReplyInputBox', 'none logged in.');
+            $scope.showReply = false;
+            // popup the selection to bring the
+            // user into login page.
+            // A confirm dialog
+            $ionicPopup.confirm({
+                    title: '提示',
+                    template: '仅登陆用户可以回复内容，带我去微信认证登陆？',
+                    cancelText: '残忍拒绝',
+                    okText: '是'
+                })
+                .then(function(res) {
+                    if (res) {
+                        window.location.href = '{0}/auth/wechat/embedded'.f(cfg.server);
+                    } else {
+                        $log.debug('user choose not login.');
+                    }
+                });
+        } else {
+            $scope.showReply = true;
+        }
+    }
 
     // save reply
     $scope.saveReply = function() {

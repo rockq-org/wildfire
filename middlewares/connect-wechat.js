@@ -403,7 +403,7 @@ function _pushReplyWithWechatTemplateAPI(toUserId, fromUserId, topicId, replyId)
                     },
                     keyword3: {
                         // replace push content via wechat
-                        value: S(reply.content).replaceAll(toUser.profile.openid, toUser.name).s,
+                        value: S(reply.content).replaceAll(u.format('[@%s](/user/%s)', toUser.loginname, toUser.loginname), toUser.name).s,
                         color: "#173177"
                     }
                     // ,

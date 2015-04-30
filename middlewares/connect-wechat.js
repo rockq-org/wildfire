@@ -14,7 +14,6 @@ var redisq = require('../persistence/redisq');
 var wxCfg = config.wechat_gzh;
 var fileStorage = require('../api/v1/fileStorage');
 var UserProxy = require('../proxy').User;
-var TopicProxy = require('../proxy').Topic;
 var ReplyProxy = require('../proxy').Reply;
 var minimatch = require('minimatch');
 
@@ -380,7 +379,7 @@ function _pushReplyWithWechatTemplateAPI(toUserId, fromUserId, topicId, replyId)
     var proxy = new EventProxy();
     var deferred = Q.defer();
 
-    proxy.all('fromUser', 'toUser', 'topic', 'reply', function(fromUser, toUser, topic, reply) {
+    proxy.all('fromUser', 'toUser', 'reply', function(fromUser, toUser, reply) {
         // Post Data
         _getWxAccessTokenFromRedis().then(function(doc) {
             logger.debug('_pushReplyWithWechatTemplateAPI', 'get access token ' + doc);
@@ -392,7 +391,7 @@ function _pushReplyWithWechatTemplateAPI(toUserId, fromUserId, topicId, replyId)
                     topcolor: "#FF0000",
                     data: {
                         first: {
-                            value: topic.title,
+                            value: "#todo topic.title",
                             color: "#173177"
                         },
                         keyword1: {
@@ -439,10 +438,6 @@ function _pushReplyWithWechatTemplateAPI(toUserId, fromUserId, topicId, replyId)
 
     UserProxy.getUserById(toUserId, proxy.done(function(user) {
         proxy.emit('toUser', user);
-    }));
-
-    TopicProxy.getTopicById(topicId, proxy.done(function(topic) {
-        proxy.emit('topic', topic);
     }));
 
     ReplyProxy.getReplyById(replyId, proxy.done(function(reply) {

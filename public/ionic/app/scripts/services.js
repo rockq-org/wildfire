@@ -137,7 +137,7 @@ angular.module('iwildfire.services', ['ngResource'])
         }
     };
     this.clear = function() {
-        console.log('clear all store except accesstoken');
+        $log.debug('clear all store except accesstoken');
         var accesstoken = this.getAccessToken();
         window.localStorage.clear();
         this.setAccessToken(accesstoken);
@@ -279,14 +279,14 @@ angular.module('iwildfire.services', ['ngResource'])
             goods_exchange_location: params.goods_exchange_location,
             goods_status: params.goods_status
         };
-        console.log('lyman service 322', JSON.stringify(postData));
+        $log.debug('lyman service 322', JSON.stringify(postData));
         $http.post('{0}/topics'.f(cfg.api), postData)
             .success(function(data) {
-                console.log('lyman  success 325', JSON.stringify(data));
+                $log.debug('lyman  success 325', JSON.stringify(data));
                 deferred.resolve(data);
             })
             .error(function(err) {
-                console.log(JSON.stringify(err));
+                $log.debug(JSON.stringify(err));
                 deferred.reject(err);
             });
         return deferred.promise;
@@ -463,11 +463,11 @@ angular.module('iwildfire.services', ['ngResource'])
 
         //TODO: maybe add expire time stuff to refresh it
         // if( wechatSingnature ){
-        //     console.log('now get the cache version of wechatSingnature', JSON.stringify(wechatSingnature));
+        //     $log.debug('now get the cache version of wechatSingnature', JSON.stringify(wechatSingnature));
         //     deferred.resolve( wechatSingnature );
         //     return deferred.promise;
         // } else {
-        //     console.log('do not cache wechatSingnature yet', JSON.stringify(wechatSingnature));
+        //     $log.debug('do not cache wechatSingnature yet', JSON.stringify(wechatSingnature));
         // }
         // when the server domain is registered in
         // wechat plaform. If not, the signature can be
@@ -504,7 +504,7 @@ angular.module('iwildfire.services', ['ngResource'])
                      * jsApiList和debug 可以在客户端修改
                      */
                     if (typeof(data) == 'object' && data.rc == 0) {
-                        console.log('get wechatSingnature the first time', JSON.stringify(data));
+                        $log.debug('get wechatSingnature the first time', JSON.stringify(data));
                         store.save('wechatSingnature', data.msg);
                         deferred.resolve(data.msg);
                     } else {
@@ -542,7 +542,7 @@ angular.module('iwildfire.services', ['ngResource'])
 
         this.getWechatSignature()
             .then(function(wechat_signature) {
-                console.log(JSON.stringify(wechat_signature));
+                $log.debug(JSON.stringify(wechat_signature));
                 if (wechat_signature) {
                     wechat_signature.jsApiList = ['chooseImage',
                         'previewImage', 'uploadImage',
@@ -574,7 +574,7 @@ angular.module('iwildfire.services', ['ngResource'])
         var self = this;
         var locationDetail = store.get('locationDetail');
         if (locationDetail) {
-            console.log('return cached locationDetail', locationDetail);
+            $log.debug('return cached locationDetail', JSON.stringify(locationDetail));
             deferred.resolve(locationDetail);
             return deferred.promise;
         }
@@ -588,7 +588,7 @@ angular.module('iwildfire.services', ['ngResource'])
                         var longitude = res.longitude; // 经度，浮点数，范围为180 ~ -180。
                         var speed = res.speed; // 速度，以米/每秒计
                         var accuracy = res.accuracy; // 位置精度
-                        console.log('get latlng by wechat api', JSON.stringify(res));
+                        $log.debug('get latlng by wechat api', JSON.stringify(res));
                         var geocoder;
                         var center = new qq.maps.LatLng(latitude, longitude);
                         var geocoder = new qq.maps.Geocoder();
@@ -601,7 +601,7 @@ angular.module('iwildfire.services', ['ngResource'])
                             locationDetail.lat = latitude;
                             locationDetail.lng = longitude;
 
-                            console.log('get location first time! save it into store', locationDetail);
+                            $log.debug('get location first time! save it into store', locationDetail);
                             if (locationDetail['nearPois']) {
                                 locationDetail.nearPois = null;
                             }
@@ -611,18 +611,18 @@ angular.module('iwildfire.services', ['ngResource'])
                     }
                 });
             }, function(err) {
-                console.log('can not get location', JSON.stringify(err));
+                $log.debug('can not get location', JSON.stringify(err));
                 deferred.resolve();
             });
 
         return deferred.promise;
     };
     this.setPostGoodsLocation = function(postGoodsLocationDetail) {
-        console.log('set post goods location detail', JSON.stringify(postGoodsLocationDetail));
+        $log.debug('set post goods location detail', JSON.stringify(postGoodsLocationDetail));
         this._postGoodsLocationDetail = postGoodsLocationDetail;
     };
     this.getPostGoodsLocation = function() {
-        console.log('get post goods location detail', JSON.stringify(this._postGoodsLocationDetail));
+        $log.debug('get post goods location detail', JSON.stringify(this._postGoodsLocationDetail));
         return this._postGoodsLocationDetail;
     };
 
@@ -714,7 +714,7 @@ angular.module('iwildfire.services', ['ngResource'])
             text = query
         },
         setGeom: function(geom) {
-            console.log('setGeom', JSON.stringify(geom));
+            $log.debug('setGeom', JSON.stringify(geom));
             lng = geom.lng;
             lat = geom.lat;
         },
@@ -740,238 +740,238 @@ angular.module('iwildfire.services', ['ngResource'])
 })
 
 .factory('Topic', function(cfg, $resource, $log, $q, store) {
-    //var User = {};
-    // make sure the user is logged in
-    // before using saveReply.
-    var currentUser = store.getUserProfile();
+        //var User = {};
+        // make sure the user is logged in
+        // before using saveReply.
+        var currentUser = store.getUserProfile();
 
-    /**
-     * Get current user from local store or resolve from server.
-     * But if there is no accessToken in store.getAccessToken(),
-     * it means there is none logged in user in current session.
-     * 
-     * @type {Object}
-     */
-    var Settings = {};
-    var topic;
-    var resource = $resource(cfg.api + '/topic/:id', {
-        id: '@id',
-    }, {
-        collect: {
-            method: 'post',
-            url: cfg.api + '/topic/collect'
-        },
-        deCollect: {
-            method: 'post',
-            url: cfg.api + '/topic/de_collect'
-        },
-        reply: {
-            method: 'post',
-            url: cfg.api + '/topic/:topicId/replies',
-            timeout: 2000
-        },
-        upReply: {
-            method: 'post',
-            url: cfg.api + '/reply/:replyId/ups'
-        }
-    });
-    return {
-        getById: function(id) {
-            if (topic !== undefined && topic.id === id) {
-                var topicDefer = $q.defer();
-                topicDefer.resolve({
-                    data: topic
-                });
-                return {
-                    $promise: topicDefer.promise
-                };
+        /**
+         * Get current user from local store or resolve from server.
+         * But if there is no accessToken in store.getAccessToken(),
+         * it means there is none logged in user in current session.
+         * 
+         * @type {Object}
+         */
+        var Settings = {};
+        var topic;
+        var resource = $resource(cfg.api + '/topic/:id', {
+            id: '@id',
+        }, {
+            collect: {
+                method: 'post',
+                url: cfg.api + '/topic/collect'
+            },
+            deCollect: {
+                method: 'post',
+                url: cfg.api + '/topic/de_collect'
+            },
+            reply: {
+                method: 'post',
+                url: cfg.api + '/topic/:topicId/replies',
+                timeout: 2000
+            },
+            upReply: {
+                method: 'post',
+                url: cfg.api + '/reply/:replyId/ups'
             }
-            return this.get(id);
-        },
-        get: function(id) {
-            return resource.get({
-                id: id
-            }, function(response) {
-                topic = response.data;
-            });
-        },
-        saveReply: function(topicId, replyData) {
-            var reply = angular.extend({}, replyData);
-            return resource.reply({
-                topicId: topicId,
-                accesstoken: currentUser.accessToken
-                    // accesstoken: '5447b4c3-0006-4a3c-9903-ac5a803bc17e'
-            }, reply);
-        },
-        upReply: function(replyId) {
-            var currentUser = User.getCurrentUser();
-            return resource.upReply({
-                replyId: replyId,
-                accesstoken: currentUser.accessToken
-            }, null, function(response) {
-                if (response.success) {
-                    angular.forEach(topic.replies, function(reply, key) {
-                        if (reply.id === replyId) {
-                            if (response.action === 'up') {
-                                reply.ups.push(currentUser.id);
-                            } else {
-                                reply.ups.pop();
-                            }
-                        }
+        });
+        return {
+            getById: function(id) {
+                if (topic !== undefined && topic.id === id) {
+                    var topicDefer = $q.defer();
+                    topicDefer.resolve({
+                        data: topic
                     });
-                } else {
-                    $log(response);
+                    return {
+                        $promise: topicDefer.promise
+                    };
                 }
-            });
-        },
-        collectTopic: function(topicId) {
-            var currentUser = User.getCurrentUser();
-            return resource.collect({
-                topic_id: topicId,
-                accesstoken: currentUser.accessToken
-            });
-        },
-        deCollectTopic: function(topicId) {
-            var currentUser = User.getCurrentUser();
-            return resource.deCollect({
-                topic_id: topicId,
-                accesstoken: currentUser.accessToken
-            });
-        }
-    };
-})
-/**
- * Provide utilities to access current login user.
- * 
- * @param  {[type]} cfg                [description]
- * @param  {[type]} $resource          [description]
- * @param  {[type]} $log               [description]
- * @param  {[type]} $q                 [description]
- * @param  {[type]} store)             {                 var resource [description]
- * @param  {[type]} null               [description]
- * @param  {[type]} function(response) {                                                                      $log.debug('post accesstoken:', response);                user.accesstoken [description]
- * @param  {Object} logout:            function()    {                                    user [description]
- * @return {[type]}                    [description]
- */
-.factory('User', function(cfg, $resource, $log, $q, store) {
-    var resource = $resource(cfg.api + '/accesstoken');
-    var userResource = $resource(cfg.api + '/user/:loginname', {
-        loginname: ''
-    });
-    var user = store.getUserProfile();
-    return {
-        /**
-         * accessToken can be passed from wechat uaa
-         * or get locally by store.getAccessToken.
-         * @param  {[type]} accesstoken [description]
-         * @return {[type]}             [description]
-         */
-        login: function(accesstoken) {
-            var $this = this;
-            return resource.save({
-                accesstoken: accesstoken
-            }, null, function(response) {
-                $log.debug('post accesstoken:', response);
-                user.accesstoken = accesstoken;
-                $this.getByLoginName(response.loginname).$promise.then(function(r) {
-                    user = r.profile;
-                    store.setUserProfile(user);
+                return this.get(id);
+            },
+            get: function(id) {
+                return resource.get({
+                    id: id
+                }, function(response) {
+                    topic = response.data;
                 });
-                user.loginname = response.loginname;
-            });
-        },
-        /**
-         * delete local user data 
-         * @return {[type]} [description]
-         */
-        logout: function() {
-            user = {};
-            store.deleteUserProfile();
-            store.deleteAccessToken();
-        },
-        /**
-         * return the profile data if it exists, or null for none login user.
-         * {
-              "_id": "553b43df49232fd36bccf847",
-              "profile": {
-                "openid": "ogWfMt5hcNzXXX",
-                "nickname": "王海良",
-                "sex": 1,
-                "language": "en",
-                "city": "Haidian",
-                "province": "Beijing",
-                "country": "China",
-                "headimgurl": "http://wx.qlogo.cn/mmopen/ajNVdqHZLLChxqXiauTD4ewLXOeicBzgQrlwK6f8xfTZ40eDLQmIam7sK7jm6FffhUHcRxpMUSub1wWIqDqhwJibQ/0",
-                "privilege": [],
-                "unionid": "XXXX"
-              },
-              "accessToken": "xxxx",
-              "avatar": "http://wx.qlogo.cn/mmopen/ajNVdqHZLLChxqXiauTD4ewLXOeicBzgQrlwK6f8xfTZ40eDLQmIam7sK7jm6FffhUHcRxpMUSub1wWIqDqhwJibQ/0",
-              "email": "xx@foo.cn",
-              "pass": "xxxx",
-              "loginname": "xxx",
-              "name": "王海良",
-              "__v": 0,
-              "phone_number": "xxx",
-              "passport": "wechat",
-              "receive_at_mail": false,
-              "receive_reply_mail": false,
-              "active": true,
-              "update_at": "2015-04-25T07:35:59.393Z",
-              "create_at": "2015-04-25T07:35:59.393Z",
-              "collect_topic_count": 0,
-              "collect_tag_count": 0,
-              "following_count": 0,
-              "follower_count": 0,
-              "reply_count": 0,
-              "topic_count": 13,
-              "score": 65,
-              "is_block": false
-            }
-         * @return {[type]} [description]
-         */
-        getCurrentUser: function() {
-            $log.debug('current user:', user);
-            return user;
-        },
-        getByLoginName: function(loginName) {
-            if (user && loginName === user.loginname) {
-                var userDefer = $q.defer();
-                $log.debug('get user info from storage:', user);
-                userDefer.resolve({
-                    data: user
+            },
+            saveReply: function(topicId, replyData) {
+                var reply = angular.extend({}, replyData);
+                return resource.reply({
+                    topicId: topicId,
+                    accesstoken: currentUser.accessToken
+                        // accesstoken: '5447b4c3-0006-4a3c-9903-ac5a803bc17e'
+                }, reply);
+            },
+            upReply: function(replyId) {
+                var currentUser = User.getCurrentUser();
+                return resource.upReply({
+                    replyId: replyId,
+                    accesstoken: currentUser.accessToken
+                }, null, function(response) {
+                    if (response.success) {
+                        angular.forEach(topic.replies, function(reply, key) {
+                            if (reply.id === replyId) {
+                                if (response.action === 'up') {
+                                    reply.ups.push(currentUser.id);
+                                } else {
+                                    reply.ups.pop();
+                                }
+                            }
+                        });
+                    } else {
+                        $log(response);
+                    }
                 });
-                return {
-                    $promise: userDefer.promise
-                };
+            },
+            collectTopic: function(topicId) {
+                var currentUser = User.getCurrentUser();
+                return resource.collect({
+                    topic_id: topicId,
+                    accesstoken: currentUser.accessToken
+                });
+            },
+            deCollectTopic: function(topicId) {
+                var currentUser = User.getCurrentUser();
+                return resource.deCollect({
+                    topic_id: topicId,
+                    accesstoken: currentUser.accessToken
+                });
             }
-            return this.get(loginName);
-        },
-        get: function(loginName) {
-            return userResource.get({
-                loginname: loginName
-            }, function(response) {
-                $log.debug('get user info:', response);
-                if (user && user.loginname === loginName) {
-                    angular.extend(user, response.data);
+        };
+    })
+    /**
+     * Provide utilities to access current login user.
+     * 
+     * @param  {[type]} cfg                [description]
+     * @param  {[type]} $resource          [description]
+     * @param  {[type]} $log               [description]
+     * @param  {[type]} $q                 [description]
+     * @param  {[type]} store)             {                 var resource [description]
+     * @param  {[type]} null               [description]
+     * @param  {[type]} function(response) {                                                                      $log.debug('post accesstoken:', response);                user.accesstoken [description]
+     * @param  {Object} logout:            function()    {                                    user [description]
+     * @return {[type]}                    [description]
+     */
+    .factory('User', function(cfg, $resource, $log, $q, store) {
+        var resource = $resource(cfg.api + '/accesstoken');
+        var userResource = $resource(cfg.api + '/user/:loginname', {
+            loginname: ''
+        });
+        var user = store.getUserProfile();
+        return {
+            /**
+             * accessToken can be passed from wechat uaa
+             * or get locally by store.getAccessToken.
+             * @param  {[type]} accesstoken [description]
+             * @return {[type]}             [description]
+             */
+            login: function(accesstoken) {
+                var $this = this;
+                return resource.save({
+                    accesstoken: accesstoken
+                }, null, function(response) {
+                    $log.debug('post accesstoken:', response);
+                    user.accesstoken = accesstoken;
+                    $this.getByLoginName(response.loginname).$promise.then(function(r) {
+                        user = r.profile;
+                        store.setUserProfile(user);
+                    });
+                    user.loginname = response.loginname;
+                });
+            },
+            /**
+             * delete local user data 
+             * @return {[type]} [description]
+             */
+            logout: function() {
+                user = {};
+                store.deleteUserProfile();
+                store.deleteAccessToken();
+            },
+            /**
+             * return the profile data if it exists, or null for none login user.
+             * {
+                  "_id": "553b43df49232fd36bccf847",
+                  "profile": {
+                    "openid": "ogWfMt5hcNzXXX",
+                    "nickname": "王海良",
+                    "sex": 1,
+                    "language": "en",
+                    "city": "Haidian",
+                    "province": "Beijing",
+                    "country": "China",
+                    "headimgurl": "http://wx.qlogo.cn/mmopen/ajNVdqHZLLChxqXiauTD4ewLXOeicBzgQrlwK6f8xfTZ40eDLQmIam7sK7jm6FffhUHcRxpMUSub1wWIqDqhwJibQ/0",
+                    "privilege": [],
+                    "unionid": "XXXX"
+                  },
+                  "accessToken": "xxxx",
+                  "avatar": "http://wx.qlogo.cn/mmopen/ajNVdqHZLLChxqXiauTD4ewLXOeicBzgQrlwK6f8xfTZ40eDLQmIam7sK7jm6FffhUHcRxpMUSub1wWIqDqhwJibQ/0",
+                  "email": "xx@foo.cn",
+                  "pass": "xxxx",
+                  "loginname": "xxx",
+                  "name": "王海良",
+                  "__v": 0,
+                  "phone_number": "xxx",
+                  "passport": "wechat",
+                  "receive_at_mail": false,
+                  "receive_reply_mail": false,
+                  "active": true,
+                  "update_at": "2015-04-25T07:35:59.393Z",
+                  "create_at": "2015-04-25T07:35:59.393Z",
+                  "collect_topic_count": 0,
+                  "collect_tag_count": 0,
+                  "following_count": 0,
+                  "follower_count": 0,
+                  "reply_count": 0,
+                  "topic_count": 13,
+                  "score": 65,
+                  "is_block": false
+                }
+             * @return {[type]} [description]
+             */
+            getCurrentUser: function() {
+                $log.debug('current user:', user);
+                return user;
+            },
+            getByLoginName: function(loginName) {
+                if (user && loginName === user.loginname) {
+                    var userDefer = $q.defer();
+                    $log.debug('get user info from storage:', user);
+                    userDefer.resolve({
+                        data: user
+                    });
+                    return {
+                        $promise: userDefer.promise
+                    };
+                }
+                return this.get(loginName);
+            },
+            get: function(loginName) {
+                return userResource.get({
+                    loginname: loginName
+                }, function(response) {
+                    $log.debug('get user info:', response);
+                    if (user && user.loginname === loginName) {
+                        angular.extend(user, response.data);
 
-                    store.setUserProfile(user);
-                }
-            });
-        },
-        collectTopic: function(topicId) {
-            user.collect_topics.push({
-                id: topicId
-            });
-            store.setUserProfile(user);
-        },
-        deCollectTopic: function(topicId) {
-            angular.forEach(user.collect_topics, function(topic, key) {
-                if (topic.id === topicId) {
-                    user.collect_topics.splice(key, 1);
-                }
-            });
-            store.setUserProfile(user);
-        }
-    };
-})
+                        store.setUserProfile(user);
+                    }
+                });
+            },
+            collectTopic: function(topicId) {
+                user.collect_topics.push({
+                    id: topicId
+                });
+                store.setUserProfile(user);
+            },
+            deCollectTopic: function(topicId) {
+                angular.forEach(user.collect_topics, function(topic, key) {
+                    if (topic.id === topicId) {
+                        user.collect_topics.splice(key, 1);
+                    }
+                });
+                store.setUserProfile(user);
+            }
+        };
+    })

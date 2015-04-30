@@ -356,38 +356,6 @@ angular.module('iwildfire.services', ['ngResource'])
     }
 
     /**
-     * GetMyProfileResolveWithLocalStorage.
-     * Reduce the internet requests.
-     * get user profile data when resolve,
-     * if can not get user profile, reject its promise.
-     * The reason why it can not get user profile is mostly 
-     * due to non log-in user, a good solution is navigating to
-     * wechat uaa page if get rejected.
-     * @return {[type]} [description]
-     */
-    // this.getMyProfileWithLocalStorage = function() {
-    //     var deferred = $q.defer();
-    //     if (store.getAccessToken() && store.getUserProfile()) {
-    //         // get access token and also local profile
-    //         deferred.resolve(store.getUserProfile());
-    //     } else if (store.getAccessToken() && (!store.getUserProfile())) {
-    //         // get access token but no local profile
-    //         self.getUserProfile()
-    //             .then(function(data) {
-    //                 store.setUserProfile(data);
-    //                 deferred.resolve(data);
-    //             }, function(err) {
-    //                 deferred.reject(err);
-    //             });
-    //     } else {
-    //         // no access token and no local profile
-    //         deferred.reject();
-    //     }
-
-    //     return deferred.promise;
-    // }
-
-    /**
      * get user profile as resolve state
      * @return {[type]} [description]
      */
@@ -831,7 +799,7 @@ angular.module('iwildfire.services', ['ngResource'])
             var reply = angular.extend({}, replyData);
             return resource.reply({
                 topicId: topicId,
-                accesstoken: currentUser.accesstoken
+                accesstoken: currentUser.accessToken
                     // accesstoken: '5447b4c3-0006-4a3c-9903-ac5a803bc17e'
             }, reply);
         },
@@ -839,7 +807,7 @@ angular.module('iwildfire.services', ['ngResource'])
             var currentUser = User.getCurrentUser();
             return resource.upReply({
                 replyId: replyId,
-                accesstoken: currentUser.accesstoken
+                accesstoken: currentUser.accessToken
             }, null, function(response) {
                 if (response.success) {
                     angular.forEach(topic.replies, function(reply, key) {
@@ -860,19 +828,31 @@ angular.module('iwildfire.services', ['ngResource'])
             var currentUser = User.getCurrentUser();
             return resource.collect({
                 topic_id: topicId,
-                accesstoken: currentUser.accesstoken
+                accesstoken: currentUser.accessToken
             });
         },
         deCollectTopic: function(topicId) {
             var currentUser = User.getCurrentUser();
             return resource.deCollect({
                 topic_id: topicId,
-                accesstoken: currentUser.accesstoken
+                accesstoken: currentUser.accessToken
             });
         }
     };
 })
-
+/**
+ * Provide utilities to access current login user.
+ * 
+ * @param  {[type]} cfg                [description]
+ * @param  {[type]} $resource          [description]
+ * @param  {[type]} $log               [description]
+ * @param  {[type]} $q                 [description]
+ * @param  {[type]} store)             {                 var resource [description]
+ * @param  {[type]} null               [description]
+ * @param  {[type]} function(response) {                                                                      $log.debug('post accesstoken:', response);                user.accesstoken [description]
+ * @param  {Object} logout:            function()    {                                    user [description]
+ * @return {[type]}                    [description]
+ */
 .factory('User', function(cfg, $resource, $log, $q, store) {
     var resource = $resource(cfg.api + '/accesstoken');
     var userResource = $resource(cfg.api + '/user/:loginname', {
@@ -880,6 +860,12 @@ angular.module('iwildfire.services', ['ngResource'])
     });
     var user = store.getUserProfile();
     return {
+        /**
+         * accessToken can be passed from wechat uaa
+         * or get locally by store.getAccessToken.
+         * @param  {[type]} accesstoken [description]
+         * @return {[type]}             [description]
+         */
         login: function(accesstoken) {
             var $this = this;
             return resource.save({
@@ -894,13 +880,56 @@ angular.module('iwildfire.services', ['ngResource'])
                 user.loginname = response.loginname;
             });
         },
+        /**
+         * delete local user data 
+         * @return {[type]} [description]
+         */
         logout: function() {
             user = {};
-            Storage.remove(storageKey);
-
-            // unset alias for jpush
-            // Push.setAlias('');
+            store.deleteUserProfile();
+            store.deleteAccessToken();
         },
+        /**
+         * return the profile data if it exists, or null for none login user.
+         * {
+              "_id": "553b43df49232fd36bccf847",
+              "profile": {
+                "openid": "ogWfMt5hcNzXXX",
+                "nickname": "王海良",
+                "sex": 1,
+                "language": "en",
+                "city": "Haidian",
+                "province": "Beijing",
+                "country": "China",
+                "headimgurl": "http://wx.qlogo.cn/mmopen/ajNVdqHZLLChxqXiauTD4ewLXOeicBzgQrlwK6f8xfTZ40eDLQmIam7sK7jm6FffhUHcRxpMUSub1wWIqDqhwJibQ/0",
+                "privilege": [],
+                "unionid": "XXXX"
+              },
+              "accessToken": "xxxx",
+              "avatar": "http://wx.qlogo.cn/mmopen/ajNVdqHZLLChxqXiauTD4ewLXOeicBzgQrlwK6f8xfTZ40eDLQmIam7sK7jm6FffhUHcRxpMUSub1wWIqDqhwJibQ/0",
+              "email": "xx@foo.cn",
+              "pass": "xxxx",
+              "loginname": "xxx",
+              "name": "王海良",
+              "__v": 0,
+              "phone_number": "xxx",
+              "passport": "wechat",
+              "receive_at_mail": false,
+              "receive_reply_mail": false,
+              "active": true,
+              "update_at": "2015-04-25T07:35:59.393Z",
+              "create_at": "2015-04-25T07:35:59.393Z",
+              "collect_topic_count": 0,
+              "collect_tag_count": 0,
+              "following_count": 0,
+              "follower_count": 0,
+              "reply_count": 0,
+              "topic_count": 13,
+              "score": 65,
+              "is_block": false
+            }
+         * @return {[type]} [description]
+         */
         getCurrentUser: function() {
             $log.debug('current user:', user);
             return user;

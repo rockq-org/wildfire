@@ -5,10 +5,12 @@
 /**
  * Module dependencies.
  */
-
 var config = require('./config');
 var appInit = require('./appinit.js');
 var revision = require('git-rev');
+// Date add-ons for Node.js
+// https://www.npmjs.com/package/date-utils
+require('date-utils');
 
 if (!config.debug) {
     require('newrelic');

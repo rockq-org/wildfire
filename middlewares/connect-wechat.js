@@ -17,6 +17,7 @@ var UserProxy = require('../proxy').User;
 var ReplyProxy = require('../proxy').Reply;
 var TopicProxy = require('../proxy').Topic;
 var minimatch = require('minimatch');
+var S = require('string');
 
 /**
  * download wechat server image with server id
@@ -364,7 +365,6 @@ _getWxAccessTokenFromRedis().then(function(doc) {
     console.log('wechat access token: ' + doc);
 });
 
-
 /**
  * provide method to send notification with message templates
  * @param  {[type]} fromUserId [description]
@@ -398,11 +398,12 @@ function _pushReplyWithWechatTemplateAPI(toUserId, fromUserId, topicId, replyId)
                         color: "#173177"
                     },
                     keyword2: {
-                        value: reply.create_at,
+                        value: reply.create_at.toFormat('YYYY-MM-DD HH:MI PP');,
                         color: "#173177"
                     },
                     keyword3: {
-                        value: reply.content,
+                        // replace push content via wechat
+                        value: S(reply.content).replaceAll(toUser.profile.openid, toUser.name).s,
                         color: "#173177"
                     }
                     // ,

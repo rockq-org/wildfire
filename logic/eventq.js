@@ -12,13 +12,17 @@ var connect_wechat = require('../middlewares/connect-wechat');
 
 appInit.add();
 
-
+/**
+ * send reply message with notify api of wechat industry template
+ * @param  {[type]} payload [description]
+ * @return {[type]}         [description]
+ */
 function _sendReplyNotifyWithWechatTemplateAPI(payload) {
     try {
-        var reply_id = payload.reply_id;
-        var from_user_id = payload.author_id;
-        var to_user_id = payload.master_id;
-        var topic_id = payload.topic_id;
+        var reply_id = payload[0].reply_id;
+        var from_user_id = payload[0].author_id;
+        var to_user_id = payload[0].master_id;
+        var topic_id = payload[0].topic_id;
         connect_wechat.pushReplyWithWechatTemplateAPI(to_user_id,
                 from_user_id,
                 topic_id,

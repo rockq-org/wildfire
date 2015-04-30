@@ -441,7 +441,7 @@ function _pushReplyWithWechatTemplateAPI(toUserId, fromUserId, topicId, replyId)
         proxy.emit('toUser', user);
     }));
 
-    TopicProxy.getTopic(topicId, proxy.done(function(topic) {
+    TopicProxy.getTopicById(topicId, proxy.done(function(topic) {
         proxy.emit('topic', topic);
     }));
 

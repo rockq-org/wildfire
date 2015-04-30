@@ -23,6 +23,15 @@ exports.sendReplyMessage = function (master_id, author_id, topic_id, reply_id, c
   });
 };
 
+/**
+ * [sendAtMessage description]
+ * @param  {objectId}   master_id toUser
+ * @param  {objectId}   author_id fromUser
+ * @param  {objectId}   topic_id  related topicId
+ * @param  {objectId}   reply_id  reply id
+ * @param  {Function} callback  [description]
+ * @return {[type]}             [description]
+ */
 exports.sendAtMessage = function (master_id, author_id, topic_id, reply_id, callback) {
   callback = callback || _.noop;
   var ep = new eventproxy();

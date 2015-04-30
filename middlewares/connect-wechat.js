@@ -379,7 +379,7 @@ function _pushReplyWithWechatTemplateAPI(toUserId, fromUserId, topicId, replyId)
     var proxy = new EventProxy();
     var deferred = Q.defer();
 
-    proxy.all('fromUser', 'toUser', 'reply', function(fromUser, toUser, reply) {
+    proxy.all('fromUser', 'toUser', 'topic', 'reply', function(fromUser, toUser, topic, reply) {
         // Post Data
         _getWxAccessTokenFromRedis().then(function(doc) {
             logger.debug('_pushReplyWithWechatTemplateAPI', 'get access token ' + doc);
@@ -391,7 +391,7 @@ function _pushReplyWithWechatTemplateAPI(toUserId, fromUserId, topicId, replyId)
                     topcolor: "#FF0000",
                     data: {
                         first: {
-                            value: "#todo topic.title",
+                            value: topic.title,
                             color: "#173177"
                         },
                         keyword1: {
@@ -438,6 +438,10 @@ function _pushReplyWithWechatTemplateAPI(toUserId, fromUserId, topicId, replyId)
 
     UserProxy.getUserById(toUserId, proxy.done(function(user) {
         proxy.emit('toUser', user);
+    }));
+
+    TopicProxy.getTopicById(topicId, proxy.done(function(topic) {
+        proxy.emit('topic', topic);
     }));
 
     ReplyProxy.getReplyById(replyId, proxy.done(function(reply) {

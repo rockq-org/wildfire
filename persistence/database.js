@@ -294,7 +294,7 @@ EMPEvent.prototype.create = function(event, user, argN, callback) { // event has
         if (user.onBehalf.emails)
             e.userEmails = user.onBehalf.emails.toString();
     }
-    
+
     this.eventCol.insert(e, function(err, inserted) {
         if (err) {
             promise.reject(err);
@@ -320,12 +320,17 @@ function _registerEMP(schema, mname, callback) {
     logger.info("registerEMPEvents", "create listeners for " + mname);
     // #TODO check permissions
     // schema.pre('save', _preSavePermit);
+    try {
+        schema.pre('save', function(next) {
+            this.wasNew = this.isNew;
+            next();
+        });
 
-    schema.pre('save', function(next) {
-        this.wasNew = this.isNew;
-        next();
-    });
+    } catch (e) {
+        console.log(e);
+    }
 
+    console.log('cllb ka');
     schema.post('save', function(doc) {
         if (this.wasNew) {
             // if (doc._mUser)
@@ -338,6 +343,7 @@ function _registerEMP(schema, mname, callback) {
     schema.post('remove', function(doc) {
         pCallback(mname, ":del", doc);
     });
+
 
     callback();
 }
@@ -390,10 +396,18 @@ function init() {
             return promise;
         })
         .then(function() {
+            var promise = new mongoose.Promise();
+            _registerEMP(require('../models/message'), 'messages', function() {
+                logger.info('EMPEvent', 'collection:messages:* is enrolled.');
+                promise.resolve();
+            });
+            logger.info('EMPEvent', 'service is started.');
+            return promise;
+        })
+        .then(function() {
             Database.prototype.connection = dbase;
             Database.prototype.empEvent = _empEvent;
             Database.prototype.registerEMP = _registerEMP;
-            logger.info('EMPEvent', 'service is started.');
             exports.databaseStatus = true;
             exports.initPromise.resolve();
             appInit.resolve();

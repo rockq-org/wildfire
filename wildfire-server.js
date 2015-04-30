@@ -26,6 +26,9 @@ var session = require('express-session');
 var passport = require('passport');
 require('./persistence/database');
 require('./models');
+// start eventq as event subscriptions
+require('./persistence/eventq');
+
 var GitHubStrategy = require('passport-github').Strategy;
 var githubStrategyMiddleware = require('./middlewares/github_strategy');
 var WechatStrategy = require('passport-wechat');

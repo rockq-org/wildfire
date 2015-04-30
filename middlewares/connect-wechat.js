@@ -15,8 +15,8 @@ var wxCfg = config.wechat_gzh;
 var fileStorage = require('../api/v1/fileStorage');
 var UserProxy = require('../proxy').User;
 var ReplyProxy = require('../proxy').Reply;
+var TopicProxy = require('../proxy').Topic;
 var minimatch = require('minimatch');
-
 
 /**
  * download wechat server image with server id

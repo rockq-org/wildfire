@@ -46,7 +46,6 @@ angular.module('iwildfire.directives', [])
                     size = new qq.maps.Size(36, 36),
                     origin = new qq.maps.Point(0, 0),
                     markerIcon = new qq.maps.MarkerImage( host + "/images/map/1.png", size, origin, anchor );
-                    console.log(host + "/images/map/1.png");
                 marker.setIcon(markerIcon);
 
                 marker.setTitle(i + 1);

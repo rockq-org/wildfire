@@ -141,6 +141,7 @@ angular.module('iwildfire.controllers', [])
     $ionicModal,
     $timeout,
     $state,
+    webq,
     locationDetail,
     $location,
     $log,
@@ -148,14 +149,13 @@ angular.module('iwildfire.controllers', [])
     Tabs,
     cfg
 ) {
-    locationDetail = {
-        api_address: '仙游',
-        user_edit_address: '仙游',
-        lat: 25.3518140000000010,
-        lng: 118.7042859999999962
-    };
-
-    $scope.locationDetail = locationDetail;
+    // locationDetail = {
+    //     api_address: '仙游',
+    //     user_edit_address: '仙游',
+    //     lat: 25.3518140000000010,
+    //     lng: 118.7042859999999962
+    // };
+    // $scope.locationDetail = locationDetail;
 
     $scope.sideMenus = Tabs.getList();
     $stateParams.tab = $stateParams.tab || 'all';
@@ -250,17 +250,25 @@ angular.module('iwildfire.controllers', [])
         };
     }
 
-    // init here
     if (typeof(locationDetail) != 'undefined') {
+        console.log('get location from resolve now!', JSON.stringify(locationDetail));
         $scope.address = locationDetail.user_edit_address;
         $scope.tabTitle = locationDetail.user_edit_address;
         Topics.setGeom(locationDetail);
-        loadDataAfterGetLocation();
-        $scope.doRefresh();
+        $scope.locationDetail = locationDetail;
     } else {
         // load pages from local browser for debugging
         loadDataAfterGetLocation();
         $scope.doRefresh();
+    };
+
+
+    $scope.map = {
+        center: {
+            lat: locationDetail.lat,
+            lng: locationDetail.lng
+        },
+        zoom: 13
     };
 
     $scope.$watchCollection('locationDetail', function(newValue, oldValue) {
@@ -271,13 +279,6 @@ angular.module('iwildfire.controllers', [])
         $scope.doRefresh();
     });
 
-    $scope.map = {
-        center: {
-            lat: locationDetail.lat,
-            lng: locationDetail.lng
-        },
-        zoom: 13
-    };
 })
 
 .controller('ItemCtrl', function(

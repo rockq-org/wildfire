@@ -7,7 +7,7 @@
 // 'starter.controllers' is found in controllers.js
 angular.module('iwildfire', ['ionic', 'iwildfire.controllers', 'iwildfire.services', 'iwildfire.directives', 'iwildfire.filters', 'config', 'angularMoment'])
 
-.run(function($ionicPlatform, $rootScope, $log, store, webq, $ionicLoading, amMoment) {
+.run(function($ionicPlatform, $rootScope, $log, store, webq, $ionicLoading, amMoment, Messages) {
 
     amMoment.changeLocale('zh-cn');
 
@@ -46,6 +46,13 @@ angular.module('iwildfire', ['ionic', 'iwildfire.controllers', 'iwildfire.servic
             return callback && callback();
         };
     };
+    $rootScope.message_not_read_count = 0;
+    Messages.getMessageCount().$promise.then(function(response){
+        $timeout(function(){
+            console.log(response.data);
+            $rootScope.message_not_read_count = response.data;
+        })
+    });
 })
 
 // global config for uniform ui for different platform
@@ -138,15 +145,15 @@ angular.module('iwildfire', ['ionic', 'iwildfire.controllers', 'iwildfire.servic
         }
     })
 
-    .state('tab.inbox-detail', {
-        url: '/inbox/:chatId',
-        views: {
-            'tab-inbox': {
-                templateUrl: 'templates/inbox-detail.html',
-                controller: 'InboxDetailCtrl'
-            }
-        }
-    })
+    // .state('tab.inbox-detail', {
+    //     url: '/inbox/:chatId',
+    //     views: {
+    //         'tab-inbox': {
+    //             templateUrl: 'templates/inbox-detail.html',
+    //             controller: 'InboxDetailCtrl'
+    //         }
+    //     }
+    // })
 
     .state('tab.account', {
         url: '/account',

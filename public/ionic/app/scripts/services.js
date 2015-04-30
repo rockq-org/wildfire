@@ -43,46 +43,47 @@ angular.module('iwildfire.services', ['ngResource'])
     return _Tabs;
 })
 
-.factory('Messages', function() {
-    // Might use a resource here that returns a JSON array
-
-    // Some fake testing data
-    var chats = [{
-        id: 0,
-        userId: '00001',
-        name: 'tb234243',
-        lastText: '用户直接跟你对话的，这里显示你们最后一条的对话内容（可能是你的也可能是他的）点击后最顶部是宝贝的链接',
-        face: 'images/dummy/avatar.jpeg'
-    }, {
-        id: 1,
-        userId: '00002',
-        name: '宝贝留言',
-        lastText: 'tb234243: 有点贵哦（这个是用户名+宝贝留言内容，点击到达宝贝页面的留言位置）',
-        face: 'images/dummy/1.jpg'
-    }, {
-        id: 1,
-        userId: '00002',
-        name: 'name here',
-        lastText: 'less text',
-        face: 'images/dummy/1.jpg'
-    }];
-
-    return {
-        all: function() {
-            return chats;
-        },
-        remove: function(chat) {
-            chats.splice(chats.indexOf(chat), 1);
-        },
-        get: function(chatId) {
-            for (var i = 0; i < chats.length; i++) {
-                if (chats[i].id === parseInt(chatId)) {
-                    return chats[i];
-                }
-            }
-            return null;
-        }
-    };
+.factory('Messages', function(cfg, store, $resource, $log) {
+    console.log(store.getAccessToken());
+  var messages = {};
+  var messagesCount = 0;
+  var resource =  $resource(cfg.api + '/messages', null, {
+    count: {
+      method: 'get',
+      url: cfg.api + '/message/count'
+    },
+    markAll: {
+      method: 'post',
+      url: cfg.api + '/message/mark_all'
+    }
+  });
+  return {
+    currentMessageCount: function() {
+      return messagesCount;
+    },
+    getMessageCount: function() {
+      $log.debug('get messages count');
+      return resource.count({
+        accesstoken: store.getAccessToken()
+      });
+    },
+    getMessages: function() {
+      $log.debug('get messages');
+      return resource.get({
+        accesstoken: store.getAccessToken()
+      });
+      return messages;
+    },
+    markAll: function() {
+      $log.debug('mark all as read');
+      return resource.markAll({
+        accesstoken: store.getAccessToken()
+      }, function(response) {
+        $log.debug('marked messages as read:', response);
+        messagesCount = 0;
+      });
+    }
+  };
 })
 
 /**
@@ -99,9 +100,9 @@ Local storage is per domain. All pages, from one domain, can store and access th
  *
  * window.localStorage - stores data with no expiration date
  * window.sessionStorage - stores data for one session (data is lost when the tab is closed)
- * 
+ *
  * http://www.w3schools.com/html/html5_webstorage.asp
- * In wechat, the localStorage/sessionStorage may be clean up 
+ * In wechat, the localStorage/sessionStorage may be clean up
  * in days.
  */
 .service('store', function($log, cfg) {
@@ -792,7 +793,7 @@ Local storage is per domain. All pages, from one domain, can store and access th
          * Get current user from local store or resolve from server.
          * But if there is no accessToken in store.getAccessToken(),
          * it means there is none logged in user in current session.
-         * 
+         *
          * @type {Object}
          */
         var Settings = {};
@@ -885,7 +886,7 @@ Local storage is per domain. All pages, from one domain, can store and access th
     })
     /**
      * Provide utilities to access current login user.
-     * 
+     *
      * @param  {[type]} cfg                [description]
      * @param  {[type]} $resource          [description]
      * @param  {[type]} $log               [description]
@@ -924,7 +925,7 @@ Local storage is per domain. All pages, from one domain, can store and access th
                 });
             },
             /**
-             * delete local user data 
+             * delete local user data
              * @return {[type]} [description]
              */
             logout: function() {

@@ -383,36 +383,38 @@ function _pushReplyWithWechatTemplateAPI(toUserId, fromUserId, topicId, replyId)
         // Post Data
         _getWxAccessTokenFromRedis().then(function(doc) {
             logger.debug('_pushReplyWithWechatTemplateAPI', 'get access token ' + doc);
-            superagent.post(u.format('https://api.weixin.qq.com/cgi-bin/message/template/send?access_token=%s', doc))
-                .send({
-                    touser: toUser.profile.openid,
-                    template_id: config.wechat_gzh.api.notify_template_id,
-                    url: u.format("http://%s/#/item/%s", config.client_host, topicId),
-                    topcolor: "#FF0000",
-                    data: {
-                        first: {
-                            value: topic.title,
-                            color: "#173177"
-                        },
-                        keyword1: {
-                            value: fromUser.name,
-                            color: "#173177"
-                        },
-                        keyword2: {
-                            value: reply.create_at,
-                            color: "#173177"
-                        },
-                        keyword3: {
-                            value: reply.content,
-                            color: "#173177"
-                        }
-                        // ,
-                        // remark: {
-                        //     value: "尾部文字！",
-                        //     color: "#173177"
-                        // }
+            var payload = {
+                touser: toUser.profile.openid,
+                template_id: config.wechat_gzh.api.notify_template_id,
+                url: u.format("http://%s/#/item/%s", config.client_host, topicId),
+                topcolor: "#FF0000",
+                data: {
+                    first: {
+                        value: topic.title,
+                        color: "#173177"
+                    },
+                    keyword1: {
+                        value: fromUser.name,
+                        color: "#173177"
+                    },
+                    keyword2: {
+                        value: reply.create_at,
+                        color: "#173177"
+                    },
+                    keyword3: {
+                        value: reply.content,
+                        color: "#173177"
                     }
-                })
+                    // ,
+                    // remark: {
+                    //     value: "尾部文字！",
+                    //     color: "#173177"
+                    // }
+                }
+            };
+            logger.debug('_pushReplyWithWechatTemplateAPI', "send body " + JSON.stringify(payload));
+            superagent.post(u.format('https://api.weixin.qq.com/cgi-bin/message/template/send?access_token=%s', doc))
+                .send(payload)
                 .set('Content-Type', 'application/json')
                 .set('Accept', 'application/json')
                 .end(function(err, res) {

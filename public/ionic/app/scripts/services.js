@@ -86,9 +86,27 @@ angular.module('iwildfire.services', ['ngResource'])
 })
 
 /**
- * http://www.zhihu.com/question/21323842
+ * HTML5 Local Storage
+ * http://www.w3schools.com/html/html5_webstorage.asp
+ *
+ * With local storage, web applications can store data locally within the user's browser.
+
+Before HTML5, application data had to be stored in cookies, included in every server request. Local storage is more secure, and large amounts of data can be stored locally, without affecting website performance.
+
+Unlike cookies, the storage limit is far larger (at least 5MB) and information is never transferred to the server.
+
+Local storage is per domain. All pages, from one domain, can store and access the same data.
+ *
+ * window.localStorage - stores data with no expiration date
+ * window.sessionStorage - stores data for one session (data is lost when the tab is closed)
+ * 
+ * http://www.w3schools.com/html/html5_webstorage.asp
+ * In wechat, the localStorage/sessionStorage may be clean up 
+ * in days.
  */
 .service('store', function($log, cfg) {
+
+    var self = this;
 
     this.setAccessToken = function(data) {
         window.localStorage.setItem('WILDFIRE_ACCESS_TOKEN', data);
@@ -125,22 +143,54 @@ angular.module('iwildfire.services', ['ngResource'])
         window.removeItem('WILDFIRE_USER_PROFILE');
     };
 
-    this.save = function(key, value) {
-        window.localStorage.setItem('WILDFIRE_' + key, JSON.stringify(value));
-    };
-    this.get = function(key) {
-        var raw = window.localStorage.getItem('WILDFIRE_' + key);
+    /**
+     * get the cached location detail
+     * @return {[type]} [description]
+     */
+    this.getLocationDetail = function() {
+        var raw = window.sessionStorage.getItem('WILDFIRE_LOCATION_DETAIL');
         if (raw) {
             return JSON.parse(raw);
         } else {
             return null;
         }
     };
+
+    /**
+     * set location into cache
+     * @param {[type]} data [description]
+     * use sessionStorage to drop the data.
+     */
+    this.setLocationDetail = function(data) {
+        window.sessionStorage.setItem('WILDFIRE_LOCATION_DETAIL', JSON.stringify(data));
+    };
+
+    this.deleteLocationDetail = function() {
+        window.sessionStorage.removeItem('WILDFIRE_LOCATION_DETAIL');
+    }
+
+    this.setWechatSignature = function(data) {
+        window.sessionStorage.setItem('WILDFIRE_WECHAT_SIGNATURE', JSON.stringify(data));
+    }
+
+    this.getWechatSignature = function() {
+        var raw = window.sessionStorage.getItem('WILDFIRE_WECHAT_SIGNATURE');
+        if (raw) {
+            return JSON.parse(raw);
+        } else {
+            return null;
+        }
+    }
+
+    this.deleteWechatSignature = function() {
+        window.sessionStorage.removeItem('WILDFIRE_WECHAT_SIGNATURE');
+    }
+
     this.clear = function() {
         $log.debug('clear all store except accesstoken');
         var accesstoken = this.getAccessToken();
         window.localStorage.clear();
-        this.setAccessToken(accesstoken);
+        self.setAccessToken(accesstoken);
     }
 })
 
@@ -459,7 +509,7 @@ angular.module('iwildfire.services', ['ngResource'])
         // should not use encodeURIComponent
         var app_url = window.location.href.split('#')[0];
         var accesstoken = store.getAccessToken();
-        var wechatSingnature = store.get('wechatSingnature');
+        var wechatSingnature = store.getWechatSignature();
 
         //TODO: maybe add expire time stuff to refresh it
         // if( wechatSingnature ){
@@ -505,7 +555,7 @@ angular.module('iwildfire.services', ['ngResource'])
                      */
                     if (typeof(data) == 'object' && data.rc == 0) {
                         $log.debug('get wechatSingnature the first time', JSON.stringify(data));
-                        store.save('wechatSingnature', data.msg);
+                        store.setWechatSignature(data.msg);
                         deferred.resolve(data.msg);
                     } else {
                         deferred.resolve();
@@ -534,12 +584,6 @@ angular.module('iwildfire.services', ['ngResource'])
      */
     this.getWxWrapper = function() {
         var deferred = $q.defer();
-        // var wxWrapperIsReady = store.get('wxWrapperIsReady');
-        // if( wxWrapperIsReady ){
-        //     deferred.resolve(wx);
-        //     return deferred.promise;
-        // }
-
         this.getWechatSignature()
             .then(function(wechat_signature) {
                 $log.debug(JSON.stringify(wechat_signature));
@@ -557,7 +601,6 @@ angular.module('iwildfire.services', ['ngResource'])
                     wx.ready(function() {
                         //TODO: maybe add an expire time for this?
                         //      or just clear up alllll store while user refresh our url?
-                        // store.save('wxWrapperIsReady', 'true');
                         deferred.resolve(wx);
                     });
                 } else {
@@ -572,7 +615,7 @@ angular.module('iwildfire.services', ['ngResource'])
     this.getLocationDetail = function() {
         var deferred = $q.defer();
         var self = this;
-        var locationDetail = store.get('locationDetail');
+        var locationDetail = store.getLocationDetail();
         if (locationDetail) {
             $log.debug('return cached locationDetail', JSON.stringify(locationDetail));
             deferred.resolve(locationDetail);
@@ -605,7 +648,7 @@ angular.module('iwildfire.services', ['ngResource'])
                             if (locationDetail['nearPois']) {
                                 locationDetail.nearPois = null;
                             }
-                            store.save('locationDetail', locationDetail);
+                            store.setLocationDetail(locationDetail);
                             deferred.resolve(locationDetail);
                         });
                     }

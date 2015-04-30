@@ -27,7 +27,7 @@ var passport = require('passport');
 require('./persistence/database');
 require('./models');
 // start eventq as event subscriptions
-require('./persistence/eventq');
+require('./logic/eventq');
 
 var GitHubStrategy = require('passport-github').Strategy;
 var githubStrategyMiddleware = require('./middlewares/github_strategy');

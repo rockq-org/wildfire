@@ -2,13 +2,36 @@
  * subsribe EMPEvent and process triggers
  */
 
-var Database = require('./database');
+var Database = require('../persistence/database');
 var logger = require('../common/loggerUtil').getLogger('eventq');
 var appInit = require('../appinit.js');
 var minimatch = require("minimatch");
 var config = require('../config');
+var _ = require('lodash');
+var connect_wechat = require('../middlewares/connect-wechat');
 
 appInit.add();
+
+
+function _sendReplyNotifyWithWechatTemplateAPI(payload) {
+    try {
+        var reply_id = payload.reply_id;
+        var from_user_id = payload.author_id;
+        var to_user_id = payload.master_id;
+        var topic_id = payload.topic_id;
+        connect_wechat.pushReplyWithWechatTemplateAPI(to_user_id,
+                from_user_id,
+                topic_id,
+                reply_id)
+            .then(function() {
+                logger.debug('_sendReplyNotifyWithWechatTemplateAPI', 'Notify is send out.');
+            }, function(err) {
+                logger.error('_sendReplyNotifyWithWechatTemplateAPI', err);
+            });
+    } catch (e) {
+        logger.error('_sendReplyNotifyWithWechatTemplateAPI', e);
+    }
+}
 
 /**
  * handle arrival events
@@ -18,9 +41,11 @@ appInit.add();
 function _handleOnBehalf(event) {
     logger.debug('_handleOnBehalf', event);
     // check event pattern and publish out.
-    if (minimatch(event.event, "collection:messages:*")) {
+    // 
+    if (minimatch(event.event, "collection:messages:post")) {
         logger.debug('_handleOnBehalf', 'process collection:messages ...');
         logger.debug('_handleOnBehalf', JSON.stringify(event));
+        _sendReplyNotifyWithWechatTemplateAPI(JSON.parse(event.args));
     }
 }
 

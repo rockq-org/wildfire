@@ -7,7 +7,7 @@
 // 'starter.controllers' is found in controllers.js
 angular.module('iwildfire', ['ionic', 'iwildfire.controllers', 'iwildfire.services', 'iwildfire.directives', 'iwildfire.filters', 'config', 'angularMoment'])
 
-.run(function($ionicPlatform, $rootScope, $log, store, webq, $ionicLoading, amMoment, Messages) {
+.run(function($ionicPlatform, $rootScope, $log, store, webq, $ionicLoading, amMoment, Messages, $timeout) {
 
     amMoment.changeLocale('zh-cn');
 

@@ -398,7 +398,7 @@ function _pushReplyWithWechatTemplateAPI(toUserId, fromUserId, topicId, replyId)
                         color: "#173177"
                     },
                     keyword2: {
-                        value: reply.create_at.toFormat('YYYY-MM-DD HH:MI PP');,
+                        value: reply.create_at.toFormat('YYYY-MM-DD HH:MI PP'),
                         color: "#173177"
                     },
                     keyword3: {

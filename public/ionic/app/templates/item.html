@@ -82,8 +82,20 @@
     </ion-list>
 
   </ion-content>
-
-  <div class="bar bar-footer" ng-show="!showReply" ng-disabled="false" style="padding:0;margin:0">
+  <div class="bar bar-footer">
+    <div class="tabs tabs-color-dark">
+      <a class="tab-item" ng-click="bargain()">
+        我要出价
+      </a>
+      <a class="tab-item" ng-click="connect">
+        <i class="icon frog-icon frog-logo-on"></i>
+      </a>
+      <a class="tab-item" ng-click="comment()">
+        我要留言
+      </a>
+    </div>
+  </div>
+  <!--div class="bar bar-footer" ng-show="!showReply" ng-disabled="false" style="padding:0;margin:0">
     <button ng-click="isShownReplyInputBox()" class="button button-full button-stable" style="padding:0;margin:0">我要留言</button>
   </div>
   <div class="bar bar-footer" ng-show="showReply" class="bar-stable" keyboard-attach>
@@ -93,5 +105,5 @@
       <button class="button button-small button-clear button-positive" ng-click="saveReply()">
         {{ replyData.content == ""? "取消" : "提交" }}
       </button>
-  </div>
+  </div-->
 </ion-view>

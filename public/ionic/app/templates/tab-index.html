@@ -1,17 +1,23 @@
 <!-- http://ionicframework.com/docs/api/directive/ionSideMenus/ -->
 <ion-view hide-nav-bar="true">
     <ion-side-menus>
-        <ion-side-menu-content>
+        <ion-side-menu-content id="index">
           <ion-header-bar class="bar-dark">
               <div class="buttons">
                   <button class="button button-icon ion-navicon" menu-toggle="left"> {{menuTitle}}</button>
               </div>
-              <h1 class="title" ng-click="endSearch()">{{tabTitle}}</h1>
+              <h1 class="title" ng-click="showAddress()">{{tabTitle}}</h1>
               <input class="searchbox" ng-class="showSearch?'expanded':''" ng-model="query" type="text" placeholder="">
               <a class="button button-icon icon ion-ios-search pull-right" ng-click="doSearch(query)"></a>
           </ion-header-bar>
+          <div class="bar bar-subheader">
+            <div class="button-bar">
+              <a class="button button-clear active">最新发布</a>
+              <a class="button button-clear">特价推荐</a>
+            </div>
+          </div>
           <ion-nav-view name="menuContent">
-              <ion-content>
+              <ion-content class="has-subheader">
                 <ion-refresher ng-if="topics.length > 0 || loadError" pulling-text="下拉刷新..." on-refresh="doRefresh()" refreshing-icon="ion-loading-c">
                 </ion-refresher>
                 <div class="list topics">

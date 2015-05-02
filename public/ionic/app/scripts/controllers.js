@@ -4,6 +4,7 @@ angular.module('iwildfire.controllers', [])
     $stateParams,
     $ionicLoading,
     $ionicModal,
+    $ionicPopup,
     $timeout,
     $state,
     locationDetail,
@@ -107,16 +108,19 @@ angular.module('iwildfire.controllers', [])
             return;
         }
         $log.debug('doSearch');
+        $scope.showSearch = false;
         Topics.setQuery(query);
         // Topics.setGeom({lng:140,lat:40.4});
         $scope.doRefresh();
         $log.debug('searchText', query);
         $scope.tabTitle = query || '首页';
     }
-    $scope.endSearch = function() {
-        $scope.showSearch = false;
+    $scope.showAddress = function() {
+        var popup = $ionicPopup.alert({
+            title: '当前位置',
+            template: $scope.tabTitle
+        })
     }
-
 
     if (typeof(locationDetail) != 'undefined') {
         console.log('lyman 122', JSON.stringify(locationDetail));
@@ -139,6 +143,7 @@ angular.module('iwildfire.controllers', [])
     $stateParams,
     $ionicLoading,
     $ionicModal,
+    $ionicPopup,
     $timeout,
     $state,
     webq,
@@ -188,14 +193,18 @@ angular.module('iwildfire.controllers', [])
             return;
         }
         $log.debug('doSearch');
+        $scope.showSearch = false;
         Topics.setQuery(query);
         // Topics.setGeom({lng:140,lat:40.4});
         $scope.doRefresh();
         $log.debug('searchText', query);
         $scope.tabTitle = query || '首页';
     }
-    $scope.endSearch = function() {
-        $scope.showSearch = false;
+    $scope.showAddress = function() {
+        var popup = $ionicPopup.alert({
+            title: '当前位置',
+            template: $scope.tabTitle
+        });
     }
 
     function loadDataAfterGetLocation() {
@@ -387,6 +396,67 @@ angular.module('iwildfire.controllers', [])
         } else {
             $scope.showReply = true;
         }
+    }
+
+    $scope.bargain = function(){/*
+        if ($scope.topic.goods_is_bargain == false){
+            var popup = $ionicPopup.alert({
+                title: '对不起',
+                template: '次商品不接受砍价'
+            });
+            return;
+        }*/
+        var popup = $ionicPopup.show({
+            template: '<input type="text" ng-model="data.wifi">',
+            title: '我要出价',
+            subTitle: '价格要厚道',
+            scope: $scope,
+            buttons: [
+              { text: '取消' },
+              {
+                text: '<b>出价</b>',
+                type: 'button-positive',
+                onTap: function(e) {
+                  if (!$scope.data.wifi) {
+                    //don't allow the user to close unless he enters wifi password
+                    e.preventDefault();
+                  } else {
+                    return $scope.data.wifi;
+                  }
+                }
+              }
+            ]
+        });
+        popup.then(function(res) {
+            console.log('Tapped!', res);
+        });
+    }
+
+    $scope.comment = function(){
+        var popup = $ionicPopup.show({
+            template: '<input type="text" ng-model="data.wifi">',
+            title: '我要留言',
+            subTitle: '说点什么吧',
+            scope: $scope,
+            buttons: [
+              { text: '取消' },
+              {
+                text: '<b>留言</b>',
+                type: 'button-positive',
+                onTap: function(e) {
+                  if (!$scope.data.wifi) {
+                    //don't allow the user to close unless he enters wifi password
+                    e.preventDefault();
+                  } else {
+                    return $scope.data.wifi;
+                  }
+                }
+              }
+            ]
+        });
+        popup.then(function(res) {
+            console.log('Tapped!', res);
+        });
     }
 
     // save reply

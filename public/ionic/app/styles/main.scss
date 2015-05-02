@@ -110,9 +110,27 @@ input.location-address{
 	overflow: visible;
 }
 
+.tabs-color-dark .tab-item {
+  color: #444;
+}
+.tab-item .icon {
+  margin-top: 3px;
+  width: 40px;
+  height: 40px;
+  border: 1px solid #444;
+  border-radius: 20px;
+  line-height: 40px !important;
+}
+.tab-item-active .icon {
+  background-color: #444;
+  color: #fff;
+}
+
 .tab-item .frog-icon {
 	background-size: 100% auto!important;
 	height: 60px;
+  width: 60px;
+  border: none;
 	position: relative;
 	top: -10px;
 }
@@ -125,6 +143,10 @@ input.location-address{
 	background: url(../images/frog-logo-1.png);
 }
 
+#index .button-clear.active, .button-clear.activated {
+  opacity: 0.6;
+  border-bottom: 3px solid #444 !important;
+}
 
 .wf-post-form .goods-img-holder {
   position: relative;

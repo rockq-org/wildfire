@@ -119,8 +119,13 @@ input.location-address{
   width: 40px;
   height: 40px;
   border: 1px solid $dark;
+  background-color: #fff;
   border-radius: 20px;
   line-height: 40px !important;
+}
+.tab-item.activated .icon {
+  background-color: $dark;
+  color: #fff;
 }
 .tab-item-active .icon {
   background-color: $dark;
@@ -131,17 +136,20 @@ input.location-address{
 	background-size: 100% auto!important;
 	height: 60px;
   width: 60px;
-  border: none;
 	position: relative;
 	top: -10px;
+  border-radius: 50%;
+  background-color: #fff;
+  background-position-y: -5px;
+  background-repeat: no-repeat;
 }
 
-.tab-item .frog-logo-on {
-	background: url(../images/frog-logo-2.png);
+.frog-icon.frog1 {
+	background-image: url(../images/frog1.png);
 }
 
-.frog-logo-off {
-	background: url(../images/frog-logo-1.png);
+.frog-icon.frog2 {
+	background-image: url(../images/frog2.png);
 }
 
 #index .button-clear.active, .button-clear.activated {

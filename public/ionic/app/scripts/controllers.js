@@ -564,7 +564,6 @@ angular.module('iwildfire.controllers', [])
     cfg,
     store,
     webq,
-    locationDetail,
     wxWrapper,
     Tabs) {
 
@@ -576,7 +575,6 @@ angular.module('iwildfire.controllers', [])
     // if (!store.getAccessToken()) {
     //     window.location.href = '{0}/auth/wechat/embedded'.f(cfg.server);
     // }
-    $scope.locationDetail = {};
 
     // $scope.params = {
     //     // 标题5到10个字
@@ -746,24 +744,6 @@ angular.module('iwildfire.controllers', [])
 
     }
 
-    $scope.closeChangeLocationModal = function(isSubmit) {
-        if (isSubmit) {
-            $timeout(function() {
-                // $scope.params.goods_exchange_location = webq.getPostGoodsLocation();
-                // $scope.params.goods_exchange_location.user_edit_address = $scope.locationDetail.user_edit_address;
-                // $scope.locationDetail = $scope.params.goods_exchange_location;
-                // console.log(JSON.stringify($scope.locationDetail));
-
-                // $scope.params.goods_exchange_location.api_address = $scope.locationDetail.api_address;
-                // $scope.params.goods_exchange_location.user_edit_address = $scope.locationDetail.user_edit_address;
-                // $scope.params.goods_exchange_location.lat = $scope.locationDetail.lat;
-                // $scope.params.goods_exchange_location.lng = $scope.locationDetail.lng;
-                // console.log('lyman 498', JSON.stringify($scope.locationDetail));
-                // console.log('lyman 499', JSON.stringify($scope.params.goods_exchange_location));
-            });
-        }
-        $scope.changeLocationModal.hide();
-    }
 
     /**
      * 验证表单字段
@@ -814,19 +794,6 @@ angular.module('iwildfire.controllers', [])
         }
     }
 
-    $scope.locationDetail = locationDetail;
-    $scope.params.goods_exchange_location = locationDetail;
-    console.log(JSON.stringify(locationDetail));
-    $scope.showEdit = false;
-    // Create the modal that we will use later
-    $ionicModal.fromTemplateUrl('templates/modal-change-location.html', {
-        scope: $scope
-    }).then(function(modal) {
-        $scope.changeLocationModal = modal;
-        // modal.show();
-    });
-
-
     /*******************************************
      * Modal View to input description of goods
      *******************************************/
@@ -847,6 +814,52 @@ angular.module('iwildfire.controllers', [])
     /*******************************************
      * End of Modal View to input description of goods
      *******************************************/
+
+    /*******************************************
+     * Modal View to input detail of exchange location
+     *******************************************/
+
+    /**
+     * Store the exchange location information
+     * @type {Object}
+     */
+    webq.getLocationDetail(wxWrapper)
+        .then(function(data) {
+            $scope.locationDetail = data;
+            $scope.params.goods_exchange_location = locationDetail;
+            $log.debug('locationDetail', JSON.stringify(locationDetail));
+            $scope.showEdit = false;
+            // Create the modal that we will use later
+            $ionicModal.fromTemplateUrl('templates/modal-change-location.html', {
+                scope: $scope
+            }).then(function(modal) {
+                $scope.changeLocationModal = modal;
+                // modal.show();
+            });
+
+            $scope.closeChangeLocationModal = function(isSubmit) {
+                if (isSubmit) {
+                    $timeout(function() {
+                        // $scope.params.goods_exchange_location = webq.getPostGoodsLocation();
+                        // $scope.params.goods_exchange_location.user_edit_address = $scope.locationDetail.user_edit_address;
+                        // $scope.locationDetail = $scope.params.goods_exchange_location;
+                        // console.log(JSON.stringify($scope.locationDetail));
+
+                        // $scope.params.goods_exchange_location.api_address = $scope.locationDetail.api_address;
+                        // $scope.params.goods_exchange_location.user_edit_address = $scope.locationDetail.user_edit_address;
+                        // $scope.params.goods_exchange_location.lat = $scope.locationDetail.lat;
+                        // $scope.params.goods_exchange_location.lng = $scope.locationDetail.lng;
+                        // console.log('lyman 498', JSON.stringify($scope.locationDetail));
+                        // console.log('lyman 499', JSON.stringify($scope.params.goods_exchange_location));
+                    });
+                }
+                $scope.changeLocationModal.hide();
+            }
+        });
+    /*******************************************
+     * End Modal View to input detail of exchange location
+     *******************************************/
+
 
     //Cleanup the modal when we're done with it!
     $scope.$on('$destroy', function() {

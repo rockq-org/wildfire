@@ -126,9 +126,6 @@ angular.module('iwildfire', ['ionic', 'iwildfire.controllers', 'iwildfire.servic
                 resolve: {
                     wxWrapper: function(webq) {
                         return webq.getWxWrapper();
-                    },
-                    locationDetail: function(webq){
-                        return webq.getLocationDetail();
                     }
                 }
             }

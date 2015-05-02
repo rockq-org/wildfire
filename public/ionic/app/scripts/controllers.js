@@ -336,7 +336,13 @@ angular.module('iwildfire.controllers', [])
         return topicResource.$promise.then(function(response) {
             $scope.topic = response.data;
             $ionicSlideBoxDelegate.update();
-            console.log($scope.topic);
+            $scope.replies = [];
+            $scope.bargains = [];
+            $scope.topic.replies.forEach(function(item, i){
+                if(item.price)  $scope.bargains.push(item);
+                else    $scope.replies.push(item);
+            })
+            console.log($scope.bargains);
         }, $rootScope.requestErrorHandler({
             noBackdrop: true
         }, function() {
@@ -408,7 +414,8 @@ angular.module('iwildfire.controllers', [])
                     return;
                 }*/
         var popup = $ionicPopup.show({
-            template: '<input type="text" ng-model="data.wifi">',
+            template: '出价&nbsp;&nbsp;&nbsp;￥<input type="text" ng-model="replyData.price">\
+                        说点什么<input type="text" ng-model="replyData.content">',
             title: '我要出价',
             subTitle: '价格要厚道',
             scope: $scope,
@@ -418,11 +425,19 @@ angular.module('iwildfire.controllers', [])
                 text: '<b>出价</b>',
                 type: 'button-positive',
                 onTap: function(e) {
-                    if (!$scope.data.wifi) {
+                    if (!$scope.replyData.content) {
                         //don't allow the user to close unless he enters wifi password
                         e.preventDefault();
                     } else {
-                        return $scope.data.wifi;
+                        $ionicLoading.show();
+                        Topic.saveReply(id, $scope.replyData).$promise.then(function(response) {
+                            $ionicLoading.hide();
+                            $scope.replyData.content = '';
+                            $log.debug('post reply response:', response);
+                            $scope.loadTopic(true).then(function() {
+                                $ionicScrollDelegate.scrollBottom();
+                            });
+                        }, $rootScope.requestErrorHandler);
                     }
                 }
             }]
@@ -434,7 +449,7 @@ angular.module('iwildfire.controllers', [])
 
     $scope.comment = function() {
         var popup = $ionicPopup.show({
-            template: '<input type="text" ng-model="data.wifi">',
+            template: '<input type="text" ng-model="replyData.content">',
             title: '我要留言',
             subTitle: '说点什么吧',
             scope: $scope,
@@ -444,11 +459,19 @@ angular.module('iwildfire.controllers', [])
                 text: '<b>留言</b>',
                 type: 'button-positive',
                 onTap: function(e) {
-                    if (!$scope.data.wifi) {
+                    if (!$scope.replyData.content) {
                         //don't allow the user to close unless he enters wifi password
                         e.preventDefault();
                     } else {
-                        return $scope.data.wifi;
+                        $ionicLoading.show();
+                        Topic.saveReply(id, $scope.replyData).$promise.then(function(response) {
+                            $ionicLoading.hide();
+                            $scope.replyData.content = '';
+                            $log.debug('post reply response:', response);
+                            $scope.loadTopic(true).then(function() {
+                                $ionicScrollDelegate.scrollBottom();
+                            });
+                        }, $rootScope.requestErrorHandler);
                     }
                 }
             }]

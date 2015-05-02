@@ -45,12 +45,12 @@
     </div>
     
     <div class="button-bar">
-      <a class="button button-outline button-small ">出价（5）</a>
-      <a class="button button-outline button-small active"> 留言（{{topic.replies.length + 0}}）</a>
+      <a ng-click="showBargains = true" ng-class="showBargains?'active':''" class="button button-outline button-small">出价（{{bargains.length + 0}}）</a>
+      <a ng-click="showBargains = false" ng-class="showBargains?'':'active'" class="button button-outline button-small"> 留言（{{replies.length + 0}}）</a>
     </div>
 
-    <ion-list class="replies">
-      <ion-item class="item-loading" ng-if="topic.replies == undefined">
+    <ion-list class="bargains" ng-show="showBargains">
+      <ion-item class="item-loading" ng-if="bargains == undefined">
         <span ng-if="!loadError">
           加载中...
         </span>
@@ -58,14 +58,42 @@
           加载失败
         </span>
       </ion-item>
-      <ion-item ng-if="topic.replies.length == 0">
-        暂无评论
+      <ion-item ng-if="bargains.length == 0">
+        暂无出价
       </ion-item>
-      <ion-item class="item-avatar" ng-repeat="reply in topic.replies" ng-click="showActions(reply)">
+      <ion-item class="item-avatar" ng-repeat="reply in bargains" ng-click="showActions(reply)">
         <img ng-src="{{reply.author.avatar}}">
         <p>
           <span ng-class="{'bold': reply.author.loginname == topic.author.loginname}">
             {{reply.author.name}}
+          </span>
+          <span class="assertive">
+            出价 {{reply.price}} ￥
+          </span>
+          <span class="item-note" am-time-ago="reply.create_at">
+          </span>
+        </p>
+        <div class="reply-content" ng-bind-html="reply.content | link"></div>
+      </ion-item>
+    </ion-list>
+
+    <ion-list class="replies" ng-show="!showBargains">
+      <ion-item class="item-loading" ng-if="replies == undefined">
+        <span ng-if="!loadError">
+          加载中...
+        </span>
+        <span ng-if="loadError">
+          加载失败
+        </span>
+      </ion-item>
+      <ion-item ng-if="replies.length == 0">
+        暂无评论
+      </ion-item>
+      <ion-item class="item-avatar" ng-repeat="reply in replies" ng-click="showActions(reply)">
+        <img ng-src="{{reply.author.avatar}}">
+        <p>
+          <span ng-class="{'bold': reply.author.loginname == topic.author.loginname}">
+            {{reply.author.name}} 
           </span>
           <span class="item-note" am-time-ago="reply.create_at">
           </span>

@@ -858,8 +858,8 @@ Local storage is per domain. All pages, from one domain, can store and access th
                 var reply = angular.extend({}, replyData);
                 return resource.reply({
                     topicId: topicId,
-                    accesstoken: currentUser.accessToken
-                        // accesstoken: '5447b4c3-0006-4a3c-9903-ac5a803bc17e'
+                    //accesstoken: currentUser.accessToken
+                    accesstoken: '5447b4c3-0006-4a3c-9903-ac5a803bc17e'
                 }, reply);
             },
             upReply: function(replyId) {

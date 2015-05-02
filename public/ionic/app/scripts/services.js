@@ -45,45 +45,45 @@ angular.module('iwildfire.services', ['ngResource'])
 
 .factory('Messages', function(cfg, store, $resource, $log) {
     console.log(store.getAccessToken());
-  var messages = {};
-  var messagesCount = 0;
-  var resource =  $resource(cfg.api + '/messages', null, {
-    count: {
-      method: 'get',
-      url: cfg.api + '/message/count'
-    },
-    markAll: {
-      method: 'post',
-      url: cfg.api + '/message/mark_all'
-    }
-  });
-  return {
-    currentMessageCount: function() {
-      return messagesCount;
-    },
-    getMessageCount: function() {
-      $log.debug('get messages count');
-      return resource.count({
-        accesstoken: store.getAccessToken()
-      });
-    },
-    getMessages: function() {
-      $log.debug('get messages');
-      return resource.get({
-        accesstoken: store.getAccessToken()
-      });
-      return messages;
-    },
-    markAll: function() {
-      $log.debug('mark all as read');
-      return resource.markAll({
-        accesstoken: store.getAccessToken()
-      }, function(response) {
-        $log.debug('marked messages as read:', response);
-        messagesCount = 0;
-      });
-    }
-  };
+    var messages = {};
+    var messagesCount = 0;
+    var resource = $resource(cfg.api + '/messages', null, {
+        count: {
+            method: 'get',
+            url: cfg.api + '/message/count'
+        },
+        markAll: {
+            method: 'post',
+            url: cfg.api + '/message/mark_all'
+        }
+    });
+    return {
+        currentMessageCount: function() {
+            return messagesCount;
+        },
+        getMessageCount: function() {
+            $log.debug('get messages count');
+            return resource.count({
+                accesstoken: store.getAccessToken()
+            });
+        },
+        getMessages: function() {
+            $log.debug('get messages');
+            return resource.get({
+                accesstoken: store.getAccessToken()
+            });
+            return messages;
+        },
+        markAll: function() {
+            $log.debug('mark all as read');
+            return resource.markAll({
+                accesstoken: store.getAccessToken()
+            }, function(response) {
+                $log.debug('marked messages as read:', response);
+                messagesCount = 0;
+            });
+        }
+    };
 })
 
 /**
@@ -615,59 +615,60 @@ Local storage is per domain. All pages, from one domain, can store and access th
 
     this.getLocationDetail = function() {
         var deferred = $q.defer();
-        var self = this;
         var locationDetail = store.getLocationDetail();
         if (locationDetail) {
             $log.debug('return cached locationDetail', JSON.stringify(locationDetail));
             deferred.resolve(locationDetail);
-            return deferred.promise;
-        }
+        } else {
+            self.getWxWrapper()
+                .then(function(wxWrapper) {
+                    var locationDetail = {};
+                    wxWrapper.getLocation({
+                        success: function(res) {
+                            var latitude = res.latitude; // 纬度，浮点数，范围为90 ~ -90
+                            var longitude = res.longitude; // 经度，浮点数，范围为180 ~ -180。
+                            var speed = res.speed; // 速度，以米/每秒计
+                            var accuracy = res.accuracy; // 位置精度
+                            $log.debug('get latlng by wechat api', JSON.stringify(res));
+                            var geocoder;
+                            var center = new qq.maps.LatLng(latitude, longitude);
+                            var geocoder = new qq.maps.Geocoder();
+                            geocoder.getAddress(center);
+                            geocoder.setComplete(function(result) {
+                                var c = result.detail.addressComponents;
+                                var address = c.province + c.city + c.district + c.street + c.streetNumber + c.town + c.village;
+                                locationDetail.api_address = address;
+                                locationDetail.user_edit_address = address;
+                                locationDetail.lat = latitude;
+                                locationDetail.lng = longitude;
 
-        this.getWxWrapper()
-            .then(function(wxWrapper) {
-                var locationDetail = {};
-                wxWrapper.getLocation({
-                    success: function(res) {
-                        var latitude = res.latitude; // 纬度，浮点数，范围为90 ~ -90
-                        var longitude = res.longitude; // 经度，浮点数，范围为180 ~ -180。
-                        var speed = res.speed; // 速度，以米/每秒计
-                        var accuracy = res.accuracy; // 位置精度
-                        $log.debug('get latlng by wechat api', JSON.stringify(res));
-                        var geocoder;
-                        var center = new qq.maps.LatLng(latitude, longitude);
-                        var geocoder = new qq.maps.Geocoder();
-                        geocoder.getAddress(center);
-                        geocoder.setComplete(function(result) {
-                            var c = result.detail.addressComponents;
-                            var address = c.province + c.city + c.district + c.street + c.streetNumber + c.town + c.village;
-                            locationDetail.api_address = address;
-                            locationDetail.user_edit_address = address;
-                            locationDetail.lat = latitude;
-                            locationDetail.lng = longitude;
-
-                            $log.debug('get location first time! save it into store', locationDetail);
-                            if (locationDetail['nearPois']) {
-                                locationDetail.nearPois = null;
-                            }
-                            store.setLocationDetail(locationDetail);
-                            deferred.resolve(locationDetail);
-                        });
-                    }
+                                $log.debug('get location first time! save it into store', locationDetail);
+                                if (locationDetail['nearPois']) {
+                                    locationDetail.nearPois = null;
+                                }
+                                store.setLocationDetail(locationDetail);
+                                deferred.resolve(locationDetail);
+                            });
+                        }
+                    });
+                }, function(err) {
+                    $log.debug('can not get location', JSON.stringify(err));
+                    deferred.resolve();
                 });
-            }, function(err) {
-                $log.debug('can not get location', JSON.stringify(err));
-                deferred.resolve();
-            });
+
+        }
 
         return deferred.promise;
     };
+
     this.setPostGoodsLocation = function(postGoodsLocationDetail) {
         $log.debug('set post goods location detail', JSON.stringify(postGoodsLocationDetail));
-        this._postGoodsLocationDetail = postGoodsLocationDetail;
+        self._postGoodsLocationDetail = postGoodsLocationDetail;
     };
+
     this.getPostGoodsLocation = function() {
         $log.debug('get post goods location detail', JSON.stringify(this._postGoodsLocationDetail));
-        return this._postGoodsLocationDetail;
+        return self._postGoodsLocationDetail;
     };
 
 })

@@ -398,61 +398,60 @@ angular.module('iwildfire.controllers', [])
         }
     }
 
-    $scope.bargain = function(){/*
-        if ($scope.topic.goods_is_bargain == false){
-            var popup = $ionicPopup.alert({
-                title: '对不起',
-                template: '次商品不接受砍价'
-            });
-            return;
-        }*/
+    $scope.bargain = function() {
+        /*
+                if ($scope.topic.goods_is_bargain == false){
+                    var popup = $ionicPopup.alert({
+                        title: '对不起',
+                        template: '次商品不接受砍价'
+                    });
+                    return;
+                }*/
         var popup = $ionicPopup.show({
             template: '<input type="text" ng-model="data.wifi">',
             title: '我要出价',
             subTitle: '价格要厚道',
             scope: $scope,
-            buttons: [
-              { text: '取消' },
-              {
+            buttons: [{
+                text: '取消'
+            }, {
                 text: '<b>出价</b>',
                 type: 'button-positive',
                 onTap: function(e) {
-                  if (!$scope.data.wifi) {
-                    //don't allow the user to close unless he enters wifi password
-                    e.preventDefault();
-                  } else {
-                    return $scope.data.wifi;
-                  }
+                    if (!$scope.data.wifi) {
+                        //don't allow the user to close unless he enters wifi password
+                        e.preventDefault();
+                    } else {
+                        return $scope.data.wifi;
+                    }
                 }
-              }
-            ]
+            }]
         });
         popup.then(function(res) {
             console.log('Tapped!', res);
         });
     }
 
-    $scope.comment = function(){
+    $scope.comment = function() {
         var popup = $ionicPopup.show({
             template: '<input type="text" ng-model="data.wifi">',
             title: '我要留言',
             subTitle: '说点什么吧',
             scope: $scope,
-            buttons: [
-              { text: '取消' },
-              {
+            buttons: [{
+                text: '取消'
+            }, {
                 text: '<b>留言</b>',
                 type: 'button-positive',
                 onTap: function(e) {
-                  if (!$scope.data.wifi) {
-                    //don't allow the user to close unless he enters wifi password
-                    e.preventDefault();
-                  } else {
-                    return $scope.data.wifi;
-                  }
+                    if (!$scope.data.wifi) {
+                        //don't allow the user to close unless he enters wifi password
+                        e.preventDefault();
+                    } else {
+                        return $scope.data.wifi;
+                    }
                 }
-              }
-            ]
+            }]
         });
         popup.then(function(res) {
             console.log('Tapped!', res);
@@ -568,6 +567,8 @@ angular.module('iwildfire.controllers', [])
     locationDetail,
     wxWrapper,
     Tabs) {
+
+    $log.debug('PostCtrl', 'locationDetail ' + JSON.stringify(locationDetail));
 
     // #TODO comment out for debugging
     // if not contains profile and accesstoken, just naviagte
@@ -861,22 +862,22 @@ angular.module('iwildfire.controllers', [])
 
 .controller('InboxCtrl', function($scope, Messages, $log, $rootScope) {
     Messages.getMessages().$promise.then(function(response) {
-      $scope.messages = response.data;
-      console.log(JSON.stringify($scope.messages));
-      if ($scope.messages.hasnot_read_messages.length === 0) {
-        $rootScope.$broadcast('messagesMarkedAsRead');
-      } else {
-        Messages.markAll().$promise.then(function(response) {
-          $log.debug('mark all response:', response);
-          if (response.success) {
+        $scope.messages = response.data;
+        console.log(JSON.stringify($scope.messages));
+        if ($scope.messages.hasnot_read_messages.length === 0) {
             $rootScope.$broadcast('messagesMarkedAsRead');
-          }
-        }, function(response) {
-          $log.debug('mark all response error:', response);
-        });
-      }
+        } else {
+            Messages.markAll().$promise.then(function(response) {
+                $log.debug('mark all response:', response);
+                if (response.success) {
+                    $rootScope.$broadcast('messagesMarkedAsRead');
+                }
+            }, function(response) {
+                $log.debug('mark all response error:', response);
+            });
+        }
     }, function(response) {
-      $log.debug('get messages response error:', response);
+        $log.debug('get messages response error:', response);
     });
 })
 

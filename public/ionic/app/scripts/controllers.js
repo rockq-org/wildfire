@@ -823,9 +823,9 @@ angular.module('iwildfire.controllers', [])
      */
     webq.getLocationDetail(wxWrapper)
         .then(function(data) {
+            $log.debug('locationDetail', JSON.stringify(data));
             $scope.locationDetail = data;
-            $scope.params.goods_exchange_location = locationDetail;
-            $log.debug('locationDetail', JSON.stringify(locationDetail));
+            $scope.params.goods_exchange_location = data;
             $scope.showEdit = false;
             // Create the modal that we will use later
             $ionicModal.fromTemplateUrl('templates/modal-change-location.html', {

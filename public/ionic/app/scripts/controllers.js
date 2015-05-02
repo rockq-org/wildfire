@@ -567,8 +567,6 @@ angular.module('iwildfire.controllers', [])
     wxWrapper,
     Tabs) {
 
-    $log.debug('PostCtrl', 'locationDetail ' + JSON.stringify(locationDetail));
-
     // #TODO comment out for debugging
     // if not contains profile and accesstoken, just naviagte
     // to user authentication page.

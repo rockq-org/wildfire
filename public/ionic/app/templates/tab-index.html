@@ -10,14 +10,16 @@
               <input class="searchbox" ng-class="showSearch?'expanded':''" ng-model="query" type="text" placeholder="">
               <a class="button button-icon icon ion-ios-search pull-right" ng-click="doSearch(query)"></a>
           </ion-header-bar>
-          <div class="bar bar-subheader">
+          <!-- #TODO hide 特价推荐 at this time. https://github.com/arrking/wildfire/issues/123 -->
+<!--           <div class="bar bar-subheader">
             <div class="button-bar">
               <a class="button button-clear active">最新发布</a>
               <a class="button button-clear">特价推荐</a>
             </div>
-          </div>
+          </div> -->
           <ion-nav-view name="menuContent">
-              <ion-content class="has-subheader">
+              <ion-content>
+              <!-- <ion-content class="has-subheader"> -->
                 <ion-refresher ng-if="topics.length > 0 || loadError" pulling-text="下拉刷新..." on-refresh="doRefresh()" refreshing-icon="ion-loading-c">
                 </ion-refresher>
                 <div class="list topics">

@@ -20,8 +20,8 @@
         &nbsp;
         <del>￥ {{topic.goods_pre_price}}</del>
         </h3>
-        <button class="button button-assertive button-small">接受侃价</button>
-        <br />
+        <button class="button button-assertive button-small">{{topic.goods_is_bargain?'接受侃价':'谢绝侃价'}}</button>
+        <br />        
         <a class="button button-clear button-assertive">
           <i class=" icon ion-ios-heart-outline"> </i> {{topic.collect_count + 0}}
         </a>
@@ -32,23 +32,21 @@
           <img ng-src='{{topic.author.avatar}}' />
           <span>{{topic.author.name}}</span>
         </div>
-        <div class="item-content"><i class="icon ion-ios7-location mr5"></i>{{topic.goods_exchange_location.address}}</div>
+        <div class="item-content"><i class="icon ion-ios-location mr5"></i>{{topic.goods_exchange_location.address}}</div>
         <div class="item-note">
           距离1.5公里<br />
           <span am-time-ago="topic.update_at"></span>
         </div>
       </div>
     </div>
-    <div class="row topic">
-      <div class="col col90">
-        <h5>宝贝详情</h4>
-        <div class="topic-content" ng-bind-html="topic.content | link"></div>
-      </div>
+    <div class="dot-line padding">
+      <h5>宝贝详情</h4>
+      <div class="topic-content" ng-bind-html="topic.content | link"></div>
     </div>
     
     <div class="button-bar">
       <a class="button button-outline button-small ">出价（5）</a>
-      <a class="button button-outline button-small active"> 留言（{{topic.replies.length}}）</a>
+      <a class="button button-outline button-small active"> 留言（{{topic.replies.length + 0}}）</a>
     </div>
 
     <ion-list class="replies">
@@ -71,11 +69,6 @@
           </span>
           <span class="item-note" am-time-ago="reply.create_at">
           </span>
-          <span class="item-note cnode">
-            <i class="icon ion-thumbsup"></i>
-            <span ng-if="reply.ups.length > 0">{{reply.ups.length}}</span>
-            &nbsp;
-          </span>
         </p>
         <div class="reply-content" ng-bind-html="reply.content | link"></div>
       </ion-item>
@@ -87,9 +80,11 @@
       <a class="tab-item" ng-click="bargain()">
         我要出价
       </a>
-      <a class="tab-item" ng-click="connect">
-        <i class="icon frog-icon frog-logo-on"></i>
-      </a>
+      <div class="tab-item">
+        <i ng-click="showContact=!showContact" class="icon frog-icon frog-logo-on"></i>
+        <a class="tab-item" href="tel:{{topic.author.phone_number}}"><i ng-show="showContact" class="icon ion-ios-telephone phone-icon"></i></a>
+        <a class="tab-item" href="sms:{{topic.author.phone_number}}"><i ng-show="showContact" class="icon ion-ios-chatbubble message-icon"></i></a>
+      </div>
       <a class="tab-item" ng-click="comment()">
         我要留言
       </a>

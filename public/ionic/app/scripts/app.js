@@ -55,6 +55,11 @@ angular.module('iwildfire', ['ionic', 'iwildfire.controllers', 'iwildfire.servic
     });
 })
 
+.config(function ($compileProvider) {
+    $compileProvider.imgSrcSanitizationWhitelist(/^\s*(https?|local|data):/);
+    $compileProvider.aHrefSanitizationWhitelist(/^\s*(https?|ftp|mailto|tel|sms|chrome-extension):/);
+})
+
 // global config for uniform ui for different platform
 .config(function($ionicConfigProvider) {
     $ionicConfigProvider.views.transition('ios');

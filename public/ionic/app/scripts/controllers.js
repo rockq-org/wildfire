@@ -474,56 +474,6 @@ angular.module('iwildfire.controllers', [])
         }, $rootScope.requestErrorHandler);
     };
 
-    // show actions
-    $scope.showActions = function(reply) {
-        var currentUser = User.getCurrentUser();
-        if (currentUser.loginname === undefined || currentUser.loginname === reply.author.loginname) {
-            return;
-        }
-        $log.debug('action reply:', reply);
-        var upLabel = '赞';
-        // detect if current user already do up
-        if (reply.ups.indexOf(currentUser.id) !== -1) {
-            upLabel = '已赞';
-        }
-        var replyContent = '@' + reply.author.loginname;
-        $ionicActionSheet.show({
-            buttons: [{
-                text: '回复'
-            }, {
-                text: upLabel
-            }],
-            titleText: replyContent,
-            cancel: function() {},
-            buttonClicked: function(index) {
-
-                // reply to someone
-                if (index === 0) {
-                    $scope.replyData.content = replyContent + ' ';
-                    $scope.replyData.reply_id = reply.id;
-                    $timeout(function() {
-                        document.querySelector('.reply-new input').focus();
-                    }, 1);
-                }
-
-                // up reply
-                if (index === 1) {
-                    Topic.upReply(reply.id).$promise.then(function(response) {
-                        $log.debug('up reply response:', response);
-                        $ionicLoading.show({
-                            noBackdrop: true,
-                            template: response.action === 'up' ? '点赞成功' : '点赞已取消',
-                            duration: 1000
-                        });
-                    }, $rootScope.requestErrorHandler({
-                        noBackdrop: true,
-                    }));
-                }
-                return true;
-            }
-        });
-    };
-
     // collect topic
     $scope.collectTopic = function() {
         if ($scope.isCollected) {

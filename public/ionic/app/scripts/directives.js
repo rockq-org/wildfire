@@ -36,9 +36,9 @@ angular.module('iwildfire.directives', [])
         for(var i in topics){
             (function(n) {
                 var marker = new qq.maps.Marker({ map: map });
-                var position = {lat: 25.3518140000000010 + i * 0.003, lng: 118.7042859999999962 + i * 0.003};
-                position = new qq.maps.LatLng(position.lat, position.lng);
-                // position = new qq.maps.LatLng(topics[i].goods_exchange_location.lat, topics[i].goods_exchange_location.lng);
+                // var position = {lat: 25.3518140000000010 + i * 0.003, lng: 118.7042859999999962 + i * 0.003};
+                // position = new qq.maps.LatLng(position.lat, position.lng);
+                var position = new qq.maps.LatLng(topics[i].goods_exchange_location.lat, topics[i].goods_exchange_location.lng);
 
                 marker.setPosition( position );
 
@@ -81,7 +81,7 @@ angular.module('iwildfire.directives', [])
         map = new qq.maps.Map( container, {
             center: center,
             zoom: scope.zoom,
-            zoomControl: false,
+            zoomControl: true,
             mapTypeControl: false
         });
 
@@ -102,9 +102,10 @@ angular.module('iwildfire.directives', [])
             complete: function(result) {
                 $timeout(function(){
                     var c = result.detail.addressComponents;
-                    var address = c.city + c.district + c.street + c.streetNumber + c.town + c.village;
+                    var full_address = c.country + c.province + c.city + c.district + c.street + c.streetNumber + c.town + c.village;
+                    var address = c.streetNumber + c.town + c.village;
 
-                    scope.locationDetail.api_address = result.detail.address;
+                    scope.locationDetail.api_address = full_address;
                     scope.locationDetail.user_edit_address = address;
                     scope.locationDetail.lat = result.detail.location.lat;
                     scope.locationDetail.lng = result.detail.location.lng;
@@ -117,8 +118,8 @@ angular.module('iwildfire.directives', [])
 
         // add reset control
         var style = {
-            left: 10,
-            top: height - 56,
+            left: 60,
+            top: height - 66,
             iconName: '3.png'
         };
         var resetControl = addControl(container, style);
@@ -153,7 +154,7 @@ angular.module('iwildfire.directives', [])
         var map = new qq.maps.Map(element, {
             // 地图的中心地理坐标
             center: center,
-            zoomControl: false,
+            zoomControl: true,
             mapTypeControl: false,
             zoom: 17
         });
@@ -180,7 +181,7 @@ angular.module('iwildfire.directives', [])
         // });
 
         var resetControl = document.createElement("div");
-        resetControl.style.left = 15 + "px";
+        resetControl.style.left = 60 + "px";
         resetControl.style.top = height - 100 + "px";
         resetControl.style.position = "relative";
         resetControl.style.width = "36px";
@@ -204,8 +205,9 @@ angular.module('iwildfire.directives', [])
             complete: function(result) {
                 $timeout(function() {
                     var c = result.detail.addressComponents;
-                    address = c.city + c.district + c.street + c.streetNumber + c.town + c.village;
-                    scope.$parent.$parent.locationDetail.api_address = result.detail.address;
+                    var full_address = c.country + c.province + c.city + c.district + c.street + c.streetNumber + c.town + c.village;
+                    var address = c.streetNumber + c.town + c.village;
+                    scope.$parent.$parent.locationDetail.api_address = full_address;
                     scope.$parent.$parent.locationDetail.user_edit_address = address;
                     scope.$parent.$parent.locationDetail.lat = result.detail.location.lat;
                     scope.$parent.$parent.locationDetail.lng = result.detail.location.lng;

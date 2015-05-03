@@ -47,21 +47,28 @@ Orders fake tab
                         <i class="icon ion-ios-heart-outline" style="color:red">{{item.collect_count}}</i>
                         <!-- need a filter to process create_at  -->
                         <span>{{item.create_at | relativets}} </span>
-                        <ion-option-button class="button-calm" ng-click="editDingOnShelf(item)" ng-if="item.goods_status === '在售'">
-                            顶
-                        </ion-option-button>
-                        <ion-option-button class="button-stable" ng-click="editOffShelf(item)" ng-if="item.goods_status === '在售'">
-                            下架
-                        </ion-option-button>
-                        <ion-option-button class="button-energized" ng-click="editSoldOut(item)" ng-if="item.goods_status === '在售'">
-                            售出
-                        </ion-option-button>
-                        <ion-option-button class="button-assertive" ng-click="editDelete(item)" ng-if="item.goods_status === '下架'">
-                            删除
-                        </ion-option-button>
-                        <ion-option-button class="button-royal" ng-click="editOnShelf(item)" ng-if="item.goods_status === '下架'">
-                            上架
-                        </ion-option-button>
+                        <span ng-if="!isFavoriteTab">
+                            <ion-option-button class="button-calm" ng-click="editDingOnShelf(item)" ng-if="item.goods_status === '在售'">
+                                顶
+                            </ion-option-button>
+                            <ion-option-button class="button-stable" ng-click="editOffShelf(item)" ng-if="item.goods_status === '在售'">
+                                下架
+                            </ion-option-button>
+                            <ion-option-button class="button-energized" ng-click="editSoldOut(item)" ng-if="item.goods_status === '在售'">
+                                售出
+                            </ion-option-button>
+                            <ion-option-button class="button-assertive" ng-click="editDelete(item)" ng-if="item.goods_status === '下架'">
+                                删除
+                            </ion-option-button>
+                            <ion-option-button class="button-royal" ng-click="editOnShelf(item)" ng-if="item.goods_status === '下架'">
+                                上架
+                            </ion-option-button>
+                        </span>
+                        <span ng-if="isFavoriteTab">
+                            <ion-option-button class="button-assertive" ng-click="editUnCollected(item)">
+                                取消收藏
+                            </ion-option-button>
+                        </span>
                     </ion-item>
                 </ion-list>
             </ion-scroll>

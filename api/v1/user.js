@@ -194,8 +194,9 @@ exports.getMyTopics = function(req, res, next) {
 exports.getMyCollections = function(req, res, next) {
     var user = req.user;
     var page = Number(req.query.page) || 1;
-    var limit = config.list_topic_count;
-console.log(page, user);
+    // var limit = config.list_topic_count;
+    var limit = 100;
+
     var render = function (topics, pages) {
       // res.render('user/collect_topics', {
       //   topics: topics,

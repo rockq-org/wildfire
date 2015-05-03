@@ -49,7 +49,7 @@ angular.module('iwildfire', ['ionic', 'iwildfire.controllers', 'iwildfire.servic
     $rootScope.message_not_read_count = 0;
     Messages.getMessageCount().$promise.then(function(response){
         $timeout(function(){
-            console.log(response.data);
+            // console.log(response.data);
             $rootScope.message_not_read_count = response.data;
         })
     });
@@ -68,8 +68,8 @@ angular.module('iwildfire', ['ionic', 'iwildfire.controllers', 'iwildfire.servic
     $ionicConfigProvider.navBar.alignTitle('center');
 })
 
-.config(function($stateProvider, $urlRouterProvider) {
-
+.config(function($stateProvider, $urlRouterProvider, $logProvider) {
+    $logProvider.debugEnabled( false );// turn off log
     /**
      * more about ui-router
      * http://angular-ui.github.io/ui-router/site/

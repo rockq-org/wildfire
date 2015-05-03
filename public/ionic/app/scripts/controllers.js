@@ -887,13 +887,14 @@ angular.module('iwildfire.controllers', [])
 // })
 
 .controller('AccountCtrl', function($scope, $ionicModal, $log, store, cfg,
-    webq, myProfile, myTopics) {
+    webq, myProfile, myTopics, $q) {
     $log.debug("myProfile" + JSON.stringify(myProfile));
     $log.debug("myTopics: " + JSON.stringify(myTopics));
     // load user profile from localStorage
     var onGoingStuffs = [];
     var offShelfStuffs = [];
     var favoritesStuffs = [];
+    $scope.isFavoriteTab = false;
 
     if (!myProfile && !cfg.debug) {
         // change to wechat uaa page
@@ -914,24 +915,28 @@ angular.module('iwildfire.controllers', [])
      */
     function _separateMyTopics(update, callback) {
         if (update) {
-            webq.getMyTopicsResolve()
-                .then(function(latestMyTopics) {
-                    if (latestMyTopics) {
-                        myTopics = latestMyTopics;
-                        onGoingStuffs = _.filter(myTopics, function(x) {
-                            return x.goods_status === '在售';
-                        });
+            $q.all([
+              webq.getMyTopicsResolve(),
+              webq.getMyCollectionResolve()
+            ]).then(function(results) {
+                var latestMyTopics = results[0];
 
-                        offShelfStuffs = _.filter(myTopics, function(x) {
-                            return x.goods_status === '下架';
-                        });
+                if (latestMyTopics) {
+                    myTopics = latestMyTopics;
+                    onGoingStuffs = _.filter(myTopics, function(x) {
+                        return x.goods_status === '在售';
+                    });
 
-                        favoritesStuffs = _.filter(myTopics, function(x) {
-                            return x.goods_status === '收藏';
-                        });
-                        if (callback) callback();
-                    }
-                });
+                    offShelfStuffs = _.filter(myTopics, function(x) {
+                        return x.goods_status === '下架';
+                    });
+
+                }
+
+                favoritesStuffs = results[1];
+
+                if (callback) callback();
+            });
         } else if (myTopics) {
             onGoingStuffs = _.filter(myTopics, function(x) {
                 return x.goods_status === '在售';
@@ -941,11 +946,6 @@ angular.module('iwildfire.controllers', [])
                 return x.goods_status === '下架';
             });
 
-            // #Todo Issue 78
-            // https://github.com/arrking/wildfire/issues/78
-            favoritesStuffs = _.filter(myTopics, function(x) {
-                return x.goods_status === '收藏';
-            });
             if (callback) callback();
         }
     }
@@ -977,18 +977,21 @@ angular.module('iwildfire.controllers', [])
                     $scope.stuffs = onGoingStuffs;
                     _resetScopeData();
                 });
+                $scope.isFavoriteTab = false;
                 break;
             case 'offShelfStuffs':
                 _separateMyTopics(true, function() {
                     $scope.stuffs = offShelfStuffs;
                     _resetScopeData();
                 });
+                $scope.isFavoriteTab = false;
                 break;
             case 'favoritesStuffs':
                 _separateMyTopics(true, function() {
                     $scope.stuffs = favoritesStuffs;
                     _resetScopeData();
                 });
+                $scope.isFavoriteTab = true;
                 break;
             default:
                 break;
@@ -1008,6 +1011,29 @@ angular.module('iwildfire.controllers', [])
             }, function() {
                 alert('没有成功，什么情况，稍候再试 ?');
             });
+    }
+
+    /**
+     * 取消收藏
+     * tab: favoritesStuffs
+     * @param  {[type]} topic [description]
+     * @return {[type]}       [description]
+     */
+    $scope.editUnCollected = function(topic) {
+
+        // TODO: wait for collected api
+
+        // topic.goods_status = '下架';
+        // webq.updateMyTopic(topic)
+        //     .then(function(data) {
+        //         // alert('{0} 成功下架'.f(topic.title));
+        //         _separateMyTopics(true, function() {
+        //             $scope.stuffs = onGoingStuffs;
+        //             _resetScopeData();
+        //         });
+        //     }, function(err) {
+        //         alert(JSON.stringify(err));
+        //     });
     }
 
     /**

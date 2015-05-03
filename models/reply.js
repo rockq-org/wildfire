@@ -3,6 +3,7 @@ var Schema = mongoose.Schema;
 var ObjectId = Schema.ObjectId;
 
 var ReplySchema = new Schema({
+	price: {type: Number},
   content: { type: String },
   topic_id: { type: ObjectId},
   author_id: { type: ObjectId },

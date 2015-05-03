@@ -45,45 +45,45 @@ angular.module('iwildfire.services', ['ngResource'])
 
 .factory('Messages', function(cfg, store, $resource, $log) {
     console.log(store.getAccessToken());
-  var messages = {};
-  var messagesCount = 0;
-  var resource =  $resource(cfg.api + '/messages', null, {
-    count: {
-      method: 'get',
-      url: cfg.api + '/message/count'
-    },
-    markAll: {
-      method: 'post',
-      url: cfg.api + '/message/mark_all'
-    }
-  });
-  return {
-    currentMessageCount: function() {
-      return messagesCount;
-    },
-    getMessageCount: function() {
-      $log.debug('get messages count');
-      return resource.count({
-        accesstoken: store.getAccessToken()
-      });
-    },
-    getMessages: function() {
-      $log.debug('get messages');
-      return resource.get({
-        accesstoken: store.getAccessToken()
-      });
-      return messages;
-    },
-    markAll: function() {
-      $log.debug('mark all as read');
-      return resource.markAll({
-        accesstoken: store.getAccessToken()
-      }, function(response) {
-        $log.debug('marked messages as read:', response);
-        messagesCount = 0;
-      });
-    }
-  };
+    var messages = {};
+    var messagesCount = 0;
+    var resource = $resource(cfg.api + '/messages', null, {
+        count: {
+            method: 'get',
+            url: cfg.api + '/message/count'
+        },
+        markAll: {
+            method: 'post',
+            url: cfg.api + '/message/mark_all'
+        }
+    });
+    return {
+        currentMessageCount: function() {
+            return messagesCount;
+        },
+        getMessageCount: function() {
+            $log.debug('get messages count');
+            return resource.count({
+                accesstoken: store.getAccessToken()
+            });
+        },
+        getMessages: function() {
+            $log.debug('get messages');
+            return resource.get({
+                accesstoken: store.getAccessToken()
+            });
+            return messages;
+        },
+        markAll: function() {
+            $log.debug('mark all as read');
+            return resource.markAll({
+                accesstoken: store.getAccessToken()
+            }, function(response) {
+                $log.debug('marked messages as read:', response);
+                messagesCount = 0;
+            });
+        }
+    };
 })
 
 /**
@@ -509,25 +509,13 @@ Local storage is per domain. All pages, from one domain, can store and access th
         var deferred = $q.defer();
         // should not use encodeURIComponent
         var app_url = window.location.href.split('#')[0];
-        var accesstoken = store.getAccessToken();
-        var wechatSingnature = store.getWechatSignature();
 
-        //TODO: maybe add expire time stuff to refresh it
-        // if( wechatSingnature ){
-        //     $log.debug('now get the cache version of wechatSingnature', JSON.stringify(wechatSingnature));
-        //     deferred.resolve( wechatSingnature );
-        //     return deferred.promise;
-        // } else {
-        //     $log.debug('do not cache wechatSingnature yet', JSON.stringify(wechatSingnature));
-        // }
         // when the server domain is registered in
         // wechat plaform. If not, the signature can be
         // generated with this app url.
-        if (!accesstoken) {
-            deferred.resolve();
-        } else if (S(cfg.server).contains('arrking.com')) {
+        // #TODO set this domian properly is very important.
+        if (S(cfg.server).contains('arrking.com')) {
             $http.post('{0}/ionic/wechat-signature'.f(cfg.api), {
-                    accesstoken: accesstoken,
                     app_url: app_url
                 }, {
                     headers: {
@@ -585,7 +573,7 @@ Local storage is per domain. All pages, from one domain, can store and access th
      */
     this.getWxWrapper = function() {
         var deferred = $q.defer();
-        this.getWechatSignature()
+        self.getWechatSignature()
             .then(function(wechat_signature) {
                 $log.debug(JSON.stringify(wechat_signature));
                 if (wechat_signature) {
@@ -597,11 +585,13 @@ Local storage is per domain. All pages, from one domain, can store and access th
                     wx.config(wechat_signature);
                     wx.error(function(err) {
                         alert(err);
+                        $log.error('getWxWrapper', err);
                         deferred.resolve();
                     });
                     wx.ready(function() {
                         //TODO: maybe add an expire time for this?
                         //      or just clear up alllll store while user refresh our url?
+                        $log.debug('getWxWrapper', 'wxWrapper is resolved.');
                         deferred.resolve(wx);
                     });
                 } else {
@@ -613,61 +603,75 @@ Local storage is per domain. All pages, from one domain, can store and access th
         return deferred.promise;
     };
 
-    this.getLocationDetail = function() {
+    /**
+     * Get location detail with a wxWrapper and deferred object
+     * @param  {[type]} wxWrapper [description]
+     * @param  {[type]} deferred  [description]
+     * @return {[type]}           [description]
+     */
+    function _getLocationDetail(wxWrapper, deferred) {
+        var locationDetail = {};
+        wxWrapper.getLocation({
+            success: function(res) {
+                var latitude = res.latitude; // 纬度，浮点数，范围为90 ~ -90
+                var longitude = res.longitude; // 经度，浮点数，范围为180 ~ -180。
+                var speed = res.speed; // 速度，以米/每秒计
+                var accuracy = res.accuracy; // 位置精度
+                $log.debug('get latlng by wechat api', JSON.stringify(res));
+                var geocoder;
+                var center = new qq.maps.LatLng(latitude, longitude);
+                var geocoder = new qq.maps.Geocoder();
+                geocoder.getAddress(center);
+                geocoder.setComplete(function(result) {
+                    var c = result.detail.addressComponents;
+                    var address = c.province + c.city + c.district + c.street + c.streetNumber + c.town + c.village;
+                    locationDetail.api_address = address;
+                    locationDetail.user_edit_address = address;
+                    locationDetail.lat = latitude;
+                    locationDetail.lng = longitude;
+
+                    if (locationDetail['nearPois']) {
+                        locationDetail.nearPois = null;
+                    }
+                    store.setLocationDetail(locationDetail);
+                    $log.debug('get location first time! save it into store', JSON.stringify(locationDetail));
+                    deferred.resolve(locationDetail);
+                });
+            }
+        });
+    }
+
+    this.getLocationDetail = function(wxWrapper) {
         var deferred = $q.defer();
-        var self = this;
         var locationDetail = store.getLocationDetail();
         if (locationDetail) {
             $log.debug('return cached locationDetail', JSON.stringify(locationDetail));
             deferred.resolve(locationDetail);
-            return deferred.promise;
-        }
-
-        this.getWxWrapper()
-            .then(function(wxWrapper) {
-                var locationDetail = {};
-                wxWrapper.getLocation({
-                    success: function(res) {
-                        var latitude = res.latitude; // 纬度，浮点数，范围为90 ~ -90
-                        var longitude = res.longitude; // 经度，浮点数，范围为180 ~ -180。
-                        var speed = res.speed; // 速度，以米/每秒计
-                        var accuracy = res.accuracy; // 位置精度
-                        $log.debug('get latlng by wechat api', JSON.stringify(res));
-                        var geocoder;
-                        var center = new qq.maps.LatLng(latitude, longitude);
-                        var geocoder = new qq.maps.Geocoder();
-                        geocoder.getAddress(center);
-                        geocoder.setComplete(function(result) {
-                            var c = result.detail.addressComponents;
-                            var address = c.province + c.city + c.district + c.street + c.streetNumber + c.town + c.village;
-                            locationDetail.api_address = address;
-                            locationDetail.user_edit_address = address;
-                            locationDetail.lat = latitude;
-                            locationDetail.lng = longitude;
-
-                            $log.debug('get location first time! save it into store', locationDetail);
-                            if (locationDetail['nearPois']) {
-                                locationDetail.nearPois = null;
-                            }
-                            store.setLocationDetail(locationDetail);
-                            deferred.resolve(locationDetail);
-                        });
-                    }
+        } else if (wxWrapper) {
+            // use the wxWrapper passed in
+            _getLocationDetail(wxWrapper, deferred);
+        } else {
+            // get a new wxWrapper
+            self.getWxWrapper()
+                .then(function(wxWrapper) {
+                    _getLocationDetail(wxWrapper, deferred);
+                }, function(err) {
+                    $log.debug('can not get location', JSON.stringify(err));
+                    deferred.resolve();
                 });
-            }, function(err) {
-                $log.debug('can not get location', JSON.stringify(err));
-                deferred.resolve();
-            });
+        }
 
         return deferred.promise;
     };
+
     this.setPostGoodsLocation = function(postGoodsLocationDetail) {
         $log.debug('set post goods location detail', JSON.stringify(postGoodsLocationDetail));
-        this._postGoodsLocationDetail = postGoodsLocationDetail;
+        self._postGoodsLocationDetail = postGoodsLocationDetail;
     };
+
     this.getPostGoodsLocation = function() {
         $log.debug('get post goods location detail', JSON.stringify(this._postGoodsLocationDetail));
-        return this._postGoodsLocationDetail;
+        return self._postGoodsLocationDetail;
     };
 
 })
@@ -843,8 +847,8 @@ Local storage is per domain. All pages, from one domain, can store and access th
                 var reply = angular.extend({}, replyData);
                 return resource.reply({
                     topicId: topicId,
-                    accesstoken: currentUser.accessToken
-                        // accesstoken: '5447b4c3-0006-4a3c-9903-ac5a803bc17e'
+                    //accesstoken: currentUser.accessToken
+                    accesstoken: '5447b4c3-0006-4a3c-9903-ac5a803bc17e'
                 }, reply);
             },
             upReply: function(replyId) {

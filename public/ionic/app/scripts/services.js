@@ -509,25 +509,13 @@ Local storage is per domain. All pages, from one domain, can store and access th
         var deferred = $q.defer();
         // should not use encodeURIComponent
         var app_url = window.location.href.split('#')[0];
-        var accesstoken = store.getAccessToken();
-        var wechatSingnature = store.getWechatSignature();
 
-        //TODO: maybe add expire time stuff to refresh it
-        // if( wechatSingnature ){
-        //     $log.debug('now get the cache version of wechatSingnature', JSON.stringify(wechatSingnature));
-        //     deferred.resolve( wechatSingnature );
-        //     return deferred.promise;
-        // } else {
-        //     $log.debug('do not cache wechatSingnature yet', JSON.stringify(wechatSingnature));
-        // }
         // when the server domain is registered in
         // wechat plaform. If not, the signature can be
         // generated with this app url.
-        if (!accesstoken) {
-            deferred.resolve();
-        } else if (S(cfg.server).contains('arrking.com')) {
+        // #TODO set this domian properly is very important.
+        if (S(cfg.server).contains('arrking.com')) {
             $http.post('{0}/ionic/wechat-signature'.f(cfg.api), {
-                    accesstoken: accesstoken,
                     app_url: app_url
                 }, {
                     headers: {

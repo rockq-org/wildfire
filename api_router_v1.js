@@ -25,7 +25,7 @@ router.post('/topic/de_collect', middleware.auth, topicController.de_collect); /
 
 // 用户
 router.get('/user/my_topics', middleware.auth, userController.getMyTopics);
-router.get('/user/my_collection', middleware.auth, userController.getMyTopics);
+router.get('/user/my_collection', middleware.auth, userController.getMyCollections);
 router.get('/user/:loginname', middleware.auth, userController.show);
 
 // accessToken 测试

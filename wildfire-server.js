@@ -158,7 +158,7 @@ revision.short(function(gitRevision) {
     passport.use(new GitHubStrategy(config.GITHUB_OAUTH, githubStrategyMiddleware));
 
     /**
-     * Wechat UAA Service for ionic app embedded wechat 
+     * Wechat UAA Service for ionic app embedded wechat
      * @param  {[type]} req           [description]
      * @param  {[type]} openid        [description]
      * @param  {[type]} profile       [description]
@@ -258,7 +258,7 @@ revision.short(function(gitRevision) {
             } else {
                 logger.debug('wechat uaa', JSON.stringify(user));
             }
-            // node passport login user as req.user, but in nodeclub, 
+            // node passport login user as req.user, but in nodeclub,
             // req.session.user should also be signed.
             if (user) {
                 res.locals.current_user = req.session.user = user;

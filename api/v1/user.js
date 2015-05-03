@@ -3,6 +3,7 @@ var eventproxy = require('eventproxy');
 var UserProxy = require('../../proxy').User;
 var TopicProxy = require('../../proxy').Topic;
 var ReplyProxy = require('../../proxy').Reply;
+var config = require('../../config');
 var TopicCollect = require('../../proxy').TopicCollect;
 var weimi = require('../../middlewares/weimi');
 var redisq = require('../../persistence/redisq');
@@ -207,7 +208,7 @@ console.log(page, user);
             pages: pages,
             current_page: page
         };
-
+        var err = false;
         if (err) {
             requestUtil.okJsonResponse({
                 rc: 0,
@@ -221,7 +222,7 @@ console.log(page, user);
         }
     };
 
-    var proxy = EventProxy.create('topics', 'pages', render);
+    var proxy = eventproxy.create('topics', 'pages', render);
     proxy.fail(next);
 
     TopicCollect.getTopicCollectsByUserId(user._id, proxy.done(function (docs) {
@@ -235,8 +236,8 @@ console.log(page, user);
         limit: limit,
         sort: '-create_at'
       };
-      Topic.getTopicsByQuery(query, opt, proxy.done('topics'));
-      Topic.getCountByQuery(query, proxy.done(function (all_topics_count) {
+      TopicProxy.getTopicsByQuery(query, opt, proxy.done('topics'));
+      TopicProxy.getCountByQuery(query, proxy.done(function (all_topics_count) {
         var pages = Math.ceil(all_topics_count / limit);
         proxy.emit('pages', pages);
       }));

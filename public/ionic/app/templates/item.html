@@ -22,10 +22,10 @@
         </h3>
         <button class="button button-assertive button-small">{{topic.goods_is_bargain?'接受侃价':'谢绝侃价'}}</button>
         <br />
-        <a ng-if="isCollected" class="button button-clear button-assertive">
+        <a ng-if="isCollected" class="button button-clear button-assertive" ng-click="collectTopic()">
           <i class=" icon ion-ios-heart"> </i> {{topic.collect_count + 0}} 已收藏
         </a>
-        <a ng-if="!isCollected" class="button button-clear button-assertive">
+        <a ng-if="!isCollected" class="button button-clear button-assertive" ng-click="collectTopic()">
           <i class=" icon ion-ios-heart-outline"> </i> {{topic.collect_count + 0}}
         </a>
         &nbsp;<span class="visit-count">浏览 {{topic.visit_count + 1}}</span>

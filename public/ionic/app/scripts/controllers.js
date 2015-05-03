@@ -506,6 +506,7 @@ angular.module('iwildfire.controllers', [])
             Topic.deCollectTopic(id).$promise.then(function(response) {
                 if (response.success) {
                     $scope.isCollected = false;
+                    $scope.topic.collect_count = parseInt($scope.topic.collect_count) - 1;
                     User.deCollectTopic(id);
                 }
             });
@@ -513,6 +514,8 @@ angular.module('iwildfire.controllers', [])
             Topic.collectTopic(id).$promise.then(function(response) {
                 if (response.success) {
                     $scope.isCollected = true;
+                    console.log($scope.topic.collect_count);
+                    $scope.topic.collect_count = parseInt($scope.topic.collect_count) + 1;
                     User.collectTopic(id);
                 }
             });
@@ -889,7 +892,7 @@ angular.module('iwildfire.controllers', [])
 // })
 
 .controller('AccountCtrl', function($scope, $ionicModal, $log, store, cfg,
-    webq, myProfile, myTopics, $q) {
+    webq, myProfile, myTopics, $q, Topic) {
     $log.debug("myProfile" + JSON.stringify(myProfile));
     $log.debug("myTopics: " + JSON.stringify(myTopics));
     // load user profile from localStorage
@@ -1022,20 +1025,16 @@ angular.module('iwildfire.controllers', [])
      * @return {[type]}       [description]
      */
     $scope.editUnCollected = function(topic) {
-
-        // TODO: wait for collected api
-
-        // topic.goods_status = '下架';
-        // webq.updateMyTopic(topic)
-        //     .then(function(data) {
-        //         // alert('{0} 成功下架'.f(topic.title));
-        //         _separateMyTopics(true, function() {
-        //             $scope.stuffs = onGoingStuffs;
-        //             _resetScopeData();
-        //         });
-        //     }, function(err) {
-        //         alert(JSON.stringify(err));
-        //     });
+        Topic.deCollectTopic(topic._id).$promise.then(function(response) {
+            console.log(response);
+            if (response.success) {
+                console.log('success uncollected topic');
+                _separateMyTopics(true, function() {
+                    $scope.stuffs = favoritesStuffs;
+                    _resetScopeData();
+                });
+            }
+        });
     }
 
     /**

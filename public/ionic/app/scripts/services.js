@@ -915,14 +915,12 @@ Local storage is per domain. All pages, from one domain, can store and access th
                 });
             },
             collectTopic: function(topicId) {
-                var currentUser = User.getCurrentUser();
                 return resource.collect({
                     topic_id: topicId,
                     accesstoken: currentUser.accessToken
                 });
             },
             deCollectTopic: function(topicId) {
-                var currentUser = User.getCurrentUser();
                 return resource.deCollect({
                     topic_id: topicId,
                     accesstoken: currentUser.accessToken

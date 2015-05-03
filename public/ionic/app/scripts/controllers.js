@@ -337,6 +337,7 @@ angular.module('iwildfire.controllers', [])
             $scope.topic = response.data;
             $ionicSlideBoxDelegate.update();
             console.log($scope.topic);
+            $scope.isCollected = $scope.topic.in_collection;
         }, $rootScope.requestErrorHandler({
             noBackdrop: true
         }, function() {
@@ -348,14 +349,6 @@ angular.module('iwildfire.controllers', [])
     // detect if user has collected this topic
     var currentUser = User.getCurrentUser();
     $scope.isCollected = false;
-
-    if (currentUser) {
-        angular.forEach(currentUser.collect_topics, function(topics) {
-            if (topics.id === id) {
-                $scope.isCollected = true;
-            }
-        });
-    }
 
     // do refresh
     $scope.doRefresh = function() {

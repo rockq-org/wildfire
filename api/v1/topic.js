@@ -130,9 +130,21 @@ var show = function(req, res, next) {
             reply = _.pick(reply, ['id', 'author', 'content', 'ups', 'create_at']);
             return reply;
         });
-        res.send({
-            data: topic
-        });
+
+        // 查询当前topic是否被当前用户收藏
+        if (!req.user.id) {
+            res.send({
+                data: topic
+            });
+        } else {
+            TopicCollect.getTopicCollect(req.user.id, topic._id, function (doc) {
+                topic.in_collection = !!doc;
+                res.send({
+                    data: topic
+                });
+            });
+        }
+        
     }));
 };
 

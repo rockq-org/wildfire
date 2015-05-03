@@ -22,8 +22,11 @@
         </h3>
         <button class="button button-assertive button-small">接受侃价</button>
         <br />
-        <a class="button button-clear button-assertive">
-          <i class=" icon ion-ios-heart-outline"> </i> {{topic.collect_count + 0}}
+        <a ng-if="isCollected" class="button button-clear button-assertive">
+          <i class=" icon ion-ios-heart"> </i> {{topic.collect_count + 0}} 已收藏
+        </a>
+        <a ng-if="!isCollected" class="button button-clear button-assertive">
+          <i class=" icon ion-ios-heart-outline"> </i> {{topic.collect_count + 0}} 未收藏
         </a>
         &nbsp;<span class="visit-count">浏览 {{topic.visit_count + 0}}</span>
       </div>

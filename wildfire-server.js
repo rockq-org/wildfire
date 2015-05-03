@@ -222,13 +222,21 @@ revision.short(function(gitRevision) {
     }));
 
     app.get('/auth/wechat/embedded', function(req, res, next) {
-        // var redirect = req.query.redirect;
-        var redirect = 'somethingnew';
+        var redirect = req.query.redirect;
         if (redirect) {
-            passport.authenticate('wechat', {
-                scope: 'snsapi_userinfo',
-                state: HashStateProxy.getHashStateByValue(redirect)
-            })(req, res, next);
+            HashStateProxy.getHashStateByValue(redirect)
+                .then(function(result) {
+                    passport.authenticate('wechat', {
+                        scope: 'snsapi_userinfo',
+                        state: result.md5
+                    })(req, res, next);
+                }, function(err) {
+                    logger.warn('/auth/wechat/embedded', 'can not get state from db, just navigate to index page.');
+                    passport.authenticate('wechat', {
+                        scope: 'snsapi_userinfo',
+                        state: false
+                    })(req, res, next);
+                });
         } else {
             passport.authenticate('wechat', {
                 scope: 'snsapi_userinfo',
@@ -236,7 +244,6 @@ revision.short(function(gitRevision) {
             })(req, res, next);
         }
     });
-
 
     // app.get('/auth/wechat/embedded/callback', passport.authenticate('wechat', {
     //     failureRedirect: '/auth/wechat/embedded/err',

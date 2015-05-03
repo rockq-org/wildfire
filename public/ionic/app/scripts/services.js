@@ -114,6 +114,7 @@ Local storage is per domain. All pages, from one domain, can store and access th
     };
 
     this.getAccessToken = function() {
+        console.log('WILDFIRE_ACCESS_TOKEN', window.localStorage.getItem('WILDFIRE_ACCESS_TOKEN') );
         return window.localStorage.getItem('WILDFIRE_ACCESS_TOKEN');
     };
 
@@ -150,6 +151,7 @@ Local storage is per domain. All pages, from one domain, can store and access th
      */
     this.getLocationDetail = function() {
         var raw = window.sessionStorage.getItem('WILDFIRE_LOCATION_DETAIL');
+        console.log('WILDFIRE_LOCATION_DETAIL ', raw);
         if (raw) {
             return JSON.parse(raw);
         } else {
@@ -176,6 +178,7 @@ Local storage is per domain. All pages, from one domain, can store and access th
 
     this.getWechatSignature = function() {
         var raw = window.sessionStorage.getItem('WILDFIRE_WECHAT_SIGNATURE');
+        console.log('WILDFIRE_WECHAT_SIGNATURE ', raw);
         if (raw) {
             return JSON.parse(raw);
         } else {

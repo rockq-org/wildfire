@@ -543,7 +543,7 @@ Local storage is per domain. All pages, from one domain, can store and access th
                      * jsApiList和debug 可以在客户端修改
                      */
                     if (typeof(data) == 'object' && data.rc == 0) {
-                        $log.debug('get wechatSingnature the first time', JSON.stringify(data));
+                        console.log('get wechatSingnature the first time', JSON.stringify(data));
                         store.setWechatSignature(data.msg);
                         deferred.resolve(data.msg);
                     } else {
@@ -551,6 +551,7 @@ Local storage is per domain. All pages, from one domain, can store and access th
                     }
                 })
                 .error(function(err) {
+                    console.log('get wechatSingnature from wx api server error', err);
                     deferred.resolve();
                 })
         } else {
@@ -575,7 +576,7 @@ Local storage is per domain. All pages, from one domain, can store and access th
         var deferred = $q.defer();
         self.getWechatSignature()
             .then(function(wechat_signature) {
-                $log.debug(JSON.stringify(wechat_signature));
+                console.log(wechat_signature);
                 if (wechat_signature) {
                     wechat_signature.jsApiList = ['chooseImage',
                         'previewImage', 'uploadImage',
@@ -595,6 +596,7 @@ Local storage is per domain. All pages, from one domain, can store and access th
                         deferred.resolve(wx);
                     });
                 } else {
+                    console.log('do not get wechat_signature', wechat_signature);
                     deferred.reject();
                 }
             }, function() {
@@ -624,8 +626,9 @@ Local storage is per domain. All pages, from one domain, can store and access th
                 geocoder.getAddress(center);
                 geocoder.setComplete(function(result) {
                     var c = result.detail.addressComponents;
-                    var address = c.province + c.city + c.district + c.street + c.streetNumber + c.town + c.village;
-                    locationDetail.api_address = address;
+                    var full_address = c.country + c.province + c.city + c.district + c.street + c.streetNumber + c.town + c.village;
+                    var address = c.streetNumber + c.town + c.village;
+                    locationDetail.api_address = full_address;
                     locationDetail.user_edit_address = address;
                     locationDetail.lat = latitude;
                     locationDetail.lng = longitude;
@@ -644,6 +647,8 @@ Local storage is per domain. All pages, from one domain, can store and access th
     this.getLocationDetail = function(wxWrapper) {
         var deferred = $q.defer();
         var locationDetail = store.getLocationDetail();
+
+        console.log(locationDetail, wxWrapper);
         if (locationDetail) {
             $log.debug('return cached locationDetail', JSON.stringify(locationDetail));
             deferred.resolve(locationDetail);
@@ -658,7 +663,7 @@ Local storage is per domain. All pages, from one domain, can store and access th
                 .then(function(wxWrapper) {
                     _getLocationDetail(wxWrapper, deferred);
                 }, function(err) {
-                    $log.debug('can not get location', JSON.stringify(err));
+                    console.log('can not get location', err);
                     deferred.resolve();
                 });
         }

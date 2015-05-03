@@ -133,15 +133,15 @@ var show = function(req, res, next) {
 
         // 查询当前topic是否被当前用户收藏
         if (typeof(req.user) == 'object' && req.user.id) {
-            res.send({
-                data: topic
-            });
-        } else {
             TopicCollect.getTopicCollect(req.user.id, topic._id, function(doc) {
                 topic.in_collection = !!doc;
                 res.send({
                     data: topic
                 });
+            });
+        } else {
+            res.send({
+                data: topic
             });
         }
 

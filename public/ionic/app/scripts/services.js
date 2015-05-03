@@ -1048,12 +1048,14 @@ Local storage is per domain. All pages, from one domain, can store and access th
                 });
             },
             collectTopic: function(topicId) {
+                // TODO: should be submit to server api, maybe jianfei already done
                 user.collect_topics.push({
                     id: topicId
                 });
                 store.setUserProfile(user);
             },
             deCollectTopic: function(topicId) {
+                // TODO: should be submit to server api, maybe jianfei already done
                 angular.forEach(user.collect_topics, function(topic, key) {
                     if (topic.id === topicId) {
                         user.collect_topics.splice(key, 1);

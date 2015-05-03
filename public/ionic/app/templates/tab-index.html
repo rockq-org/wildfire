@@ -41,8 +41,8 @@
                           <div class="clearfix">
                             <div class="float-left"><span class="update-time" am-time-ago="topic.update_at"></span></div>
                             <div class="float-right">
-                              <a class="button button-clear button-small">{{topic.reply_count}} <i class="icon ion-ios-chatboxes-outline"> </i></a>
-                              <a class="button button-clear button-assertive button-small">{{topic.collect_count}} <i class=" icon ion-ios-heart-outline"> </i></a>
+                              <a class="button button-clear button-small" ui-sref="item({itemId: topic.id})">{{topic.reply_count}} <i class="icon ion-ios-chatboxes-outline"> </i></a>
+                              <a class="button button-clear button-assertive button-small" ng-click="collectTopic(topic)">{{topic.collect_count}} <i class="icon ion-ios-heart"> </i> </a>
                             </div>
                           </div>
                         </div>

@@ -122,6 +122,10 @@ angular.module('iwildfire.controllers', [])
         })
     }
 
+    $scope.collectTopic = function( topic ) {
+        topic.collect_count--;
+    }
+
     if (typeof(locationDetail) != 'undefined') {
         console.log('lyman 122', JSON.stringify(locationDetail));
         $scope.address = locationDetail.user_edit_address;
@@ -506,6 +510,9 @@ angular.module('iwildfire.controllers', [])
             Topic.deCollectTopic(id).$promise.then(function(response) {
                 if (response.success) {
                     $scope.isCollected = false;
+                    if( !$scope.topic.collect_count ){
+                        $scope.topic.collect_count = 1;
+                    }
                     $scope.topic.collect_count = parseInt($scope.topic.collect_count) - 1;
                     User.deCollectTopic(id);
                 }
@@ -514,7 +521,9 @@ angular.module('iwildfire.controllers', [])
             Topic.collectTopic(id).$promise.then(function(response) {
                 if (response.success) {
                     $scope.isCollected = true;
-                    console.log($scope.topic.collect_count);
+                    if( !$scope.topic.collect_count ){
+                        $scope.topic.collect_count = 0;
+                    }
                     $scope.topic.collect_count = parseInt($scope.topic.collect_count) + 1;
                     User.collectTopic(id);
                 }

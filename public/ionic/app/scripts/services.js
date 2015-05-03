@@ -622,6 +622,7 @@ Local storage is per domain. All pages, from one domain, can store and access th
      * @return {[type]}           [description]
      */
     function _getLocationDetail(wxWrapper, deferred) {
+        var locationDetail = {};
         wxWrapper.getLocation({
             success: function(res) {
                 var latitude = res.latitude; // 纬度，浮点数，范围为90 ~ -90
@@ -654,7 +655,7 @@ Local storage is per domain. All pages, from one domain, can store and access th
 
     this.getLocationDetail = function(wxWrapper) {
         var deferred = $q.defer();
-        var locationDetail = store.getLocationDetail() || {};
+        var locationDetail = store.getLocationDetail();
         if (locationDetail) {
             $log.debug('return cached locationDetail', JSON.stringify(locationDetail));
             deferred.resolve(locationDetail);

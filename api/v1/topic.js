@@ -84,7 +84,7 @@ var index = function(req, res, next) {
         ep.after('author', topics.length, function() {
             topics = topics.map(function(topic) {
                 return _.pick(topic, ['id', 'author_id', 'tab', 'content', 'title', 'last_reply_at',
-                    'collect_count', 'goods_now_price', 'goods_pre_price', 'goods_is_bargain', 'update_at', 'goods_pics', 'goods_quality_degree', 'goods_exchange_location','goods_exchange_geom',
+                    'collect_count', 'goods_now_price', 'goods_pre_price', 'goods_is_bargain', 'update_at', 'goods_pics', 'goods_quality_degree', 'goods_exchange_location', 'goods_exchange_geom',
                     'good', 'top', 'reply_count', 'visit_count', 'create_at', 'author'
                 ]);
             });
@@ -132,19 +132,19 @@ var show = function(req, res, next) {
         });
 
         // 查询当前topic是否被当前用户收藏
-        if (!req.user.id) {
+        if (typeof(req.user) == 'object' && req.user.id) {
             res.send({
                 data: topic
             });
         } else {
-            TopicCollect.getTopicCollect(req.user.id, topic._id, function (doc) {
+            TopicCollect.getTopicCollect(req.user.id, topic._id, function(doc) {
                 topic.in_collection = !!doc;
                 res.send({
                     data: topic
                 });
             });
         }
-        
+
     }));
 };
 

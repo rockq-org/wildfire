@@ -66,6 +66,7 @@
     "passport-github": "0.1.5",
     "passport-strategy": "^1.0.0",
     "passport-wechat": "^0.1.3",
+    "passport-wechat-auth": "0.0.1",
     "pm2": "0.12.7",
     "q": "^1.2.0",
     "qn": "1.0.1",

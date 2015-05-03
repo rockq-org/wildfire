@@ -288,7 +288,7 @@ angular.module('iwildfire.controllers', [])
         $scope.doRefresh();
     });
 
-    $scope.showFullAddress = function(){
+    $scope.showFullAddress = function() {
         console.log($scope.locationDetail.api_address);
         var alertPopup = $ionicPopup.alert({
             title: '',
@@ -346,9 +346,9 @@ angular.module('iwildfire.controllers', [])
             $scope.isCollected = $scope.topic.in_collection;
             $scope.replies = [];
             $scope.bargains = [];
-            $scope.topic.replies.forEach(function(item, i){
-                if(item.price)  $scope.bargains.push(item);
-                else    $scope.replies.push(item);
+            $scope.topic.replies.forEach(function(item, i) {
+                if (item.price) $scope.bargains.push(item);
+                else $scope.replies.push(item);
             })
             console.log($scope.topic);
             console.log($scope.bargains);
@@ -544,9 +544,9 @@ angular.module('iwildfire.controllers', [])
     // #TODO comment out for debugging
     // if not contains profile and accesstoken, just naviagte
     // to user authentication page.
-    // if (!store.getAccessToken()) {
-    //     window.location.href = '{0}/auth/wechat/embedded'.f(cfg.server);
-    // }
+    if (!store.getAccessToken()) {
+        window.location.href = '{0}/auth/wechat/embedded?redirect={1}'.f(cfg.server, encodeURIComponent('{0}/#/tab/account'.f(cfg.server)));
+    }
 
     // $scope.params = {
     //     // 标题5到10个字
@@ -827,7 +827,7 @@ angular.module('iwildfire.controllers', [])
      * End Modal View to input detail of exchange location
      *******************************************/
 
-     $scope.showFullAddress = function(){
+    $scope.showFullAddress = function() {
         console.log($scope.locationDetail.api_address);
         var alertPopup = $ionicPopup.alert({
             title: '',

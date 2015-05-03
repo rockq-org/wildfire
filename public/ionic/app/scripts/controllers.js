@@ -288,6 +288,13 @@ angular.module('iwildfire.controllers', [])
         $scope.doRefresh();
     });
 
+    $scope.showFullAddress = function() {
+        console.log($scope.locationDetail.api_address);
+        var alertPopup = $ionicPopup.alert({
+            title: '',
+            template: $scope.locationDetail.api_address
+        });
+    }
 })
 
 .controller('ItemCtrl', function(
@@ -339,9 +346,9 @@ angular.module('iwildfire.controllers', [])
             $scope.isCollected = $scope.topic.in_collection;
             $scope.replies = [];
             $scope.bargains = [];
-            $scope.topic.replies.forEach(function(item, i){
-                if(item.price)  $scope.bargains.push(item);
-                else    $scope.replies.push(item);
+            $scope.topic.replies.forEach(function(item, i) {
+                if (item.price) $scope.bargains.push(item);
+                else $scope.replies.push(item);
             })
             console.log($scope.topic);
             console.log($scope.bargains);
@@ -537,9 +544,9 @@ angular.module('iwildfire.controllers', [])
     // #TODO comment out for debugging
     // if not contains profile and accesstoken, just naviagte
     // to user authentication page.
-    // if (!store.getAccessToken()) {
-    //     window.location.href = '{0}/auth/wechat/embedded'.f(cfg.server);
-    // }
+    if (!store.getAccessToken()) {
+        window.location.href = '{0}/auth/wechat/embedded?redirect={1}'.f(cfg.server, encodeURIComponent('{0}/#/tab/account'.f(cfg.server)));
+    }
 
     // $scope.params = {
     //     // 标题5到10个字
@@ -805,17 +812,12 @@ angular.module('iwildfire.controllers', [])
             $scope.closeChangeLocationModal = function(isSubmit) {
                 if (isSubmit) {
                     $timeout(function() {
-                        // $scope.params.goods_exchange_location = webq.getPostGoodsLocation();
-                        // $scope.params.goods_exchange_location.user_edit_address = $scope.locationDetail.user_edit_address;
-                        // $scope.locationDetail = $scope.params.goods_exchange_location;
-                        // console.log(JSON.stringify($scope.locationDetail));
-
-                        // $scope.params.goods_exchange_location.api_address = $scope.locationDetail.api_address;
-                        // $scope.params.goods_exchange_location.user_edit_address = $scope.locationDetail.user_edit_address;
-                        // $scope.params.goods_exchange_location.lat = $scope.locationDetail.lat;
-                        // $scope.params.goods_exchange_location.lng = $scope.locationDetail.lng;
-                        // console.log('lyman 498', JSON.stringify($scope.locationDetail));
-                        // console.log('lyman 499', JSON.stringify($scope.params.goods_exchange_location));
+                        $scope.params.goods_exchange_location.api_address = $scope.locationDetail.api_address;
+                        $scope.params.goods_exchange_location.user_edit_address = $scope.locationDetail.user_edit_address;
+                        $scope.params.goods_exchange_location.lat = $scope.locationDetail.lat;
+                        $scope.params.goods_exchange_location.lng = $scope.locationDetail.lng;
+                        console.log('lyman 498', JSON.stringify($scope.locationDetail));
+                        console.log('lyman 499', JSON.stringify($scope.params.goods_exchange_location));
                     });
                 }
                 $scope.changeLocationModal.hide();
@@ -825,6 +827,13 @@ angular.module('iwildfire.controllers', [])
      * End Modal View to input detail of exchange location
      *******************************************/
 
+    $scope.showFullAddress = function() {
+        console.log($scope.locationDetail.api_address);
+        var alertPopup = $ionicPopup.alert({
+            title: '',
+            template: $scope.locationDetail.api_address
+        });
+    }
 
     //Cleanup the modal when we're done with it!
     $scope.$on('$destroy', function() {
@@ -1209,7 +1218,11 @@ angular.module('iwildfire.controllers', [])
     if (accesstoken) {
         store.setAccessToken($stateParams.accessToken);
     }
-    $state.go('tab.index');
+    if ($stateParams.redirectUrl) {
+        window.location = decodeURIComponent($stateParams.redirectUrl);
+    } else {
+        $state.go('tab.index');
+    }
 })
 
 .controller('SettingsCtrl', function($log, $scope,

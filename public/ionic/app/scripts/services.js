@@ -114,6 +114,7 @@ Local storage is per domain. All pages, from one domain, can store and access th
     };
 
     this.getAccessToken = function() {
+        console.log('WILDFIRE_ACCESS_TOKEN', window.localStorage.getItem('WILDFIRE_ACCESS_TOKEN') );
         return window.localStorage.getItem('WILDFIRE_ACCESS_TOKEN');
     };
 
@@ -150,6 +151,7 @@ Local storage is per domain. All pages, from one domain, can store and access th
      */
     this.getLocationDetail = function() {
         var raw = window.sessionStorage.getItem('WILDFIRE_LOCATION_DETAIL');
+        console.log('WILDFIRE_LOCATION_DETAIL ', raw);
         if (raw) {
             return JSON.parse(raw);
         } else {
@@ -176,6 +178,7 @@ Local storage is per domain. All pages, from one domain, can store and access th
 
     this.getWechatSignature = function() {
         var raw = window.sessionStorage.getItem('WILDFIRE_WECHAT_SIGNATURE');
+        console.log('WILDFIRE_WECHAT_SIGNATURE ', raw);
         if (raw) {
             return JSON.parse(raw);
         } else {
@@ -374,6 +377,35 @@ Local storage is per domain. All pages, from one domain, can store and access th
     }
 
     /**
+     * getMyCollectionResolve() returns current user's collection
+     *
+     * @author Lyman
+     * @return collectionList
+     */
+    this.getMyCollectionResolve = function() {
+        var deferred = $q.defer();
+        // TODO: add pagination function
+        var page = 1;
+        $http.get('{0}/user/my_collection/?accesstoken={1}&page={2}'.f(cfg.api,
+                // store.getAccessToken(),
+                '5RWFduLHvTgy9ehLDXj9e43gMsD-Rg_63q_h1iDdhxp_Uw_kyPtRkP0ZUMPKaK81rM2MSHRmEF62VIbNWdcGUPox3gpRLbZmOvh7wYtwzM8',
+                page
+            ))
+            .success(function(data) {
+                if (data.rc === 1) {
+                    deferred.resolve(data.msg);
+                } else {
+                    deferred.resolve();
+                }
+            })
+            .error(function(err) {
+                deferred.resolve();
+            });
+
+        return deferred.promise;
+    }
+
+    /**
      * put my topic into off shelf status
      * @param  {[type]} item [description]
      * @return {[type]}      [description]
@@ -543,7 +575,7 @@ Local storage is per domain. All pages, from one domain, can store and access th
                      * jsApiList和debug 可以在客户端修改
                      */
                     if (typeof(data) == 'object' && data.rc == 0) {
-                        $log.debug('get wechatSingnature the first time', JSON.stringify(data));
+                        console.log('get wechatSingnature the first time', JSON.stringify(data));
                         store.setWechatSignature(data.msg);
                         deferred.resolve(data.msg);
                     } else {
@@ -551,6 +583,7 @@ Local storage is per domain. All pages, from one domain, can store and access th
                     }
                 })
                 .error(function(err) {
+                    console.log('get wechatSingnature from wx api server error', err);
                     deferred.resolve();
                 })
         } else {
@@ -575,7 +608,7 @@ Local storage is per domain. All pages, from one domain, can store and access th
         var deferred = $q.defer();
         self.getWechatSignature()
             .then(function(wechat_signature) {
-                $log.debug(JSON.stringify(wechat_signature));
+                console.log(wechat_signature);
                 if (wechat_signature) {
                     wechat_signature.jsApiList = ['chooseImage',
                         'previewImage', 'uploadImage',
@@ -591,10 +624,11 @@ Local storage is per domain. All pages, from one domain, can store and access th
                     wx.ready(function() {
                         //TODO: maybe add an expire time for this?
                         //      or just clear up alllll store while user refresh our url?
-                        $log.debug('getWxWrapper', 'wxWrapper is resolved.');
+                        console.log('getWxWrapper', 'wxWrapper is resolved.');
                         deferred.resolve(wx);
                     });
                 } else {
+                    console.log('do not get wechat_signature', wechat_signature);
                     deferred.reject();
                 }
             }, function() {
@@ -624,8 +658,9 @@ Local storage is per domain. All pages, from one domain, can store and access th
                 geocoder.getAddress(center);
                 geocoder.setComplete(function(result) {
                     var c = result.detail.addressComponents;
-                    var address = c.province + c.city + c.district + c.street + c.streetNumber + c.town + c.village;
-                    locationDetail.api_address = address;
+                    var full_address = c.country + c.province + c.city + c.district + c.street + c.streetNumber + c.town + c.village;
+                    var address = c.streetNumber + c.town + c.village;
+                    locationDetail.api_address = full_address;
                     locationDetail.user_edit_address = address;
                     locationDetail.lat = latitude;
                     locationDetail.lng = longitude;
@@ -644,6 +679,8 @@ Local storage is per domain. All pages, from one domain, can store and access th
     this.getLocationDetail = function(wxWrapper) {
         var deferred = $q.defer();
         var locationDetail = store.getLocationDetail();
+
+        console.log(locationDetail, wxWrapper);
         if (locationDetail) {
             $log.debug('return cached locationDetail', JSON.stringify(locationDetail));
             deferred.resolve(locationDetail);
@@ -658,7 +695,7 @@ Local storage is per domain. All pages, from one domain, can store and access th
                 .then(function(wxWrapper) {
                     _getLocationDetail(wxWrapper, deferred);
                 }, function(err) {
-                    $log.debug('can not get location', JSON.stringify(err));
+                    console.log('can not get location', err);
                     deferred.resolve();
                 });
         }

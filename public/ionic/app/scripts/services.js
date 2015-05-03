@@ -759,6 +759,9 @@ Local storage is per domain. All pages, from one domain, can store and access th
         });
     };
     return {
+        addVisitCount: function(){
+
+        },
         refresh: function() {
             return getTopics(currentTab, 1, text, function(response) {
                 nextPage = 2;

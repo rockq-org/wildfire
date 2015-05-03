@@ -5,7 +5,7 @@
   <ion-content class="has-header has-footer" ng-class="(showReply||showBargain)?'has-reply':''">
     <ion-refresher pulling-text="下拉刷新..." on-refresh="doRefresh()" refreshing-icon="ion-loading-c">
     </ion-refresher>
-    
+
     <ion-slide-box style="height: 200px;" does-continue="true" auto-play="true" slide-interval="2000">
         <ion-slide ng-repeat="pic in topic.goods_pics">
           <div style="width:100%; height:100%; background:url('{{img_prefix}}{{pic}}') center no-repeat; background-size:cover"></div>
@@ -21,14 +21,14 @@
         <del>￥ {{topic.goods_pre_price}}</del>
         </h3>
         <button class="button button-assertive button-small">{{topic.goods_is_bargain?'接受侃价':'谢绝侃价'}}</button>
-        <br />        
+        <br />
         <a ng-if="isCollected" class="button button-clear button-assertive">
           <i class=" icon ion-ios-heart"> </i> {{topic.collect_count + 0}} 已收藏
         </a>
         <a ng-if="!isCollected" class="button button-clear button-assertive">
           <i class=" icon ion-ios-heart-outline"> </i> {{topic.collect_count + 0}}
         </a>
-        &nbsp;<span class="visit-count">浏览 {{topic.visit_count + 0}}</span>
+        &nbsp;<span class="visit-count">浏览 {{topic.visit_count + 1}}</span>
       </div>
       <div class="col col50 text-right">
         <div class="name-avatar">
@@ -37,7 +37,7 @@
         </div>
         <div class="item-content"><i class="icon ion-ios-location mr5"></i>{{topic.goods_exchange_location.address}}</div>
         <div class="item-note">
-          距离1.5公里<br />
+          {{topic.goods_exchange_location | flatternDistance:currentLocation}}<br />
           <span am-time-ago="topic.update_at"></span>
         </div>
       </div>
@@ -46,7 +46,7 @@
       <h5>宝贝详情</h4>
       <div class="topic-content" ng-bind-html="topic.content | link"></div>
     </div>
-    
+
     <div class="button-bar">
       <a ng-click="showBargains = true" ng-class="showBargains?'active':''" class="button button-outline button-small">出价（{{bargains.length + 0}}）</a>
       <a ng-click="showBargains = false" ng-class="showBargains?'':'active'" class="button button-outline button-small"> 留言（{{replies.length + 0}}）</a>
@@ -96,7 +96,7 @@
         <img ng-src="{{reply.author.avatar}}">
         <p>
           <span ng-class="{'bold': reply.author.loginname == topic.author.loginname}">
-            {{reply.author.name}} 
+            {{reply.author.name}}
           </span>
           <span class="item-note" am-time-ago="reply.create_at">
           </span>

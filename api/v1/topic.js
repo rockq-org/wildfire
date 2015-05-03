@@ -85,7 +85,7 @@ var index = function(req, res, next) {
             topics = topics.map(function(topic) {
                 return _.pick(topic, ['id', 'author_id', 'tab', 'content', 'title', 'last_reply_at',
                     'collect_count', 'goods_now_price', 'goods_pre_price', 'goods_is_bargain', 'update_at', 'goods_pics', 'goods_quality_degree', 'goods_exchange_location', 'goods_exchange_geom',
-                    'good', 'top', 'reply_count', 'visit_count', 'create_at', 'author'
+                    'good', 'top', 'reply_count', 'visit_count', 'create_at', 'author', 'collect_count'
                 ]);
             });
 
@@ -111,6 +111,10 @@ var show = function(req, res, next) {
                 error_msg: 'topic_id `' + topicId + '` is not exists.'
             });
         }
+
+        topic.visit_count += 1;
+        topic.save();
+
         topic = _.pick(topic, ['id', 'author_id', 'tab', 'content', 'title', 'last_reply_at',
             'goods_pre_price', 'goods_now_price', 'goods_pre_price', 'goods_is_bargain', 'update_at', 'goods_pics', 'goods_quality_degree',
             'goods_exchange_location', 'goods_exchange_geom',

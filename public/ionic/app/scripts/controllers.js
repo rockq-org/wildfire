@@ -310,6 +310,7 @@ angular.module('iwildfire.controllers', [])
     $log,
     Topics,
     Topic,
+    store,
     cfg,
     User
 ) {
@@ -320,6 +321,7 @@ angular.module('iwildfire.controllers', [])
     $scope.img_prefix = cfg.server;
     $scope.avatar_prefix = cfg.api + '/avatar/';
     $scope.showReply = false;
+    $scope.currentLocation = store.getLocationDetail();
 
     // before enter view event
     $scope.$on('$ionicView.beforeEnter', function() {

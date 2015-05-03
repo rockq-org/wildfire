@@ -234,13 +234,13 @@ revision.short(function(gitRevision) {
                     logger.warn('/auth/wechat/embedded', 'can not get state from db, just navigate to index page.');
                     passport.authenticate('wechat', {
                         scope: 'snsapi_userinfo',
-                        state: false
+                        state: ''
                     })(req, res, next);
                 });
         } else {
             passport.authenticate('wechat', {
                 scope: 'snsapi_userinfo',
-                state: false
+                state: ''
             })(req, res, next);
         }
     });
@@ -266,8 +266,17 @@ revision.short(function(gitRevision) {
             if (!user.phone_number) {
                 // force user input phone number
                 res.redirect(util.format('http://%s/#/bind-mobile-phone/%s', config.client_host, user.accessToken));
-            } else {
+            } else if (req.query && req.query.state !== '') {
                 // pass user accesstoken into client
+                res.redirect(util.format('http://%s/#/bind-access-token/%s', config.client_host, user.accessToken));
+                HashStateProxy.getHashStateByMD5(req.query.state)
+                    .then(function(result) {
+                        res.redirect(util.format('http://%s/#/bind-access-token/%s/%s', config.client_host, user.accessToken, encodeURIComponent(result.value)));
+                    }, function(err) {
+                        logger.warn('/auth/wechat/embedded/callback', 'can not get state by md5');
+                        res.redirect(util.format('http://%s/#/bind-access-token/%s', config.client_host, user.accessToken));
+                    });
+            } else {
                 res.redirect(util.format('http://%s/#/bind-access-token/%s', config.client_host, user.accessToken));
             }
         })(req, res, next);

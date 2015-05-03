@@ -1244,7 +1244,11 @@ angular.module('iwildfire.controllers', [])
     if (accesstoken) {
         store.setAccessToken($stateParams.accessToken);
     }
-    $state.go('tab.index');
+    if ($stateParams.redirectUrl) {
+        window.location = decodeURIComponent($stateParams.redirectUrl);
+    } else {
+        $state.go('tab.index');
+    }
 })
 
 .controller('SettingsCtrl', function($log, $scope,

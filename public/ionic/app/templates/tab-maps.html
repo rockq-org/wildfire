@@ -1,7 +1,7 @@
 <ion-view hide-nav-bar="true">
     <ion-side-menus>
         <ion-side-menu-content>
-          <ion-header-bar class="bar-dark">
+          <ion-header-bar class="bar-royal">
               <div class="buttons">
                   <button class="button button-icon ion-navicon" menu-toggle="left"> {{menuTitle}}</button>
               </div>
@@ -17,13 +17,13 @@
           </ion-nav-view>
         </ion-side-menu-content>
         <ion-side-menu side="left">
-            <ion-header-bar class="bar-assertive">
+            <ion-header-bar class="bar-stable">
                 <h1 class="title">分类</h1>
             </ion-header-bar>
             <ion-content>
                 <ion-list>
-                    <ion-item class="item item-icon-right topic-name-menu assertive {{currentTab==item.value?'stable-bg':''}}" menu-close ng-click="changeSelected(item)" ng-repeat="item in sideMenus" href="#/tab/maps/{{item.value}}">
-                        <i class="icon ion-ios-arrow-right assertive" ng-if="currentTab==item.value"></i> {{item.label}}
+                    <ion-item class="item topic-name-menu stable-bg {{currentTab==item.value?'activated':''}}" menu-close ng-click="changeSelected(item)" ng-repeat="item in sideMenus" href="#/tab/maps/{{item.value}}">
+                        {{item.label}}
                     </ion-item>
                 </ion-list>
             </ion-content>

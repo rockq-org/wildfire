@@ -183,5 +183,65 @@ exports.getMyTopics = function(req, res, next) {
     });
 }
 
+/**
+ * Get my collections
+ * @param  {[type]}   req  [description]
+ * @param  {[type]}   res  [description]
+ * @param  {Function} next [description]
+ * @return {[type]}        [description]
+ */
+exports.getMyCollections = function(req, res, next) {
+    var user = req.user;
+    var page = Number(req.query.page) || 1;
+    var limit = config.list_topic_count;
+console.log(page, user);
+    var render = function (topics, pages) {
+      // res.render('user/collect_topics', {
+      //   topics: topics,
+      //   current_page: page,
+      //   pages: pages,
+      //   user: user
+      // });
+        var data = {
+            topics: topics,
+            pages: pages,
+            current_page: page
+        };
+
+        if (err) {
+            requestUtil.okJsonResponse({
+                rc: 0,
+                msg: err
+            }, res);
+        } else {
+            requestUtil.okJsonResponse({
+                rc: 1,
+                msg: data
+            }, res);
+        }
+    };
+
+    var proxy = EventProxy.create('topics', 'pages', render);
+    proxy.fail(next);
+
+    TopicCollect.getTopicCollectsByUserId(user._id, proxy.done(function (docs) {
+      var ids = [];
+      for (var i = 0; i < docs.length; i++) {
+        ids.push(docs[i].topic_id);
+      }
+      var query = { _id: { '$in': ids } };
+      var opt = {
+        skip: (page - 1) * limit,
+        limit: limit,
+        sort: '-create_at'
+      };
+      Topic.getTopicsByQuery(query, opt, proxy.done('topics'));
+      Topic.getCountByQuery(query, proxy.done(function (all_topics_count) {
+        var pages = Math.ceil(all_topics_count / limit);
+        proxy.emit('pages', pages);
+      }));
+    }));
+}
+
 
 exports.show = show;

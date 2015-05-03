@@ -374,6 +374,35 @@ Local storage is per domain. All pages, from one domain, can store and access th
     }
 
     /**
+     * getMyCollectionResolve() returns current user's collection
+     *
+     * @author Lyman
+     * @return collectionList
+     */
+    this.getMyCollectionResolve = function() {
+        var deferred = $q.defer();
+        // TODO: add pagination function
+        var page = 1;
+        $http.get('{0}/user/my_collection/?accesstoken={1}&page={2}'.f(cfg.api,
+                // store.getAccessToken(),
+                '5RWFduLHvTgy9ehLDXj9e43gMsD-Rg_63q_h1iDdhxp_Uw_kyPtRkP0ZUMPKaK81rM2MSHRmEF62VIbNWdcGUPox3gpRLbZmOvh7wYtwzM8',
+                page
+            ))
+            .success(function(data) {
+                if (data.rc === 1) {
+                    deferred.resolve(data.msg);
+                } else {
+                    deferred.resolve();
+                }
+            })
+            .error(function(err) {
+                deferred.resolve();
+            });
+
+        return deferred.promise;
+    }
+
+    /**
      * put my topic into off shelf status
      * @param  {[type]} item [description]
      * @return {[type]}      [description]
@@ -592,7 +621,7 @@ Local storage is per domain. All pages, from one domain, can store and access th
                     wx.ready(function() {
                         //TODO: maybe add an expire time for this?
                         //      or just clear up alllll store while user refresh our url?
-                        $log.debug('getWxWrapper', 'wxWrapper is resolved.');
+                        console.log('getWxWrapper', 'wxWrapper is resolved.');
                         deferred.resolve(wx);
                     });
                 } else {

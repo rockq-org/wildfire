@@ -1,33 +1,42 @@
 <!-- http://ionicframework.com/docs/api/directive/ionSideMenus/ -->
 <ion-view hide-nav-bar="true">
     <ion-side-menus>
-        <ion-side-menu-content>
+        <ion-side-menu-content id="index">
           <ion-header-bar class="bar-dark">
               <div class="buttons">
                   <button class="button button-icon ion-navicon" menu-toggle="left"> {{menuTitle}}</button>
               </div>
-              <h1 class="title" ng-click="endSearch()">{{tabTitle}}</h1>
+              <h1 class="title" ng-click="showAddress()">{{tabTitle}}</h1>
               <input class="searchbox" ng-class="showSearch?'expanded':''" ng-model="query" type="text" placeholder="">
               <a class="button button-icon icon ion-ios-search pull-right" ng-click="doSearch(query)"></a>
           </ion-header-bar>
+          <!-- #TODO hide 特价推荐 at this time. https://github.com/arrking/wildfire/issues/123 -->
+<!--           <div class="bar bar-subheader">
+            <div class="button-bar">
+              <a class="button button-clear active">最新发布</a>
+              <a class="button button-clear">特价推荐</a>
+            </div>
+          </div> -->
           <ion-nav-view name="menuContent">
               <ion-content>
+              <!-- <ion-content class="has-subheader"> -->
                 <ion-refresher ng-if="topics.length > 0 || loadError" pulling-text="下拉刷新..." on-refresh="doRefresh()" refreshing-icon="ion-loading-c">
                 </ion-refresher>
                 <div class="list topics">
                   <div class="item col col-50 no-border" style="height:315px; float:left" ng-repeat="topic in topics">
                       <div class="item item-image">
                         <a ui-sref="item({itemId: topic.id})">
-                          <img class="full-image " ng-src="{{img_prefix}}{{topic.goods_pics[0]}}" width="170px" height="194px" />
+                          <img class="full-image " style="width:100%; height:194px; background:url('{{img_prefix}}{{topic.goods_pics[0]}}') center no-repeat; background-size:cover"/>
                           <span class="{{topic.goods_quality_degree | badge}}">{{topic.goods_quality_degree}}</span>
                         </a>
                         <div class="text-left padding-left padding-right padding-top">
-                          <a ui-sref="item({itemId: topic.id})" class="topics-title"> <h3> {{topic.title}} </h3></a>
-                          <h3 class="price">
-                            <span class="assertive">￥ {{topic.goods_now_price}}</span>
+                          <a ui-sref="item({itemId: topic.id})" class="topics-title"> <h2> {{topic.title}} </h2></a>
+                          <h2 class="price assertive">
+                            ￥ {{topic.goods_now_price}}
                             &nbsp;
                             <del>￥ {{topic.goods_pre_price}}</del>
-                          </h3>
+                            <span ng-if='topic.goods_is_bargain' class="bargain">侃</span>
+                          </h2>
                           <div class="clearfix dot-line"></div>
                           <div class="clearfix">
                             <div class="float-left"><span class="update-time" am-time-ago="topic.update_at"></span></div>
@@ -60,7 +69,7 @@
             <ion-content>
                 <ion-list>
                     <ion-item class="item item-icon-right topic-name-menu assertive {{currentTab==item.value?'stable-bg':''}}" menu-close ng-click="changeSelected(item)" ng-repeat="item in sideMenus" href="#/tab/index/{{item.value}}">
-                        <i class="icon ion-ios7-arrow-right assertive" ng-if="currentTab==item.value"></i> {{item.label}}
+                        <i class="icon ion-ios-arrow-right assertive" ng-if="currentTab==item.value"></i> {{item.label}}
                     </ion-item>
                 </ion-list>
             </ion-content>

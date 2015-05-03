@@ -6,7 +6,7 @@
     <ion-refresher pulling-text="下拉刷新..." on-refresh="doRefresh()" refreshing-icon="ion-loading-c">
     </ion-refresher>
     
-    <ion-slide-box style="height: 200px;" does-continue="true" auto-play="true" slide-interval="1000">
+    <ion-slide-box style="height: 200px;" does-continue="true" auto-play="true" slide-interval="2000">
         <ion-slide ng-repeat="pic in topic.goods_pics">
           <div style="width:100%; height:100%; background:url('{{img_prefix}}{{pic}}') center no-repeat; background-size:cover"></div>
         </ion-slide>
@@ -20,9 +20,12 @@
         &nbsp;
         <del>￥ {{topic.goods_pre_price}}</del>
         </h3>
-        <button class="button button-assertive button-small">接受侃价</button>
-        <br />
-        <a class="button button-clear button-assertive">
+        <button class="button button-assertive button-small">{{topic.goods_is_bargain?'接受侃价':'谢绝侃价'}}</button>
+        <br />        
+        <a ng-if="isCollected" class="button button-clear button-assertive">
+          <i class=" icon ion-ios-heart"> </i> {{topic.collect_count + 0}} 已收藏
+        </a>
+        <a ng-if="!isCollected" class="button button-clear button-assertive">
           <i class=" icon ion-ios-heart-outline"> </i> {{topic.collect_count + 0}}
         </a>
         &nbsp;<span class="visit-count">浏览 {{topic.visit_count + 0}}</span>
@@ -32,27 +35,25 @@
           <img ng-src='{{topic.author.avatar}}' />
           <span>{{topic.author.name}}</span>
         </div>
-        <div class="item-content"><i class="icon ion-ios7-location mr5"></i>{{topic.goods_exchange_location.address}}</div>
+        <div class="item-content"><i class="icon ion-ios-location mr5"></i>{{topic.goods_exchange_location.address}}</div>
         <div class="item-note">
           距离1.5公里<br />
           <span am-time-ago="topic.update_at"></span>
         </div>
       </div>
     </div>
-    <div class="row topic">
-      <div class="col col90">
-        <h5>宝贝详情</h4>
-        <div class="topic-content" ng-bind-html="topic.content | link"></div>
-      </div>
+    <div class="dot-line padding">
+      <h5>宝贝详情</h4>
+      <div class="topic-content" ng-bind-html="topic.content | link"></div>
     </div>
     
     <div class="button-bar">
-      <a class="button button-outline button-small ">出价（5）</a>
-      <a class="button button-outline button-small active"> 留言（{{topic.replies.length}}）</a>
+      <a ng-click="showBargains = true" ng-class="showBargains?'active':''" class="button button-outline button-small">出价（{{bargains.length + 0}}）</a>
+      <a ng-click="showBargains = false" ng-class="showBargains?'':'active'" class="button button-outline button-small"> 留言（{{replies.length + 0}}）</a>
     </div>
 
-    <ion-list class="replies">
-      <ion-item class="item-loading" ng-if="topic.replies == undefined">
+    <ion-list class="bargains" ng-show="showBargains">
+      <ion-item class="item-loading" ng-if="bargains == undefined">
         <span ng-if="!loadError">
           加载中...
         </span>
@@ -60,21 +61,44 @@
           加载失败
         </span>
       </ion-item>
-      <ion-item ng-if="topic.replies.length == 0">
-        暂无评论
+      <ion-item ng-if="bargains.length == 0">
+        暂无出价
       </ion-item>
-      <ion-item class="item-avatar" ng-repeat="reply in topic.replies" ng-click="showActions(reply)">
+      <ion-item class="item-avatar" ng-repeat="reply in bargains" ng-click="showActions(reply)">
         <img ng-src="{{reply.author.avatar}}">
         <p>
           <span ng-class="{'bold': reply.author.loginname == topic.author.loginname}">
             {{reply.author.name}}
           </span>
+          <span class="assertive">
+            出价 {{reply.price}} ￥
+          </span>
           <span class="item-note" am-time-ago="reply.create_at">
           </span>
-          <span class="item-note cnode">
-            <i class="icon ion-thumbsup"></i>
-            <span ng-if="reply.ups.length > 0">{{reply.ups.length}}</span>
-            &nbsp;
+        </p>
+        <div class="reply-content" ng-bind-html="reply.content | link"></div>
+      </ion-item>
+    </ion-list>
+
+    <ion-list class="replies" ng-show="!showBargains">
+      <ion-item class="item-loading" ng-if="replies == undefined">
+        <span ng-if="!loadError">
+          加载中...
+        </span>
+        <span ng-if="loadError">
+          加载失败
+        </span>
+      </ion-item>
+      <ion-item ng-if="replies.length == 0">
+        暂无评论
+      </ion-item>
+      <ion-item class="item-avatar" ng-repeat="reply in replies" ng-click="showActions(reply)">
+        <img ng-src="{{reply.author.avatar}}">
+        <p>
+          <span ng-class="{'bold': reply.author.loginname == topic.author.loginname}">
+            {{reply.author.name}} 
+          </span>
+          <span class="item-note" am-time-ago="reply.create_at">
           </span>
         </p>
         <div class="reply-content" ng-bind-html="reply.content | link"></div>
@@ -82,8 +106,22 @@
     </ion-list>
 
   </ion-content>
-
-  <div class="bar bar-footer" ng-show="!showReply" ng-disabled="false" style="padding:0;margin:0">
+  <div class="bar bar-footer">
+    <div class="tabs tabs-color-dark">
+      <a class="tab-item" ng-click="bargain()">
+        我要出价
+      </a>
+      <div class="tab-item">
+        <i ng-click="showContact=!showContact" class="icon frog-icon frog2"></i>
+        <a class="tab-item" href="tel:{{topic.author.phone_number}}"><i ng-show="showContact" class="icon ion-ios-telephone phone-icon"></i></a>
+        <a class="tab-item" href="sms:{{topic.author.phone_number}}"><i ng-show="showContact" class="icon ion-ios-chatbubble message-icon"></i></a>
+      </div>
+      <a class="tab-item" ng-click="comment()">
+        我要留言
+      </a>
+    </div>
+  </div>
+  <!--div class="bar bar-footer" ng-show="!showReply" ng-disabled="false" style="padding:0;margin:0">
     <button ng-click="isShownReplyInputBox()" class="button button-full button-stable" style="padding:0;margin:0">我要留言</button>
   </div>
   <div class="bar bar-footer" ng-show="showReply" class="bar-stable" keyboard-attach>
@@ -93,5 +131,5 @@
       <button class="button button-small button-clear button-positive" ng-click="saveReply()">
         {{ replyData.content == ""? "取消" : "提交" }}
       </button>
-  </div>
+  </div-->
 </ion-view>

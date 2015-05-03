@@ -84,7 +84,7 @@ var index = function(req, res, next) {
         ep.after('author', topics.length, function() {
             topics = topics.map(function(topic) {
                 return _.pick(topic, ['id', 'author_id', 'tab', 'content', 'title', 'last_reply_at',
-                    'collect_count', 'goods_now_price', 'goods_pre_price', 'update_at', 'goods_pics', 'goods_quality_degree', 'goods_exchange_location','goods_exchange_geom',
+                    'collect_count', 'goods_now_price', 'goods_pre_price', 'goods_is_bargain', 'update_at', 'goods_pics', 'goods_quality_degree', 'goods_exchange_location', 'goods_exchange_geom',
                     'good', 'top', 'reply_count', 'visit_count', 'create_at', 'author'
                 ]);
             });
@@ -112,7 +112,7 @@ var show = function(req, res, next) {
             });
         }
         topic = _.pick(topic, ['id', 'author_id', 'tab', 'content', 'title', 'last_reply_at',
-            'goods_pre_price', 'goods_now_price', 'goods_pre_price', 'update_at', 'goods_pics', 'goods_quality_degree',
+            'goods_pre_price', 'goods_now_price', 'goods_pre_price', 'goods_is_bargain', 'update_at', 'goods_pics', 'goods_quality_degree',
             'goods_exchange_location', 'goods_exchange_geom',
             'good', 'top', 'reply_count', 'visit_count', 'create_at', 'author'
         ]);
@@ -120,19 +120,31 @@ var show = function(req, res, next) {
         if (mdrender) {
             topic.content = renderHelper.markdown(at.linkUsers(topic.content));
         }
-        topic.author = _.pick(author, ['name', 'avatar']);
+        topic.author = _.pick(author, ['name', 'avatar', 'loginname', 'phone_number']);
 
         topic.replies = replies.map(function(reply) {
             if (mdrender) {
                 reply.content = renderHelper.markdown(at.linkUsers(reply.content));
             }
-            reply.author = _.pick(reply.author, ['name', 'avatar', 'loginname']);
-            reply = _.pick(reply, ['id', 'author', 'content', 'ups', 'create_at']);
+            reply.author = _.pick(reply.author, ['name', 'avatar', 'loginname', 'phone_number']);
+            reply = _.pick(reply, ['id', 'author', 'price', 'content', 'ups', 'create_at']);
             return reply;
         });
-        res.send({
-            data: topic
-        });
+
+        // 查询当前topic是否被当前用户收藏
+        if (typeof(req.user) == 'object' && req.user.id) {
+            TopicCollect.getTopicCollect(req.user.id, topic._id, function(doc) {
+                topic.in_collection = !!doc;
+                res.send({
+                    data: topic
+                });
+            });
+        } else {
+            res.send({
+                data: topic
+            });
+        }
+
     }));
 };
 

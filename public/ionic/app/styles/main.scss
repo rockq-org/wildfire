@@ -1,3 +1,4 @@
+$dark:                            #56c1b5 !default; //#444
 // Your application styles go here
 @import "modules/fast.scss";
 @import "modules/profile.scss";
@@ -42,7 +43,6 @@ $ionicons-font-path: "../fonts" !default;
 }
 .dot-line{
   border-top: 1px dashed #ccc;
-  margin: 10px 0;
 }
 .float-left{
   float: left;
@@ -53,13 +53,10 @@ $ionicons-font-path: "../fonts" !default;
 .update-time{
   font-size: 80%;
 }
-.price{
-  padding: 10px 0 0;
-  del{
-    color: #ccc;
-    font-weight: normal;
-    font-size: 16px;
-  }
+.price del{
+  color: #ccc;
+  font-weight: normal;
+  font-size: 12px;
 }
 
 .searchbox {
@@ -106,25 +103,80 @@ input.location-address{
   }
 }
 
+.tabs {
+  border-top: 1px solid $dark !important;
+}
+
 .tab-item {
 	overflow: visible;
+}
+
+.tabs-color-dark .tab-item {
+  color: $dark;
+}
+.tab-item .icon {
+  margin-top: 3px;
+  width: 40px;
+  height: 40px;
+  border: 1px solid $dark;
+  background-color: #fff;
+  border-radius: 20px;
+  line-height: 40px !important;
+}
+.tab-item.activated .icon {
+  background-color: $dark;
+  color: #fff;
+}
+.tab-item-active .icon {
+  background-color: $dark;
+  color: #fff;
 }
 
 .tab-item .frog-icon {
 	background-size: 100% auto!important;
 	height: 60px;
+  width: 60px;
 	position: relative;
 	top: -10px;
+  border-radius: 50%;
+  background-color: #fff;
+  background-position-y: -5px;
+  background-repeat: no-repeat;
 }
 
-.tab-item .frog-logo-on {
-	background: url(../images/frog-logo-2.png);
+.frog-icon.frog1 {
+	background-image: url(../images/frog1.png);
 }
 
-.frog-logo-off {
-	background: url(../images/frog-logo-1.png);
+.frog-icon.frog2 {
+	background-image: url(../images/frog2.png);
 }
 
+#index .button-clear.active, .button-clear.activated {
+  opacity: 0.6;
+  border-bottom: 3px solid $dark !important;
+}
+#index .dot-line {
+  margin: 10px 0;
+}
+#index .bargain {
+  background: orange;
+  color: #fff;
+  font-size: 12px;
+  padding: 1px 3px;
+  margin-left: 6px;
+  line-height: 16px;
+}
+.phone-icon {
+  position: absolute;
+  bottom: 40px;
+  left: calc(50% - 60px);
+}
+.message-icon {
+  position: absolute;
+  bottom: 40px;
+  right: calc(50% - 60px);
+}
 
 .wf-post-form .goods-img-holder {
   position: relative;

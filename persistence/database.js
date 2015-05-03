@@ -330,7 +330,6 @@ function _registerEMP(schema, mname, callback) {
         console.log(e);
     }
 
-    console.log('cllb ka');
     schema.post('save', function(doc) {
         if (this.wasNew) {
             // if (doc._mUser)

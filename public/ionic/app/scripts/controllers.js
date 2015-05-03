@@ -4,6 +4,7 @@ angular.module('iwildfire.controllers', [])
     $stateParams,
     $ionicLoading,
     $ionicModal,
+    $ionicPopup,
     $timeout,
     $state,
     locationDetail,
@@ -107,16 +108,19 @@ angular.module('iwildfire.controllers', [])
             return;
         }
         $log.debug('doSearch');
+        $scope.showSearch = false;
         Topics.setQuery(query);
         // Topics.setGeom({lng:140,lat:40.4});
         $scope.doRefresh();
         $log.debug('searchText', query);
         $scope.tabTitle = query || '首页';
     }
-    $scope.endSearch = function() {
-        $scope.showSearch = false;
+    $scope.showAddress = function() {
+        var popup = $ionicPopup.alert({
+            title: '当前位置',
+            template: $scope.tabTitle
+        })
     }
-
 
     if (typeof(locationDetail) != 'undefined') {
         console.log('lyman 122', JSON.stringify(locationDetail));
@@ -139,6 +143,7 @@ angular.module('iwildfire.controllers', [])
     $stateParams,
     $ionicLoading,
     $ionicModal,
+    $ionicPopup,
     $timeout,
     $state,
     webq,
@@ -188,14 +193,18 @@ angular.module('iwildfire.controllers', [])
             return;
         }
         $log.debug('doSearch');
+        $scope.showSearch = false;
         Topics.setQuery(query);
         // Topics.setGeom({lng:140,lat:40.4});
         $scope.doRefresh();
         $log.debug('searchText', query);
         $scope.tabTitle = query || '首页';
     }
-    $scope.endSearch = function() {
-        $scope.showSearch = false;
+    $scope.showAddress = function() {
+        var popup = $ionicPopup.alert({
+            title: '当前位置',
+            template: $scope.tabTitle
+        });
     }
 
     function loadDataAfterGetLocation() {
@@ -327,7 +336,15 @@ angular.module('iwildfire.controllers', [])
         return topicResource.$promise.then(function(response) {
             $scope.topic = response.data;
             $ionicSlideBoxDelegate.update();
+            $scope.isCollected = $scope.topic.in_collection;
+            $scope.replies = [];
+            $scope.bargains = [];
+            $scope.topic.replies.forEach(function(item, i){
+                if(item.price)  $scope.bargains.push(item);
+                else    $scope.replies.push(item);
+            })
             console.log($scope.topic);
+            console.log($scope.bargains);
         }, $rootScope.requestErrorHandler({
             noBackdrop: true
         }, function() {
@@ -339,14 +356,6 @@ angular.module('iwildfire.controllers', [])
     // detect if user has collected this topic
     var currentUser = User.getCurrentUser();
     $scope.isCollected = false;
-
-    if (currentUser) {
-        angular.forEach(currentUser.collect_topics, function(topics) {
-            if (topics.id === id) {
-                $scope.isCollected = true;
-            }
-        });
-    }
 
     // do refresh
     $scope.doRefresh = function() {
@@ -389,6 +398,83 @@ angular.module('iwildfire.controllers', [])
         }
     }
 
+    $scope.bargain = function() {
+        /*
+                if ($scope.topic.goods_is_bargain == false){
+                    var popup = $ionicPopup.alert({
+                        title: '对不起',
+                        template: '次商品不接受砍价'
+                    });
+                    return;
+                }*/
+        var popup = $ionicPopup.show({
+            template: '出价&nbsp;&nbsp;&nbsp;￥<input type="text" ng-model="replyData.price">\
+                        说点什么<input type="text" ng-model="replyData.content">',
+            title: '我要出价',
+            subTitle: '价格要厚道',
+            scope: $scope,
+            buttons: [{
+                text: '取消'
+            }, {
+                text: '<b>出价</b>',
+                type: 'button-positive',
+                onTap: function(e) {
+                    if (!$scope.replyData.content) {
+                        //don't allow the user to close unless he enters wifi password
+                        e.preventDefault();
+                    } else {
+                        $ionicLoading.show();
+                        Topic.saveReply(id, $scope.replyData).$promise.then(function(response) {
+                            $ionicLoading.hide();
+                            $scope.replyData.content = '';
+                            $log.debug('post reply response:', response);
+                            $scope.loadTopic(true).then(function() {
+                                $ionicScrollDelegate.scrollBottom();
+                            });
+                        }, $rootScope.requestErrorHandler);
+                    }
+                }
+            }]
+        });
+        popup.then(function(res) {
+            console.log('Tapped!', res);
+        });
+    }
+
+    $scope.comment = function() {
+        var popup = $ionicPopup.show({
+            template: '<input type="text" ng-model="replyData.content">',
+            title: '我要留言',
+            subTitle: '说点什么吧',
+            scope: $scope,
+            buttons: [{
+                text: '取消'
+            }, {
+                text: '<b>留言</b>',
+                type: 'button-positive',
+                onTap: function(e) {
+                    if (!$scope.replyData.content) {
+                        //don't allow the user to close unless he enters wifi password
+                        e.preventDefault();
+                    } else {
+                        $ionicLoading.show();
+                        Topic.saveReply(id, $scope.replyData).$promise.then(function(response) {
+                            $ionicLoading.hide();
+                            $scope.replyData.content = '';
+                            $log.debug('post reply response:', response);
+                            $scope.loadTopic(true).then(function() {
+                                $ionicScrollDelegate.scrollBottom();
+                            });
+                        }, $rootScope.requestErrorHandler);
+                    }
+                }
+            }]
+        });
+        popup.then(function(res) {
+            console.log('Tapped!', res);
+        });
+    }
+
     // save reply
     $scope.saveReply = function() {
         $log.debug('new reply data:', JSON.stringify($scope.replyData));
@@ -403,56 +489,6 @@ angular.module('iwildfire.controllers', [])
             });
             $scope.showReply = false;
         }, $rootScope.requestErrorHandler);
-    };
-
-    // show actions
-    $scope.showActions = function(reply) {
-        var currentUser = User.getCurrentUser();
-        if (currentUser.loginname === undefined || currentUser.loginname === reply.author.loginname) {
-            return;
-        }
-        $log.debug('action reply:', reply);
-        var upLabel = '赞';
-        // detect if current user already do up
-        if (reply.ups.indexOf(currentUser.id) !== -1) {
-            upLabel = '已赞';
-        }
-        var replyContent = '@' + reply.author.loginname;
-        $ionicActionSheet.show({
-            buttons: [{
-                text: '回复'
-            }, {
-                text: upLabel
-            }],
-            titleText: replyContent,
-            cancel: function() {},
-            buttonClicked: function(index) {
-
-                // reply to someone
-                if (index === 0) {
-                    $scope.replyData.content = replyContent + ' ';
-                    $scope.replyData.reply_id = reply.id;
-                    $timeout(function() {
-                        document.querySelector('.reply-new input').focus();
-                    }, 1);
-                }
-
-                // up reply
-                if (index === 1) {
-                    Topic.upReply(reply.id).$promise.then(function(response) {
-                        $log.debug('up reply response:', response);
-                        $ionicLoading.show({
-                            noBackdrop: true,
-                            template: response.action === 'up' ? '点赞成功' : '点赞已取消',
-                            duration: 1000
-                        });
-                    }, $rootScope.requestErrorHandler({
-                        noBackdrop: true,
-                    }));
-                }
-                return true;
-            }
-        });
     };
 
     // collect topic
@@ -495,7 +531,6 @@ angular.module('iwildfire.controllers', [])
     cfg,
     store,
     webq,
-    locationDetail,
     wxWrapper,
     Tabs) {
 
@@ -505,7 +540,6 @@ angular.module('iwildfire.controllers', [])
     // if (!store.getAccessToken()) {
     //     window.location.href = '{0}/auth/wechat/embedded'.f(cfg.server);
     // }
-    $scope.locationDetail = {};
 
     // $scope.params = {
     //     // 标题5到10个字
@@ -675,24 +709,6 @@ angular.module('iwildfire.controllers', [])
 
     }
 
-    $scope.closeChangeLocationModal = function(isSubmit) {
-        if (isSubmit) {
-            $timeout(function() {
-                // $scope.params.goods_exchange_location = webq.getPostGoodsLocation();
-                // $scope.params.goods_exchange_location.user_edit_address = $scope.locationDetail.user_edit_address;
-                // $scope.locationDetail = $scope.params.goods_exchange_location;
-                // console.log(JSON.stringify($scope.locationDetail));
-
-                // $scope.params.goods_exchange_location.api_address = $scope.locationDetail.api_address;
-                // $scope.params.goods_exchange_location.user_edit_address = $scope.locationDetail.user_edit_address;
-                // $scope.params.goods_exchange_location.lat = $scope.locationDetail.lat;
-                // $scope.params.goods_exchange_location.lng = $scope.locationDetail.lng;
-                // console.log('lyman 498', JSON.stringify($scope.locationDetail));
-                // console.log('lyman 499', JSON.stringify($scope.params.goods_exchange_location));
-            });
-        }
-        $scope.changeLocationModal.hide();
-    }
 
     /**
      * 验证表单字段
@@ -743,19 +759,6 @@ angular.module('iwildfire.controllers', [])
         }
     }
 
-    $scope.locationDetail = locationDetail;
-    $scope.params.goods_exchange_location = locationDetail;
-    console.log(JSON.stringify(locationDetail));
-    $scope.showEdit = false;
-    // Create the modal that we will use later
-    $ionicModal.fromTemplateUrl('templates/modal-change-location.html', {
-        scope: $scope
-    }).then(function(modal) {
-        $scope.changeLocationModal = modal;
-        // modal.show();
-    });
-
-
     /*******************************************
      * Modal View to input description of goods
      *******************************************/
@@ -777,6 +780,52 @@ angular.module('iwildfire.controllers', [])
      * End of Modal View to input description of goods
      *******************************************/
 
+    /*******************************************
+     * Modal View to input detail of exchange location
+     *******************************************/
+
+    /**
+     * Store the exchange location information
+     * @type {Object}
+     */
+    webq.getLocationDetail(wxWrapper)
+        .then(function(data) {
+            $log.debug('locationDetail', JSON.stringify(data));
+            $scope.locationDetail = data;
+            $scope.params.goods_exchange_location = data;
+            $scope.showEdit = false;
+            // Create the modal that we will use later
+            $ionicModal.fromTemplateUrl('templates/modal-change-location.html', {
+                scope: $scope
+            }).then(function(modal) {
+                $scope.changeLocationModal = modal;
+                // modal.show();
+            });
+
+            $scope.closeChangeLocationModal = function(isSubmit) {
+                if (isSubmit) {
+                    $timeout(function() {
+                        // $scope.params.goods_exchange_location = webq.getPostGoodsLocation();
+                        // $scope.params.goods_exchange_location.user_edit_address = $scope.locationDetail.user_edit_address;
+                        // $scope.locationDetail = $scope.params.goods_exchange_location;
+                        // console.log(JSON.stringify($scope.locationDetail));
+
+                        // $scope.params.goods_exchange_location.api_address = $scope.locationDetail.api_address;
+                        // $scope.params.goods_exchange_location.user_edit_address = $scope.locationDetail.user_edit_address;
+                        // $scope.params.goods_exchange_location.lat = $scope.locationDetail.lat;
+                        // $scope.params.goods_exchange_location.lng = $scope.locationDetail.lng;
+                        // console.log('lyman 498', JSON.stringify($scope.locationDetail));
+                        // console.log('lyman 499', JSON.stringify($scope.params.goods_exchange_location));
+                    });
+                }
+                $scope.changeLocationModal.hide();
+            }
+        });
+    /*******************************************
+     * End Modal View to input detail of exchange location
+     *******************************************/
+
+
     //Cleanup the modal when we're done with it!
     $scope.$on('$destroy', function() {
 
@@ -791,22 +840,22 @@ angular.module('iwildfire.controllers', [])
 
 .controller('InboxCtrl', function($scope, Messages, $log, $rootScope) {
     Messages.getMessages().$promise.then(function(response) {
-      $scope.messages = response.data;
-      console.log(JSON.stringify($scope.messages));
-      if ($scope.messages.hasnot_read_messages.length === 0) {
-        $rootScope.$broadcast('messagesMarkedAsRead');
-      } else {
-        Messages.markAll().$promise.then(function(response) {
-          $log.debug('mark all response:', response);
-          if (response.success) {
+        $scope.messages = response.data;
+        console.log(JSON.stringify($scope.messages));
+        if ($scope.messages.hasnot_read_messages.length === 0) {
             $rootScope.$broadcast('messagesMarkedAsRead');
-          }
-        }, function(response) {
-          $log.debug('mark all response error:', response);
-        });
-      }
+        } else {
+            Messages.markAll().$promise.then(function(response) {
+                $log.debug('mark all response:', response);
+                if (response.success) {
+                    $rootScope.$broadcast('messagesMarkedAsRead');
+                }
+            }, function(response) {
+                $log.debug('mark all response error:', response);
+            });
+        }
     }, function(response) {
-      $log.debug('get messages response error:', response);
+        $log.debug('get messages response error:', response);
     });
 })
 

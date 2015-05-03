@@ -10,6 +10,7 @@ var config = require('../../config');
 
 var create = function (req, res, next) {
   var topic_id = req.params.topic_id;
+  var price = req.body.price;
   var content = req.body.content;
   var reply_id = req.body.reply_id;
 
@@ -41,7 +42,7 @@ var create = function (req, res, next) {
   });
 
   ep.all('topic', 'topic_author', function (topic, topicAuthor) {
-    Reply.newAndSave(content, topic_id, req.user.id, reply_id, ep.done(function (reply) {
+    Reply.newAndSave(price, content, topic_id, req.user.id, reply_id, ep.done(function (reply) {
       Topic.updateLastReply(topic_id, reply._id, ep.done(function () {
         ep.emit('reply_saved', reply);
         //发送at消息，并防止重复 at 作者

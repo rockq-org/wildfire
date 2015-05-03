@@ -176,26 +176,36 @@ revision.short(function(gitRevision) {
             // state: true
             // }, function (openid, profile, token, done) {
     }, function(req, accessToken, refreshToken, profile, done) {
-        req.session.wechat_params = params;
+        req.session.wechat_params = {
+            accessToken: accessToken,
+            refreshToken: refreshToken
+        };
 
         logger.debug('snsapi_userinfo', JSON.stringify(profile));
+
         /**
-         * 
-        {
-        "openid": "ogWfMt5hcNzyPu2BRHjGj4CZmGqo",
-        "nickname": "王海良",
-        "sex": 1,
-        "language": "en",
-        "city": "Haidian",
-        "province": "Beijing",
-        "country": "China",
-        "headimgurl": "http://wx.qlogo.cn/mmopen/Q3auHgzwzM4K3X0qF1xm0lH7MWFobvcge14aBibJbeV78z9TwWjicb5gOwVbQ7QO0CiaIBGv1DrJibDL0tacJM6VZw/0",
-        "privilege": [],
-        "unionid": "o0DaijgmdOUuAIRQ1QNZzuTizOT8"
-        }
+         * {
+  "provider": "wechat",
+  "id": "ogWfMt5hcNzyPu2BRHjGj4CZmGqo",
+  "displayName": "王海良",
+  "username": "王海良",
+  "_raw": "{\"openid\":\"ogWfMt5hcNzyPu2BRHjGj4CZmGqo\",\"nickname\":\"王海良\",\"sex\":1,\"language\":\"en\",\"city\":\"海淀\",\"province\":\"北京\",\"country\":\"中国\",\"headimgurl\":\"http:\\/\\/wx.qlogo.cn\\/mmopen\\/ajNVdqHZLLChxqXiauTD4ewLXOeicBzgQrlwK6f8xfTZ40eDLQmIam7sK7jm6FffhUHcRxpMUSub1wWIqDqhwJibQ\\/0\",\"privilege\":[],\"unionid\":\"o0DaijgmdOUuAIRQ1QNZzuTizOT8\"}",
+  "_json": {
+    "openid": "ogWfMt5hcNzyPu2BRHjGj4CZmGqo",
+    "nickname": "王海良",
+    "sex": 1,
+    "language": "en",
+    "city": "海淀",
+    "province": "北京",
+    "country": "中国",
+    "headimgurl": "http://wx.qlogo.cn/mmopen/ajNVdqHZLLChxqXiauTD4ewLXOeicBzgQrlwK6f8xfTZ40eDLQmIam7sK7jm6FffhUHcRxpMUSub1wWIqDqhwJibQ/0",
+    "privilege": [],
+    "unionid": "o0DaijgmdOUuAIRQ1QNZzuTizOT8"
+  }
+}
          */
         // create user profile
-        UserProxy.newOrUpdate(profile)
+        UserProxy.newOrUpdate(profile._json)
             .then(function(user) {
                 logger.debug('WechatStrategy', 'login user.');
                 // When the login operation completes, user will be assigned to req.user.

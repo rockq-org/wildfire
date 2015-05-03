@@ -639,8 +639,8 @@ Local storage is per domain. All pages, from one domain, can store and access th
                         geocoder.getAddress(center);
                         geocoder.setComplete(function(result) {
                             var c = result.detail.addressComponents;
-                            var address = c.province + c.city + c.district + c.street + c.streetNumber + c.town + c.village;
-                            locationDetail.api_address = address;
+                            var address =  c.district + c.street + c.streetNumber + c.town + c.village;
+                            locationDetail.api_address = result.detail.address;
                             locationDetail.user_edit_address = address;
                             locationDetail.lat = latitude;
                             locationDetail.lng = longitude;

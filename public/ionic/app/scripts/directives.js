@@ -38,7 +38,7 @@ angular.module('iwildfire.directives', [])
                 var marker = new qq.maps.Marker({ map: map });
                 var position = {lat: 25.3518140000000010 + i * 0.003, lng: 118.7042859999999962 + i * 0.003};
                 position = new qq.maps.LatLng(position.lat, position.lng);
-                // position = new qq.maps.LatLng(topics[i].goods_exchange_location.lat, topics[i].goods_exchange_location.lng);
+                position = new qq.maps.LatLng(topics[i].goods_exchange_location.lat, topics[i].goods_exchange_location.lng);
 
                 marker.setPosition( position );
 
@@ -102,7 +102,7 @@ angular.module('iwildfire.directives', [])
             complete: function(result) {
                 $timeout(function(){
                     var c = result.detail.addressComponents;
-                    var address = c.city + c.district + c.street + c.streetNumber + c.town + c.village;
+                    var address = c.district + c.street + c.streetNumber + c.town + c.village;
 
                     scope.locationDetail.api_address = result.detail.address;
                     scope.locationDetail.user_edit_address = address;

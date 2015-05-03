@@ -62,6 +62,7 @@
     "nodemailer": "0.3.43",
     "passport": "0.1.18",
     "passport-github": "0.1.5",
+    "passport-wechat-auth": "0.0.1",
     "pm2": "0.12.7",
     "q": "^1.2.0",
     "qn": "1.0.1",

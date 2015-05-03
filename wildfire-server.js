@@ -33,7 +33,7 @@ revision.short(function(gitRevision) {
 
     var GitHubStrategy = require('passport-github').Strategy;
     var githubStrategyMiddleware = require('./middlewares/github_strategy');
-    var WechatStrategy = require('./middlewares/passport-wechat');
+    var WechatStrategy = require('passport-wechat-auth').OAuth2Strategy;
     var webRouter = require('./web_router');
     var apiRouterV1 = require('./api_router_v1');
     var auth = require('./middlewares/auth');
@@ -168,14 +168,14 @@ revision.short(function(gitRevision) {
      * @return {[type]}               [description]
      */
     passport.use(new WechatStrategy({
-        appid: wxConfig.appId,
-        appsecret: wxConfig.appSecret,
+        appId: wxConfig.appId,
+        appSecret: wxConfig.appSecret,
         callbackURL: util.format('http://%s/auth/wechat/embedded/callback', config.client_host),
         scope: 'snsapi_userinfo',
         passReqToCallback: true
             // state: true
             // }, function (openid, profile, token, done) {
-    }, function(req, openid, profile, params, done) {
+    }, function(req, accessToken, refreshToken, profile, done) {
         req.session.wechat_params = params;
 
         logger.debug('snsapi_userinfo', JSON.stringify(profile));

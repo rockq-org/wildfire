@@ -1,4 +1,4 @@
-$dark:                            #56c1b5 !default; //#444
+$royal: #56c1b5 !default; 
 // Your application styles go here
 @import "modules/fast.scss";
 @import "modules/profile.scss";
@@ -30,7 +30,7 @@ $ionicons-font-path: "../fonts" !default;
 .goods-badge.ny{background: url(../images/badge/ny.png) no-repeat top left;}
 
 .topic-name-menu{
-  padding: 0;
+  padding: 0 6px;
   a{
     line-height: 52px;
     padding-left: 16px;
@@ -104,31 +104,31 @@ input.location-address{
 }
 
 .tabs {
-  border-top: 1px solid $dark !important;
+  border-top: 1px solid $royal !important;
 }
 
 .tab-item {
 	overflow: visible;
 }
 
-.tabs-color-dark .tab-item {
-  color: $dark;
+.tabs-color-royal .tab-item {
+  color: $royal;
 }
 .tab-item .icon {
   margin-top: 3px;
   width: 40px;
   height: 40px;
-  border: 1px solid $dark;
+  border: 1px solid $royal;
   background-color: #fff;
   border-radius: 20px;
   line-height: 40px !important;
 }
 .tab-item.activated .icon {
-  background-color: $dark;
+  background-color: $royal;
   color: #fff;
 }
 .tab-item-active .icon {
-  background-color: $dark;
+  background-color: $royal;
   color: #fff;
 }
 
@@ -154,7 +154,7 @@ input.location-address{
 
 #index .button-clear.active, .button-clear.activated {
   opacity: 0.6;
-  border-bottom: 3px solid $dark !important;
+  border-bottom: 3px solid $royal !important;
 }
 #index .dot-line {
   margin: 10px 0;
@@ -176,6 +176,13 @@ input.location-address{
   position: absolute;
   bottom: 40px;
   right: calc(50% - 60px);
+}
+.topic-name-menu.activated {
+  border-left: 6px solid $royal;
+  padding-left: 0px;
+}
+.has-reply {
+  bottom: 150px;
 }
 
 .wf-post-form .goods-img-holder {

@@ -97,9 +97,14 @@ input.location-address{
     width: 40px;
     height: 40px;
   }
-  span{
+  span{  
     line-height: 40px;
     vertical-align: top;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    width: calc(100% - 50px);
+    display: inline-block;
   }
 }
 
@@ -112,7 +117,7 @@ input.location-address{
 }
 
 .tabs-color-royal .tab-item {
-  color: $royal;
+  color: $royal !important;
 }
 .tab-item .icon {
   margin-top: 3px;

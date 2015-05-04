@@ -268,16 +268,9 @@ revision.short(function(gitRevision) {
                 res.redirect(util.format('http://%s/#/bind-mobile-phone/%s', config.client_host, user.accessToken));
             } else if (req.query && req.query.state !== '') {
                 // pass user accesstoken into client
-                HashStateProxy.getHashStateByMD5(req.query.state)
-                    .then(function(result) {
-                        logger.debug('/auth/wechat/embedded/callback hashState', JSON.stringify(result));
-                        var redirectUrl = util.format('http://%s/#/bind-access-token/%s/%s', config.client_host, user.accessToken, encodeURIComponent(result.value));
-                        logger.debug('/auth/wechat/embedded/callback redirectUrl', redirectUrl);
-                        res.redirect(redirectUrl);
-                    }, function(err) {
-                        logger.warn('/auth/wechat/embedded/callback', 'can not get state by md5');
-                        res.redirect(util.format('http://%s/#/bind-access-token/%s', config.client_host, user.accessToken));
-                    });
+                var redirectUrl = util.format('http://%s/#/bind-access-token/%s/%s', config.client_host, user.accessToken, req.query.state);
+                logger.debug('/auth/wechat/embedded/callback hashState', redirectUrl);
+                res.redirect(redirectUrl);
             } else {
                 var redirectUrl = util.format('http://%s/#/bind-access-token/%s', config.client_host, user.accessToken);
                 logger.debug('/auth/wechat/embedded/callback redirectUrl', redirectUrl);

@@ -1249,7 +1249,7 @@ angular.module('iwildfire.controllers', [])
     $scope,
     $state,
     store) {
-    $log.debug('Get stateParams: ' + JSON.stringify($stateParams));
+    console.log('Get stateParams: ' + JSON.stringify($stateParams));
     var accesstoken = $stateParams.accessToken;
     if (accesstoken) {
         store.setAccessToken($stateParams.accessToken);

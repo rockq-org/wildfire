@@ -62,4 +62,10 @@ router.post('/ionic/wechat-images', middleware.auth, ionicController.getWechatIm
  */
 router.post('/ionic/feedback', middleware.auth, ionicController.saveFeedback);
 
+/**
+ * get state url
+ */
+router.post('/ionic/state', toolsController.getHashStateByMd5);
+
+
 module.exports = router;

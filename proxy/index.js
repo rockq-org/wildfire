@@ -4,3 +4,4 @@ exports.Topic = require('./topic');
 exports.Reply = require('./reply');
 exports.TopicCollect = require('./topic_collect');
 exports.FileStorage = require('./fileStorage');
+exports.HashState = require('./hashState');

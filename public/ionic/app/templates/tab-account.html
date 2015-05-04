@@ -39,7 +39,7 @@ Orders fake tab
                             亲，还没有记录呢
                         </div>
                     </div>
-                    <ion-item ng-repeat="item in stuffs" class="item item-thumbnail-left">
+                    <ion-item ng-repeat="item in stuffs" class="item item-thumbnail-left" href="#/item/{{item._id}}">
                         <img src="{{item.goods_pics[0]}}" />
                         <h2>{{item.title}}</h2>
                         <p>¥ {{item.goods_now_price}}</p>

@@ -2,6 +2,7 @@ var models = require('../../models');
 var TopicModel = models.Topic;
 var TopicProxy = require('../../proxy').Topic;
 var TopicCollect = require('../../proxy').TopicCollect;
+var TopicComplian = require('../../proxy').TopicComplian;
 var UserProxy = require('../../proxy').User;
 var UserModel = models.User;
 var config = require('../../config');
@@ -486,10 +487,15 @@ exports.ding = function(req, res, next) {
     }
 }
 
-
-
-exports.complain = function(req, res, next) {
+exports.addComplain = function(req, res, next) {
+    var user_id = req.user.id;
     var topic_id = req.body.topic_id;
+    var args = {
+        user_id: user_id,
+        topic_id: topic_id,
+        description: req.body.description
+    };
+
     TopicProxy.getTopic(topic_id, function(err, topic) {
         if (err) {
             return next(err);
@@ -500,36 +506,13 @@ exports.complain = function(req, res, next) {
             });
         }
 
-        TopicCollect.getTopicCollect(req.user.id, topic._id, function(err, doc) {
+        TopicComplian.newAndSave(args, function(err) {
             if (err) {
                 return next(err);
             }
-            if (doc) {
-                res.json({
-                    success: true
-                });
-                return;
-            }
-
-            TopicCollect.newAndSave(req.user.id, topic._id, function(err) {
-                if (err) {
-                    return next(err);
-                }
-                res.json({
-                    success: true
-                });
+            res.json({
+                success: true
             });
-            UserProxy.getUserById(req.user.id, function(err, user) {
-                if (err) {
-                    return next(err);
-                }
-                user.collect_topic_count += 1;
-                user.save();
-            });
-
-            req.user.collect_topic_count += 1;
-            topic.collect_count += 1;
-            topic.save();
         });
     });
 };

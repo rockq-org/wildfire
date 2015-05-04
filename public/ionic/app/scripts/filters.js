@@ -50,8 +50,13 @@ angular.module('iwildfire.filters', [])
         }
 
         distance = getFlatternDistance(itemLocation.lat, itemLocation.lng, currentLocation.lat, currentLocation.lng);
-        distance = getKm( distance );
-        distance += '公里';
+        if( distance > 1000 ) {
+            distance = getKm( distance );
+            distance += '千米';
+        } else {
+            distance += '米';
+        }
+
         return distance;
     };
 })

@@ -126,6 +126,11 @@ angular.module('iwildfire.controllers', [])
         topic.collect_count--;
     }
 
+    $scope.complainTopic = function( topic ) {
+
+    }
+
+
     if (typeof(locationDetail) != 'undefined') {
         console.log('lyman 122', JSON.stringify(locationDetail));
         $scope.address = locationDetail.user_edit_address;

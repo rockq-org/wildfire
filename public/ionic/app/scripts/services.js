@@ -844,6 +844,10 @@ Local storage is per domain. All pages, from one domain, can store and access th
     var resource = $resource(cfg.api + '/topic/:id', {
         id: '@id',
     }, {
+        complain: {
+            method: 'post',
+            url: cfg.api + '/topic/complain'
+        },
         collect: {
             method: 'post',
             url: cfg.api + '/topic/collect'
@@ -909,6 +913,13 @@ Local storage is per domain. All pages, from one domain, can store and access th
                 } else {
                     $log(response);
                 }
+            });
+        },
+        complainTopic: function(topicId, description) {
+            return resource.complain({
+                topicId: topicId,
+                description: description,
+                accesstoken: currentUser.accessToken
             });
         },
         collectTopic: function(topicId) {

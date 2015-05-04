@@ -488,15 +488,14 @@ exports.ding = function(req, res, next) {
 }
 
 exports.addComplain = function(req, res, next) {
-    var user_id = req.user.id;
-    var topic_id = req.body.topic_id;
+    var topicId = req.body.topicId;
     var args = {
-        user_id: user_id,
-        topic_id: topic_id,
+        userId: req.user.id,
+        topicId: topicId,
         description: req.body.description
     };
 
-    TopicProxy.getTopic(topic_id, function(err, topic) {
+    TopicProxy.getTopic(topicId, function(err, topic) {
         if (err) {
             return next(err);
         }

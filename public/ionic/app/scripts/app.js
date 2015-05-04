@@ -11,6 +11,19 @@ angular.module('iwildfire', ['ionic', 'iwildfire.controllers', 'iwildfire.servic
 
     amMoment.changeLocale('zh-cn');
 
+    $rootScope.showLoading = function(msg) {
+        if( !msg ){
+            msg = '加载中...';
+        }
+
+        $ionicLoading.show({
+            template: msg
+        });
+    };
+    $rootScope.hideLoading = function(){
+        $ionicLoading.hide();
+    };
+
     $ionicPlatform.ready(function() {
         // Hide the accessory bar by default (remove this to show the accessory bar above the keyboard
         // for form inputs)

@@ -126,11 +126,6 @@ angular.module('iwildfire.controllers', [])
         topic.collect_count--;
     }
 
-    $scope.complainTopic = function( topic ) {
-
-    }
-
-
     if (typeof(locationDetail) != 'undefined') {
         console.log('lyman 122', JSON.stringify(locationDetail));
         $scope.address = locationDetail.user_edit_address;
@@ -535,6 +530,44 @@ angular.module('iwildfire.controllers', [])
             });
         }
     };
+
+     // for complian topic
+    $scope.complainTopic = function( topic ) {
+        $scope.popupData = {};
+        // An elaborate, custom popup
+        var myPopup = $ionicPopup.show({
+                            template: '<textarea ng-model="popupData.complainDescription" placeholder="您的举报理由" style="height:120px"></textarea>',
+                            title: '举报商品',
+                            // subTitle: '请输入您的举报理由',
+                            scope: $scope,
+                            buttons: [
+                              { text: '取消' },
+                              {
+                                text: '<b>提交</b>',
+                                type: 'button-assertive',
+                                onTap: function(e) {
+                                  if (!$scope.popupData.complainDescription) {
+                                    //don't allow the user to close unless he enters wifi password
+                                    e.preventDefault();
+                                  } else {
+                                    return $scope.popupData.complainDescription;
+                                  }
+                                }
+                              }
+                            ]
+                        });
+
+        myPopup.then(function(description) {
+            if( description ) {
+                $scope.showLoading('提交中，请稍候！');
+                Topic.complainTopic(topic.id, description ).$promise.then(function(response){
+                    console.log(response);
+                    $scope.showLoading('提交成功！');
+                    $scope.hideLoading();
+                });
+            }
+        });
+    }
 })
 
 /**

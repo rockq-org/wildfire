@@ -3,11 +3,11 @@ var Schema = mongoose.Schema;
 var ObjectId = Schema.ObjectId;
 
 var TopicComplainSchema = new Schema({
-  user_id: { type: ObjectId },
-  topic_id: { type: ObjectId },
+  userId: { type: ObjectId },
+  topicId: { type: ObjectId },
   description: {type: String}, // 举报理由
-  is_processed: {type: String}, // 后台运营人员是否已经处理
-  create_at: { type: Date, default: Date.now }
+  isProcessed: { type: Boolean, default: false }, // 后台运营人员是否已经处理
+  createAt: { type: Date, default: Date.now }
 });
 
 mongoose.model('TopicComplain', TopicComplainSchema);

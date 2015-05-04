@@ -2,9 +2,9 @@ var TopicComplain = require('../models').TopicComplain;
 
 exports.newAndSave = function (args, callback) {
   var topicComplain = new TopicComplain();
-  topicComplain.user_id = args.user_id;
-  topicComplain.topic_id = args.topic_id;
+  topicComplain.userId = args.user_id;
+  topicComplain.topicId = args.topic_id;
   topicComplain.description = args.description;
-  topicComplain.is_processed = 'false';
+  // topicComplain.isProcessed = false;
   topicComplain.save(callback);
 };

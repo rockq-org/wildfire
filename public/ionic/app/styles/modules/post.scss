@@ -1,32 +1,40 @@
+$royal: #56c1b5 !default; 
 .wf-post-form {
     * {
         color: #666;
     }
+    .item {
+    }
     .button {
-        background: #aaa;
-        border-color: #999;
+        //background: #aaa;
+        //border-color: #999;
     }
     .tag-list {
         white-space: normal;
         li {
             display: inline-block;
             text-align: center;
-            margin: 4px 6px 4px 0;
-            line-height: 14px;
+            margin: 4px 0px;
+            line-height: 16px;
             font-size: 14px;
             display: inline-block;
-            width: 66px;
-            min-width: 66px;
-            border: 1px solid #ccc;
+            border-right: 1px solid $royal;
             a {
                 color: #666;
                 text-decoration: none;
                 display: block;
-                line-height: 30px;
+                padding: 2px 10px;
+                // line-height: 30px;
             }
             &.active {
-                background: #ccc;
+                background: $royal;
+                a {
+                    color: #fff;
+                }
             }
+        }
+        li:last-child {
+            border-right: none;
         }
     }
     .quality-list {
@@ -47,9 +55,12 @@
                 box-sizing: border-box;
             } 
             &.active a {
-                background: #999;
+                background: $royal;
                 color: #fff;
             }
         }
     }
+}
+.row .item-input {
+  padding: 1px 0 0px 8px;
 }

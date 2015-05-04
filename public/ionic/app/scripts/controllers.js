@@ -594,7 +594,6 @@ angular.module('iwildfire.controllers', [])
     webq,
     wxWrapper,
     Tabs) {
-
     // #TODO comment out for debugging
     // if not contains profile and accesstoken, just naviagte
     // to user authentication page.
@@ -631,8 +630,8 @@ angular.module('iwildfire.controllers', [])
         tab: 'electronics',
         quality: '全新',
         goods_pics: [],
-        goods_pre_price: 33,
-        goods_now_price: 22,
+        goods_pre_price: null,
+        goods_now_price: null,
         goods_is_bargain: true,
         // dummy data
         goods_exchange_location: {
@@ -904,7 +903,7 @@ angular.module('iwildfire.controllers', [])
 .controller('InboxCtrl', function($scope, Messages, $log, $rootScope) {
     Messages.getMessages().$promise.then(function(response) {
         $scope.messages = response.data;
-        console.log(JSON.stringify($scope.messages));
+        //console.log(JSON.stringify($scope.messages));
         if ($scope.messages.hasnot_read_messages.length === 0) {
             $rootScope.$broadcast('messagesMarkedAsRead');
         } else {

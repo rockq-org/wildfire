@@ -324,8 +324,12 @@ angular.module('iwildfire.controllers', [])
     $scope.topic = topic;
     $scope.img_prefix = cfg.server;
     $scope.avatar_prefix = cfg.api + '/avatar/';
-    $scope.showBargains = true;
-    $scope.status = 'normal';
+    //$scope.showBargains = false;
+    //$scope.status = 'normal';
+    $scope.status = {
+        action: 'normal',
+        showBargains: false
+    }
     $scope.currentLocation = store.getLocationDetail();
 
     // before enter view event
@@ -359,7 +363,7 @@ angular.module('iwildfire.controllers', [])
                 else $scope.replies.push(item);
             })
             console.log($scope.topic);
-            console.log($scope.bargains);
+            console.log($scope.replies);
         }, $rootScope.requestErrorHandler({
             noBackdrop: true
         }, function() {
@@ -413,81 +417,9 @@ angular.module('iwildfire.controllers', [])
         }
     }
 
-    $scope.bargain = function() {
-        /*
-                if ($scope.topic.goods_is_bargain == false){
-                    var popup = $ionicPopup.alert({
-                        title: '对不起',
-                        template: '次商品不接受砍价'
-                    });
-                    return;
-                }*/
-        var popup = $ionicPopup.show({
-            template: '出价&nbsp;&nbsp;&nbsp;￥<input type="text" ng-model="replyData.price">\
-                        说点什么<input type="text" ng-model="replyData.content">',
-            title: '我要出价',
-            subTitle: '价格要厚道',
-            scope: $scope,
-            buttons: [{
-                text: '取消'
-            }, {
-                text: '<b>出价</b>',
-                type: 'button-positive',
-                onTap: function(e) {
-                    if (!$scope.replyData.content) {
-                        //don't allow the user to close unless he enters wifi password
-                        e.preventDefault();
-                    } else {
-                        $ionicLoading.show();
-                        Topic.saveReply(id, $scope.replyData).$promise.then(function(response) {
-                            $ionicLoading.hide();
-                            $scope.replyData.content = '';
-                            $log.debug('post reply response:', response);
-                            $scope.loadTopic(true).then(function() {
-                                $ionicScrollDelegate.scrollBottom();
-                            });
-                        }, $rootScope.requestErrorHandler);
-                    }
-                }
-            }]
-        });
-        popup.then(function(res) {
-            console.log('Tapped!', res);
-        });
-    }
-
-    $scope.comment = function() {
-        var popup = $ionicPopup.show({
-            template: '<input type="text" ng-model="replyData.content">',
-            title: '我要留言',
-            subTitle: '说点什么吧',
-            scope: $scope,
-            buttons: [{
-                text: '取消'
-            }, {
-                text: '<b>留言</b>',
-                type: 'button-positive',
-                onTap: function(e) {
-                    if (!$scope.replyData.content) {
-                        //don't allow the user to close unless he enters wifi password
-                        e.preventDefault();
-                    } else {
-                        $ionicLoading.show();
-                        Topic.saveReply(id, $scope.replyData).$promise.then(function(response) {
-                            $ionicLoading.hide();
-                            $scope.replyData.content = '';
-                            $log.debug('post reply response:', response);
-                            $scope.loadTopic(true).then(function() {
-                                $ionicScrollDelegate.scrollBottom();
-                            });
-                        }, $rootScope.requestErrorHandler);
-                    }
-                }
-            }]
-        });
-        popup.then(function(res) {
-            console.log('Tapped!', res);
-        });
+    $scope.replyTo = function(replyAuthor) {
+        $scope.replyData.replyTo=replyAuthor;
+        $scope.status.action='reply';
     }
 
     // save reply
@@ -495,6 +427,11 @@ angular.module('iwildfire.controllers', [])
         $log.debug('new reply data:', JSON.stringify($scope.replyData));
         if ($scope.replyData.content == '') return $scope.showReply = false;
         $ionicLoading.show();
+        if($scope.replyData.replyTo){
+            $scope.replyData.reply_to = $scope.replyData.replyTo.name;
+            //$scope.replyData.content = '@'+$scope.replyData.replyTo.loginname+' '+ $scope.replyData.content;
+        }
+        console.log($scope.replyData);
         Topic.saveReply(id, $scope.replyData).$promise.then(function(response) {
             $ionicLoading.hide();
             $scope.replyData = {
@@ -505,7 +442,10 @@ angular.module('iwildfire.controllers', [])
                 $ionicScrollDelegate.scrollBottom();
             });
             $scope.showReply = false;
-        }, $rootScope.requestErrorHandler);
+        }, function(){
+            $ionicLoading.hide();
+            $rootScope.requestErrorHandler()
+        });
     };
 
     // collect topic

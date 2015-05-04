@@ -578,17 +578,19 @@ Local storage is per domain. All pages, from one domain, can store and access th
                         store.setWechatSignature(data.msg);
                         deferred.resolve(data.msg);
                     } else {
-                        deferred.resolve();
+                        deferred.reject(data);
                     }
                 })
                 .error(function(err) {
+                    console.dir(arguments);
                     console.log('get wechatSingnature from wx api server error', err);
                     deferred.reject( err );
                 })
         } else {
             // wechat signature is assigned to undefined if
             // APP_URL is not belong to arrking.com.
-            deferred.reject('APP_URL is not belong to arrking.com');
+            console.log('reject ' + cfg.server + 'do not contains arrking.com ');
+            deferred.reject(cfg.server + 'do not contains arrking.com ');
         }
 
         return deferred.promise;
@@ -680,7 +682,6 @@ Local storage is per domain. All pages, from one domain, can store and access th
 
         if (locationDetail) {
             console.log('get cached locationDetail from store', JSON.stringify(locationDetail));
-
             deferred.resolve(locationDetail);
 
             return deferred.promise;
@@ -691,6 +692,10 @@ Local storage is per domain. All pages, from one domain, can store and access th
         } else {
             // get a new wxWrapper
             console.log('we have to get wxWrapper again from deferred, cause the locationDetail and the wxWrapper do not cached');
+            _getLocationDetail(wxWrapper, deferred);
+        } else {
+            // get a new wxWrapper
+            console.log('get a new wxWrapper');
             self.getWxWrapper()
                 .then(function(wxWrapper) {
                     _getLocationDetail(wxWrapper, deferred);

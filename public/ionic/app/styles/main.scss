@@ -98,6 +98,7 @@ input.location-address{
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
+    width: -webkit-calc(100% - 50px);
     width: calc(100% - 50px);
     display: inline-block;
   }
@@ -170,12 +171,18 @@ input.location-address{
 .phone-icon {
   position: absolute;
   bottom: 40px;
-  left: calc(50% - 60px);
+  right: 50%;
+  margin-right: 20px !important;
+  //left: -webkit-calc(50% - 60px);
+  //left: calc(50% - 60px);
 }
 .message-icon {
   position: absolute;
   bottom: 40px;
-  right: calc(50% - 60px);
+  left: 50%;
+  margin-left: 20px !important;
+  //right: -webkit-calc(50% - 60px);
+  //right: calc(50% - 60px);
 }
 .topic-name-menu.activated {
   border-left: 6px solid $royal;

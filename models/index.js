@@ -6,6 +6,7 @@ require('./user');
 require('./topic');
 require('./reply');
 require('./topic_collect');
+require('./TopicComplain');
 require('./message');
 require('./fileStorage');
 require('./feedback');
@@ -15,6 +16,7 @@ exports.User = mongoose.model('User');
 exports.Topic = mongoose.model('Topic');
 exports.Reply = mongoose.model('Reply');
 exports.TopicCollect = mongoose.model('TopicCollect');
+exports.TopicComplain = mongoose.model('TopicComplain');
 exports.Message = mongoose.model('Message');
 
 // use GridFS to manage files

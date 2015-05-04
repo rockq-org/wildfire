@@ -2,6 +2,7 @@ var TopicComplain = require('../models').TopicComplain;
 
 exports.newAndSave = function (args, callback) {
   var topicComplain = new TopicComplain();
+  console.log(topicComplain);
   topicComplain.userId = args.user_id;
   topicComplain.topicId = args.topic_id;
   topicComplain.description = args.description;

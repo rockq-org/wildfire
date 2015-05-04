@@ -2,7 +2,7 @@ var models = require('../../models');
 var TopicModel = models.Topic;
 var TopicProxy = require('../../proxy').Topic;
 var TopicCollect = require('../../proxy').TopicCollect;
-var TopicComplian = require('../../proxy').TopicComplian;
+var TopicComplain = require('../../proxy').TopicComplain;
 var UserProxy = require('../../proxy').User;
 var UserModel = models.User;
 var config = require('../../config');
@@ -504,8 +504,8 @@ exports.addComplain = function(req, res, next) {
                 error_msg: '主题不存在'
             });
         }
-
-        TopicComplian.newAndSave(args, function(err) {
+        console.log('zzzz');
+        TopicComplain.newAndSave(args, function(err) {
             if (err) {
                 return next(err);
             }

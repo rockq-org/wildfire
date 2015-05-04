@@ -540,7 +540,7 @@ angular.module('iwildfire.controllers', [])
         $scope.popupData = {};
         // An elaborate, custom popup
         var myPopup = $ionicPopup.show({
-                            template: '<textarea ng-model="popupData.complainDescription" placeholder="您的举报理由" style="height:120px"></textarea>',
+                            template: '<textarea autofocus ng-model="popupData.complainDescription" placeholder="您的举报理由" style="height:120px"></textarea>',
                             title: '举报商品',
                             // subTitle: '请输入您的举报理由',
                             scope: $scope,
@@ -565,8 +565,6 @@ angular.module('iwildfire.controllers', [])
             if( description ) {
                 $scope.showLoading('提交中，请稍候！');
                 Topic.complainTopic(topic.id, description ).$promise.then(function(response){
-                    console.log(response);
-                    $scope.showLoading('提交成功！');
                     $scope.hideLoading();
                 });
             }

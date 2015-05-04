@@ -532,14 +532,17 @@ angular.module('iwildfire.controllers', [])
     cfg,
     store,
     webq,
+    locationDetail,
     wxWrapper,
     Tabs) {
     // #TODO comment out for debugging
     // if not contains profile and accesstoken, just naviagte
     // to user authentication page.
     if (!store.getAccessToken()) {
+        console.log('redirection!');
         window.location.href = '{0}/auth/wechat/embedded?redirect={1}'.f(cfg.server, encodeURIComponent('{0}/#/tab/account'.f(cfg.server)));
     }
+    console.log('I am here, the PostCtrl');
 
     // $scope.params = {
     //     // 标题5到10个字
@@ -788,8 +791,9 @@ angular.module('iwildfire.controllers', [])
      * Store the exchange location information
      * @type {Object}
      */
-    webq.getLocationDetail(wxWrapper)
-        .then(function(data) {
+    // webq.getLocationDetail(wxWrapper)
+        // .then(function(data) {
+    function _locationDetail( data ){
             $log.debug('locationDetail', JSON.stringify(data));
             $scope.locationDetail = data;
             $scope.params.goods_exchange_location = data;
@@ -815,7 +819,9 @@ angular.module('iwildfire.controllers', [])
                 }
                 $scope.changeLocationModal.hide();
             }
-        });
+        // });
+    }
+    _locationDetail( locationDetail );
     /*******************************************
      * End Modal View to input detail of exchange location
      *******************************************/

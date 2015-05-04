@@ -44,7 +44,6 @@ angular.module('iwildfire.services', ['ngResource'])
 })
 
 .factory('Messages', function(cfg, store, $resource, $log) {
-    console.log(store.getAccessToken());
     var messages = {};
     var messagesCount = 0;
     var resource = $resource(cfg.api + '/messages', null, {
@@ -584,12 +583,12 @@ Local storage is per domain. All pages, from one domain, can store and access th
                 })
                 .error(function(err) {
                     console.log('get wechatSingnature from wx api server error', err);
-                    deferred.resolve();
+                    deferred.reject( err );
                 })
         } else {
             // wechat signature is assigned to undefined if
             // APP_URL is not belong to arrking.com.
-            deferred.resolve();
+            deferred.reject('APP_URL is not belong to arrking.com');
         }
 
         return deferred.promise;
@@ -608,7 +607,6 @@ Local storage is per domain. All pages, from one domain, can store and access th
         var deferred = $q.defer();
         self.getWechatSignature()
             .then(function(wechat_signature) {
-                console.log(wechat_signature);
                 if (wechat_signature) {
                     wechat_signature.jsApiList = ['chooseImage',
                         'previewImage', 'uploadImage',
@@ -629,7 +627,7 @@ Local storage is per domain. All pages, from one domain, can store and access th
                     });
                 } else {
                     console.log('do not get wechat_signature', wechat_signature);
-                    deferred.reject();
+                    deferred.reject('do not get wechat_signature');
                 }
             }, function() {
                 deferred.reject();
@@ -680,17 +678,19 @@ Local storage is per domain. All pages, from one domain, can store and access th
         var deferred = $q.defer();
         var locationDetail = store.getLocationDetail();
 
-        console.log(locationDetail, wxWrapper);
         if (locationDetail) {
-            $log.debug('return cached locationDetail', JSON.stringify(locationDetail));
+            console.log('get cached locationDetail from store', JSON.stringify(locationDetail));
+
             deferred.resolve(locationDetail);
 
             return deferred.promise;
         } else if (wxWrapper) {
             // use the wxWrapper passed in
+            console.log('use the wxWrapper to get locationDetail', JSON.stringify(wxWrapper));
             _getLocationDetail(wxWrapper, deferred);
         } else {
             // get a new wxWrapper
+            console.log('we have to get wxWrapper again from deferred, cause the locationDetail and the wxWrapper do not cached');
             self.getWxWrapper()
                 .then(function(wxWrapper) {
                     _getLocationDetail(wxWrapper, deferred);

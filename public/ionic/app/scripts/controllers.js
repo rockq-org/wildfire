@@ -122,9 +122,9 @@ angular.module('iwildfire.controllers', [])
         })
     }
 
-    $scope.collectTopic = function( topic ) {
-        topic.collect_count--;
-    }
+    // $scope.collectTopic = function( topic ) {
+    //     topic.collect_count--;
+    // }
 
     if (typeof(locationDetail) != 'undefined') {
         console.log('lyman 122', JSON.stringify(locationDetail));

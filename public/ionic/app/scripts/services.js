@@ -114,7 +114,7 @@ Local storage is per domain. All pages, from one domain, can store and access th
     };
 
     this.getAccessToken = function() {
-        console.log('WILDFIRE_ACCESS_TOKEN', window.localStorage.getItem('WILDFIRE_ACCESS_TOKEN') );
+        console.log('WILDFIRE_ACCESS_TOKEN', window.localStorage.getItem('WILDFIRE_ACCESS_TOKEN'));
         return window.localStorage.getItem('WILDFIRE_ACCESS_TOKEN');
     };
 
@@ -759,7 +759,7 @@ Local storage is per domain. All pages, from one domain, can store and access th
         });
     };
     return {
-        addVisitCount: function(){
+        addVisitCount: function() {
 
         },
         refresh: function() {
@@ -830,238 +830,239 @@ Local storage is per domain. All pages, from one domain, can store and access th
 })
 
 .factory('Topic', function(cfg, $resource, $log, $q, store) {
-        //var User = {};
-        // make sure the user is logged in
-        // before using saveReply.
-        var currentUser = store.getUserProfile();
+    //var User = {};
+    // make sure the user is logged in
+    // before using saveReply.
+    var currentUser = store.getUserProfile();
 
-        /**
-         * Get current user from local store or resolve from server.
-         * But if there is no accessToken in store.getAccessToken(),
-         * it means there is none logged in user in current session.
-         *
-         * @type {Object}
-         */
-        var Settings = {};
-        var topic;
-        var resource = $resource(cfg.api + '/topic/:id', {
-            id: '@id',
-        }, {
-            collect: {
-                method: 'post',
-                url: cfg.api + '/topic/collect'
-            },
-            deCollect: {
-                method: 'post',
-                url: cfg.api + '/topic/de_collect'
-            },
-            reply: {
-                method: 'post',
-                url: cfg.api + '/topic/:topicId/replies',
-                timeout: 2000
-            },
-            upReply: {
-                method: 'post',
-                url: cfg.api + '/reply/:replyId/ups'
-            }
-        });
-        return {
-            getById: function(id) {
-                if (topic !== undefined && topic.id === id) {
-                    var topicDefer = $q.defer();
-                    topicDefer.resolve({
-                        data: topic
-                    });
-                    return {
-                        $promise: topicDefer.promise
-                    };
-                }
-                return this.get(id);
-            },
-            get: function(id) {
-                return resource.get({
-                    id: id
-                }, function(response) {
-                    topic = response.data;
-                });
-            },
-            saveReply: function(topicId, replyData) {
-                var reply = angular.extend({}, replyData);
-                return resource.reply({
-                    topicId: topicId,
-                    //accesstoken: currentUser.accessToken
-                    accesstoken: '5447b4c3-0006-4a3c-9903-ac5a803bc17e'
-                }, reply);
-            },
-            upReply: function(replyId) {
-                var currentUser = User.getCurrentUser();
-                return resource.upReply({
-                    replyId: replyId,
-                    accesstoken: currentUser.accessToken
-                }, null, function(response) {
-                    if (response.success) {
-                        angular.forEach(topic.replies, function(reply, key) {
-                            if (reply.id === replyId) {
-                                if (response.action === 'up') {
-                                    reply.ups.push(currentUser.id);
-                                } else {
-                                    reply.ups.pop();
-                                }
-                            }
-                        });
-                    } else {
-                        $log(response);
-                    }
-                });
-            },
-            collectTopic: function(topicId) {
-                return resource.collect({
-                    topic_id: topicId,
-                    accesstoken: currentUser.accessToken
-                });
-            },
-            deCollectTopic: function(topicId) {
-                return resource.deCollect({
-                    topic_id: topicId,
-                    accesstoken: currentUser.accessToken
-                });
-            }
-        };
-    })
     /**
-     * Provide utilities to access current login user.
+     * Get current user from local store or resolve from server.
+     * But if there is no accessToken in store.getAccessToken(),
+     * it means there is none logged in user in current session.
      *
-     * @param  {[type]} cfg                [description]
-     * @param  {[type]} $resource          [description]
-     * @param  {[type]} $log               [description]
-     * @param  {[type]} $q                 [description]
-     * @param  {[type]} store)             {                 var resource [description]
-     * @param  {[type]} null               [description]
-     * @param  {[type]} function(response) {                                                                      $log.debug('post accesstoken:', response);                user.accesstoken [description]
-     * @param  {Object} logout:            function()    {                                    user [description]
-     * @return {[type]}                    [description]
+     * @type {Object}
      */
-    .factory('User', function(cfg, $resource, $log, $q, store) {
-        var resource = $resource(cfg.api + '/accesstoken');
-        var userResource = $resource(cfg.api + '/user/:loginname', {
-            loginname: ''
-        });
-        var user = store.getUserProfile();
-        return {
-            /**
-             * accessToken can be passed from wechat uaa
-             * or get locally by store.getAccessToken.
-             * @param  {[type]} accesstoken [description]
-             * @return {[type]}             [description]
-             */
-            login: function(accesstoken) {
-                var $this = this;
-                return resource.save({
-                    accesstoken: accesstoken
-                }, null, function(response) {
-                    $log.debug('post accesstoken:', response);
-                    user.accesstoken = accesstoken;
-                    $this.getByLoginName(response.loginname).$promise.then(function(r) {
-                        user = r.profile;
-                        store.setUserProfile(user);
-                    });
-                    user.loginname = response.loginname;
+    var Settings = {};
+    var topic;
+    var resource = $resource(cfg.api + '/topic/:id', {
+        id: '@id',
+    }, {
+        collect: {
+            method: 'post',
+            url: cfg.api + '/topic/collect'
+        },
+        deCollect: {
+            method: 'post',
+            url: cfg.api + '/topic/de_collect'
+        },
+        reply: {
+            method: 'post',
+            url: cfg.api + '/topic/:topicId/replies',
+            timeout: 2000
+        },
+        upReply: {
+            method: 'post',
+            url: cfg.api + '/reply/:replyId/ups'
+        }
+    });
+    return {
+        getById: function(id) {
+            if (topic !== undefined && topic.id === id) {
+                var topicDefer = $q.defer();
+                topicDefer.resolve({
+                    data: topic
                 });
-            },
-            /**
-             * delete local user data
-             * @return {[type]} [description]
-             */
-            logout: function() {
-                user = {};
-                store.deleteUserProfile();
-                store.deleteAccessToken();
-            },
-            /**
-             * return the profile data if it exists, or null for none login user.
-             * {
-                  "_id": "553b43df49232fd36bccf847",
-                  "profile": {
-                    "openid": "ogWfMt5hcNzXXX",
-                    "nickname": "王海良",
-                    "sex": 1,
-                    "language": "en",
-                    "city": "Haidian",
-                    "province": "Beijing",
-                    "country": "China",
-                    "headimgurl": "http://wx.qlogo.cn/mmopen/ajNVdqHZLLChxqXiauTD4ewLXOeicBzgQrlwK6f8xfTZ40eDLQmIam7sK7jm6FffhUHcRxpMUSub1wWIqDqhwJibQ/0",
-                    "privilege": [],
-                    "unionid": "XXXX"
-                  },
-                  "accessToken": "xxxx",
-                  "avatar": "http://wx.qlogo.cn/mmopen/ajNVdqHZLLChxqXiauTD4ewLXOeicBzgQrlwK6f8xfTZ40eDLQmIam7sK7jm6FffhUHcRxpMUSub1wWIqDqhwJibQ/0",
-                  "email": "xx@foo.cn",
-                  "pass": "xxxx",
-                  "loginname": "xxx",
-                  "name": "王海良",
-                  "__v": 0,
-                  "phone_number": "xxx",
-                  "passport": "wechat",
-                  "receive_at_mail": false,
-                  "receive_reply_mail": false,
-                  "active": true,
-                  "update_at": "2015-04-25T07:35:59.393Z",
-                  "create_at": "2015-04-25T07:35:59.393Z",
-                  "collect_topic_count": 0,
-                  "collect_tag_count": 0,
-                  "following_count": 0,
-                  "follower_count": 0,
-                  "reply_count": 0,
-                  "topic_count": 13,
-                  "score": 65,
-                  "is_block": false
-                }
-             * @return {[type]} [description]
-             */
-            getCurrentUser: function() {
-                $log.debug('current user:', user);
-                return user;
-            },
-            getByLoginName: function(loginName) {
-                if (user && loginName === user.loginname) {
-                    var userDefer = $q.defer();
-                    $log.debug('get user info from storage:', user);
-                    userDefer.resolve({
-                        data: user
-                    });
-                    return {
-                        $promise: userDefer.promise
-                    };
-                }
-                return this.get(loginName);
-            },
-            get: function(loginName) {
-                return userResource.get({
-                    loginname: loginName
-                }, function(response) {
-                    $log.debug('get user info:', response);
-                    if (user && user.loginname === loginName) {
-                        angular.extend(user, response.data);
-
-                        store.setUserProfile(user);
-                    }
-                });
-            },
-            collectTopic: function(topicId) {
-                // TODO: should be submit to server api, maybe jianfei already done
-                user.collect_topics.push({
-                    id: topicId
-                });
-                store.setUserProfile(user);
-            },
-            deCollectTopic: function(topicId) {
-                // TODO: should be submit to server api, maybe jianfei already done
-                angular.forEach(user.collect_topics, function(topic, key) {
-                    if (topic.id === topicId) {
-                        user.collect_topics.splice(key, 1);
-                    }
-                });
-                store.setUserProfile(user);
+                return {
+                    $promise: topicDefer.promise
+                };
             }
-        };
-    })
+            return this.get(id);
+        },
+        get: function(id) {
+            return resource.get({
+                id: id
+            }, function(response) {
+                topic = response.data;
+            });
+        },
+        saveReply: function(topicId, replyData) {
+            var reply = angular.extend({}, replyData);
+            return resource.reply({
+                topicId: topicId,
+                //accesstoken: currentUser.accessToken
+                accesstoken: '5447b4c3-0006-4a3c-9903-ac5a803bc17e'
+            }, reply);
+        },
+        upReply: function(replyId) {
+            var currentUser = User.getCurrentUser();
+            return resource.upReply({
+                replyId: replyId,
+                accesstoken: currentUser.accessToken
+            }, null, function(response) {
+                if (response.success) {
+                    angular.forEach(topic.replies, function(reply, key) {
+                        if (reply.id === replyId) {
+                            if (response.action === 'up') {
+                                reply.ups.push(currentUser.id);
+                            } else {
+                                reply.ups.pop();
+                            }
+                        }
+                    });
+                } else {
+                    $log(response);
+                }
+            });
+        },
+        collectTopic: function(topicId) {
+            return resource.collect({
+                topic_id: topicId,
+                accesstoken: currentUser.accessToken
+            });
+        },
+        deCollectTopic: function(topicId) {
+            return resource.deCollect({
+                topic_id: topicId,
+                accesstoken: currentUser.accessToken
+            });
+        }
+    };
+})
+
+/**
+ * Provide utilities to access current login user.
+ *
+ * @param  {[type]} cfg                [description]
+ * @param  {[type]} $resource          [description]
+ * @param  {[type]} $log               [description]
+ * @param  {[type]} $q                 [description]
+ * @param  {[type]} store)             {                 var resource [description]
+ * @param  {[type]} null               [description]
+ * @param  {[type]} function(response) {                                                                      $log.debug('post accesstoken:', response);                user.accesstoken [description]
+ * @param  {Object} logout:            function()    {                                    user [description]
+ * @return {[type]}                    [description]
+ */
+.factory('User', function(cfg, $resource, $log, $q, store) {
+    var resource = $resource(cfg.api + '/accesstoken');
+    var userResource = $resource(cfg.api + '/user/:loginname', {
+        loginname: ''
+    });
+    var user = store.getUserProfile();
+    return {
+        /**
+         * accessToken can be passed from wechat uaa
+         * or get locally by store.getAccessToken.
+         * @param  {[type]} accesstoken [description]
+         * @return {[type]}             [description]
+         */
+        login: function(accesstoken) {
+            var $this = this;
+            return resource.save({
+                accesstoken: accesstoken
+            }, null, function(response) {
+                $log.debug('post accesstoken:', response);
+                user.accesstoken = accesstoken;
+                $this.getByLoginName(response.loginname).$promise.then(function(r) {
+                    user = r.profile;
+                    store.setUserProfile(user);
+                });
+                user.loginname = response.loginname;
+            });
+        },
+        /**
+         * delete local user data
+         * @return {[type]} [description]
+         */
+        logout: function() {
+            user = {};
+            store.deleteUserProfile();
+            store.deleteAccessToken();
+        },
+        /**
+         * return the profile data if it exists, or null for none login user.
+         * {
+              "_id": "553b43df49232fd36bccf847",
+              "profile": {
+                "openid": "ogWfMt5hcNzXXX",
+                "nickname": "王海良",
+                "sex": 1,
+                "language": "en",
+                "city": "Haidian",
+                "province": "Beijing",
+                "country": "China",
+                "headimgurl": "http://wx.qlogo.cn/mmopen/ajNVdqHZLLChxqXiauTD4ewLXOeicBzgQrlwK6f8xfTZ40eDLQmIam7sK7jm6FffhUHcRxpMUSub1wWIqDqhwJibQ/0",
+                "privilege": [],
+                "unionid": "XXXX"
+              },
+              "accessToken": "xxxx",
+              "avatar": "http://wx.qlogo.cn/mmopen/ajNVdqHZLLChxqXiauTD4ewLXOeicBzgQrlwK6f8xfTZ40eDLQmIam7sK7jm6FffhUHcRxpMUSub1wWIqDqhwJibQ/0",
+              "email": "xx@foo.cn",
+              "pass": "xxxx",
+              "loginname": "xxx",
+              "name": "王海良",
+              "__v": 0,
+              "phone_number": "xxx",
+              "passport": "wechat",
+              "receive_at_mail": false,
+              "receive_reply_mail": false,
+              "active": true,
+              "update_at": "2015-04-25T07:35:59.393Z",
+              "create_at": "2015-04-25T07:35:59.393Z",
+              "collect_topic_count": 0,
+              "collect_tag_count": 0,
+              "following_count": 0,
+              "follower_count": 0,
+              "reply_count": 0,
+              "topic_count": 13,
+              "score": 65,
+              "is_block": false
+            }
+         * @return {[type]} [description]
+         */
+        getCurrentUser: function() {
+            $log.debug('current user:', user);
+            return user;
+        },
+        getByLoginName: function(loginName) {
+            if (user && loginName === user.loginname) {
+                var userDefer = $q.defer();
+                $log.debug('get user info from storage:', user);
+                userDefer.resolve({
+                    data: user
+                });
+                return {
+                    $promise: userDefer.promise
+                };
+            }
+            return this.get(loginName);
+        },
+        get: function(loginName) {
+            return userResource.get({
+                loginname: loginName
+            }, function(response) {
+                $log.debug('get user info:', response);
+                if (user && user.loginname === loginName) {
+                    angular.extend(user, response.data);
+
+                    store.setUserProfile(user);
+                }
+            });
+        },
+        collectTopic: function(topicId) {
+            // TODO: should be submit to server api, maybe jianfei already done
+            user.collect_topics.push({
+                id: topicId
+            });
+            store.setUserProfile(user);
+        },
+        deCollectTopic: function(topicId) {
+            // TODO: should be submit to server api, maybe jianfei already done
+            angular.forEach(user.collect_topics, function(topic, key) {
+                if (topic.id === topicId) {
+                    user.collect_topics.splice(key, 1);
+                }
+            });
+            store.setUserProfile(user);
+        }
+    };
+})

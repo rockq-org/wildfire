@@ -268,7 +268,6 @@ revision.short(function(gitRevision) {
                 res.redirect(util.format('http://%s/#/bind-mobile-phone/%s', config.client_host, user.accessToken));
             } else if (req.query && req.query.state !== '') {
                 // pass user accesstoken into client
-                res.redirect(util.format('http://%s/#/bind-access-token/%s', config.client_host, user.accessToken));
                 HashStateProxy.getHashStateByMD5(req.query.state)
                     .then(function(result) {
                         res.redirect(util.format('http://%s/#/bind-access-token/%s/%s', config.client_host, user.accessToken, encodeURIComponent(result.value)));

@@ -26,7 +26,7 @@
                   <div class="item col col-50 no-border" style="height:315px; float:left" ng-repeat="topic in topics">
                       <div class="item item-image">
                         <a ui-sref="item({itemId: topic.id})">
-                          <img class="full-image " style="width:100%; height:194px; background:url('{{img_prefix}}{{topic.goods_pics[0]}}') center no-repeat; background-size:cover"/>
+                          <div class="full-image " style="width:100%; height:194px; background:url('{{img_prefix}}{{topic.goods_pics[0]}}') center no-repeat; background-size:cover"></div>
                           <span class="{{topic.goods_quality_degree | badge}}">{{topic.goods_quality_degree}}</span>
                         </a>
                         <div class="text-left padding-left padding-right padding-top">

@@ -44,19 +44,20 @@ angular.module('iwildfire.filters', [])
     }
 
     return function(itemLocation, currentLocation) {
-        var distance;
+        var distance='';
         if( !itemLocation ){
             return;
         }
 
-        distance = getFlatternDistance(itemLocation.lat, itemLocation.lng, currentLocation.lat, currentLocation.lng);
-        if( distance > 1000 ) {
-            distance = getKm( distance );
-            distance += '千米';
-        } else {
-            distance += '米';
+        if(currentLocation){
+            distance = getFlatternDistance(itemLocation.lat, itemLocation.lng, currentLocation.lat, currentLocation.lng);
+            if( distance > 1000 ) {
+                distance = getKm( distance );
+                distance += '千米';
+            } else {
+                distance += '米';
+            }
         }
-
         return distance;
     };
 })

@@ -504,7 +504,7 @@ exports.addComplain = function(req, res, next) {
                 error_msg: '主题不存在'
             });
         }
-        console.log('zzzz');
+
         TopicComplain.newAndSave(args, function(err) {
             if (err) {
                 return next(err);

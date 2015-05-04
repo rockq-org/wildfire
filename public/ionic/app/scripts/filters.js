@@ -44,14 +44,15 @@ angular.module('iwildfire.filters', [])
     }
 
     return function(itemLocation, currentLocation) {
-        var distance;
+        var distance='';
         if( !itemLocation ){
             return;
         }
-
-        distance = getFlatternDistance(itemLocation.lat, itemLocation.lng, currentLocation.lat, currentLocation.lng);
-        distance = getKm( distance );
-        distance += '公里';
+        if(currentLocation){
+            distance = getFlatternDistance(itemLocation.lat, itemLocation.lng, currentLocation.lat, currentLocation.lng);
+            distance = getKm( distance );
+            distance += '公里';
+        }
         return distance;
     };
 })

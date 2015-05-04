@@ -2,14 +2,14 @@
 <ion-view hide-nav-bar="true">
     <ion-side-menus>
         <ion-side-menu-content id="index">
-          <ion-header-bar class="bar-royal">
+          <div class="bar bar-header bar-royal">
               <div class="buttons">
                   <button class="button button-icon ion-navicon" menu-toggle="left"> {{menuTitle}}</button>
               </div>
               <h1 class="title" ng-click="showAddress()">{{tabTitle}}</h1>
               <input class="searchbox" ng-class="showSearch?'expanded':''" ng-model="query" type="text" placeholder="">
               <a class="button button-icon icon ion-ios-search pull-right" ng-click="doSearch(query)"></a>
-          </ion-header-bar>
+          </div>
           <!-- #TODO hide 特价推荐 at this time. https://github.com/arrking/wildfire/issues/123 -->
 <!--           <div class="bar bar-subheader">
             <div class="button-bar">
@@ -18,7 +18,7 @@
             </div>
           </div> -->
           <ion-nav-view name="menuContent">
-              <ion-content>
+              <ion-content class="has-header">
               <!-- <ion-content class="has-subheader"> -->
                 <ion-refresher ng-if="topics.length > 0 || loadError" pulling-text="下拉刷新..." on-refresh="doRefresh()" refreshing-icon="ion-loading-c">
                 </ion-refresher>

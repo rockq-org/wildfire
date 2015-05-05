@@ -856,10 +856,7 @@ Local storage is per domain. All pages, from one domain, can store and access th
     //var User = {};
     // make sure the user is logged in
     // before using saveReply.
-    var currentUser = store.getUserProfile();
-    if( typeof(currentUser['accessToken']) == 'undefined' ){
-        currentUser['accessToken'] = '';
-    }
+    var currentUser = store.getUserProfile() || { accessToken: '' };
 
     /**
      * Get current user from local store or resolve from server.

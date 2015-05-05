@@ -66,6 +66,7 @@ angular.module('iwildfire', ['ionic', 'iwildfire.controllers', 'iwildfire.servic
             $rootScope.message_not_read_count = response.data;
         })
     });
+
 })
 
 .config(function($compileProvider) {

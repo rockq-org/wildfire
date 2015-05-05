@@ -110,7 +110,7 @@ angular.module('iwildfire.directives', [])
                     scope.locationDetail.lat = result.detail.location.lat;
                     scope.locationDetail.lng = result.detail.location.lng;
                     var newCenter = new qq.maps.LatLng(scope.locationDetail.lat, scope.locationDetail.lng);
-
+                    console.log('change location');
                     circle.setCenter( newCenter );
                 })
             }

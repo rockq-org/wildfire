@@ -5,8 +5,8 @@
               <div class="buttons">
                   <button class="button button-icon ion-navicon" menu-toggle="left"> {{menuTitle}}</button>
               </div>
-              <h1 class="title" ng-click="endSearch()"><button style="" class="button button-clear button-outline button-icon icon ion-arrow-expand" ng-click="showFullAddress()"></button> {{tabTitle}}</h1>
-
+              <h1 class="title" ng-click="showFullAddress()">{{tabTitle}}</h1>
+              <i class="title-expand icon ion-chevron-down icon-accessory"></i>
               <input class="searchbox" ng-class="showSearch?'expanded':''" ng-model="query" type="text" placeholder="">
               <a class="button button-icon icon ion-ios-search pull-right" ng-click="doSearch(query)"></a>
           </ion-header-bar>

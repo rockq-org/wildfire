@@ -8,6 +8,7 @@ angular.module('iwildfire.controllers', [])
     $timeout,
     $state,
     $location,
+    $rootScope,
     $log,
     Topics,
     webq,
@@ -126,10 +127,14 @@ angular.module('iwildfire.controllers', [])
         topic.collect_count--;
     }
 
+
     webq.getLocationDetail()
         .then(function(locationDetail) {
+            if( $rootScope.locationDetail ){
+                locationDetail = $rootScope.locationDetail;
+            }
             if (typeof(locationDetail) != 'undefined') {
-                console.log('lyman 122', JSON.stringify(locationDetail));
+                console.log('setup the locationDetail in indexCtrl after deferred', JSON.stringify(locationDetail));
                 $scope.address = locationDetail.user_edit_address;
                 $scope.tabTitle = locationDetail.user_edit_address;
                 Topics.setGeom(locationDetail);
@@ -156,7 +161,9 @@ angular.module('iwildfire.controllers', [])
     $timeout,
     $state,
     webq,
+    store,
     locationDetail,
+    $rootScope,
     $location,
     $log,
     Topics,
@@ -270,7 +277,7 @@ angular.module('iwildfire.controllers', [])
     }
 
     // webq.getLocationDetail().then(function(locationDetail){
-        console.log('get location from resolve now!', JSON.stringify(locationDetail));
+        console.log('get location from resolve now!', JSON.stringify($scope.locationDetail));
         $scope.map = {
             center: {
                 lat: locationDetail.lat,
@@ -289,6 +296,8 @@ angular.module('iwildfire.controllers', [])
 
 
     $scope.$watchCollection('locationDetail', function(newValue, oldValue) {
+        $rootScope.locationDetail = newValue;
+        console.log('rootScope locationDetail', JSON.stringify(newValue));
         $scope.address = $scope.locationDetail.user_edit_address;
         $scope.tabTitle = $scope.locationDetail.user_edit_address;
         Topics.setGeom($scope.locationDetail);
@@ -506,6 +515,7 @@ angular.module('iwildfire.controllers', [])
             if (description) {
                 $scope.showLoading('提交中，请稍候！');
                 Topic.complainTopic(topic.id, description).$promise.then(function(response) {
+                    console.log(JSON.stringify(response));
                     $scope.hideLoading();
                 });
             }

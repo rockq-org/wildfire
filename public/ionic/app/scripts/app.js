@@ -219,7 +219,7 @@ angular.module('iwildfire', ['ionic', 'iwildfire.controllers', 'iwildfire.servic
 
     .state('bind-access-token', {
         cache: false,
-        url: '/bind-access-token/:accessToken/:redirectUrl',
+        url: '/bind-access-token/:accessToken/:md5',
         templateUrl: 'templates/bind-access-token.html',
         controller: 'BindAccessTokenCtrl'
     });

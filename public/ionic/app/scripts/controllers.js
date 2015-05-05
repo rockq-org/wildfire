@@ -122,7 +122,7 @@ angular.module('iwildfire.controllers', [])
         })
     }
 
-    $scope.collectTopic = function( topic ) {
+    $scope.collectTopic = function(topic) {
         topic.collect_count--;
     }
 
@@ -510,7 +510,7 @@ angular.module('iwildfire.controllers', [])
             Topic.deCollectTopic(id).$promise.then(function(response) {
                 if (response.success) {
                     $scope.isCollected = false;
-                    if( !$scope.topic.collect_count ){
+                    if (!$scope.topic.collect_count) {
                         $scope.topic.collect_count = 1;
                     }
                     $scope.topic.collect_count = parseInt($scope.topic.collect_count) - 1;
@@ -521,7 +521,7 @@ angular.module('iwildfire.controllers', [])
             Topic.collectTopic(id).$promise.then(function(response) {
                 if (response.success) {
                     $scope.isCollected = true;
-                    if( !$scope.topic.collect_count ){
+                    if (!$scope.topic.collect_count) {
                         $scope.topic.collect_count = 0;
                     }
                     $scope.topic.collect_count = parseInt($scope.topic.collect_count) + 1;
@@ -559,7 +559,7 @@ angular.module('iwildfire.controllers', [])
     // if not contains profile and accesstoken, just naviagte
     // to user authentication page.
     if (!store.getAccessToken()) {
-        window.location.href = '{0}/auth/wechat/embedded?redirect={1}'.f(cfg.server, encodeURIComponent('{0}/#/tab/account'.f(cfg.server)));
+        window.location.href = '{0}/auth/wechat/embedded?redirect={1}'.f(cfg.server, encodeURIComponent('tab.post'));
     }
 
     // $scope.params = {
@@ -930,8 +930,8 @@ angular.module('iwildfire.controllers', [])
     function _separateMyTopics(update, callback) {
         if (update) {
             $q.all([
-              webq.getMyTopicsResolve(),
-              webq.getMyCollectionResolve()
+                webq.getMyTopicsResolve(),
+                webq.getMyCollectionResolve()
             ]).then(function(results) {
                 var latestMyTopics = results[0];
 
@@ -1248,15 +1248,24 @@ angular.module('iwildfire.controllers', [])
 .controller('BindAccessTokenCtrl', function($log, $stateParams,
     $scope,
     $state,
-    store) {
+    store,
+    webq) {
     console.log('Get stateParams: ' + JSON.stringify($stateParams));
     var accesstoken = $stateParams.accessToken;
     if (accesstoken) {
         store.setAccessToken($stateParams.accessToken);
     }
-    if ($stateParams.redirectUrl) {
-        window.location = decodeURIComponent($stateParams.redirectUrl);
+    if ($stateParams.md5) {
+        webq.getHashStateValByMd5($stateParams.md5)
+            .then(function(data) {
+                console.log('BindAccessTokenCtrl Redirect to ' + data);
+                $state.go(data);
+            }, function(err) {
+                console.log('BindAccessTokenCtrl Get an error, redirect to tab.index');
+                $state.go('tab.index');
+            });
     } else {
+        console.log()
         $state.go('tab.index');
     }
 })

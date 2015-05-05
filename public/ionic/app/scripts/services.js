@@ -713,6 +713,38 @@ Local storage is per domain. All pages, from one domain, can store and access th
         return self._postGoodsLocationDetail;
     };
 
+    /** 
+     * Support provide Callback URL in user authentication service
+     * https://github.com/arrking/wildfire/issues/128 
+     * get hash state value by md5
+     */
+    this.getHashStateValByMd5 = function(md5) {
+        var deferred = $q.defer();
+
+        $http.post('{0}/ionic/state'.f(cfg.api), {
+                md5: md5
+            }, {
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
+                }
+            })
+            .success(function(data) {
+                if (data && data.rc === 0) {
+                    console.log('Get state value ' + data.msg);
+                    deferred.resolve(data.msg);
+                } else {
+                    console.error('Get state request ' + JSON.stringify(data))
+                    deferred.reject(data);
+                }
+            })
+            .error(function(err) {
+                deferred.reject(err);
+            });
+
+        return deferred.promise;
+    }
+
 })
 
 /**

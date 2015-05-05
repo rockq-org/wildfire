@@ -40,7 +40,7 @@ angular.module('iwildfire.filters', [])
     }
 
     function getKm(distance){
-        return ( parseInt(distance) / 1000);
+        return ( distance / 1000);
     }
 
     return function(itemLocation, currentLocation) {
@@ -51,6 +51,7 @@ angular.module('iwildfire.filters', [])
 
         if(currentLocation){
             distance = getFlatternDistance(itemLocation.lat, itemLocation.lng, currentLocation.lat, currentLocation.lng);
+            distance = parseInt(distance);
             if( distance > 1000 ) {
                 distance = getKm( distance );
                 distance += '千米';

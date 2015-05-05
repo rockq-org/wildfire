@@ -422,8 +422,11 @@ angular.module('iwildfire.controllers', [])
     }
 
     $scope.replyTo = function(replyAuthor) {
+        $scope.replyData={content:''};
         $scope.replyData.replyTo = replyAuthor;
+        status.showBargains=false;
         $scope.status.action = 'reply';
+        console.log(replyAuthor);
     }
 
     // save reply
@@ -433,7 +436,7 @@ angular.module('iwildfire.controllers', [])
         $ionicLoading.show();
         if ($scope.replyData.replyTo) {
             $scope.replyData.reply_to = $scope.replyData.replyTo.name;
-            //$scope.replyData.content = '@'+$scope.replyData.replyTo.loginname+' '+ $scope.replyData.content;
+            $scope.replyData.content = '@'+$scope.replyData.replyTo.loginname+' '+ $scope.replyData.content;
         }
         console.log($scope.replyData);
         Topic.saveReply(id, $scope.replyData).$promise.then(function(response) {

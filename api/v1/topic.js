@@ -116,10 +116,10 @@ var show = function(req, res, next) {
         topic.visit_count += 1;
         topic.save();
 
-        topic = _.pick(topic, ['id', 'author_id', 'tab', 'content', 'title', 'last_reply_at',
+        topic = _.pick(topic, ['_id', 'id', 'author_id', 'tab', 'content', 'title', 'last_reply_at',
             'goods_pre_price', 'goods_now_price', 'goods_pre_price', 'goods_is_bargain', 'update_at', 'goods_pics', 'goods_quality_degree',
             'goods_exchange_location', 'goods_exchange_geom',
-            'good', 'top', 'reply_count', 'visit_count', 'create_at', 'author'
+            'good', 'top', 'reply_count', 'visit_count', 'collect_count', 'create_at', 'author'
         ]);
 
         if (mdrender) {
@@ -137,8 +137,8 @@ var show = function(req, res, next) {
         });
 
         // 查询当前topic是否被当前用户收藏
-        if (typeof(req.user) == 'object' && req.user.id) {
-            TopicCollect.getTopicCollect(req.user.id, topic._id, function(doc) {
+        if (typeof(req.user) == 'object' && req.user._id) {
+            TopicCollect.getTopicCollect(req.user._id, topic._id, function(doc) {
                 topic.in_collection = !!doc;
                 res.send({
                     data: topic

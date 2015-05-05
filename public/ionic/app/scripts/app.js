@@ -11,6 +11,19 @@ angular.module('iwildfire', ['ionic', 'iwildfire.controllers', 'iwildfire.servic
 
     amMoment.changeLocale('zh-cn');
 
+    $rootScope.showLoading = function(msg) {
+        if (!msg) {
+            msg = '加载中...';
+        }
+
+        $ionicLoading.show({
+            template: msg
+        });
+    };
+    $rootScope.hideLoading = function() {
+        $ionicLoading.hide();
+    };
+
     $ionicPlatform.ready(function() {
         // Hide the accessory bar by default (remove this to show the accessory bar above the keyboard
         // for form inputs)
@@ -47,15 +60,15 @@ angular.module('iwildfire', ['ionic', 'iwildfire.controllers', 'iwildfire.servic
         };
     };
     $rootScope.message_not_read_count = 0;
-    Messages.getMessageCount().$promise.then(function(response){
-        $timeout(function(){
+    Messages.getMessageCount().$promise.then(function(response) {
+        $timeout(function() {
             // console.log(response.data);
             $rootScope.message_not_read_count = response.data;
         })
     });
 })
 
-.config(function ($compileProvider) {
+.config(function($compileProvider) {
     $compileProvider.imgSrcSanitizationWhitelist(/^\s*(https?|local|data):/);
     $compileProvider.aHrefSanitizationWhitelist(/^\s*(https?|ftp|mailto|tel|sms|chrome-extension):/);
 })
@@ -66,10 +79,13 @@ angular.module('iwildfire', ['ionic', 'iwildfire.controllers', 'iwildfire.servic
     $ionicConfigProvider.tabs.style('standard');
     $ionicConfigProvider.tabs.position('bottom');
     $ionicConfigProvider.navBar.alignTitle('center');
+    $ionicConfigProvider.form.checkbox('square');
+    //$ionicConfigProvider.form.toggle('small')
+    $ionicConfigProvider.backButton.previousTitleText('false');
 })
 
 .config(function($stateProvider, $urlRouterProvider, $logProvider) {
-    $logProvider.debugEnabled( false );// turn off log
+    $logProvider.debugEnabled(false); // turn off log
     /**
      * more about ui-router
      * http://angular-ui.github.io/ui-router/site/
@@ -83,12 +99,12 @@ angular.module('iwildfire', ['ionic', 'iwildfire.controllers', 'iwildfire.servic
     $stateProvider
 
     // setup an abstract state for the tabs directive
-    .state('tab', {
+        .state('tab', {
         url: "/tab",
         abstract: true,
         templateUrl: "templates/tabs.html",
         resolve: {
-            locationDetail: function(webq){
+            locationDetail: function(webq) {
                 return webq.getLocationDetail();
             }
         }
@@ -121,18 +137,17 @@ angular.module('iwildfire', ['ionic', 'iwildfire.controllers', 'iwildfire.servic
         controller: 'ItemCtrl'
     })
 
-    .state('tab.post', {
+    .state('post', {
         cache: false,
         url: '/post',
-        views: {
-            'tab-post': {
-                templateUrl: 'templates/tab-post.html',
-                controller: 'PostCtrl',
-                resolve: {
-                    wxWrapper: function(webq) {
-                        return webq.getWxWrapper();
-                    }
-                }
+        templateUrl: 'templates/tab-post.html',
+        controller: 'PostCtrl',
+        resolve: {
+            locationDetail: function(wxWrapper, webq) {
+                return webq.getLocationDetail(wxWrapper);
+            },
+            wxWrapper: function(webq) {
+                return webq.getWxWrapper();
             }
         }
     })
@@ -146,16 +161,6 @@ angular.module('iwildfire', ['ionic', 'iwildfire.controllers', 'iwildfire.servic
             }
         }
     })
-
-    // .state('tab.inbox-detail', {
-    //     url: '/inbox/:chatId',
-    //     views: {
-    //         'tab-inbox': {
-    //             templateUrl: 'templates/inbox-detail.html',
-    //             controller: 'InboxDetailCtrl'
-    //         }
-    //     }
-    // })
 
     .state('tab.account', {
         url: '/account',
@@ -226,4 +231,5 @@ angular.module('iwildfire', ['ionic', 'iwildfire.controllers', 'iwildfire.servic
 
     // if none of the above states are matched, use this as the fallback
     $urlRouterProvider.otherwise('/tab/index/');
+
 });

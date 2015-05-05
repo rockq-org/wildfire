@@ -13,6 +13,7 @@ var create = function (req, res, next) {
   var price = req.body.price;
   var content = req.body.content;
   var reply_id = req.body.reply_id;
+  var reply_to = req.body.reply_to;
 
   var ep = new eventproxy();
   ep.fail(next);
@@ -42,7 +43,7 @@ var create = function (req, res, next) {
   });
 
   ep.all('topic', 'topic_author', function (topic, topicAuthor) {
-    Reply.newAndSave(price, content, topic_id, req.user.id, reply_id, ep.done(function (reply) {
+    Reply.newAndSave(price, reply_to, content, topic_id, req.user.id, reply_id, ep.done(function (reply) {
       Topic.updateLastReply(topic_id, reply._id, ep.done(function () {
         ep.emit('reply_saved', reply);
         //发送at消息，并防止重复 at 作者

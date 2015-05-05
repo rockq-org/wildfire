@@ -44,7 +44,6 @@ angular.module('iwildfire.services', ['ngResource'])
 })
 
 .factory('Messages', function(cfg, store, $resource, $log) {
-    console.log(store.getAccessToken());
     var messages = {};
     var messagesCount = 0;
     var resource = $resource(cfg.api + '/messages', null, {
@@ -579,17 +578,19 @@ Local storage is per domain. All pages, from one domain, can store and access th
                         store.setWechatSignature(data.msg);
                         deferred.resolve(data.msg);
                     } else {
-                        deferred.resolve();
+                        deferred.reject(data);
                     }
                 })
                 .error(function(err) {
+                    console.dir(arguments);
                     console.log('get wechatSingnature from wx api server error', err);
-                    deferred.resolve();
+                    deferred.reject( err );
                 })
         } else {
             // wechat signature is assigned to undefined if
             // APP_URL is not belong to arrking.com.
-            deferred.resolve();
+            console.log('reject ' + cfg.server + 'do not contains arrking.com ');
+            deferred.reject(cfg.server + 'do not contains arrking.com ');
         }
 
         return deferred.promise;
@@ -608,7 +609,6 @@ Local storage is per domain. All pages, from one domain, can store and access th
         var deferred = $q.defer();
         self.getWechatSignature()
             .then(function(wechat_signature) {
-                console.log(wechat_signature);
                 if (wechat_signature) {
                     wechat_signature.jsApiList = ['chooseImage',
                         'previewImage', 'uploadImage',
@@ -629,7 +629,7 @@ Local storage is per domain. All pages, from one domain, can store and access th
                     });
                 } else {
                     console.log('do not get wechat_signature', wechat_signature);
-                    deferred.reject();
+                    deferred.reject('do not get wechat_signature');
                 }
             }, function() {
                 deferred.reject();
@@ -680,17 +680,18 @@ Local storage is per domain. All pages, from one domain, can store and access th
         var deferred = $q.defer();
         var locationDetail = store.getLocationDetail();
 
-        console.log(locationDetail, wxWrapper);
         if (locationDetail) {
-            $log.debug('return cached locationDetail', JSON.stringify(locationDetail));
+            console.log('get cached locationDetail from store', JSON.stringify(locationDetail));
             deferred.resolve(locationDetail);
 
             return deferred.promise;
         } else if (wxWrapper) {
             // use the wxWrapper passed in
+            console.log('use the wxWrapper to get locationDetail', JSON.stringify(wxWrapper));
             _getLocationDetail(wxWrapper, deferred);
         } else {
             // get a new wxWrapper
+            console.log('get a new wxWrapper');
             self.getWxWrapper()
                 .then(function(wxWrapper) {
                     _getLocationDetail(wxWrapper, deferred);
@@ -791,9 +792,6 @@ Local storage is per domain. All pages, from one domain, can store and access th
         });
     };
     return {
-        addVisitCount: function() {
-
-        },
         refresh: function() {
             return getTopics(currentTab, 1, text, function(response) {
                 nextPage = 2;
@@ -879,6 +877,10 @@ Local storage is per domain. All pages, from one domain, can store and access th
     var resource = $resource(cfg.api + '/topic/:id', {
         id: '@id',
     }, {
+        complain: {
+            method: 'post',
+            url: cfg.api + '/topic/complain'
+        },
         collect: {
             method: 'post',
             url: cfg.api + '/topic/collect'
@@ -921,8 +923,8 @@ Local storage is per domain. All pages, from one domain, can store and access th
             var reply = angular.extend({}, replyData);
             return resource.reply({
                 topicId: topicId,
-                //accesstoken: currentUser.accessToken
-                accesstoken: '5447b4c3-0006-4a3c-9903-ac5a803bc17e'
+                accesstoken: currentUser.accessToken
+                //accesstoken: '5447b4c3-0006-4a3c-9903-ac5a803bc17e'
             }, reply);
         },
         upReply: function(replyId) {
@@ -944,6 +946,13 @@ Local storage is per domain. All pages, from one domain, can store and access th
                 } else {
                     $log(response);
                 }
+            });
+        },
+        complainTopic: function(topicId, description) {
+            return resource.complain({
+                topicId: topicId,
+                description: description,
+                accesstoken: currentUser.accessToken
             });
         },
         collectTopic: function(topicId) {

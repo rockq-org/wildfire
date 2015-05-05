@@ -14,6 +14,7 @@ var site = require('./controllers/site');
 var user = require('./controllers/user');
 var message = require('./controllers/message');
 var topic = require('./controllers/topic');
+var complain = require('./controllers/complain');
 var reply = require('./controllers/reply');
 var rss = require('./controllers/rss');
 var staticController  = require('./controllers/static');
@@ -67,6 +68,10 @@ router.post('/user/:name/delete_all', auth.adminRequired, user.deleteAll);  // �
 
 // message controler
 router.get('/my/messages', auth.userRequired, message.index); // 用户个人的所有消息页
+
+// complain
+router.get('/complain', complain.index);
+router.get('/complain/:tid', complain.item);
 
 // topic
 

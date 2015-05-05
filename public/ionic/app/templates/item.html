@@ -2,7 +2,7 @@
   <ion-nav-buttons side="left">
     <a class="button button-icon icon ion-ios-arrow-back" href="#tab/index"></a>
   </ion-nav-buttons>
-  <ion-content class="has-header has-footer" ng-class="(showReply||showBargain)?'has-reply':''">
+  <ion-content class="has-header has-footer" ng-class="(status.action!='normal')?'has-reply':''">
     <ion-refresher pulling-text="下拉刷新..." on-refresh="doRefresh()" refreshing-icon="ion-loading-c">
     </ion-refresher>
 
@@ -21,6 +21,7 @@
         <del>￥ {{topic.goods_pre_price}}</del>
         </h3>
         <button class="button button-assertive button-small">{{topic.goods_is_bargain?'接受侃价':'谢绝侃价'}}</button>
+        &nbsp;<button class="button button-clear button-small ion-alert-circled" ng-click="complainTopic(topic)"> 举报</button>
         <br />
         <a ng-if="isCollected" class="button button-clear button-assertive" ng-click="collectTopic()">
           <i class=" icon ion-ios-heart"> </i> {{topic.collect_count + 0}} 已收藏
@@ -48,11 +49,11 @@
     </div>
 
     <div class="button-bar">
-      <a ng-click="showBargains = true" ng-class="showBargains?'active':''" class="button button-outline button-small">出价（{{bargains.length + 0}}）</a>
-      <a ng-click="showBargains = false" ng-class="showBargains?'':'active'" class="button button-outline button-small"> 留言（{{replies.length + 0}}）</a>
+      <a ng-click="status.showBargains = true" ng-class="status.showBargains?'active':''" class="button button-outline button-small">出价（{{bargains.length + 0}}）</a>
+      <a ng-click="status.showBargains = false" ng-class="status.showBargains?'':'active'" class="button button-outline button-small"> 留言（{{replies.length + 0}}）</a>
     </div>
 
-    <ion-list class="bargains" ng-show="showBargains">
+    <ion-list class="bargains" ng-show="status.showBargains">
       <ion-item class="item-loading" ng-if="bargains == undefined">
         <span ng-if="!loadError">
           加载中...
@@ -64,7 +65,7 @@
       <ion-item ng-if="bargains.length == 0">
         暂无出价
       </ion-item>
-      <ion-item class="item-avatar" ng-repeat="reply in bargains" ng-click="showActions(reply)">
+      <ion-item class="item-avatar" ng-repeat="reply in bargains">
         <img ng-src="{{reply.author.avatar}}">
         <p>
           <span ng-class="{'bold': reply.author.loginname == topic.author.loginname}">
@@ -80,7 +81,7 @@
       </ion-item>
     </ion-list>
 
-    <ion-list class="replies" ng-show="!showBargains">
+    <ion-list class="replies" ng-show="!status.showBargains">
       <ion-item class="item-loading" ng-if="replies == undefined">
         <span ng-if="!loadError">
           加载中...
@@ -92,11 +93,15 @@
       <ion-item ng-if="replies.length == 0">
         暂无评论
       </ion-item>
-      <ion-item class="item-avatar" ng-repeat="reply in replies" ng-click="showActions(reply)">
+      <ion-item class="item-avatar" ng-repeat="reply in replies" 
+        ng-click="replyTo(reply.author)">
         <img ng-src="{{reply.author.avatar}}">
         <p>
           <span ng-class="{'bold': reply.author.loginname == topic.author.loginname}">
             {{reply.author.name}}
+          </span>
+          <span class="assertive" ng-if="reply.reply_to">
+            回复 {{reply.reply_to}}
           </span>
           <span class="item-note" am-time-ago="reply.create_at">
           </span>
@@ -106,9 +111,9 @@
     </ion-list>
 
   </ion-content>
-  <div class="bar bar-footer" ng-show="!(showReply||showBargain)">
+  <div class="bar bar-footer" ng-show="status.action=='normal'">
     <div class="tabs tabs-color-royal">
-      <a class="tab-item" ng-click="showBargain=true;showBargains=true;">
+      <a class="tab-item" ng-click="replyData={content:''};status.showBargains=true;status.action='bid';">
         我要出价
       </a>
       <div class="tab-item">
@@ -116,27 +121,27 @@
         <a class="tab-item" href="tel:{{topic.author.phone_number}}"><i ng-show="showContact" class="icon ion-ios-telephone phone-icon"></i></a>
         <a class="tab-item" href="sms:{{topic.author.phone_number}}"><i ng-show="showContact" class="icon ion-ios-chatbubble message-icon"></i></a>
       </div>
-      <a class="tab-item" ng-click="showReply=true;showBargains=false;">
+      <a class="tab-item" ng-click="replyData={content:''};status.showBargains=false;status.action='reply';">
         我要留言
       </a>
     </div>
   </div>
-  <div class="bar bar-footer" ng-show="showReply||showBargain" style="background:#ddd;height: 150px;display:block;" keyboard-attach>
+  <div class="bar bar-footer" ng-show="status.action!='normal'" style="background:#ddd;height: 150px;display:block;" keyboard-attach>
       <div class="row" style="display:block;">
-        <button class="button button-small button-clear button-dark float-left" ng-click="showReply=false;showBargain=false;">
+        <button class="button button-small button-clear button-dark float-left" ng-click="status.action='normal'">
           取消
         </button>
-        <button class="button button-small button-clear button-royal float-right" ng-click="saveReply()">
+        <button class="button button-small button-clear button-royal float-right" ng-click="status.action='normal';saveReply()">
           发送
         </button>
       </div>
-      <div ng-show="showReply" class="row" style="padding:10px;">
+      <div ng-show="status.action=='reply'" class="row" style="padding:10px;">
         <label class="col col-25">
           回复
         </label>
-        <span class="col col-75">{{replyTo||"卖家"}}</span>
+        <span class="col col-75">{{replyData.replyTo.name||"卖家"}}</span>
       </div>
-      <div ng-show="showBargain" class="row" style="padding:10px;">
+      <div ng-show="status.action=='bid'" class="row" style="padding:10px;">
         <label class="col col-25">
           出价&nbsp;&nbsp;&nbsp;￥
         </label>

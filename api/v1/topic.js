@@ -2,6 +2,7 @@ var models = require('../../models');
 var TopicModel = models.Topic;
 var TopicProxy = require('../../proxy').Topic;
 var TopicCollect = require('../../proxy').TopicCollect;
+var TopicComplain = require('../../proxy').TopicComplain;
 var UserProxy = require('../../proxy').User;
 var UserModel = models.User;
 var config = require('../../config');
@@ -131,7 +132,7 @@ var show = function(req, res, next) {
                 reply.content = renderHelper.markdown(at.linkUsers(reply.content));
             }
             reply.author = _.pick(reply.author, ['name', 'avatar', 'loginname', 'phone_number']);
-            reply = _.pick(reply, ['id', 'author', 'price', 'content', 'ups', 'create_at']);
+            reply = _.pick(reply, ['id', 'author', 'price', 'reply_to', 'content', 'ups', 'create_at']);
             return reply;
         });
 
@@ -485,3 +486,32 @@ exports.ding = function(req, res, next) {
         }, res);
     }
 }
+
+exports.addComplain = function(req, res, next) {
+    var topicId = req.body.topicId;
+    var args = {
+        userId: req.user.id,
+        topicId: topicId,
+        description: req.body.description
+    };
+
+    TopicProxy.getTopic(topicId, function(err, topic) {
+        if (err) {
+            return next(err);
+        }
+        if (!topic) {
+            return res.json({
+                error_msg: '主题不存在'
+            });
+        }
+
+        TopicComplain.newAndSave(args, function(err) {
+            if (err) {
+                return next(err);
+            }
+            res.json({
+                success: true
+            });
+        });
+    });
+};

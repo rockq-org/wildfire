@@ -324,7 +324,12 @@ angular.module('iwildfire.controllers', [])
     $scope.topic = topic;
     $scope.img_prefix = cfg.server;
     $scope.avatar_prefix = cfg.api + '/avatar/';
-    $scope.showReply = false;
+    //$scope.showBargains = false;
+    //$scope.status = 'normal';
+    $scope.status = {
+        action: 'normal',
+        showBargains: false
+    }
     $scope.currentLocation = store.getLocationDetail();
 
     // before enter view event
@@ -335,7 +340,8 @@ angular.module('iwildfire.controllers', [])
         }
     });
     $scope.$on('$ionicView.afterLeave', function() {
-        $scope.showReply = false;
+        $scope.showBargains = false;
+        $scope.status = 'normal';
     });
 
     // load topic data
@@ -357,7 +363,7 @@ angular.module('iwildfire.controllers', [])
                 else $scope.replies.push(item);
             })
             console.log($scope.topic);
-            console.log($scope.bargains);
+            console.log($scope.replies);
         }, $rootScope.requestErrorHandler({
             noBackdrop: true
         }, function() {
@@ -411,81 +417,9 @@ angular.module('iwildfire.controllers', [])
         }
     }
 
-    $scope.bargain = function() {
-        /*
-                if ($scope.topic.goods_is_bargain == false){
-                    var popup = $ionicPopup.alert({
-                        title: '对不起',
-                        template: '次商品不接受砍价'
-                    });
-                    return;
-                }*/
-        var popup = $ionicPopup.show({
-            template: '出价&nbsp;&nbsp;&nbsp;￥<input type="text" ng-model="replyData.price">\
-                        说点什么<input type="text" ng-model="replyData.content">',
-            title: '我要出价',
-            subTitle: '价格要厚道',
-            scope: $scope,
-            buttons: [{
-                text: '取消'
-            }, {
-                text: '<b>出价</b>',
-                type: 'button-positive',
-                onTap: function(e) {
-                    if (!$scope.replyData.content) {
-                        //don't allow the user to close unless he enters wifi password
-                        e.preventDefault();
-                    } else {
-                        $ionicLoading.show();
-                        Topic.saveReply(id, $scope.replyData).$promise.then(function(response) {
-                            $ionicLoading.hide();
-                            $scope.replyData.content = '';
-                            $log.debug('post reply response:', response);
-                            $scope.loadTopic(true).then(function() {
-                                $ionicScrollDelegate.scrollBottom();
-                            });
-                        }, $rootScope.requestErrorHandler);
-                    }
-                }
-            }]
-        });
-        popup.then(function(res) {
-            console.log('Tapped!', res);
-        });
-    }
-
-    $scope.comment = function() {
-        var popup = $ionicPopup.show({
-            template: '<input type="text" ng-model="replyData.content">',
-            title: '我要留言',
-            subTitle: '说点什么吧',
-            scope: $scope,
-            buttons: [{
-                text: '取消'
-            }, {
-                text: '<b>留言</b>',
-                type: 'button-positive',
-                onTap: function(e) {
-                    if (!$scope.replyData.content) {
-                        //don't allow the user to close unless he enters wifi password
-                        e.preventDefault();
-                    } else {
-                        $ionicLoading.show();
-                        Topic.saveReply(id, $scope.replyData).$promise.then(function(response) {
-                            $ionicLoading.hide();
-                            $scope.replyData.content = '';
-                            $log.debug('post reply response:', response);
-                            $scope.loadTopic(true).then(function() {
-                                $ionicScrollDelegate.scrollBottom();
-                            });
-                        }, $rootScope.requestErrorHandler);
-                    }
-                }
-            }]
-        });
-        popup.then(function(res) {
-            console.log('Tapped!', res);
-        });
+    $scope.replyTo = function(replyAuthor) {
+        $scope.replyData.replyTo=replyAuthor;
+        $scope.status.action='reply';
     }
 
     // save reply
@@ -493,15 +427,25 @@ angular.module('iwildfire.controllers', [])
         $log.debug('new reply data:', JSON.stringify($scope.replyData));
         if ($scope.replyData.content == '') return $scope.showReply = false;
         $ionicLoading.show();
+        if($scope.replyData.replyTo){
+            $scope.replyData.reply_to = $scope.replyData.replyTo.name;
+            //$scope.replyData.content = '@'+$scope.replyData.replyTo.loginname+' '+ $scope.replyData.content;
+        }
+        console.log($scope.replyData);
         Topic.saveReply(id, $scope.replyData).$promise.then(function(response) {
             $ionicLoading.hide();
-            $scope.replyData.content = '';
+            $scope.replyData = {
+                content: ''
+            };
             $log.debug('post reply response:', response);
             $scope.loadTopic(true).then(function() {
                 $ionicScrollDelegate.scrollBottom();
             });
             $scope.showReply = false;
-        }, $rootScope.requestErrorHandler);
+        }, function(){
+            $ionicLoading.hide();
+            $rootScope.requestErrorHandler()
+        });
     };
 
     // collect topic
@@ -530,6 +474,42 @@ angular.module('iwildfire.controllers', [])
             });
         }
     };
+
+     // for complian topic
+    $scope.complainTopic = function( topic ) {
+        $scope.popupData = {};
+        // An elaborate, custom popup
+        var myPopup = $ionicPopup.show({
+                            template: '<textarea autofocus ng-model="popupData.complainDescription" placeholder="您的举报理由" style="height:120px"></textarea>',
+                            title: '举报商品',
+                            // subTitle: '请输入您的举报理由',
+                            scope: $scope,
+                            buttons: [
+                              { text: '取消' },
+                              {
+                                text: '<b>提交</b>',
+                                type: 'button-assertive',
+                                onTap: function(e) {
+                                  if (!$scope.popupData.complainDescription) {
+                                    //don't allow the user to close unless he enters wifi password
+                                    e.preventDefault();
+                                  } else {
+                                    return $scope.popupData.complainDescription;
+                                  }
+                                }
+                              }
+                            ]
+                        });
+
+        myPopup.then(function(description) {
+            if( description ) {
+                $scope.showLoading('提交中，请稍候！');
+                Topic.complainTopic(topic.id, description ).$promise.then(function(response){
+                    $scope.hideLoading();
+                });
+            }
+        });
+    }
 })
 
 /**
@@ -552,15 +532,16 @@ angular.module('iwildfire.controllers', [])
     cfg,
     store,
     webq,
+    locationDetail,
     wxWrapper,
     Tabs) {
-
     // #TODO comment out for debugging
     // if not contains profile and accesstoken, just naviagte
     // to user authentication page.
     if (!store.getAccessToken()) {
         window.location.href = '{0}/auth/wechat/embedded?redirect={1}'.f(cfg.server, encodeURIComponent('tab.post'));
     }
+    console.log('I am here, the PostCtrl');
 
     // $scope.params = {
     //     // 标题5到10个字
@@ -591,8 +572,8 @@ angular.module('iwildfire.controllers', [])
         tab: 'electronics',
         quality: '全新',
         goods_pics: [],
-        goods_pre_price: 33,
-        goods_now_price: 22,
+        goods_pre_price: null,
+        goods_now_price: null,
         goods_is_bargain: true,
         // dummy data
         goods_exchange_location: {
@@ -809,8 +790,9 @@ angular.module('iwildfire.controllers', [])
      * Store the exchange location information
      * @type {Object}
      */
-    webq.getLocationDetail(wxWrapper)
-        .then(function(data) {
+    // webq.getLocationDetail(wxWrapper)
+        // .then(function(data) {
+    function _locationDetail( data ){
             $log.debug('locationDetail', JSON.stringify(data));
             $scope.locationDetail = data;
             $scope.params.goods_exchange_location = data;
@@ -836,7 +818,9 @@ angular.module('iwildfire.controllers', [])
                 }
                 $scope.changeLocationModal.hide();
             }
-        });
+        // });
+    }
+    _locationDetail( locationDetail );
     /*******************************************
      * End Modal View to input detail of exchange location
      *******************************************/
@@ -864,7 +848,7 @@ angular.module('iwildfire.controllers', [])
 .controller('InboxCtrl', function($scope, Messages, $log, $rootScope) {
     Messages.getMessages().$promise.then(function(response) {
         $scope.messages = response.data;
-        console.log(JSON.stringify($scope.messages));
+        //console.log(JSON.stringify($scope.messages));
         if ($scope.messages.hasnot_read_messages.length === 0) {
             $rootScope.$broadcast('messagesMarkedAsRead');
         } else {

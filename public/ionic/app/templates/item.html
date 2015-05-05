@@ -21,7 +21,8 @@
         <del>￥ {{topic.goods_pre_price}}</del>
         </h3>
         <button class="button button-assertive button-small">{{topic.goods_is_bargain?'接受侃价':'谢绝侃价'}}</button>
-        &nbsp;<button class="button button-clear button-small ion-alert-circled" ng-click="complainTopic(topic)"> 举报</button>
+        &nbsp;
+        <button class="button button-clear button-small ion-alert-circled" ng-click="complainTopic(topic)"> 举报</button>
         <br />
         <a ng-if="isCollected" class="button button-clear button-assertive" ng-click="collectTopic()">
           <i class=" icon ion-ios-heart"> </i> {{topic.collect_count + 0}} 已收藏
@@ -93,7 +94,7 @@
       <ion-item ng-if="replies.length == 0">
         暂无评论
       </ion-item>
-      <ion-item class="item-avatar" ng-repeat="reply in replies" 
+      <ion-item class="item-avatar" ng-repeat="reply in replies"
         ng-click="replyTo(reply.author)">
         <img ng-src="{{reply.author.avatar}}">
         <p>

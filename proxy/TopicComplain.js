@@ -30,7 +30,6 @@ exports.getTopicById = function(id, callback) {
         return callback(null, topic, author, last_reply);
     }).fail(callback);
 
-    console.log('id 33', id);
     Topic.findOne({
         _id: id
     }, proxy.done(function(topic) {
@@ -63,7 +62,7 @@ exports.getTopicById = function(id, callback) {
  * @param {Function} callback 回调函数
  */
 exports.getCountByQuery = function(query, callback) {
-    Topic.count(query, callback);
+    TopicComplain.count(query, callback);
 };
 
 /**
@@ -86,10 +85,10 @@ exports.getTopicsByQuery = function(query, opt, callback) {
         }
 
         // var topics_id = _.pluck(docs, 'id');
-        var topics_id = _.pluck(docs, 'topicId');
+        var topicComplainList = docs;
 
         var proxy = new EventProxy();
-        proxy.after('topic_ready', topics_id.length, function(topics) {
+        proxy.after('topic_ready', topicComplainList.length, function(topics) {
             // 过滤掉空值
             var filtered = topics.filter(function(item) {
                 return !!item;
@@ -98,15 +97,16 @@ exports.getTopicsByQuery = function(query, opt, callback) {
         });
         proxy.fail(callback);
 
-        console.log('topics_id 102', topics_id);
-        topics_id.forEach(function(id, i) {
-            console.log('103', id);
+        topicComplainList.forEach(function(item, i) {
+            var id = item.topicId;
             exports.getTopicById(id, proxy.group('topic_ready', function(topic, author, last_reply) {
                 // 当id查询出来之后，进一步查询列表时，文章可能已经被删除了
                 // 所以这里有可能是null
-                console.log('topic', topic);
                 if (topic) {
                     topic.author = author;
+                    topic.complainDesc = item.description;
+                    topic.complainUserId = item.userId;
+                    topic.complainTime = tools.formatDate(item.createAt, true);
                     topic.reply = last_reply;
                     topic.friendly_create_at = tools.formatDate(topic.create_at, true);
                 }
@@ -154,7 +154,7 @@ exports.getFullTopicsByQuery = function(query, opt, callback) {
         proxy.fail(callback);
 
         topics_id.forEach(function(id, i) {
-            exports.getTopicById(id, proxy.group('topic_ready', function(topic, author, last_reply) {
+            Topic.getTopicById(id, proxy.group('topic_ready', function(topic, author, last_reply) {
                 // 当id查询出来之后，进一步查询列表时，文章可能已经被删除了
                 // 所以这里有可能是null
                 if (topic) {

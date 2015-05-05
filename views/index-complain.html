@@ -7,7 +7,7 @@
       <% [['all', '全部'], ['good', '精华']].concat(tabs).forEach(function (pair) {
         var value = pair[0];
         var text = pair[1]; %>
-        <a href="<%= value ? '/?tab=' + value : '/' %>"
+        <a href="<%= value ? '/complain?tab=' + value : '/' %>"
           class="topic-tab <%= value === tab ? 'current-tab' : '' %>"><%= text %></a>
       <% }) %>
     </div>
@@ -17,7 +17,7 @@
       topics: topics,
       pages: pages,
       current_page: current_page,
-      base: '/'
+      base: '/complain'
       }) %>
     </div>
     <% } else { %>

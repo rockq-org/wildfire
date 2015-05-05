@@ -43,6 +43,7 @@ exports.index = function (req, res, next) {
   }
 
   var limit = config.list_topic_count;
+  // var limit = 2;
   // var options = { skip: (page - 1) * limit, limit: limit, sort: '-top -last_reply_at'};
   var options = { skip: (page - 1) * limit, limit: limit};
 
@@ -87,17 +88,17 @@ exports.index = function (req, res, next) {
   // END 取0回复的主题
 
   // 取分页数据
-  cache.get('pages', proxy.done(function (pages) {
-    if (pages) {
-      proxy.emit('pages', pages);
-    } else {
-      Topic.getCountByQuery(query, proxy.done(function (all_topics_count) {
+  // cache.get('pages', proxy.done(function (pages) {
+  //   if (pages) {
+  //     proxy.emit('pages', pages);
+  //   } else {
+      TopicComplain.getCountByQuery(query, proxy.done(function (all_topics_count) {
         var pages = Math.ceil(all_topics_count / limit);
-        cache.set(JSON.stringify(query) + 'pages', pages, 60 * 1);
+        // cache.set(JSON.stringify(query) + 'pages', pages, 60 * 1);
         proxy.emit('pages', pages);
       }));
-    }
-  }));
+    // }
+  // }));
   // END 取分页数据
 
   var tabName = renderHelper.tabName(tab);

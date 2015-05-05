@@ -584,7 +584,7 @@ Local storage is per domain. All pages, from one domain, can store and access th
                 .error(function(err) {
                     console.dir(arguments);
                     console.log('get wechatSingnature from wx api server error', err);
-                    deferred.reject( err );
+                    deferred.reject(err);
                 })
         } else {
             // wechat signature is assigned to undefined if
@@ -676,34 +676,23 @@ Local storage is per domain. All pages, from one domain, can store and access th
         });
     }
 
-    this.getLocationDetail = function(wxWrapper) {
+    this.getLocationDetail = function() {
         var deferred = $q.defer();
         var locationDetail = store.getLocationDetail();
 
-        if (locationDetail) {
-            console.log('get cached locationDetail from store', JSON.stringify(locationDetail));
-            deferred.resolve(locationDetail);
-
+        if( locationDetail ) {
+            deferred.resolve( locationDetail );
             return deferred.promise;
-        } else if (wxWrapper) {
-            // use the wxWrapper passed in
-            console.log('use the wxWrapper to get locationDetail', JSON.stringify(wxWrapper));
-            _getLocationDetail(wxWrapper, deferred);
-        } else {
-            // get a new wxWrapper
-            console.log('we have to get wxWrapper again from deferred, cause the locationDetail and the wxWrapper do not cached');
-            _getLocationDetail(wxWrapper, deferred);
-        } else {
-            // get a new wxWrapper
-            console.log('get a new wxWrapper');
-            self.getWxWrapper()
-                .then(function(wxWrapper) {
-                    _getLocationDetail(wxWrapper, deferred);
-                }, function(err) {
-                    console.log('can not get location', err);
-                    deferred.resolve();
-                });
         }
+
+        console.log('get a new wxWrapper');
+        self.getWxWrapper()
+            .then(function(wxWrapper) {
+                _getLocationDetail(wxWrapper, deferred);
+            }, function(err) {
+                console.log('can not get location', err);
+                deferred.reject();
+            });
 
         return deferred.promise;
     };
@@ -717,6 +706,38 @@ Local storage is per domain. All pages, from one domain, can store and access th
         $log.debug('get post goods location detail', JSON.stringify(this._postGoodsLocationDetail));
         return self._postGoodsLocationDetail;
     };
+
+    /**
+     * Support provide Callback URL in user authentication service
+     * https://github.com/arrking/wildfire/issues/128
+     * get hash state value by md5
+     */
+    this.getHashStateValByMd5 = function(md5) {
+        var deferred = $q.defer();
+
+        $http.post('{0}/ionic/state'.f(cfg.api), {
+                md5: md5
+            }, {
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
+                }
+            })
+            .success(function(data) {
+                if (data && data.rc === 0) {
+                    console.log('Get state value ' + data.msg);
+                    deferred.resolve(data.msg);
+                } else {
+                    console.error('Get state request ' + JSON.stringify(data))
+                    deferred.reject(data);
+                }
+            })
+            .error(function(err) {
+                deferred.reject(err);
+            });
+
+        return deferred.promise;
+    }
 
 })
 
@@ -836,6 +857,9 @@ Local storage is per domain. All pages, from one domain, can store and access th
     // make sure the user is logged in
     // before using saveReply.
     var currentUser = store.getUserProfile();
+    if( typeof(currentUser['accessToken']) == undefined ){
+        currentUser['accessToken'] = '';
+    }
 
     /**
      * Get current user from local store or resolve from server.
@@ -896,7 +920,7 @@ Local storage is per domain. All pages, from one domain, can store and access th
             return resource.reply({
                 topicId: topicId,
                 accesstoken: currentUser.accessToken
-                //accesstoken: '5447b4c3-0006-4a3c-9903-ac5a803bc17e'
+                    //accesstoken: '5447b4c3-0006-4a3c-9903-ac5a803bc17e'
             }, reply);
         },
         upReply: function(replyId) {
@@ -1062,14 +1086,17 @@ Local storage is per domain. All pages, from one domain, can store and access th
             });
         },
         collectTopic: function(topicId) {
-            // TODO: should be submit to server api, maybe jianfei already done
+            if( typeof( user['collect_topics'] ) == 'undefined' ) {
+                user['collect_topics'] = [];
+                console.log(user.collect_topics);
+            }
+            console.log(typeof( user['collect_topics'] ));
             user.collect_topics.push({
                 id: topicId
             });
             store.setUserProfile(user);
         },
         deCollectTopic: function(topicId) {
-            // TODO: should be submit to server api, maybe jianfei already done
             angular.forEach(user.collect_topics, function(topic, key) {
                 if (topic.id === topicId) {
                     user.collect_topics.splice(key, 1);

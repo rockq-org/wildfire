@@ -7,10 +7,10 @@ angular.module('iwildfire.controllers', [])
     $ionicPopup,
     $timeout,
     $state,
-    locationDetail,
     $location,
     $log,
     Topics,
+    webq,
     Tabs,
     cfg
 ) {
@@ -122,23 +122,28 @@ angular.module('iwildfire.controllers', [])
         })
     }
 
-    // $scope.collectTopic = function( topic ) {
-    //     topic.collect_count--;
-    // }
+    $scope.collectTopic = function(topic) {
+        topic.collect_count--;
+    }
 
-    if (typeof(locationDetail) != 'undefined') {
-        console.log('lyman 122', JSON.stringify(locationDetail));
-        $scope.address = locationDetail.user_edit_address;
-        $scope.tabTitle = locationDetail.user_edit_address;
-        Topics.setGeom(locationDetail);
-        loadDataAfterGetLocation();
-    } else {
-        // load pages from local browser for debugging
-        loadDataAfterGetLocation();
-    };
-
+    webq.getLocationDetail()
+        .then(function(locationDetail) {
+            if (typeof(locationDetail) != 'undefined') {
+                console.log('lyman 122', JSON.stringify(locationDetail));
+                $scope.address = locationDetail.user_edit_address;
+                $scope.tabTitle = locationDetail.user_edit_address;
+                Topics.setGeom(locationDetail);
+                loadDataAfterGetLocation();
+            } else {
+                // load pages from local browser for debugging
+                loadDataAfterGetLocation();
+            };
+        })
+        .catch(function(err) {
+            console.error('Get an error when running webq.getLocationDetail(wxWrapper)');
+            console.error(err);
+        });
 })
-
 
 
 .controller('MapsCtrl', function(
@@ -164,7 +169,8 @@ angular.module('iwildfire.controllers', [])
     //     lat: 25.3518140000000010,
     //     lng: 118.7042859999999962
     // };
-    // $scope.locationDetail = locationDetail;
+    $scope.locationDetail = locationDetail;
+    // $scope.locationDetail = {};
 
     $scope.sideMenus = Tabs.getList();
     $stateParams.tab = $stateParams.tab || 'all';
@@ -263,26 +269,24 @@ angular.module('iwildfire.controllers', [])
         };
     }
 
-    if (typeof(locationDetail) != 'undefined') {
+    // webq.getLocationDetail().then(function(locationDetail){
         console.log('get location from resolve now!', JSON.stringify(locationDetail));
+        $scope.map = {
+            center: {
+                lat: locationDetail.lat,
+                lng: locationDetail.lng
+            },
+            zoom: 13
+        };
         $scope.address = locationDetail.user_edit_address;
         $scope.tabTitle = locationDetail.user_edit_address;
         Topics.setGeom(locationDetail);
         $scope.locationDetail = locationDetail;
-    } else {
-        // load pages from local browser for debugging
         loadDataAfterGetLocation();
         $scope.doRefresh();
-    };
+    // });
 
 
-    $scope.map = {
-        center: {
-            lat: locationDetail.lat,
-            lng: locationDetail.lng
-        },
-        zoom: 13
-    };
 
     $scope.$watchCollection('locationDetail', function(newValue, oldValue) {
         $scope.address = $scope.locationDetail.user_edit_address;
@@ -418,8 +422,8 @@ angular.module('iwildfire.controllers', [])
     }
 
     $scope.replyTo = function(replyAuthor) {
-        $scope.replyData.replyTo=replyAuthor;
-        $scope.status.action='reply';
+        $scope.replyData.replyTo = replyAuthor;
+        $scope.status.action = 'reply';
     }
 
     // save reply
@@ -427,7 +431,7 @@ angular.module('iwildfire.controllers', [])
         $log.debug('new reply data:', JSON.stringify($scope.replyData));
         if ($scope.replyData.content == '') return $scope.showReply = false;
         $ionicLoading.show();
-        if($scope.replyData.replyTo){
+        if ($scope.replyData.replyTo) {
             $scope.replyData.reply_to = $scope.replyData.replyTo.name;
             //$scope.replyData.content = '@'+$scope.replyData.replyTo.loginname+' '+ $scope.replyData.content;
         }
@@ -442,7 +446,7 @@ angular.module('iwildfire.controllers', [])
                 $ionicScrollDelegate.scrollBottom();
             });
             $scope.showReply = false;
-        }, function(){
+        }, function() {
             $ionicLoading.hide();
             $rootScope.requestErrorHandler()
         });
@@ -454,7 +458,7 @@ angular.module('iwildfire.controllers', [])
             Topic.deCollectTopic(id).$promise.then(function(response) {
                 if (response.success) {
                     $scope.isCollected = false;
-                    if( !$scope.topic.collect_count ){
+                    if (!$scope.topic.collect_count) {
                         $scope.topic.collect_count = 1;
                     }
                     $scope.topic.collect_count = parseInt($scope.topic.collect_count) - 1;
@@ -465,7 +469,7 @@ angular.module('iwildfire.controllers', [])
             Topic.collectTopic(id).$promise.then(function(response) {
                 if (response.success) {
                     $scope.isCollected = true;
-                    if( !$scope.topic.collect_count ){
+                    if (!$scope.topic.collect_count) {
                         $scope.topic.collect_count = 0;
                     }
                     $scope.topic.collect_count = parseInt($scope.topic.collect_count) + 1;
@@ -475,36 +479,35 @@ angular.module('iwildfire.controllers', [])
         }
     };
 
-     // for complian topic
-    $scope.complainTopic = function( topic ) {
+    // for complian topic
+    $scope.complainTopic = function(topic) {
         $scope.popupData = {};
         // An elaborate, custom popup
         var myPopup = $ionicPopup.show({
-                            template: '<textarea autofocus ng-model="popupData.complainDescription" placeholder="您的举报理由" style="height:120px"></textarea>',
-                            title: '举报商品',
-                            // subTitle: '请输入您的举报理由',
-                            scope: $scope,
-                            buttons: [
-                              { text: '取消' },
-                              {
-                                text: '<b>提交</b>',
-                                type: 'button-assertive',
-                                onTap: function(e) {
-                                  if (!$scope.popupData.complainDescription) {
-                                    //don't allow the user to close unless he enters wifi password
-                                    e.preventDefault();
-                                  } else {
-                                    return $scope.popupData.complainDescription;
-                                  }
-                                }
-                              }
-                            ]
-                        });
+            template: '<textarea autofocus ng-model="popupData.complainDescription" placeholder="您的举报理由" style="height:120px"></textarea>',
+            title: '举报商品',
+            // subTitle: '请输入您的举报理由',
+            scope: $scope,
+            buttons: [{
+                text: '取消'
+            }, {
+                text: '<b>提交</b>',
+                type: 'button-assertive',
+                onTap: function(e) {
+                    if (!$scope.popupData.complainDescription) {
+                        //don't allow the user to close unless he enters wifi password
+                        e.preventDefault();
+                    } else {
+                        return $scope.popupData.complainDescription;
+                    }
+                }
+            }]
+        });
 
         myPopup.then(function(description) {
-            if( description ) {
+            if (description) {
                 $scope.showLoading('提交中，请稍候！');
-                Topic.complainTopic(topic.id, description ).$promise.then(function(response){
+                Topic.complainTopic(topic.id, description).$promise.then(function(response) {
                     $scope.hideLoading();
                 });
             }
@@ -532,46 +535,22 @@ angular.module('iwildfire.controllers', [])
     cfg,
     store,
     webq,
-    locationDetail,
     wxWrapper,
     Tabs) {
     // #TODO comment out for debugging
     // if not contains profile and accesstoken, just naviagte
     // to user authentication page.
     if (!store.getAccessToken()) {
-        console.log('redirection!');
-        window.location.href = '{0}/auth/wechat/embedded?redirect={1}'.f(cfg.server, encodeURIComponent('{0}/#/tab/account'.f(cfg.server)));
+        window.location.href = '{0}/auth/wechat/embedded?redirect={1}'.f(cfg.server, encodeURIComponent('tab.post'));
     }
     console.log('I am here, the PostCtrl');
 
-    // $scope.params = {
-    //     // 标题5到10个字
-    //     title: null,
-    //     content: null,
-    //     tab: null,
-    //     quality: null,
-    //     goods_pics: ['http://img1.cache.netease.com/catchpic/9/95/95C6FAC0DC54FC2D8BFFE30EE14990DD.jpg',
-    //         'http://img1.cache.netease.com/catchpic/9/95/95C6FAC0DC54FC2D8BFFE30EE14990DD.jpg'],
-    //     goods_pre_price: null,
-    //     goods_now_price: null,
-    //     goods_is_bargain: true,
-    //     // dummy data
-    //     goods_exchange_location: {
-    //         user_edit_address: null,
-    //         api_address: null,
-    //         lat: null, // latitude
-    //         lng: null // longitude
-    //     },
-    //     goods_status: '在售'
-    // };
-
-    // #Todo this is dummy data for debugging
     $scope.params = {
         // 标题5到10个字
-        title: 'testtitle',
-        content: 'test contenet',
-        tab: 'electronics',
-        quality: '全新',
+        title: null,
+        content: null,
+        tab: null,
+        quality: null,
         goods_pics: [],
         goods_pre_price: null,
         goods_now_price: null,
@@ -585,6 +564,27 @@ angular.module('iwildfire.controllers', [])
         },
         goods_status: '在售'
     };
+
+    // #Todo this is dummy data for debugging
+    // $scope.params = {
+    //     // 标题5到10个字
+    //     title: 'testtitle',
+    //     content: 'test contenet',
+    //     tab: 'electronics',
+    //     quality: '全新',
+    //     goods_pics: [],
+    //     goods_pre_price: null,
+    //     goods_now_price: null,
+    //     goods_is_bargain: true,
+    //     // dummy data
+    //     goods_exchange_location: {
+    //         user_edit_address: null,
+    //         api_address: null,
+    //         lat: null, // latitude
+    //         lng: null // longitude
+    //     },
+    //     goods_status: '在售'
+    // };
 
 
     $scope.pageModel = {};
@@ -791,10 +791,9 @@ angular.module('iwildfire.controllers', [])
      * Store the exchange location information
      * @type {Object}
      */
-    // webq.getLocationDetail(wxWrapper)
-        // .then(function(data) {
-    function _locationDetail( data ){
-            $log.debug('locationDetail', JSON.stringify(data));
+    webq.getLocationDetail(wxWrapper)
+        .then(function(data) {
+            $log.debug('webq.getLocationDetail locationDetail ', JSON.stringify(data));
             $scope.locationDetail = data;
             $scope.params.goods_exchange_location = data;
             $scope.showEdit = false;
@@ -819,9 +818,11 @@ angular.module('iwildfire.controllers', [])
                 }
                 $scope.changeLocationModal.hide();
             }
-        // });
-    }
-    _locationDetail( locationDetail );
+        })
+        .catch(function(err) {
+            console.error('Get an error when running webq.getLocationDetail(wxWrapper)');
+            console.error(err);
+        });
     /*******************************************
      * End Modal View to input detail of exchange location
      *******************************************/
@@ -915,8 +916,8 @@ angular.module('iwildfire.controllers', [])
     function _separateMyTopics(update, callback) {
         if (update) {
             $q.all([
-              webq.getMyTopicsResolve(),
-              webq.getMyCollectionResolve()
+                webq.getMyTopicsResolve(),
+                webq.getMyCollectionResolve()
             ]).then(function(results) {
                 var latestMyTopics = results[0];
 
@@ -1233,15 +1234,24 @@ angular.module('iwildfire.controllers', [])
 .controller('BindAccessTokenCtrl', function($log, $stateParams,
     $scope,
     $state,
-    store) {
+    store,
+    webq) {
     console.log('Get stateParams: ' + JSON.stringify($stateParams));
     var accesstoken = $stateParams.accessToken;
     if (accesstoken) {
         store.setAccessToken($stateParams.accessToken);
     }
-    if ($stateParams.redirectUrl) {
-        window.location = decodeURIComponent($stateParams.redirectUrl);
+    if ($stateParams.md5) {
+        webq.getHashStateValByMd5($stateParams.md5)
+            .then(function(data) {
+                console.log('BindAccessTokenCtrl Redirect to ' + data);
+                $state.go(data);
+            }, function(err) {
+                console.log('BindAccessTokenCtrl Get an error, redirect to tab.index');
+                $state.go('tab.index');
+            });
     } else {
+        console.log()
         $state.go('tab.index');
     }
 })

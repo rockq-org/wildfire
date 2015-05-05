@@ -37,7 +37,7 @@
           <img ng-src='{{topic.author.avatar}}' />
           <span>{{topic.author.name}}</span>
         </div>
-        <div class="item-content"><i class="icon ion-ios-location mr5"></i>{{topic.goods_exchange_location.address}}</div>
+        <div class="item-content"><i class="icon ion-ios-location mr5"></i>{{topic.goods_exchange_location.user_edit_address}}</div>
         <div class="item-note">
           {{topic.goods_exchange_location | flatternDistance:currentLocation}}<br />
           <span am-time-ago="topic.update_at"></span>

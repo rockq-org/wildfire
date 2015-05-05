@@ -366,8 +366,6 @@ angular.module('iwildfire.controllers', [])
                 if (item.price) $scope.bargains.push(item);
                 else $scope.replies.push(item);
             })
-            console.log($scope.topic);
-            console.log($scope.replies);
         }, $rootScope.requestErrorHandler({
             noBackdrop: true
         }, function() {

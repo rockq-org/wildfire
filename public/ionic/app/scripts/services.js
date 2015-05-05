@@ -857,7 +857,7 @@ Local storage is per domain. All pages, from one domain, can store and access th
     // make sure the user is logged in
     // before using saveReply.
     var currentUser = store.getUserProfile();
-    if( typeof(currentUser['accessToken']) == undefined ){
+    if( typeof(currentUser['accessToken']) == 'undefined' ){
         currentUser['accessToken'] = '';
     }
 
@@ -870,8 +870,8 @@ Local storage is per domain. All pages, from one domain, can store and access th
      */
     var Settings = {};
     var topic;
-    var resource = $resource(cfg.api + '/topic/:id', {
-        id: '@id',
+    var resource = $resource(cfg.api + '/topic/:id?accesstoken=' + currentUser['accessToken'], {
+        id: '@id'
     }, {
         complain: {
             method: 'post',

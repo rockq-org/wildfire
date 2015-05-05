@@ -1,7 +1,9 @@
 var TopicCollect = require('../models').TopicCollect;
 
 exports.getTopicCollect = function (userId, topicId, callback) {
-  TopicCollect.findOne({user_id: userId, topic_id: topicId}, callback);
+  TopicCollect.findOne({user_id: userId, topic_id: topicId}, function(err, doc){
+    callback(doc);
+  });
 };
 
 exports.getTopicCollectsByUserId = function (userId, callback) {

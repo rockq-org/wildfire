@@ -102,12 +102,7 @@ angular.module('iwildfire', ['ionic', 'iwildfire.controllers', 'iwildfire.servic
         .state('tab', {
         url: "/tab",
         abstract: true,
-        templateUrl: "templates/tabs.html",
-        resolve: {
-            locationDetail: function(webq) {
-                return webq.getLocationDetail();
-            }
-        }
+        templateUrl: "templates/tabs.html"
     })
 
     // Each tab has its own nav history stack:
@@ -143,9 +138,6 @@ angular.module('iwildfire', ['ionic', 'iwildfire.controllers', 'iwildfire.servic
         templateUrl: 'templates/tab-post.html',
         controller: 'PostCtrl',
         resolve: {
-            locationDetail: function(wxWrapper, webq) {
-                return webq.getLocationDetail(wxWrapper);
-            },
             wxWrapper: function(webq) {
                 return webq.getWxWrapper();
             }

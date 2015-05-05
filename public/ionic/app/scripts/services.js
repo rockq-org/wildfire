@@ -584,7 +584,7 @@ Local storage is per domain. All pages, from one domain, can store and access th
                 .error(function(err) {
                     console.dir(arguments);
                     console.log('get wechatSingnature from wx api server error', err);
-                    deferred.reject( err );
+                    deferred.reject(err);
                 })
         } else {
             // wechat signature is assigned to undefined if
@@ -680,25 +680,29 @@ Local storage is per domain. All pages, from one domain, can store and access th
         var deferred = $q.defer();
         var locationDetail = store.getLocationDetail();
 
-        if (locationDetail) {
-            console.log('get cached locationDetail from store', JSON.stringify(locationDetail));
-            deferred.resolve(locationDetail);
+        try {
+            if (locationDetail) {
+                console.log('get cached locationDetail from store', JSON.stringify(locationDetail));
+                deferred.resolve(locationDetail);
 
-            return deferred.promise;
-        } else if (wxWrapper) {
-            // use the wxWrapper passed in
-            console.log('use the wxWrapper to get locationDetail', JSON.stringify(wxWrapper));
-            _getLocationDetail(wxWrapper, deferred);
-        } else {
-            // get a new wxWrapper
-            console.log('get a new wxWrapper');
-            self.getWxWrapper()
-                .then(function(wxWrapper) {
-                    _getLocationDetail(wxWrapper, deferred);
-                }, function(err) {
-                    console.log('can not get location', err);
-                    deferred.resolve();
-                });
+                return deferred.promise;
+            } else if (wxWrapper) {
+                // use the wxWrapper passed in
+                console.log('use the wxWrapper to get locationDetail', JSON.stringify(wxWrapper));
+                _getLocationDetail(wxWrapper, deferred);
+            } else {
+                // get a new wxWrapper
+                console.log('get a new wxWrapper');
+                self.getWxWrapper()
+                    .then(function(wxWrapper) {
+                        _getLocationDetail(wxWrapper, deferred);
+                    }, function(err) {
+                        console.log('can not get location', err);
+                        deferred.reject();
+                    });
+            }
+        } catch (err) {
+            deferred.reject(err);
         }
 
         return deferred.promise;
@@ -924,7 +928,7 @@ Local storage is per domain. All pages, from one domain, can store and access th
             return resource.reply({
                 topicId: topicId,
                 accesstoken: currentUser.accessToken
-                //accesstoken: '5447b4c3-0006-4a3c-9903-ac5a803bc17e'
+                    //accesstoken: '5447b4c3-0006-4a3c-9903-ac5a803bc17e'
             }, reply);
         },
         upReply: function(replyId) {

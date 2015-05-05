@@ -7,7 +7,6 @@ angular.module('iwildfire.controllers', [])
     $ionicPopup,
     $timeout,
     $state,
-    locationDetail,
     $location,
     $log,
     Topics,
@@ -126,19 +125,24 @@ angular.module('iwildfire.controllers', [])
         topic.collect_count--;
     }
 
-    if (typeof(locationDetail) != 'undefined') {
-        console.log('lyman 122', JSON.stringify(locationDetail));
-        $scope.address = locationDetail.user_edit_address;
-        $scope.tabTitle = locationDetail.user_edit_address;
-        Topics.setGeom(locationDetail);
-        loadDataAfterGetLocation();
-    } else {
-        // load pages from local browser for debugging
-        loadDataAfterGetLocation();
-    };
-
+    webq.getLocationDetail(wxWrapper)
+        .then(function(locationDetail) {
+            if (typeof(locationDetail) != 'undefined') {
+                console.log('lyman 122', JSON.stringify(locationDetail));
+                $scope.address = locationDetail.user_edit_address;
+                $scope.tabTitle = locationDetail.user_edit_address;
+                Topics.setGeom(locationDetail);
+                loadDataAfterGetLocation();
+            } else {
+                // load pages from local browser for debugging
+                loadDataAfterGetLocation();
+            };
+        })
+        .catch(function(err) {
+            console.error('Get an error when running webq.getLocationDetail(wxWrapper)');
+            console.error(err);
+        });
 })
-
 
 
 .controller('MapsCtrl', function(
@@ -531,7 +535,6 @@ angular.module('iwildfire.controllers', [])
     cfg,
     store,
     webq,
-    locationDetail,
     wxWrapper,
     Tabs) {
     // #TODO comment out for debugging
@@ -788,22 +791,21 @@ angular.module('iwildfire.controllers', [])
      * Store the exchange location information
      * @type {Object}
      */
-    // webq.getLocationDetail(wxWrapper)
-    // .then(function(data) {
-    function _locationDetail(data) {
-        $log.debug('locationDetail', JSON.stringify(data));
-        $scope.locationDetail = data;
-        $scope.params.goods_exchange_location = data;
-        $scope.showEdit = false;
-        // Create the modal that we will use later
-        $ionicModal.fromTemplateUrl('templates/modal-change-location.html', {
-            scope: $scope
-        }).then(function(modal) {
-            $scope.changeLocationModal = modal;
-            // modal.show();
-        });
+    webq.getLocationDetail(wxWrapper)
+        .then(function(data) {
+            $log.debug('webq.getLocationDetail locationDetail ', JSON.stringify(data));
+            $scope.locationDetail = data;
+            $scope.params.goods_exchange_location = data;
+            $scope.showEdit = false;
+            // Create the modal that we will use later
+            $ionicModal.fromTemplateUrl('templates/modal-change-location.html', {
+                scope: $scope
+            }).then(function(modal) {
+                $scope.changeLocationModal = modal;
+                // modal.show();
+            });
 
-        $scope.closeChangeLocationModal = function(isSubmit) {
+            $scope.closeChangeLocationModal = function(isSubmit) {
                 if (isSubmit) {
                     $timeout(function() {
                         $scope.params.goods_exchange_location.api_address = $scope.locationDetail.api_address;
@@ -816,9 +818,11 @@ angular.module('iwildfire.controllers', [])
                 }
                 $scope.changeLocationModal.hide();
             }
-            // });
-    }
-    _locationDetail(locationDetail);
+        })
+        .catch(function(err) {
+            console.error('Get an error when running webq.getLocationDetail(wxWrapper)');
+            console.error(err);
+        });
     /*******************************************
      * End Modal View to input detail of exchange location
      *******************************************/

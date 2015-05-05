@@ -418,8 +418,8 @@ angular.module('iwildfire.controllers', [])
     }
 
     $scope.replyTo = function(replyAuthor) {
-        $scope.replyData.replyTo=replyAuthor;
-        $scope.status.action='reply';
+        $scope.replyData.replyTo = replyAuthor;
+        $scope.status.action = 'reply';
     }
 
     // save reply
@@ -427,7 +427,7 @@ angular.module('iwildfire.controllers', [])
         $log.debug('new reply data:', JSON.stringify($scope.replyData));
         if ($scope.replyData.content == '') return $scope.showReply = false;
         $ionicLoading.show();
-        if($scope.replyData.replyTo){
+        if ($scope.replyData.replyTo) {
             $scope.replyData.reply_to = $scope.replyData.replyTo.name;
             //$scope.replyData.content = '@'+$scope.replyData.replyTo.loginname+' '+ $scope.replyData.content;
         }
@@ -442,7 +442,7 @@ angular.module('iwildfire.controllers', [])
                 $ionicScrollDelegate.scrollBottom();
             });
             $scope.showReply = false;
-        }, function(){
+        }, function() {
             $ionicLoading.hide();
             $rootScope.requestErrorHandler()
         });
@@ -475,36 +475,35 @@ angular.module('iwildfire.controllers', [])
         }
     };
 
-     // for complian topic
-    $scope.complainTopic = function( topic ) {
+    // for complian topic
+    $scope.complainTopic = function(topic) {
         $scope.popupData = {};
         // An elaborate, custom popup
         var myPopup = $ionicPopup.show({
-                            template: '<textarea autofocus ng-model="popupData.complainDescription" placeholder="您的举报理由" style="height:120px"></textarea>',
-                            title: '举报商品',
-                            // subTitle: '请输入您的举报理由',
-                            scope: $scope,
-                            buttons: [
-                              { text: '取消' },
-                              {
-                                text: '<b>提交</b>',
-                                type: 'button-assertive',
-                                onTap: function(e) {
-                                  if (!$scope.popupData.complainDescription) {
-                                    //don't allow the user to close unless he enters wifi password
-                                    e.preventDefault();
-                                  } else {
-                                    return $scope.popupData.complainDescription;
-                                  }
-                                }
-                              }
-                            ]
-                        });
+            template: '<textarea autofocus ng-model="popupData.complainDescription" placeholder="您的举报理由" style="height:120px"></textarea>',
+            title: '举报商品',
+            // subTitle: '请输入您的举报理由',
+            scope: $scope,
+            buttons: [{
+                text: '取消'
+            }, {
+                text: '<b>提交</b>',
+                type: 'button-assertive',
+                onTap: function(e) {
+                    if (!$scope.popupData.complainDescription) {
+                        //don't allow the user to close unless he enters wifi password
+                        e.preventDefault();
+                    } else {
+                        return $scope.popupData.complainDescription;
+                    }
+                }
+            }]
+        });
 
         myPopup.then(function(description) {
-            if( description ) {
+            if (description) {
                 $scope.showLoading('提交中，请稍候！');
-                Topic.complainTopic(topic.id, description ).$promise.then(function(response){
+                Topic.complainTopic(topic.id, description).$promise.then(function(response) {
                     $scope.hideLoading();
                 });
             }
@@ -543,34 +542,12 @@ angular.module('iwildfire.controllers', [])
     }
     console.log('I am here, the PostCtrl');
 
-    // $scope.params = {
-    //     // 标题5到10个字
-    //     title: null,
-    //     content: null,
-    //     tab: null,
-    //     quality: null,
-    //     goods_pics: ['http://img1.cache.netease.com/catchpic/9/95/95C6FAC0DC54FC2D8BFFE30EE14990DD.jpg',
-    //         'http://img1.cache.netease.com/catchpic/9/95/95C6FAC0DC54FC2D8BFFE30EE14990DD.jpg'],
-    //     goods_pre_price: null,
-    //     goods_now_price: null,
-    //     goods_is_bargain: true,
-    //     // dummy data
-    //     goods_exchange_location: {
-    //         user_edit_address: null,
-    //         api_address: null,
-    //         lat: null, // latitude
-    //         lng: null // longitude
-    //     },
-    //     goods_status: '在售'
-    // };
-
-    // #Todo this is dummy data for debugging
     $scope.params = {
         // 标题5到10个字
-        title: 'testtitle',
-        content: 'test contenet',
-        tab: 'electronics',
-        quality: '全新',
+        title: null,
+        content: null,
+        tab: null,
+        quality: null,
         goods_pics: [],
         goods_pre_price: null,
         goods_now_price: null,
@@ -584,6 +561,27 @@ angular.module('iwildfire.controllers', [])
         },
         goods_status: '在售'
     };
+
+    // #Todo this is dummy data for debugging
+    // $scope.params = {
+    //     // 标题5到10个字
+    //     title: 'testtitle',
+    //     content: 'test contenet',
+    //     tab: 'electronics',
+    //     quality: '全新',
+    //     goods_pics: [],
+    //     goods_pre_price: null,
+    //     goods_now_price: null,
+    //     goods_is_bargain: true,
+    //     // dummy data
+    //     goods_exchange_location: {
+    //         user_edit_address: null,
+    //         api_address: null,
+    //         lat: null, // latitude
+    //         lng: null // longitude
+    //     },
+    //     goods_status: '在售'
+    // };
 
 
     $scope.pageModel = {};
@@ -791,21 +789,21 @@ angular.module('iwildfire.controllers', [])
      * @type {Object}
      */
     // webq.getLocationDetail(wxWrapper)
-        // .then(function(data) {
-    function _locationDetail( data ){
-            $log.debug('locationDetail', JSON.stringify(data));
-            $scope.locationDetail = data;
-            $scope.params.goods_exchange_location = data;
-            $scope.showEdit = false;
-            // Create the modal that we will use later
-            $ionicModal.fromTemplateUrl('templates/modal-change-location.html', {
-                scope: $scope
-            }).then(function(modal) {
-                $scope.changeLocationModal = modal;
-                // modal.show();
-            });
+    // .then(function(data) {
+    function _locationDetail(data) {
+        $log.debug('locationDetail', JSON.stringify(data));
+        $scope.locationDetail = data;
+        $scope.params.goods_exchange_location = data;
+        $scope.showEdit = false;
+        // Create the modal that we will use later
+        $ionicModal.fromTemplateUrl('templates/modal-change-location.html', {
+            scope: $scope
+        }).then(function(modal) {
+            $scope.changeLocationModal = modal;
+            // modal.show();
+        });
 
-            $scope.closeChangeLocationModal = function(isSubmit) {
+        $scope.closeChangeLocationModal = function(isSubmit) {
                 if (isSubmit) {
                     $timeout(function() {
                         $scope.params.goods_exchange_location.api_address = $scope.locationDetail.api_address;
@@ -818,9 +816,9 @@ angular.module('iwildfire.controllers', [])
                 }
                 $scope.changeLocationModal.hide();
             }
-        // });
+            // });
     }
-    _locationDetail( locationDetail );
+    _locationDetail(locationDetail);
     /*******************************************
      * End Modal View to input detail of exchange location
      *******************************************/

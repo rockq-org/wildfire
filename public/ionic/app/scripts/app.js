@@ -121,7 +121,12 @@ angular.module('iwildfire', ['ionic', 'iwildfire.controllers', 'iwildfire.servic
         views: {
             'tab-maps': {
                 templateUrl: 'templates/tab-maps.html',
-                controller: 'MapsCtrl'
+                controller: 'MapsCtrl',
+                resolve: {
+                    locationDetail: function(webq) {
+                        return webq.getLocationDetail();
+                    }
+                }
             }
         }
     })

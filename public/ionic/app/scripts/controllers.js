@@ -10,6 +10,7 @@ angular.module('iwildfire.controllers', [])
     $location,
     $log,
     Topics,
+    webq,
     Tabs,
     cfg
 ) {
@@ -125,7 +126,7 @@ angular.module('iwildfire.controllers', [])
         topic.collect_count--;
     }
 
-    webq.getLocationDetail(wxWrapper)
+    webq.getLocationDetail()
         .then(function(locationDetail) {
             if (typeof(locationDetail) != 'undefined') {
                 console.log('lyman 122', JSON.stringify(locationDetail));
@@ -168,7 +169,8 @@ angular.module('iwildfire.controllers', [])
     //     lat: 25.3518140000000010,
     //     lng: 118.7042859999999962
     // };
-    // $scope.locationDetail = locationDetail;
+    $scope.locationDetail = locationDetail;
+    // $scope.locationDetail = {};
 
     $scope.sideMenus = Tabs.getList();
     $stateParams.tab = $stateParams.tab || 'all';
@@ -267,26 +269,24 @@ angular.module('iwildfire.controllers', [])
         };
     }
 
-    if (typeof(locationDetail) != 'undefined') {
+    // webq.getLocationDetail().then(function(locationDetail){
         console.log('get location from resolve now!', JSON.stringify(locationDetail));
+        $scope.map = {
+            center: {
+                lat: locationDetail.lat,
+                lng: locationDetail.lng
+            },
+            zoom: 13
+        };
         $scope.address = locationDetail.user_edit_address;
         $scope.tabTitle = locationDetail.user_edit_address;
         Topics.setGeom(locationDetail);
         $scope.locationDetail = locationDetail;
-    } else {
-        // load pages from local browser for debugging
         loadDataAfterGetLocation();
         $scope.doRefresh();
-    };
+    // });
 
 
-    $scope.map = {
-        center: {
-            lat: locationDetail.lat,
-            lng: locationDetail.lng
-        },
-        zoom: 13
-    };
 
     $scope.$watchCollection('locationDetail', function(newValue, oldValue) {
         $scope.address = $scope.locationDetail.user_edit_address;

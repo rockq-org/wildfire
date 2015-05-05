@@ -676,34 +676,23 @@ Local storage is per domain. All pages, from one domain, can store and access th
         });
     }
 
-    this.getLocationDetail = function(wxWrapper) {
+    this.getLocationDetail = function() {
         var deferred = $q.defer();
         var locationDetail = store.getLocationDetail();
 
-        try {
-            if (locationDetail) {
-                console.log('get cached locationDetail from store', JSON.stringify(locationDetail));
-                deferred.resolve(locationDetail);
-
-                return deferred.promise;
-            } else if (wxWrapper) {
-                // use the wxWrapper passed in
-                console.log('use the wxWrapper to get locationDetail', JSON.stringify(wxWrapper));
-                _getLocationDetail(wxWrapper, deferred);
-            } else {
-                // get a new wxWrapper
-                console.log('get a new wxWrapper');
-                self.getWxWrapper()
-                    .then(function(wxWrapper) {
-                        _getLocationDetail(wxWrapper, deferred);
-                    }, function(err) {
-                        console.log('can not get location', err);
-                        deferred.reject();
-                    });
-            }
-        } catch (err) {
-            deferred.reject(err);
+        if( locationDetail ) {
+            deferred.resolve( locationDetail );
+            return deferred.promise;
         }
+
+        console.log('get a new wxWrapper');
+        self.getWxWrapper()
+            .then(function(wxWrapper) {
+                _getLocationDetail(wxWrapper, deferred);
+            }, function(err) {
+                console.log('can not get location', err);
+                deferred.reject();
+            });
 
         return deferred.promise;
     };
@@ -718,9 +707,9 @@ Local storage is per domain. All pages, from one domain, can store and access th
         return self._postGoodsLocationDetail;
     };
 
-    /** 
+    /**
      * Support provide Callback URL in user authentication service
-     * https://github.com/arrking/wildfire/issues/128 
+     * https://github.com/arrking/wildfire/issues/128
      * get hash state value by md5
      */
     this.getHashStateValByMd5 = function(md5) {
@@ -868,6 +857,9 @@ Local storage is per domain. All pages, from one domain, can store and access th
     // make sure the user is logged in
     // before using saveReply.
     var currentUser = store.getUserProfile();
+    if( typeof(currentUser['accessToken']) == undefined ){
+        currentUser['accessToken'] = '';
+    }
 
     /**
      * Get current user from local store or resolve from server.

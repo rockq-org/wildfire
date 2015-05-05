@@ -43,7 +43,8 @@ exports.index = function (req, res, next) {
   }
 
   var limit = config.list_topic_count;
-  var options = { skip: (page - 1) * limit, limit: limit, sort: '-top -last_reply_at'};
+  // var options = { skip: (page - 1) * limit, limit: limit, sort: '-top -last_reply_at'};
+  var options = { skip: (page - 1) * limit, limit: limit};
 
   TopicComplain.getTopicsByQuery(query, options, proxy.done('topics', function (topics) {
     return topics;
@@ -102,7 +103,7 @@ exports.index = function (req, res, next) {
   var tabName = renderHelper.tabName(tab);
   proxy.all('topics', 'tops', 'no_reply_topics', 'pages',
     function (topics, tops, no_reply_topics, pages) {
-      res.render('index', {
+      res.render('index-complain', {
         topics: topics,
         current_page: page,
         list_topic_count: limit,

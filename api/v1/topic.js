@@ -489,6 +489,7 @@ exports.ding = function(req, res, next) {
 
 exports.addComplain = function(req, res, next) {
     var topicId = req.body.topicId;
+    console.log('topicId', topicId);
     var args = {
         userId: req.user.id,
         topicId: topicId,
@@ -504,6 +505,7 @@ exports.addComplain = function(req, res, next) {
                 error_msg: '主题不存在'
             });
         }
+        args.tab = topic.tab;
 
         TopicComplain.newAndSave(args, function(err) {
             if (err) {

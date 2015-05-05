@@ -1,5 +1,5 @@
 /**
- * Topic 
+ * Topic
  * http://mongoosejs.com/docs/guide.html
  * @type {[type]}
  */
@@ -22,7 +22,7 @@ var TopicSchema = new Schema({
    */
   title: { type: String },
   /**
-   * 文字描述 
+   * 文字描述
    * 与nodeclub保持一致，对交易物品的详细描述
    * @type {String}
    */
@@ -85,12 +85,12 @@ var TopicSchema = new Schema({
    */
   goods_is_bargain: {type: Boolean, required: true, default: true},
   /**
-   * 
+   *
    * @type [全新，很新，完好，适用，能用]
    */
   goods_quality_degree: {type: String, required: true, default: '完好'},
   /**
-   * 选择和买主碰头的地点 
+   * 选择和买主碰头的地点
    * https://github.com/arrking/wildfire/issues/31
    * @type {Object}
    */

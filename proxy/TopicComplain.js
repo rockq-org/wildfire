@@ -3,6 +3,7 @@ var EventProxy = require('eventproxy');
 
 var models = require('../models');
 var Topic = models.Topic;
+var TopicComplain = models.TopicComplain;
 var User = require('./user');
 var Reply = require('./reply');
 var tools = require('../common/tools');
@@ -29,6 +30,7 @@ exports.getTopicById = function(id, callback) {
         return callback(null, topic, author, last_reply);
     }).fail(callback);
 
+    console.log('id 33', id);
     Topic.findOne({
         _id: id
     }, proxy.done(function(topic) {
@@ -74,8 +76,8 @@ exports.getCountByQuery = function(query, callback) {
  * @param {Function} callback 回调函数
  */
 exports.getTopicsByQuery = function(query, opt, callback) {
-    query.deleted = false;
-    Topic.find(query, '_id', opt, function(err, docs) {
+    query.isProcessed = false;
+    TopicComplain.find(query, '', opt, function(err, docs) {
         if (err) {
             return callback(err);
         }
@@ -83,7 +85,8 @@ exports.getTopicsByQuery = function(query, opt, callback) {
             return callback(null, []);
         }
 
-        var topics_id = _.pluck(docs, 'id');
+        // var topics_id = _.pluck(docs, 'id');
+        var topics_id = _.pluck(docs, 'topicId');
 
         var proxy = new EventProxy();
         proxy.after('topic_ready', topics_id.length, function(topics) {
@@ -95,10 +98,13 @@ exports.getTopicsByQuery = function(query, opt, callback) {
         });
         proxy.fail(callback);
 
+        console.log('topics_id 102', topics_id);
         topics_id.forEach(function(id, i) {
+            console.log('103', id);
             exports.getTopicById(id, proxy.group('topic_ready', function(topic, author, last_reply) {
                 // 当id查询出来之后，进一步查询列表时，文章可能已经被删除了
                 // 所以这里有可能是null
+                console.log('topic', topic);
                 if (topic) {
                     topic.author = author;
                     topic.reply = last_reply;
@@ -272,8 +278,9 @@ exports.reduceCount = function(id, callback) {
 exports.newAndSave = function (args, callback) {
   var topicComplain = new TopicComplain();
   console.log(topicComplain);
-  topicComplain.userId = args.user_id;
-  topicComplain.topicId = args.topic_id;
+  topicComplain.userId = args.userId;
+  topicComplain.tab = args.tab;
+  topicComplain.topicId = args.topicId;
   topicComplain.description = args.description;
   // topicComplain.isProcessed = false;
   topicComplain.save(callback);

@@ -33,7 +33,7 @@
         &nbsp;<span class="visit-count">浏览 {{topic.visit_count + 1}}</span>
       </div>
       <div class="col col50 text-right">
-        <div class="name-avatar">
+        <div class="name-avatar item-content">
           <img ng-src='{{topic.author.avatar}}' />
           <span>{{topic.author.name}}</span>
         </div>
@@ -102,7 +102,7 @@
             {{reply.author.name}}
           </span>
           <span class="assertive" ng-if="reply.reply_to">
-            回复 {{reply.reply_to}}
+            回复 {{ (reply.reply_to == topic.author.name)? '卖家':reply.reply_to}}
           </span>
           <span class="item-note" am-time-ago="reply.create_at">
           </span>
@@ -122,7 +122,7 @@
         <a class="tab-item" href="tel:{{topic.author.phone_number}}"><i ng-show="showContact" class="icon ion-ios-telephone phone-icon"></i></a>
         <a class="tab-item" href="sms:{{topic.author.phone_number}}"><i ng-show="showContact" class="icon ion-ios-chatbubble message-icon"></i></a>
       </div>
-      <a class="tab-item" ng-click="replyData={content:''};status.showBargains=false;status.action='reply';">
+      <a class="tab-item" ng-click="replyTo(topic.author)">
         我要留言
       </a>
     </div>
@@ -140,7 +140,7 @@
         <label class="col col-25">
           回复
         </label>
-        <span class="col col-75">{{replyData.replyTo.name||"卖家"}}</span>
+        <span class="col col-75">{{ (replyData.replyTo.name == topic.author.name)? '卖家':replyData.replyTo.name}}</span>
       </div>
       <div ng-show="status.action=='bid'" class="row" style="padding:10px;">
         <label class="col col-25">

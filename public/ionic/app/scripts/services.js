@@ -198,7 +198,6 @@ Local storage is per domain. All pages, from one domain, can store and access th
 })
 
 
-
 /**
  * communicate with server, post/get request, return promise.
  * @param  {[type]} $http [description]

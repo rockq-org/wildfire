@@ -22,6 +22,7 @@ logs/*.log*
 
 .idea
 public/upload/*
+!public/upload/README
 
 *.sublime-project
 *.sublime-workspace

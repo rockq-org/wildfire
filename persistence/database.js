@@ -333,8 +333,10 @@ function _registerEMP(schema, mname, callback) {
     schema.post('save', function(doc) {
         if (this.wasNew) {
             // if (doc._mUser)
+            logger.debug('EMPEvent', 'post : ' + JSON.stringify(doc));
             pCallback(mname, ":post", doc); // this is a valid created with our restricted model. If not set then don't create the event, it will be created afterwards with the user.
         } else
+            logger.debug('EMPEvent', 'put : ' + JSON.stringify(doc));
             pCallback(mname, ":put", doc);
         delete this.wasNew;
     });

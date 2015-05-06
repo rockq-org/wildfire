@@ -1,6 +1,7 @@
 var eventproxy = require('eventproxy');
 var Message = require('../../proxy').Message;
 var _ = require('lodash');
+var logger = require('../../common/loggerUtil').getLogger('api/v1/message');
 
 var index = function (req, res, next) {
   var user_id = req.user._id;

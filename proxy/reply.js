@@ -100,6 +100,7 @@ exports.getRepliesByTopicId = function (id, cb) {
   });
 };
 
+
 /**
  * 创建并保存一条回复信息
  * @param {String} content 回复内容
@@ -108,7 +109,36 @@ exports.getRepliesByTopicId = function (id, cb) {
  * @param {String} [replyId] 回复ID，当二级回复时设定该值
  * @param {Function} callback 回调函数
  */
-exports.newAndSave = function (price, replyTo, content, topicId, authorId, replyId, callback) {
+exports.newAndSave = function (content, topicId, authorId, replyId, callback) {
+  if (typeof replyId === 'function') {
+    callback = replyId;
+    replyId = null;
+  }
+  var reply = new Reply();
+  reply.content = content;
+  reply.topic_id = topicId;
+  reply.author_id = authorId;
+  if (replyId) {
+    reply.reply_id = replyId;
+  }
+  reply.save(function (err) {
+    callback(err, reply);
+  });
+};
+
+
+/**
+ * Create a reply and related message with price and its replyTo userName.
+ * @param  {[type]}   price    [description]
+ * @param  {[type]}   replyTo  [description]
+ * @param  {[type]}   content  [description]
+ * @param  {[type]}   topicId  [description]
+ * @param  {[type]}   authorId [description]
+ * @param  {[type]}   replyId  [description]
+ * @param  {Function} callback [description]
+ * @return {[type]}            [description]
+ */
+exports.newAndSaveWithPriceAndReplyto = function (price, replyTo, content, topicId, authorId, replyId, callback) {
   if (typeof replyId === 'function') {
     callback = replyId;
     replyId = null;

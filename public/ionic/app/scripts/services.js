@@ -545,7 +545,9 @@ Local storage is per domain. All pages, from one domain, can store and access th
         // wechat plaform. If not, the signature can be
         // generated with this app url.
         // #TODO set this domian properly is very important.
-        if (S(cfg.server).contains('arrking.com')) {
+        var appUrl = S(cfg.server);
+        if (appUrl.contains('arrking.com') ||
+            appUrl.contains('guagua2shou.com')) {
             $http.post('{0}/ionic/wechat-signature'.f(cfg.api), {
                     app_url: app_url
                 }, {
@@ -680,8 +682,8 @@ Local storage is per domain. All pages, from one domain, can store and access th
         var deferred = $q.defer();
         var locationDetail = store.getLocationDetail();
 
-        if( locationDetail ) {
-            deferred.resolve( locationDetail );
+        if (locationDetail) {
+            deferred.resolve(locationDetail);
             return deferred.promise;
         }
 
@@ -856,7 +858,9 @@ Local storage is per domain. All pages, from one domain, can store and access th
     //var User = {};
     // make sure the user is logged in
     // before using saveReply.
-    var currentUser = store.getUserProfile() || { accessToken: '' };
+    var currentUser = store.getUserProfile() || {
+        accessToken: ''
+    };
 
     /**
      * Get current user from local store or resolve from server.
@@ -1083,11 +1087,11 @@ Local storage is per domain. All pages, from one domain, can store and access th
             });
         },
         collectTopic: function(topicId) {
-            if( typeof( user['collect_topics'] ) == 'undefined' ) {
+            if (typeof(user['collect_topics']) == 'undefined') {
                 user['collect_topics'] = [];
                 console.log(user.collect_topics);
             }
-            console.log(typeof( user['collect_topics'] ));
+            console.log(typeof(user['collect_topics']));
             user.collect_topics.push({
                 id: topicId
             });

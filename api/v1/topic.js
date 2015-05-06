@@ -56,6 +56,7 @@ var index = function(req, res, next) {
     //console.log('query',query);
     // if the topic is marked as deleted, do not return it.
     query.deleted = false;
+    query.goods_status = '在售';
     // set the response data with descending order of topic.udpate_at
 
 
@@ -128,7 +129,7 @@ var show = function(req, res, next) {
         topic.author = _.pick(author, ['name', 'avatar', 'loginname', 'phone_number']);
 
         topic.replies = replies.map(function(reply) {
-            reply.content = reply.content.replace(/^@[a-z0-9\-_]+\b/igm,'');
+            reply.content = reply.content.replace(/^@[a-z0-9\-_]+\b/igm, '');
             if (mdrender) {
                 reply.content = renderHelper.markdown(at.linkUsers(reply.content));
             }

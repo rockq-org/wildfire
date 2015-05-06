@@ -554,7 +554,7 @@ angular.module('iwildfire.controllers', [])
     // if not contains profile and accesstoken, just naviagte
     // to user authentication page.
     if (!store.getAccessToken()) {
-        window.location.href = '{0}/auth/wechat/embedded?redirect={1}'.f(cfg.server, encodeURIComponent('tab.post'));
+        window.location.href = '{0}/auth/wechat/embedded?redirect={1}'.f(cfg.server, encodeURIComponent('post'));
     }
     console.log('I am here, the PostCtrl');
 

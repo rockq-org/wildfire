@@ -107,18 +107,32 @@ Local storage is per domain. All pages, from one domain, can store and access th
 .service('store', function($log, cfg) {
 
     var self = this;
+    var itemsService = {};
+
+    function _setItem(key, value) {
+        self._removeItem(key);
+        itemsService[key] = value;
+    }
+
+    function _getItem(key) {
+        return itemsService[key];
+    }
+
+    function _removeItem(key) {
+        delete itemsService[key];
+    }
 
     this.setAccessToken = function(data) {
-        window.sessionStorage.setItem('WILDFIRE_ACCESS_TOKEN', data);
+        self._setItem('WILDFIRE_ACCESS_TOKEN', data);
     };
 
     this.getAccessToken = function() {
-        console.log('WILDFIRE_ACCESS_TOKEN', window.sessionStorage.getItem('WILDFIRE_ACCESS_TOKEN'));
-        return window.sessionStorage.getItem('WILDFIRE_ACCESS_TOKEN');
+        console.log('WILDFIRE_ACCESS_TOKEN', self._getItem('WILDFIRE_ACCESS_TOKEN'));
+        return self._getItem('WILDFIRE_ACCESS_TOKEN');
     };
 
     this.deleteAccessToken = function() {
-        window.sessionStorage.removeItem('WILDFIRE_ACCESS_TOKEN');
+        self._removeItem('WILDFIRE_ACCESS_TOKEN');
     };
 
     /**
@@ -126,22 +140,15 @@ Local storage is per domain. All pages, from one domain, can store and access th
      * @param {json} data json object of this user
      */
     this.setUserProfile = function(data) {
-        if (data) {
-            window.sessionStorage.setItem('WILDFIRE_USER_PROFILE', JSON.stringify(data));
-        }
+        self._setItem('WILDFIRE_USER_PROFILE', data);
     };
 
     this.getUserProfile = function() {
-        var rawProfile = window.sessionStorage.getItem('WILDFIRE_USER_PROFILE');
-        if (rawProfile) {
-            return JSON.parse(rawProfile);
-        } else {
-            return null;
-        }
+        return self._getItem('WILDFIRE_USER_PROFILE');
     };
 
     this.deleteUserProfile = function() {
-        window.removeItem('WILDFIRE_USER_PROFILE');
+        self._removeItem('WILDFIRE_USER_PROFILE');
     };
 
     /**
@@ -149,13 +156,8 @@ Local storage is per domain. All pages, from one domain, can store and access th
      * @return {[type]} [description]
      */
     this.getLocationDetail = function() {
-        var raw = window.sessionStorage.getItem('WILDFIRE_LOCATION_DETAIL');
-        console.log('WILDFIRE_LOCATION_DETAIL ', raw);
-        if (raw) {
-            return JSON.parse(raw);
-        } else {
-            return null;
-        }
+        console.log('WILDFIRE_LOCATION_DETAIL', self._getItem('WILDFIRE_LOCATION_DETAIL'));
+        return self._getItem('WILDFIRE_LOCATION_DETAIL');
     };
 
     /**
@@ -164,36 +166,34 @@ Local storage is per domain. All pages, from one domain, can store and access th
      * use sessionStorage to drop the data.
      */
     this.setLocationDetail = function(data) {
-        window.sessionStorage.setItem('WILDFIRE_LOCATION_DETAIL', JSON.stringify(data));
+        self._setItem('WILDFIRE_LOCATION_DETAIL', data);
     };
 
     this.deleteLocationDetail = function() {
-        window.sessionStorage.removeItem('WILDFIRE_LOCATION_DETAIL');
+        self._removeItem('WILDFIRE_LOCATION_DETAIL');
     }
 
     this.setWechatSignature = function(data) {
-        window.sessionStorage.setItem('WILDFIRE_WECHAT_SIGNATURE', JSON.stringify(data));
+        self._setItem('WILDFIRE_WECHAT_SIGNATURE', data);
     }
 
     this.getWechatSignature = function() {
-        var raw = window.sessionStorage.getItem('WILDFIRE_WECHAT_SIGNATURE');
-        console.log('WILDFIRE_WECHAT_SIGNATURE ', raw);
-        if (raw) {
-            return JSON.parse(raw);
-        } else {
-            return null;
-        }
+        console.log('WILDFIRE_WECHAT_SIGNATURE ', self._getItem('WILDFIRE_WECHAT_SIGNATURE'));
+        return self._getItem('WILDFIRE_WECHAT_SIGNATURE');
     }
 
     this.deleteWechatSignature = function() {
-        window.sessionStorage.removeItem('WILDFIRE_WECHAT_SIGNATURE');
+        self._removeItem('WILDFIRE_WECHAT_SIGNATURE');
     }
 
     this.clear = function() {
         $log.debug('clear all store except accesstoken');
-        var accesstoken = this.getAccessToken();
-        window.sessionStorage.clear();
-        self.setAccessToken(accesstoken);
+        var keys = _.keys(itemsService);
+        keys.forEach(function(x) {
+            if (key !== 'WILDFIRE_ACCESS_TOKEN') {
+                self._removeItem(x);
+            }
+        });
     }
 })
 

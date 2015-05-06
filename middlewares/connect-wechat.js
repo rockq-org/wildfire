@@ -90,10 +90,10 @@ function onSubscribe(msg, res) {
     // get user profile data with RESt API
     _createUserAccountByOpenId(msg);
     res.reply([{
-        title: '登陆链接',
-        description: '登陆后可发布信息，未登陆状态可浏览信息。',
-        picurl: u.format('http://%s/public/images/frog-icon.png', config.host),
-        url: u.format('http://%s/auth/wechat/embedded', config.host)
+        title: '欢迎关注呱呱二手',
+        description: '呱呱二手为你和你的小伙伴们提供了方便快捷的二手物品交易方式。在这里，你可以把伴随着自己成长的物品传承给学弟学妹，也可以淘到学长学姐精心收集的宝贝，更可以找到志同道合的朋友。物尽其用，传递情怀。',
+        picurl: 'http://mmbiz.qpic.cn/mmbiz/oRNrgrMMP1770dhjE8YK3ibUUGIx4LllMEh7uHPrrUIAAe6K2uIQoldv3ryicPp7o8SBibAPfSYwuSCGXibe7wQqcQ/0?wx_fmt=jpeg',
+        url: 'http://mp.weixin.qq.com/s?__biz=MzAxMjQ3NTg4OA==&mid=205335473&idx=1&sn=93299669977b4ef82ddccae54ad7313c#rd'
     }]);
 }
 

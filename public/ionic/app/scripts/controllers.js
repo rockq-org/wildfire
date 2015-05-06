@@ -130,7 +130,7 @@ angular.module('iwildfire.controllers', [])
 
     webq.getLocationDetail()
         .then(function(locationDetail) {
-            if( $rootScope.locationDetail ){
+            if ($rootScope.locationDetail) {
                 locationDetail = $rootScope.locationDetail;
             }
             if (typeof(locationDetail) != 'undefined') {
@@ -277,20 +277,20 @@ angular.module('iwildfire.controllers', [])
     }
 
     // webq.getLocationDetail().then(function(locationDetail){
-        console.log('get location from resolve now!', JSON.stringify($scope.locationDetail));
-        $scope.map = {
-            center: {
-                lat: locationDetail.lat,
-                lng: locationDetail.lng
-            },
-            zoom: 13
-        };
-        $scope.address = locationDetail.user_edit_address;
-        $scope.tabTitle = locationDetail.user_edit_address;
-        Topics.setGeom(locationDetail);
-        $scope.locationDetail = locationDetail;
-        loadDataAfterGetLocation();
-        $scope.doRefresh();
+    console.log('get location from resolve now!', JSON.stringify($scope.locationDetail));
+    $scope.map = {
+        center: {
+            lat: locationDetail.lat,
+            lng: locationDetail.lng
+        },
+        zoom: 13
+    };
+    $scope.address = locationDetail.user_edit_address;
+    $scope.tabTitle = locationDetail.user_edit_address;
+    Topics.setGeom(locationDetail);
+    $scope.locationDetail = locationDetail;
+    loadDataAfterGetLocation();
+    $scope.doRefresh();
     // });
 
 
@@ -429,9 +429,11 @@ angular.module('iwildfire.controllers', [])
     }
 
     $scope.replyTo = function(replyAuthor) {
-        $scope.replyData={content:''};
+        $scope.replyData = {
+            content: ''
+        };
         $scope.replyData.replyTo = replyAuthor;
-        status.showBargains=false;
+        status.showBargains = false;
         $scope.status.action = 'reply';
         console.log(replyAuthor);
     }
@@ -443,7 +445,7 @@ angular.module('iwildfire.controllers', [])
         $ionicLoading.show();
         if ($scope.replyData.replyTo) {
             $scope.replyData.reply_to = $scope.replyData.replyTo.name;
-            $scope.replyData.content = '@'+$scope.replyData.replyTo.loginname+' '+ $scope.replyData.content;
+            $scope.replyData.content = '@' + $scope.replyData.replyTo.loginname + ' ' + $scope.replyData.content;
         }
         console.log($scope.replyData);
         Topic.saveReply(id, $scope.replyData).$promise.then(function(response) {
@@ -944,7 +946,11 @@ angular.module('iwildfire.controllers', [])
 
                 }
 
-                favoritesStuffs = results[1];
+                // avoid results is null or undefined.
+                // fix https://github.com/arrking/wildfire/issues/159
+                if (results[1]) {
+                    favoritesStuffs = results[1];
+                }
 
                 if (callback) callback();
             });

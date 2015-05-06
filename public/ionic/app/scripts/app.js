@@ -10,6 +10,7 @@ angular.module('iwildfire', ['ionic', 'iwildfire.controllers', 'iwildfire.servic
 .run(function($ionicPlatform, $rootScope, $log, store, webq, $ionicLoading, amMoment, Messages, $timeout) {
 
     amMoment.changeLocale('zh-cn');
+    store.deleteAccessToken();
 
     $rootScope.showLoading = function(msg) {
         if (!msg) {

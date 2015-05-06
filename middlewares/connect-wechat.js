@@ -403,7 +403,8 @@ function _pushReplyWithWechatTemplateAPI(toUserId, fromUserId, topicId, replyId)
                     },
                     keyword3: {
                         // replace push content via wechat
-                        value: S(reply.content).replaceAll(u.format('[@%s](/user/%s)', toUser.loginname, toUser.loginname), u.format('对 @%s 说：', toUser.name)).s,
+                        // value: S(reply.content).replaceAll(u.format('[@%s](/user/%s)', toUser.loginname, toUser.loginname), u.format('对 @%s 说：', toUser.name)).s,
+                        value: S(reply.content).replaceAll(u.format('@%s', toUser.loginname), u.format('对 @%s 说：', toUser.name)).s,
                         color: "#173177"
                     }
                     // ,

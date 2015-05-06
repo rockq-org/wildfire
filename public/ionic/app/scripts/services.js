@@ -110,7 +110,7 @@ Local storage is per domain. All pages, from one domain, can store and access th
     var itemsService = {};
 
     function _setItem(key, value) {
-        self._removeItem(key);
+        _removeItem(key);
         itemsService[key] = value;
     }
 
@@ -123,16 +123,16 @@ Local storage is per domain. All pages, from one domain, can store and access th
     }
 
     this.setAccessToken = function(data) {
-        self._setItem('WILDFIRE_ACCESS_TOKEN', data);
+        _setItem('WILDFIRE_ACCESS_TOKEN', data);
     };
 
     this.getAccessToken = function() {
-        console.log('WILDFIRE_ACCESS_TOKEN', self._getItem('WILDFIRE_ACCESS_TOKEN'));
-        return self._getItem('WILDFIRE_ACCESS_TOKEN');
+        console.log('WILDFIRE_ACCESS_TOKEN', _getItem('WILDFIRE_ACCESS_TOKEN'));
+        return _getItem('WILDFIRE_ACCESS_TOKEN');
     };
 
     this.deleteAccessToken = function() {
-        self._removeItem('WILDFIRE_ACCESS_TOKEN');
+        _removeItem('WILDFIRE_ACCESS_TOKEN');
     };
 
     /**
@@ -140,15 +140,15 @@ Local storage is per domain. All pages, from one domain, can store and access th
      * @param {json} data json object of this user
      */
     this.setUserProfile = function(data) {
-        self._setItem('WILDFIRE_USER_PROFILE', data);
+        _setItem('WILDFIRE_USER_PROFILE', data);
     };
 
     this.getUserProfile = function() {
-        return self._getItem('WILDFIRE_USER_PROFILE');
+        return _getItem('WILDFIRE_USER_PROFILE');
     };
 
     this.deleteUserProfile = function() {
-        self._removeItem('WILDFIRE_USER_PROFILE');
+        _removeItem('WILDFIRE_USER_PROFILE');
     };
 
     /**
@@ -156,8 +156,8 @@ Local storage is per domain. All pages, from one domain, can store and access th
      * @return {[type]} [description]
      */
     this.getLocationDetail = function() {
-        console.log('WILDFIRE_LOCATION_DETAIL', self._getItem('WILDFIRE_LOCATION_DETAIL'));
-        return self._getItem('WILDFIRE_LOCATION_DETAIL');
+        console.log('WILDFIRE_LOCATION_DETAIL', _getItem('WILDFIRE_LOCATION_DETAIL'));
+        return _getItem('WILDFIRE_LOCATION_DETAIL');
     };
 
     /**
@@ -166,24 +166,24 @@ Local storage is per domain. All pages, from one domain, can store and access th
      * use sessionStorage to drop the data.
      */
     this.setLocationDetail = function(data) {
-        self._setItem('WILDFIRE_LOCATION_DETAIL', data);
+        _setItem('WILDFIRE_LOCATION_DETAIL', data);
     };
 
     this.deleteLocationDetail = function() {
-        self._removeItem('WILDFIRE_LOCATION_DETAIL');
+        _removeItem('WILDFIRE_LOCATION_DETAIL');
     }
 
     this.setWechatSignature = function(data) {
-        self._setItem('WILDFIRE_WECHAT_SIGNATURE', data);
+        _setItem('WILDFIRE_WECHAT_SIGNATURE', data);
     }
 
     this.getWechatSignature = function() {
-        console.log('WILDFIRE_WECHAT_SIGNATURE ', self._getItem('WILDFIRE_WECHAT_SIGNATURE'));
-        return self._getItem('WILDFIRE_WECHAT_SIGNATURE');
+        console.log('WILDFIRE_WECHAT_SIGNATURE ', _getItem('WILDFIRE_WECHAT_SIGNATURE'));
+        return _getItem('WILDFIRE_WECHAT_SIGNATURE');
     }
 
     this.deleteWechatSignature = function() {
-        self._removeItem('WILDFIRE_WECHAT_SIGNATURE');
+        _removeItem('WILDFIRE_WECHAT_SIGNATURE');
     }
 
     this.clear = function() {
@@ -191,7 +191,7 @@ Local storage is per domain. All pages, from one domain, can store and access th
         var keys = _.keys(itemsService);
         keys.forEach(function(x) {
             if (key !== 'WILDFIRE_ACCESS_TOKEN') {
-                self._removeItem(x);
+                _removeItem(x);
             }
         });
     }

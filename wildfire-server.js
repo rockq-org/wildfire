@@ -272,7 +272,7 @@ revision.short(function(gitRevision) {
                 logger.debug('/auth/wechat/embedded/callback hashState', redirectUrl);
                 res.redirect(redirectUrl);
             } else {
-                var redirectUrl = util.format('http://%s/#/bind-access-token/%s', config.client_host, user.accessToken);
+                var redirectUrl = util.format('http://%s/#/bind-access-token/%s/null-md5', config.client_host, user.accessToken);
                 logger.debug('/auth/wechat/embedded/callback redirectUrl', redirectUrl);
                 res.redirect(redirectUrl);
             }

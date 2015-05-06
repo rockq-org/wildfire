@@ -1258,7 +1258,7 @@ angular.module('iwildfire.controllers', [])
     if (accesstoken) {
         store.setAccessToken($stateParams.accessToken);
     }
-    if ($stateParams.md5) {
+    if ($stateParams.md5 && ($stateParams.md5 !== 'null-md5')) {
         webq.getHashStateValByMd5($stateParams.md5)
             .then(function(data) {
                 console.log('BindAccessTokenCtrl Redirect to ' + data);

@@ -553,10 +553,12 @@ angular.module('iwildfire.controllers', [])
     Tabs) {
     // 既不是调试，也不存在accesstoken
     if ((!store.getAccessToken()) && (!cfg.debug)) {
-        window.location.href = '{0}/auth/wechat/embedded?redirect={1}'.f(cfg.server, encodeURIComponent('post'));
         $ionicLoading.show({
             template: '跳转到登录认证 ...'
         });
+        $timeout(function() {
+            window.location.href = '{0}/auth/wechat/embedded?redirect={1}'.f(cfg.server, encodeURIComponent('post'));
+        }, 2000);
     }
     console.log('I am here, the PostCtrl');
 
@@ -867,14 +869,18 @@ angular.module('iwildfire.controllers', [])
     Messages,
     $log,
     $rootScope,
+    $timeout,
     cfg) {
 
     // 既不是调试，也不存在accesstoken
     if ((!store.getAccessToken()) && (!cfg.debug)) {
-        window.location.href = '{0}/auth/wechat/embedded?redirect={1}'.f(cfg.server, encodeURIComponent('tab.inbox'));
         $ionicLoading.show({
             template: '跳转到登录认证 ...'
         });
+        $timeout(function() {
+            // change to wechat uaa page
+            window.location.href = '{0}/auth/wechat/embedded?redirect={1}'.f(cfg.server, encodeURIComponent('tab.inbox'));
+        }, 2000);
     } else {
         Messages.getMessages().$promise.then(function(response) {
             $scope.messages = response.data;
@@ -928,6 +934,7 @@ angular.module('iwildfire.controllers', [])
     myProfile,
     myTopics,
     $q,
+    $timeout,
     Topic) {
     $log.debug("myProfile" + JSON.stringify(myProfile));
     $log.debug("myTopics: " + JSON.stringify(myTopics));
@@ -939,8 +946,6 @@ angular.module('iwildfire.controllers', [])
 
     // 既不是调试，也不存在accesstoken
     if (!myProfile && !cfg.debug) {
-        // change to wechat uaa page
-        window.location = '{0}/auth/wechat/embedded?redirect={1}'.f(cfg.server, encodeURIComponent('tab.account'));
         // Just to avoid myProfile = null
         // In that case, the script would throw an error. Even
         // it does not crash the app, but it is not friendly.
@@ -948,7 +953,10 @@ angular.module('iwildfire.controllers', [])
         $ionicLoading.show({
             template: '跳转到登录认证 ...'
         });
-
+        $timeout(function() {
+            // change to wechat uaa page
+            window.location = '{0}/auth/wechat/embedded?redirect={1}'.f(cfg.server, encodeURIComponent('tab.account'));
+        }, 2000);
     } else if (cfg.debug) {
         // ensure dummy data for local debugging
         myProfile = {};

@@ -109,30 +109,30 @@ Local storage is per domain. All pages, from one domain, can store and access th
     var self = this;
 
     this.setAccessToken = function(data) {
-        window.localStorage.setItem('WILDFIRE_ACCESS_TOKEN', data);
+        window.sessionStorage.setItem('WILDFIRE_ACCESS_TOKEN', data);
     };
 
     this.getAccessToken = function() {
-        console.log('WILDFIRE_ACCESS_TOKEN', window.localStorage.getItem('WILDFIRE_ACCESS_TOKEN'));
-        return window.localStorage.getItem('WILDFIRE_ACCESS_TOKEN');
+        console.log('WILDFIRE_ACCESS_TOKEN', window.sessionStorage.getItem('WILDFIRE_ACCESS_TOKEN'));
+        return window.sessionStorage.getItem('WILDFIRE_ACCESS_TOKEN');
     };
 
     this.deleteAccessToken = function() {
-        window.localStorage.removeItem('WILDFIRE_ACCESS_TOKEN');
+        window.sessionStorage.removeItem('WILDFIRE_ACCESS_TOKEN');
     };
 
     /**
-     * save user profile data into localstorage
+     * save user profile data into sessionStorage
      * @param {json} data json object of this user
      */
     this.setUserProfile = function(data) {
         if (data) {
-            window.localStorage.setItem('WILDFIRE_USER_PROFILE', JSON.stringify(data));
+            window.sessionStorage.setItem('WILDFIRE_USER_PROFILE', JSON.stringify(data));
         }
     };
 
     this.getUserProfile = function() {
-        var rawProfile = window.localStorage.getItem('WILDFIRE_USER_PROFILE');
+        var rawProfile = window.sessionStorage.getItem('WILDFIRE_USER_PROFILE');
         if (rawProfile) {
             return JSON.parse(rawProfile);
         } else {
@@ -192,7 +192,7 @@ Local storage is per domain. All pages, from one domain, can store and access th
     this.clear = function() {
         $log.debug('clear all store except accesstoken');
         var accesstoken = this.getAccessToken();
-        window.localStorage.clear();
+        window.sessionStorage.clear();
         self.setAccessToken(accesstoken);
     }
 })

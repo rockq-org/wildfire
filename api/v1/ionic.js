@@ -147,3 +147,13 @@ exports.saveFeedback = function(req, res, next) {
         }, res);
     }
 }
+
+/**
+ * Get app build number
+ */
+exports.getAppGitRevision = function(req, res, next) {
+    requestUtil.okJsonResponse({
+        rc: 1,
+        revision: process.env['wildfire_git_revision']
+    }, res);
+}

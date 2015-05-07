@@ -740,6 +740,27 @@ Local storage is per domain. All pages, from one domain, can store and access th
         return deferred.promise;
     }
 
+    /**
+     * Get app git revision as build number
+     * @return {[type]} [description]
+     */
+    this.getAppGitRevision = function() {
+        var deferred = $q.defer();
+        $http.get('{0}/ionic/app-revision'.f(cfg.api))
+            .success(function(data) {
+                if (data && data.rc === 1) {
+                    deferred.resolve(data.revision);
+                } else {
+                    deferred.reject();
+                }
+            })
+            .error(function(err) {
+                deferred.reject(err);
+            })
+
+        return deferred.promise;
+    }
+
 })
 
 /**

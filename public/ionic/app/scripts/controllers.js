@@ -1387,6 +1387,13 @@ angular.module('iwildfire.controllers', [])
             }, function(err) {
                 $scope.data.service_agreements = '服务器抽疯了，木有返回数据。';
             });
+    } else if ($state.is('about')) {
+        webq.getAppGitRevision()
+            .then(function(data) {
+                $scope.data.build = data;
+            }, function() {
+                $scope.data.build = 'N/A'
+            });
     }
 })
 

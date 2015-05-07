@@ -911,14 +911,8 @@ angular.module('iwildfire.controllers', [])
 
 })
 
-.controller('InboxCtrl', function($scope,
-    $ionicLoading,
-    Messages,
-    $log,
-    $rootScope,
-    $timeout,
-    cfg) {
-
+.controller('InboxCtrl', function($scope, $ionicLoading, Messages, $log, store, $rootScope, $timeout, cfg) {
+    $scope.doNotHaveMessage = false;
     // 既不是调试，也不存在accesstoken
     if ((!store.getAccessToken()) && (!cfg.debug)) {
         $ionicLoading.show({
@@ -943,6 +937,10 @@ angular.module('iwildfire.controllers', [])
                 }, function(response) {
                     $log.debug('mark all response error:', response);
                 });
+            }
+
+            if( $scope.messages.hasnot_read_messages.length == 0 && $scope.messages.has_read_messages.length == 0 ) {
+                $scope.doNotHaveMessage = true;
             }
         }, function(response) {
             $log.debug('get messages response error:', response);

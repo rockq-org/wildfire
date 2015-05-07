@@ -248,12 +248,14 @@ angular.module('iwildfire.directives', [])
 
     return function(scope, element, attrs) {
         webq.getLocationDetail().then(function(locationDetail){
-            var width = $document.width();
-            var height = $document.height() - 44;
-            var div = angular.element(element).find('div');
-            div.width(width);
-            div.height(height);
-            init(div[0], attrs, scope, locationDetail, width, height);
+            $timeout(function(){
+                var width = $document.width();
+                var height = $document.height() - 44;
+                var div = angular.element(element).find('div');
+                div.width(width);
+                div.height(height);
+                init(div[0], attrs, scope, locationDetail, width, height);
+            });
         });
     };
 })

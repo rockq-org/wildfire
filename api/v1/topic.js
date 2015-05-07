@@ -200,9 +200,9 @@ var create = function(req, res, next) {
     }
 
     // TODO validate goods parameters
-    if (_.some([goods_pics, goods_pre_price,
-            goods_now_price, goods_exchange_location,
-            goods_quality_degree, goods_status
+    if (_.some([goods_pics, goods_now_price,
+            goods_exchange_location, goods_quality_degree,
+            goods_status
         ], function(x) {
             return x == null;
         })) {

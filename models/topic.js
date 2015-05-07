@@ -73,7 +73,7 @@ var TopicSchema = new Schema({
    * 一手或物主购买时的价格, 人民币，正整型
    * @type {Number}
    */
-  goods_pre_price: {type: Number, required: true},
+  goods_pre_price: {type: Number, required: false},
   /**
    * 物主出手的价格, 人民币，正整型
    * @type {Number}

@@ -761,14 +761,25 @@ angular.module('iwildfire.controllers', [])
                      */
                     if (result.success) {
                         // create record successfully.
-                        alert('创建成功！');
-                        // #TODO navigate to detail page.
-                        $state.go('item', {
-                            itemId: result.topic_id
-                        });
+                        $ionicPopup.alert({
+                                title: '发布商品',
+                                template: '发布成功！'
+                            })
+                            .then(function(res) {
+                                $state.go('item', {
+                                    itemId: result.topic_id
+                                });
+                            });
                     } else {
                         // fail to create record.
-                        alert('创建失败！');
+                        $ionicPopup.alert({
+                                title: '发布商品',
+                                template: '发布失败！'
+                            })
+                            .then(function(res) {
+                                // # TODO
+                                console.error('发布失败！');
+                            });
                     }
                 }, function(err) {
                     console.log('lyman 566', JSON.stringify(err));

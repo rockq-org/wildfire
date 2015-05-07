@@ -348,16 +348,15 @@ angular.module('iwildfire.controllers', [])
     // before enter view event
     $scope.$on('$ionicView.beforeEnter', function() {
         $scope.status = {
-            action: 'normal',
-            showBargains: false
-        }
-        // track view
+                action: 'normal',
+                showBargains: false
+            }
+            // track view
         if (window.analytics) {
             window.analytics.trackView('topic view');
         }
     });
-    $scope.$on('$ionicView.afterLeave', function() {
-    });
+    $scope.$on('$ionicView.afterLeave', function() {});
 
     // load topic data
     $scope.loadTopic = function(reload) {
@@ -551,9 +550,8 @@ angular.module('iwildfire.controllers', [])
     cfg,
     store,
     webq,
-    //wxWrapper,
+    wxWrapper,
     Tabs) {
-    wxWrapper=null;
     // 既不是调试，也不存在accesstoken
     // 注意，假设 BindAccessToken 也是成功获取Profile的
     if ((!store.getAccessToken()) && (!cfg.debug)) {

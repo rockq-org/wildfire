@@ -148,9 +148,15 @@
         </label>
         <input class="col col-25" style="padding:2px 6px;" type="text" placeholder="" ng-model="replyData.price">
       </div>
-      <div class="row" style="padding:10px;">
+      <div ng-if="status.action=='reply'" class="row" style="padding:10px;">
         <label class="col col-25">
           说点什么
+        </label>
+        <input class="col col-75" style="padding:2px 6px;" type="text" placeholder="" ng-model="replyData.content"></input>
+      </div>
+      <div ng-if="status.action=='bid'" class="row" style="padding:10px;">
+        <label class="col col-25">
+          便宜点我就收了
         </label>
         <input class="col col-75" style="padding:2px 6px;" type="text" placeholder="" ng-model="replyData.content"></input>
       </div>

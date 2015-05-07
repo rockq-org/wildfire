@@ -178,6 +178,7 @@ angular.module('iwildfire.controllers', [])
     // };
     $scope.locationDetail = locationDetail;
     // $scope.locationDetail = {};
+    $scope.state = $state;
 
     $scope.sideMenus = Tabs.getList();
     $stateParams.tab = $stateParams.tab || 'all';

@@ -115,6 +115,10 @@ Local storage is per domain. All pages, from one domain, can store and access th
     }
 
     function _getItem(key) {
+        if( localStorage.getItem("isDev") ){
+            console.log('get from localStorage', localStorage.getItem(key) );
+            return localStorage.getItem(key);
+        }
         return itemsService[key];
     }
 

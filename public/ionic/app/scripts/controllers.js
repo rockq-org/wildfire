@@ -858,14 +858,6 @@ angular.module('iwildfire.controllers', [])
      * End Modal View to input detail of exchange location
      *******************************************/
 
-    $scope.showFullAddress = function() {
-        console.log($scope.locationDetail.api_address);
-        var alertPopup = $ionicPopup.alert({
-            title: '',
-            template: $scope.locationDetail.api_address
-        });
-    }
-
     //Cleanup the modal when we're done with it!
     $scope.$on('$destroy', function() {
 

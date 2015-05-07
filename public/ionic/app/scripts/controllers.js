@@ -347,14 +347,16 @@ angular.module('iwildfire.controllers', [])
 
     // before enter view event
     $scope.$on('$ionicView.beforeEnter', function() {
+        $scope.status = {
+            action: 'normal',
+            showBargains: false
+        }
         // track view
         if (window.analytics) {
             window.analytics.trackView('topic view');
         }
     });
     $scope.$on('$ionicView.afterLeave', function() {
-        $scope.showBargains = false;
-        $scope.status = 'normal';
     });
 
     // load topic data
@@ -399,7 +401,6 @@ angular.module('iwildfire.controllers', [])
     $scope.replyData = {
         content: ''
     };
-
 
     // check if the current login or not.
     // popup the login options if not.

@@ -376,7 +376,8 @@ angular.module('iwildfire.controllers', [])
             $scope.topic.replies.forEach(function(item, i) {
                 if (item.price) $scope.bargains.push(item);
                 else $scope.replies.push(item);
-            })
+            });
+            $scope.isSeller = $scope.topic.author.accessToken == store.getAccessToken();
         }, $rootScope.requestErrorHandler({
             noBackdrop: true
         }, function() {

@@ -114,13 +114,13 @@
   </ion-content>
   <div class="bar bar-footer" ng-show="status.action=='normal'">
     <div class="tabs tabs-color-royal">
-      <a class="tab-item" ng-click="replyData={content:''};status.showBargains=true;status.action='bid';">
+      <a ng-show="!isSeller" class="tab-item" ng-click="replyData={price:topic.goods_now_price,content:'便宜点我就收了'};status.showBargains=true;status.action='bid';">
         我要出价
       </a>
-      <div class="tab-item">
+      <div ng-show="!isSeller" class="tab-item">
         <i ng-click="showContact=!showContact" class="icon frog-icon frog2"></i>
-        <a class="tab-item" href="tel:{{topic.author.phone_number}}"><i ng-show="showContact" class="icon ion-ios-telephone phone-icon"></i></a>
-        <a class="tab-item" href="sms:{{topic.author.phone_number}}"><i ng-show="showContact" class="icon ion-ios-chatbubble message-icon"></i></a>
+        <a class="tab-item" href="tel:{{topic.author.phone_number}}#mp.weixin.qq.com"><i ng-show="showContact" class="icon ion-ios-telephone phone-icon"></i></a>
+        <a class="tab-item" href="sms:{{topic.author.phone_number}}#mp.weixin.qq.com"><i ng-show="showContact" class="icon ion-ios-chatbubble message-icon"></i></a>
       </div>
       <a class="tab-item" ng-click="replyTo(topic.author)">
         我要留言
@@ -148,15 +148,9 @@
         </label>
         <input class="col col-25" style="padding:2px 6px;" type="text" placeholder="" ng-model="replyData.price">
       </div>
-      <div ng-if="status.action=='reply'" class="row" style="padding:10px;">
+      <div class="row" style="padding:10px;">
         <label class="col col-25">
           说点什么
-        </label>
-        <input class="col col-75" style="padding:2px 6px;" type="text" placeholder="" ng-model="replyData.content"></input>
-      </div>
-      <div ng-if="status.action=='bid'" class="row" style="padding:10px;">
-        <label class="col col-25">
-          便宜点我就收了
         </label>
         <input class="col col-75" style="padding:2px 6px;" type="text" placeholder="" ng-model="replyData.content"></input>
       </div>

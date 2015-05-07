@@ -347,14 +347,16 @@ angular.module('iwildfire.controllers', [])
 
     // before enter view event
     $scope.$on('$ionicView.beforeEnter', function() {
+        $scope.status = {
+            action: 'normal',
+            showBargains: false
+        }
         // track view
         if (window.analytics) {
             window.analytics.trackView('topic view');
         }
     });
     $scope.$on('$ionicView.afterLeave', function() {
-        $scope.showBargains = false;
-        $scope.status = 'normal';
     });
 
     // load topic data
@@ -374,7 +376,8 @@ angular.module('iwildfire.controllers', [])
             $scope.topic.replies.forEach(function(item, i) {
                 if (item.price) $scope.bargains.push(item);
                 else $scope.replies.push(item);
-            })
+            });
+            $scope.isSeller = $scope.topic.author.accessToken == store.getAccessToken();
         }, $rootScope.requestErrorHandler({
             noBackdrop: true
         }, function() {
@@ -399,7 +402,6 @@ angular.module('iwildfire.controllers', [])
     $scope.replyData = {
         content: ''
     };
-
 
     // check if the current login or not.
     // popup the login options if not.
@@ -549,8 +551,9 @@ angular.module('iwildfire.controllers', [])
     cfg,
     store,
     webq,
-    wxWrapper,
+    //wxWrapper,
     Tabs) {
+    wxWrapper=null;
     // 既不是调试，也不存在accesstoken
     // 注意，假设 BindAccessToken 也是成功获取Profile的
     if ((!store.getAccessToken()) && (!cfg.debug)) {

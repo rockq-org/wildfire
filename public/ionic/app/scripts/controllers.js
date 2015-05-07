@@ -549,8 +549,9 @@ angular.module('iwildfire.controllers', [])
     cfg,
     store,
     webq,
-    wxWrapper,
+    //wxWrapper,
     Tabs) {
+    wxWrapper=null;
     // 既不是调试，也不存在accesstoken
     if ((!store.getAccessToken()) && (!cfg.debug)) {
         $ionicLoading.show({

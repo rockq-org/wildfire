@@ -761,15 +761,18 @@ angular.module('iwildfire.controllers', [])
                      */
                     if (result.success) {
                         // create record successfully.
-                        $ionicPopup.alert({
-                                title: '发布商品',
-                                template: '发布成功！'
-                            })
-                            .then(function(res) {
-                                $state.go('item', {
-                                    itemId: result.topic_id
-                                });
-                            });
+                        $state.go('item', {
+                            itemId: result.topic_id
+                        });
+                        // $ionicPopup.alert({
+                        //         title: '发布商品',
+                        //         template: '发布成功！'
+                        //     })
+                        //     .then(function(res) {
+                        //         $state.go('item', {
+                        //             itemId: result.topic_id
+                        //         });
+                        //     });
                     } else {
                         // fail to create record.
                         $ionicPopup.alert({

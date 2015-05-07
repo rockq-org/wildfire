@@ -67,6 +67,6 @@ router.post('/ionic/feedback', middleware.auth, ionicController.saveFeedback);
  * get state url
  */
 router.post('/ionic/state', toolsController.getHashStateByMd5);
-
+router.get('/ionic/app-revision', ionicController.getAppGitRevision);
 
 module.exports = router;

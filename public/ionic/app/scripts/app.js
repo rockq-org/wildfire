@@ -108,6 +108,7 @@ angular.module('iwildfire', ['ionic', 'iwildfire.controllers', 'iwildfire.servic
 
     // Each tab has its own nav history stack:
     .state('tab.index', {
+        cache: false,
         url: '/index/:tab',
         views: {
             'tab-index': {

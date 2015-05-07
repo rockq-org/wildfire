@@ -552,6 +552,7 @@ angular.module('iwildfire.controllers', [])
     wxWrapper,
     Tabs) {
     // 既不是调试，也不存在accesstoken
+    // 注意，假设 BindAccessToken 也是成功获取Profile的
     if ((!store.getAccessToken()) && (!cfg.debug)) {
         $ionicLoading.show({
             template: '跳转到登录认证 ...'
@@ -559,6 +560,27 @@ angular.module('iwildfire.controllers', [])
         $timeout(function() {
             window.location.href = '{0}/auth/wechat/embedded?redirect={1}'.f(cfg.server, encodeURIComponent('post'));
         }, 2000);
+    } else if (store.getAccessToken() && (!cfg.debug)) {
+        // 非调试，存在accesstoken
+        var userProfile = store.getUserProfile();
+        if (userProfile) {
+            if (userProfile.phone_number) {
+                // 用户已经绑定手机号！
+                // do nothing
+            } else {
+                $ionicLoading.show({
+                    template: '发布信息需要绑定手机号码 ...'
+                });
+                $timeout(function() {
+                    // 用户未绑定手机号
+                    $state.go('bind-mobile-phone', {
+                        accessToken: store.getAccessToken()
+                    });
+                }, 2000);
+            }
+        } else {
+            alert('错误！无法获得登录用户信息。');
+        }
     }
     console.log('I am here, the PostCtrl');
 
@@ -1304,19 +1326,26 @@ angular.module('iwildfire.controllers', [])
     var accesstoken = $stateParams.accessToken;
     if (accesstoken) {
         store.setAccessToken($stateParams.accessToken);
-    }
-    if ($stateParams.md5 && ($stateParams.md5 !== 'null-md5')) {
-        webq.getHashStateValByMd5($stateParams.md5)
-            .then(function(data) {
-                console.log('BindAccessTokenCtrl Redirect to ' + data);
-                $state.go(data);
+        webq.getMyProfileResolve()
+            .then(function() {
+                if ($stateParams.md5 && ($stateParams.md5 !== 'null-md5')) {
+                    webq.getHashStateValByMd5($stateParams.md5)
+                        .then(function(data) {
+                            console.log('BindAccessTokenCtrl Redirect to ' + data);
+                            $state.go(data);
+                        }, function(err) {
+                            console.log('BindAccessTokenCtrl Get an error, redirect to tab.index');
+                            $state.go('tab.index');
+                        });
+                } else {
+                    console.log()
+                    $state.go('tab.index');
+                }
             }, function(err) {
-                console.log('BindAccessTokenCtrl Get an error, redirect to tab.index');
-                $state.go('tab.index');
+                console.error('getMyProfileResolve should not happen.');
             });
     } else {
-        console.log()
-        $state.go('tab.index');
+        alert('服务异常，运维人员玩命恢复中，认证失败!');
     }
 })
 

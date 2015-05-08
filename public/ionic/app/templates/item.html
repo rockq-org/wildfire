@@ -119,8 +119,8 @@
       </a>
       <div ng-show="!isSeller" class="tab-item">
         <i ng-click="showContact=!showContact" class="icon frog-icon frog2"></i>
-        <a class="tab-item" href="tel:{{topic.author.phone_number}}#mp.weixin.qq.com"><i ng-show="showContact" class="icon ion-ios-telephone phone-icon"></i></a>
-        <a class="tab-item" href="sms:{{topic.author.phone_number}}#mp.weixin.qq.com"><i ng-show="showContact" class="icon ion-ios-chatbubble message-icon"></i></a>
+        <a class="tab-item" href="tel:{{topic.author.phone_number}}"><i ng-show="showContact" class="icon ion-ios-telephone phone-icon"></i></a>
+        <a class="tab-item" href="sms:{{topic.author.phone_number}}"><i ng-show="showContact" class="icon ion-ios-chatbubble message-icon"></i></a>
       </div>
       <a class="tab-item" ng-click="replyTo(topic.author)">
         我要留言

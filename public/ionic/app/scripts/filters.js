@@ -48,7 +48,6 @@ angular.module('iwildfire.filters', [])
         if( !itemLocation ){
             return;
         }
-
         if(currentLocation){
             distance = getFlatternDistance(itemLocation.lat, itemLocation.lng, currentLocation.lat, currentLocation.lng);
             distance = parseInt(distance);

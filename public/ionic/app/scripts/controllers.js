@@ -784,14 +784,17 @@ angular.module('iwildfire.controllers', [])
             return false;
         }
         if( params.goods_pre_price ) {
-            alert('zzz');
             if( params.goods_pre_price < params.goods_now_price) {
                Msg.alert('原价应该大于等于转让价！');
                 return false;
             }
         }
-        if(params.title.length < 6) {
-           Msg.alert('请输入大于五个字的标题!');
+        if(!params.title || params.title.length < 6) {
+            Msg.alert('请输入大于五个字的标题!');
+            return false;
+        }
+        if(!params.content) {
+            Msg.alert('请输入宝贝描述!');
             return false;
         }
 
@@ -814,7 +817,6 @@ angular.module('iwildfire.controllers', [])
             return;
         }
         Msg.show('提交中，请稍候...');
-
         webq.createNewGoods($scope.params)
             .then(function(result) {
                 /**

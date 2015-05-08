@@ -18,7 +18,7 @@
         <h3>
         <span class="assertive">￥ {{topic.goods_now_price}}</span>
         &nbsp;
-        <del>￥ {{topic.goods_pre_price}}</del>
+        <del ng-if="topic.goods_pre_price">￥ {{topic.goods_pre_price}}</del>
         </h3>
         <button class="button button-assertive button-small">{{topic.goods_is_bargain?'接受侃价':'谢绝侃价'}}</button>
         &nbsp;

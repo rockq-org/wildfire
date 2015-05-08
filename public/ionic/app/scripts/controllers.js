@@ -1425,7 +1425,13 @@ angular.module('iwildfire.controllers', [])
                     webq.getHashStateValByMd5($stateParams.md5)
                         .then(function(data) {
                             console.log('BindAccessTokenCtrl Redirect to ' + data);
-                            $state.go(data);
+                            // check if the data is a state string or state object
+                            if (data.startsWith('{')) {
+                                var stateObj = JSON.parse(data);
+                                $state.go(stateObj.state, stateObj.stateParams);
+                            } else {
+                                $state.go(data);
+                            }
                         }, function(err) {
                             console.log('BindAccessTokenCtrl Get an error, redirect to tab.index');
                             $state.go('tab.index');

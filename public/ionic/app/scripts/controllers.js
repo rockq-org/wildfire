@@ -349,9 +349,8 @@ angular.module('iwildfire.controllers', [])
         // 非调试，存在accesstoken
         var userProfile = store.getUserProfile();
         if (userProfile) {
-
+            _renderPage();
             // do nothing
-
             // if (userProfile.phone_number) {
             //     // 用户已经绑定手机号！
             //     // do nothing
@@ -369,204 +368,215 @@ angular.module('iwildfire.controllers', [])
         } else {
             Msg.alert('错误！无法获得登录用户信息。');
         }
+    } else if ((!store.getAccessToken()) && cfg.debug) {
+        // 调试，没有accesstoken
+        // #TODO set accesstoken and user profile for debug.        
+        _renderPage();
+    } else {
+        // 调试, 有accesstoken
+        // #TODO set user profile ?
+        // 这种情况需要设置 user profile.
     }
 
-    $log.debug('topic ctrl', $stateParams);
-    var id = $stateParams.itemId;
-    var topic = Topics.getById(id);
-    $scope.topic = topic;
-    $scope.img_prefix = cfg.server;
-    $scope.avatar_prefix = cfg.api + '/avatar/';
-    //$scope.showBargains = false;
-    //$scope.status = 'normal';
-    $scope.status = {
-        action: 'normal',
-        showBargains: false
-    }
-    $scope.currentLocation = store.getLocationDetail();
-
-    // before enter view event
-    $scope.$on('$ionicView.beforeEnter', function() {
+    function _renderPage() {
+        $log.debug('topic ctrl', $stateParams);
+        var id = $stateParams.itemId;
+        var topic = Topics.getById(id);
+        $scope.topic = topic;
+        $scope.img_prefix = cfg.server;
+        $scope.avatar_prefix = cfg.api + '/avatar/';
+        //$scope.showBargains = false;
+        //$scope.status = 'normal';
         $scope.status = {
-                action: 'normal',
-                showBargains: false
+            action: 'normal',
+            showBargains: false
+        }
+        $scope.currentLocation = store.getLocationDetail();
+
+        // before enter view event
+        $scope.$on('$ionicView.beforeEnter', function() {
+            $scope.status = {
+                    action: 'normal',
+                    showBargains: false
+                }
+                // track view
+            if (window.analytics) {
+                window.analytics.trackView('topic view');
             }
-            // track view
-        if (window.analytics) {
-            window.analytics.trackView('topic view');
-        }
-    });
-    $scope.$on('$ionicView.afterLeave', function() {});
-
-    // load topic data
-    $scope.loadTopic = function(reload) {
-        var topicResource;
-        if (reload === true) {
-            topicResource = Topic.get(id);
-        } else {
-            topicResource = Topic.getById(id);
-        }
-        return topicResource.$promise.then(function(response) {
-            $scope.topic = response.data;
-            $ionicSlideBoxDelegate.update();
-            $scope.isCollected = $scope.topic.in_collection;
-            $scope.replies = [];
-            $scope.bargains = [];
-            $scope.topic.replies.forEach(function(item, i) {
-                if (item.price) $scope.bargains.push(item);
-                else $scope.replies.push(item);
-            });
-            $scope.isSeller = $scope.topic.author.accessToken == store.getAccessToken();
-        }, $rootScope.requestErrorHandler({
-            noBackdrop: true
-        }, function() {
-            $scope.loadError = true;
-        }));
-    };
-    $scope.loadTopic();
-
-    // detect if user has collected this topic
-    var currentUser = User.getCurrentUser();
-    $scope.isCollected = false;
-
-    // do refresh
-    $scope.doRefresh = function() {
-        return $scope.loadTopic(true).then(function(response) {
-            $log.debug('do refresh complete');
-        }, function() {}).finally(function() {
-            $scope.$broadcast('scroll.refreshComplete');
         });
-    };
+        $scope.$on('$ionicView.afterLeave', function() {});
 
-    $scope.replyData = {
-        content: ''
-    };
-
-    // check if the current login or not.
-    // popup the login options if not.
-    $scope.isShownReplyInputBox = function() {
-        if (!currentUser) {
-            $log.warn('isShownReplyInputBox', 'none logged in.');
-            $scope.showReply = false;
-            // popup the selection to bring the
-            // user into login page.
-            // A confirm dialog
-            $ionicPopup.confirm({
-                    title: '提示',
-                    template: '仅登陆用户可以回复内容，带我去微信认证登陆？',
-                    cancelText: '残忍拒绝',
-                    okText: '是'
-                })
-                .then(function(res) {
-                    if (res) {
-                        window.location.href = '{0}/auth/wechat/embedded'.f(cfg.server);
-                    } else {
-                        $log.debug('user choose not login.');
-                    }
+        // load topic data
+        $scope.loadTopic = function(reload) {
+            var topicResource;
+            if (reload === true) {
+                topicResource = Topic.get(id);
+            } else {
+                topicResource = Topic.getById(id);
+            }
+            return topicResource.$promise.then(function(response) {
+                $scope.topic = response.data;
+                $ionicSlideBoxDelegate.update();
+                $scope.isCollected = $scope.topic.in_collection;
+                $scope.replies = [];
+                $scope.bargains = [];
+                $scope.topic.replies.forEach(function(item, i) {
+                    if (item.price) $scope.bargains.push(item);
+                    else $scope.replies.push(item);
                 });
-        } else {
-            $scope.showReply = true;
-        }
-    }
+                $scope.isSeller = $scope.topic.author.accessToken == store.getAccessToken();
+            }, $rootScope.requestErrorHandler({
+                noBackdrop: true
+            }, function() {
+                $scope.loadError = true;
+            }));
+        };
+        $scope.loadTopic();
 
-    $scope.replyTo = function(replyAuthor) {
+        // detect if user has collected this topic
+        var currentUser = User.getCurrentUser();
+        $scope.isCollected = false;
+
+        // do refresh
+        $scope.doRefresh = function() {
+            return $scope.loadTopic(true).then(function(response) {
+                $log.debug('do refresh complete');
+            }, function() {}).finally(function() {
+                $scope.$broadcast('scroll.refreshComplete');
+            });
+        };
+
         $scope.replyData = {
             content: ''
         };
-        $scope.replyData.replyTo = replyAuthor;
-        status.showBargains = false;
-        $scope.status.action = 'reply';
-        console.log(replyAuthor);
-    }
 
-    // save reply
-    $scope.saveReply = function() {
-        $log.debug('new reply data:', JSON.stringify($scope.replyData));
-        if ($scope.replyData.content == '') return $scope.showReply = false;
-        $ionicLoading.show();
-        if ($scope.replyData.replyTo) {
-            $scope.replyData.reply_to = $scope.replyData.replyTo.name;
-            $scope.replyData.content = '@' + $scope.replyData.replyTo.loginname + ' ' + $scope.replyData.content;
+        // check if the current login or not.
+        // popup the login options if not.
+        $scope.isShownReplyInputBox = function() {
+            if (!currentUser) {
+                $log.warn('isShownReplyInputBox', 'none logged in.');
+                $scope.showReply = false;
+                // popup the selection to bring the
+                // user into login page.
+                // A confirm dialog
+                $ionicPopup.confirm({
+                        title: '提示',
+                        template: '仅登陆用户可以回复内容，带我去微信认证登陆？',
+                        cancelText: '残忍拒绝',
+                        okText: '是'
+                    })
+                    .then(function(res) {
+                        if (res) {
+                            window.location.href = '{0}/auth/wechat/embedded'.f(cfg.server);
+                        } else {
+                            $log.debug('user choose not login.');
+                        }
+                    });
+            } else {
+                $scope.showReply = true;
+            }
         }
-        console.log($scope.replyData);
-        Topic.saveReply(id, $scope.replyData).$promise.then(function(response) {
-            $ionicLoading.hide();
+
+        $scope.replyTo = function(replyAuthor) {
             $scope.replyData = {
                 content: ''
             };
-            $log.debug('post reply response:', response);
-            $scope.loadTopic(true).then(function() {
-                $ionicScrollDelegate.scrollBottom();
-            });
-            $scope.showReply = false;
-        }, function() {
-            $ionicLoading.hide();
-            $rootScope.requestErrorHandler()
-        });
-    };
+            $scope.replyData.replyTo = replyAuthor;
+            status.showBargains = false;
+            $scope.status.action = 'reply';
+            console.log(replyAuthor);
+        }
 
-    // collect topic
-    $scope.collectTopic = function() {
-        if ($scope.isCollected) {
-            Topic.deCollectTopic(id).$promise.then(function(response) {
-                if (response.success) {
-                    $scope.isCollected = false;
-                    if (!$scope.topic.collect_count) {
-                        $scope.topic.collect_count = 1;
-                    }
-                    $scope.topic.collect_count = parseInt($scope.topic.collect_count) - 1;
-                    User.deCollectTopic(id);
-                }
+        // save reply
+        $scope.saveReply = function() {
+            $log.debug('new reply data:', JSON.stringify($scope.replyData));
+            if ($scope.replyData.content == '') return $scope.showReply = false;
+            $ionicLoading.show();
+            if ($scope.replyData.replyTo) {
+                $scope.replyData.reply_to = $scope.replyData.replyTo.name;
+                $scope.replyData.content = '@' + $scope.replyData.replyTo.loginname + ' ' + $scope.replyData.content;
+            }
+            console.log($scope.replyData);
+            Topic.saveReply(id, $scope.replyData).$promise.then(function(response) {
+                $ionicLoading.hide();
+                $scope.replyData = {
+                    content: ''
+                };
+                $log.debug('post reply response:', response);
+                $scope.loadTopic(true).then(function() {
+                    $ionicScrollDelegate.scrollBottom();
+                });
+                $scope.showReply = false;
+            }, function() {
+                $ionicLoading.hide();
+                $rootScope.requestErrorHandler()
             });
-        } else {
-            Topic.collectTopic(id).$promise.then(function(response) {
-                if (response.success) {
-                    $scope.isCollected = true;
-                    if (!$scope.topic.collect_count) {
-                        $scope.topic.collect_count = 0;
+        };
+
+        // collect topic
+        $scope.collectTopic = function() {
+            if ($scope.isCollected) {
+                Topic.deCollectTopic(id).$promise.then(function(response) {
+                    if (response.success) {
+                        $scope.isCollected = false;
+                        if (!$scope.topic.collect_count) {
+                            $scope.topic.collect_count = 1;
+                        }
+                        $scope.topic.collect_count = parseInt($scope.topic.collect_count) - 1;
+                        User.deCollectTopic(id);
                     }
-                    $scope.topic.collect_count = parseInt($scope.topic.collect_count) + 1;
-                    User.collectTopic(id);
+                });
+            } else {
+                Topic.collectTopic(id).$promise.then(function(response) {
+                    if (response.success) {
+                        $scope.isCollected = true;
+                        if (!$scope.topic.collect_count) {
+                            $scope.topic.collect_count = 0;
+                        }
+                        $scope.topic.collect_count = parseInt($scope.topic.collect_count) + 1;
+                        User.collectTopic(id);
+                    }
+                });
+            }
+        };
+
+        // for complian topic
+        $scope.complainTopic = function(topic) {
+            $scope.popupData = {};
+            // An elaborate, custom popup
+            var myPopup = $ionicPopup.show({
+                template: '<textarea autofocus ng-model="popupData.complainDescription" placeholder="您的举报理由" style="height:120px"></textarea>',
+                title: '举报商品',
+                // subTitle: '请输入您的举报理由',
+                scope: $scope,
+                buttons: [{
+                    text: '取消'
+                }, {
+                    text: '<b>提交</b>',
+                    type: 'button-assertive',
+                    onTap: function(e) {
+                        if (!$scope.popupData.complainDescription) {
+                            //don't allow the user to close unless he enters wifi password
+                            e.preventDefault();
+                        } else {
+                            return $scope.popupData.complainDescription;
+                        }
+                    }
+                }]
+            });
+
+            myPopup.then(function(description) {
+                if (description) {
+                    $scope.showLoading('提交中，请稍候！');
+                    Topic.complainTopic(topic.id, description).$promise.then(function(response) {
+                        console.log(JSON.stringify(response));
+                        $scope.hideLoading();
+                    });
                 }
             });
         }
-    };
-
-    // for complian topic
-    $scope.complainTopic = function(topic) {
-        $scope.popupData = {};
-        // An elaborate, custom popup
-        var myPopup = $ionicPopup.show({
-            template: '<textarea autofocus ng-model="popupData.complainDescription" placeholder="您的举报理由" style="height:120px"></textarea>',
-            title: '举报商品',
-            // subTitle: '请输入您的举报理由',
-            scope: $scope,
-            buttons: [{
-                text: '取消'
-            }, {
-                text: '<b>提交</b>',
-                type: 'button-assertive',
-                onTap: function(e) {
-                    if (!$scope.popupData.complainDescription) {
-                        //don't allow the user to close unless he enters wifi password
-                        e.preventDefault();
-                    } else {
-                        return $scope.popupData.complainDescription;
-                    }
-                }
-            }]
-        });
-
-        myPopup.then(function(description) {
-            if (description) {
-                $scope.showLoading('提交中，请稍候！');
-                Topic.complainTopic(topic.id, description).$promise.then(function(response) {
-                    console.log(JSON.stringify(response));
-                    $scope.hideLoading();
-                });
-            }
-        });
     }
+
 })
 
 /**

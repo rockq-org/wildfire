@@ -42,9 +42,14 @@ router.get('/messages', middleware.auth, messageController.index);
 router.get('/message/count', middleware.auth, messageController.count);
 router.post('/message/mark_all', middleware.auth, messageController.markAll);
 
+
 // 发送手机验证码
 router.post('/user/bind_phone_number', middleware.auth, userController.bindPhoneNumber);
 router.post('/user/check_phone_verifycode', middleware.auth, userController.checkPhoneVerifyCode);
+
+// wechat 消息开关
+router.post('/user/wechat-notify-enable', middleware.auth, userController.enableWechatNotify);
+router.post('/user/wechat-notify-disable', middleware.auth, userController.disableWechatNotify);
 
 /**
  * 文件

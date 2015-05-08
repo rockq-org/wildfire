@@ -777,15 +777,15 @@ angular.module('iwildfire.controllers', [])
      * @return {[type]} [description]
      */
     $scope.submitGoods = function() {
-        if(isPriceValidate($scope.params.goods_pre_price)) {
+        if (isPriceValidate($scope.params.goods_pre_price)) {
             alert('原价必须为合法数字(正数，最多两位小数)');
             return;
         }
-        if(isPriceValidate($scope.params.goods_now_price)) {
+        if (isPriceValidate($scope.params.goods_now_price)) {
             alert('转让价必须为合法数字(正数，最多两位小数)');
             return;
         }
-        if($scope.params.goods_pre_price < $scope.params.goods_now_price) {
+        if ($scope.params.goods_pre_price < $scope.params.goods_now_price) {
             alert('原价应该大于等于转让价！');
             return;
         }
@@ -939,7 +939,7 @@ angular.module('iwildfire.controllers', [])
                 });
             }
 
-            if( $scope.messages.hasnot_read_messages.length == 0 && $scope.messages.has_read_messages.length == 0 ) {
+            if ($scope.messages.hasnot_read_messages.length == 0 && $scope.messages.has_read_messages.length == 0) {
                 $scope.doNotHaveMessage = true;
             }
         }, function(response) {
@@ -1383,13 +1383,23 @@ angular.module('iwildfire.controllers', [])
         return '未绑定';
     }
 
+    // resolve user notify
+    function _getIsUserWechatNotify() {
+        var userProfile = store.getUserProfile();
+        if (userProfile) {
+            return userProfile.is_wechat_notify;
+        }
+        return false;
+    }
+
 
     $scope.data = {
         feedback: {
             title: '我要吐槽',
             content: ''
         },
-        phone: _getUserPhone()
+        phone: _getUserPhone(),
+        is_wechat_notify: _getIsUserWechatNotify()
     };
 
     $scope.goBackProfile = function() {
@@ -1415,6 +1425,31 @@ angular.module('iwildfire.controllers', [])
             $timeout(function() {
                 $scope.data.feedback.title = '我要吐槽';
             }, 3000);
+        }
+    }
+
+    $scope.toggleIsWechatNotify = function() {
+        alert('toggleIsWechatNotify' + $scope.data.is_wechat_notify);
+        if ($scope.data.is_wechat_notify) {
+            alert('enable toggleIsWechatNotify');
+            webq.enableWechatNotify()
+                .then(function() {
+                    // done
+                }, function() {
+                    // oops, error happens
+                    alert('fail to enable toggleIsWechatNotify');
+                    $scope.data.is_wechat_notify = false;
+                });
+        } else {
+            alert('disable toggleIsWechatNotify');
+            webq.disableWechatNotify()
+                .then(function() {
+                    // done
+                }, function() {
+                    // oops, error happens
+                    alert('fail to disable toggleIsWechatNotify');
+                    $scope.data.is_wechat_notify = true;
+                });
         }
     }
 

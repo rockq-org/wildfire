@@ -762,6 +762,51 @@ Local storage is per domain. All pages, from one domain, can store and access th
         return deferred.promise;
     }
 
+    /**
+     * [enableWechatNotify description]
+     * @return {[type]} [description]
+     */
+    this.enableWechatNotify = function() {
+        var deferred = $q.defer();
+        $http.post('{0}/user/wechat-notify-enable'.f(cfg.api), {
+                accesstoken: store.getAccessToken()
+            })
+            .success(function(data) {
+                if (data && data.rc === 3) {
+                    deferred.resolve();
+                } else {
+                    deferred.reject();
+                }
+            })
+            .error(function(err) {
+                deferred.reject();
+            });
+
+        return deferred.promise;
+    }
+
+    /**
+     * disable wechat notify
+     * @return {[type]} [description]
+     */
+    this.disableWechatNotify = function() {
+        var deferred = $q.defer();
+        $http.post('{0}/user/wechat-notify-disable'.f(cfg.api), {
+                accesstoken: store.getAccessToken()
+            })
+            .success(function(data) {
+                if (data && data.rc === 3) {
+                    deferred.resolve();
+                } else {
+                    deferred.reject();
+                }
+            })
+            .error(function(err) {
+                deferred.reject();
+            });
+
+        return deferred.promise;
+    }
 })
 
 /**

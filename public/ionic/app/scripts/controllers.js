@@ -110,12 +110,14 @@ angular.module('iwildfire.controllers', [])
             return;
         }
         $log.debug('doSearch');
-        $scope.showSearch = false;
+        if( !query ) {
+            $scope.showSearch = false;
+        }
         Topics.setQuery(query);
         // Topics.setGeom({lng:140,lat:40.4});
         $scope.doRefresh();
         $log.debug('searchText', query);
-        $scope.tabTitle = query || $scope.address;
+        // $scope.tabTitle = query || $scope.address;
     }
     $scope.showAddress = function() {
         var popup = $ionicPopup.alert({
@@ -213,12 +215,14 @@ angular.module('iwildfire.controllers', [])
             return;
         }
         $log.debug('doSearch');
-        $scope.showSearch = false;
+        if( !query ) {
+            $scope.showSearch = false;
+        }
         Topics.setQuery(query);
         // Topics.setGeom({lng:140,lat:40.4});
         $scope.doRefresh();
         $log.debug('searchText', query);
-        $scope.tabTitle = query || '首页';
+        // $scope.tabTitle = query || '首页';
     }
     $scope.showAddress = function() {
         var popup = $ionicPopup.alert({

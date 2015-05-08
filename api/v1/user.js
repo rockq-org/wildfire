@@ -197,13 +197,13 @@ exports.getMyCollections = function(req, res, next) {
     // var limit = config.list_topic_count;
     var limit = 100;
 
-    var render = function (topics, pages) {
-      // res.render('user/collect_topics', {
-      //   topics: topics,
-      //   current_page: page,
-      //   pages: pages,
-      //   user: user
-      // });
+    var render = function(topics, pages) {
+        // res.render('user/collect_topics', {
+        //   topics: topics,
+        //   current_page: page,
+        //   pages: pages,
+        //   user: user
+        // });
         var data = {
             topics: topics,
             pages: pages,
@@ -226,24 +226,104 @@ exports.getMyCollections = function(req, res, next) {
     var proxy = eventproxy.create('topics', 'pages', render);
     proxy.fail(next);
 
-    TopicCollect.getTopicCollectsByUserId(user._id, proxy.done(function (docs) {
-      var ids = [];
-      for (var i = 0; i < docs.length; i++) {
-        ids.push(docs[i].topic_id);
-      }
-      var query = { _id: { '$in': ids } };
-      var opt = {
-        skip: (page - 1) * limit,
-        limit: limit,
-        sort: '-create_at'
-      };
-      TopicProxy.getTopicsByQuery(query, opt, proxy.done('topics'));
-      TopicProxy.getCountByQuery(query, proxy.done(function (all_topics_count) {
-        var pages = Math.ceil(all_topics_count / limit);
-        proxy.emit('pages', pages);
-      }));
+    TopicCollect.getTopicCollectsByUserId(user._id, proxy.done(function(docs) {
+        var ids = [];
+        for (var i = 0; i < docs.length; i++) {
+            ids.push(docs[i].topic_id);
+        }
+        var query = {
+            _id: {
+                '$in': ids
+            }
+        };
+        var opt = {
+            skip: (page - 1) * limit,
+            limit: limit,
+            sort: '-create_at'
+        };
+        TopicProxy.getTopicsByQuery(query, opt, proxy.done('topics'));
+        TopicProxy.getCountByQuery(query, proxy.done(function(all_topics_count) {
+            var pages = Math.ceil(all_topics_count / limit);
+            proxy.emit('pages', pages);
+        }));
     }));
 }
 
+
+/**
+ * enable wechat notify
+ * @param  {[type]}   req  [description]
+ * @param  {[type]}   res  [description]
+ * @param  {Function} next [description]
+ * @return {[type]}        [description]
+ */
+exports.enableWechatNotify = function(req, res, next) {
+    UserProxy.getUserByLoginName(req.user.loginname, function(err, user) {
+        if (err) {
+            requestUtil.okJsonResponse({
+                rc: 1,
+                msg: 'error happens when getting user.'
+            }, res);
+        } else if (user) {
+            user.is_wechat_notify = true;
+            user.save(function(err, doc) {
+                if (err) {
+                    requestUtil.okJsonResponse({
+                        rc: 2,
+                        msg: 'Error. can not save user.'
+                    }, res);
+                } else {
+                    requestUtil.okJsonResponse({
+                        rc: 3,
+                        msg: 'Success'
+                    }, res);
+                }
+            });
+        } else {
+            requestUtil.okJsonResponse({
+                rc: 4,
+                msg: 'can not find user.'
+            }, res);
+        }
+    });
+}
+
+/**
+ * disable wehcat notify
+ * @param  {[type]}   req  [description]
+ * @param  {[type]}   res  [description]
+ * @param  {Function} next [description]
+ * @return {[type]}        [description]
+ */
+exports.disableWechatNotify = function(req, res, next) {
+    UserProxy.getUserByLoginName(req.user.loginname, function(err, user) {
+        if (err) {
+            requestUtil.okJsonResponse({
+                rc: 1,
+                msg: 'error happens when getting user.'
+            }, res);
+        } else if (user) {
+            user.is_wechat_notify = false;
+            user.save(function(err, doc) {
+                if (err) {
+                    requestUtil.okJsonResponse({
+                        rc: 2,
+                        msg: 'Error. can not save user.'
+                    }, res);
+                } else {
+                    requestUtil.okJsonResponse({
+                        rc: 3,
+                        msg: 'Success'
+                    }, res);
+                }
+            });
+        } else {
+            requestUtil.okJsonResponse({
+                rc: 4,
+                msg: 'can not find user.'
+            }, res);
+        }
+    });
+}
 
 exports.show = show;

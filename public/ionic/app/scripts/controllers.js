@@ -814,6 +814,7 @@ angular.module('iwildfire.controllers', [])
             return;
         }
         Msg.show('提交中，请稍候...');
+
         webq.createNewGoods($scope.params)
             .then(function(result) {
                 /**
@@ -960,7 +961,7 @@ angular.module('iwildfire.controllers', [])
                 });
             }
 
-            if( $scope.messages.hasnot_read_messages.length == 0 && $scope.messages.has_read_messages.length == 0 ) {
+            if ($scope.messages.hasnot_read_messages.length == 0 && $scope.messages.has_read_messages.length == 0) {
                 $scope.doNotHaveMessage = true;
             }
         }, function(response) {
@@ -1391,6 +1392,7 @@ angular.module('iwildfire.controllers', [])
 
 .controller('SettingsCtrl', function($log, $scope,
     $timeout,
+    $ionicPopup,
     $state,
     store,
     Msg,
@@ -1407,13 +1409,23 @@ angular.module('iwildfire.controllers', [])
         return '未绑定';
     }
 
+    // resolve user notify
+    function _getIsUserWechatNotify() {
+        var userProfile = store.getUserProfile();
+        if (userProfile) {
+            return userProfile.is_wechat_notify;
+        }
+        return false;
+    }
+
 
     $scope.data = {
         feedback: {
             title: '我要吐槽',
             content: ''
         },
-        phone: _getUserPhone()
+        phone: _getUserPhone(),
+        is_wechat_notify: _getIsUserWechatNotify()
     };
 
     $scope.goBackProfile = function() {
@@ -1439,6 +1451,34 @@ angular.module('iwildfire.controllers', [])
             $timeout(function() {
                 $scope.data.feedback.title = '我要吐槽';
             }, 3000);
+        }
+    }
+
+    $scope.toggleIsWechatNotify = function() {
+        if ($scope.data.is_wechat_notify) {
+            webq.enableWechatNotify()
+                .then(function() {
+                    // done
+                }, function() {
+                    // oops, error happens
+                    $scope.data.is_wechat_notify = false;
+                    $ionicPopup.alert({
+                        title: '提示',
+                        template: 'Duang, 开启微信通知服务失败 &#% ... !'
+                    });
+                });
+        } else {
+            webq.disableWechatNotify()
+                .then(function() {
+                    // done
+                }, function() {
+                    // oops, error happens
+                    $scope.data.is_wechat_notify = true;
+                    $ionicPopup.alert({
+                        title: '提示',
+                        template: 'Duang, 关闭微信通知服务失败 &#% ... !'
+                    });
+                });
         }
     }
 

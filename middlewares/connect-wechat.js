@@ -380,55 +380,61 @@ function _pushReplyWithWechatTemplateAPI(toUserId, fromUserId, topicId, replyId)
     var deferred = Q.defer();
 
     proxy.all('fromUser', 'toUser', 'topic', 'reply', function(fromUser, toUser, topic, reply) {
-        // Post Data
-        _getWxAccessTokenFromRedis().then(function(doc) {
-            logger.debug('_pushReplyWithWechatTemplateAPI', 'get access token ' + doc);
-            var payload = {
-                touser: toUser.profile.openid,
-                template_id: config.wechat_gzh.api.notify_template_id,
-                url: u.format("http://%s/#/item/%s", config.client_host, topicId),
-                topcolor: "#FF0000",
-                data: {
-                    first: {
-                        value: topic.title,
-                        color: "#173177"
-                    },
-                    keyword1: {
-                        value: fromUser.name,
-                        color: "#173177"
-                    },
-                    keyword2: {
-                        value: reply.create_at.toFormat('YYYY-MM-DD HH:MI PP'),
-                        color: "#173177"
-                    },
-                    keyword3: {
-                        // replace push content via wechat
-                        // value: S(reply.content).replaceAll(u.format('[@%s](/user/%s)', toUser.loginname, toUser.loginname), u.format('对 @%s 说：', toUser.name)).s,
-                        value: S(reply.content).replaceAll(u.format('@%s', toUser.loginname), u.format('对 @%s 说：', toUser.name)).s,
-                        color: "#173177"
+
+        if (toUser.is_wechat_notify) {
+            // Post Data
+            _getWxAccessTokenFromRedis().then(function(doc) {
+                logger.debug('_pushReplyWithWechatTemplateAPI', 'get access token ' + doc);
+                var payload = {
+                    touser: toUser.profile.openid,
+                    template_id: config.wechat_gzh.api.notify_template_id,
+                    url: u.format("http://%s/#/item/%s", config.client_host, topicId),
+                    topcolor: "#FF0000",
+                    data: {
+                        first: {
+                            value: topic.title,
+                            color: "#173177"
+                        },
+                        keyword1: {
+                            value: fromUser.name,
+                            color: "#173177"
+                        },
+                        keyword2: {
+                            value: reply.create_at.toFormat('YYYY-MM-DD HH:MI PP'),
+                            color: "#173177"
+                        },
+                        keyword3: {
+                            // replace push content via wechat
+                            // value: S(reply.content).replaceAll(u.format('[@%s](/user/%s)', toUser.loginname, toUser.loginname), u.format('对 @%s 说：', toUser.name)).s,
+                            value: S(reply.content).replaceAll(u.format('@%s', toUser.loginname), u.format('对 @%s 说：', toUser.name)).s,
+                            color: "#173177"
+                        }
+                        // ,
+                        // remark: {
+                        //     value: "尾部文字！",
+                        //     color: "#173177"
+                        // }
                     }
-                    // ,
-                    // remark: {
-                    //     value: "尾部文字！",
-                    //     color: "#173177"
-                    // }
-                }
-            };
-            logger.debug('_pushReplyWithWechatTemplateAPI', "send body " + JSON.stringify(payload));
-            superagent.post(u.format('https://api.weixin.qq.com/cgi-bin/message/template/send?access_token=%s', doc))
-                .send(payload)
-                .set('Content-Type', 'application/json')
-                .set('Accept', 'application/json')
-                .end(function(err, res) {
-                    if (res.ok) {
-                        logger.debug('_pushReplyWithWechatTemplateAPI', 'send wechat message by api template successfully.');
-                        deferred.resolve(res.body);
-                    } else {
-                        logger.warn('_pushReplyWithWechatTemplateAPI', err);
-                        deferred.reject(err);
-                    }
-                });
-        });
+                };
+                logger.debug('_pushReplyWithWechatTemplateAPI', "send body " + JSON.stringify(payload));
+                superagent.post(u.format('https://api.weixin.qq.com/cgi-bin/message/template/send?access_token=%s', doc))
+                    .send(payload)
+                    .set('Content-Type', 'application/json')
+                    .set('Accept', 'application/json')
+                    .end(function(err, res) {
+                        if (res.ok) {
+                            logger.debug('_pushReplyWithWechatTemplateAPI', 'send wechat message by api template successfully.');
+                            deferred.resolve(res.body);
+                        } else {
+                            logger.warn('_pushReplyWithWechatTemplateAPI', err);
+                            deferred.reject(err);
+                        }
+                    });
+            });
+        } else {
+            logger.debug('_pushReplyWithWechatTemplateAPI', u.format('%s disable is_wechat_notify.', toUser.name));
+            deferred.resolve();
+        }
     });
 
     proxy.fail(function(err) {

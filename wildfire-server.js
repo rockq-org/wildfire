@@ -265,9 +265,9 @@ revision.short(function(gitRevision) {
             }
             if (!user.phone_number) {
                 if (req.query && req.query.state !== '') {
-                    res.redirect(util.format('http://%s/#/bind-mobile-phone/%s/null-md5', config.client_host, user.accessToken));
-                } else {
                     res.redirect(util.format('http://%s/#/bind-mobile-phone/%s/%s', config.client_host, user.accessToken, req.query.state));
+                } else {
+                    res.redirect(util.format('http://%s/#/bind-mobile-phone/%s/null-md5', config.client_host, user.accessToken));
                 }
                 // force user input phone number
             } else if (req.query && req.query.state !== '') {

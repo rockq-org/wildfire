@@ -370,7 +370,7 @@ angular.module('iwildfire.controllers', [])
         }
     } else if ((!store.getAccessToken()) && cfg.debug) {
         // 调试，没有accesstoken
-        // #TODO set accesstoken and user profile for debug.        
+        // #TODO set accesstoken and user profile for debug.
         _renderPage();
     } else {
         // 调试, 有accesstoken
@@ -830,7 +830,7 @@ angular.module('iwildfire.controllers', [])
             return false;
         }
         if (params.goods_pre_price) {
-            if (params.goods_pre_price < params.goods_now_price) {
+            if (parseFloat(params.goods_pre_price) < parseFloat(params.goods_now_price)) {
                 Msg.alert('原价应该大于等于转让价！');
                 return false;
             }

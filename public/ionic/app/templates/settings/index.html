@@ -14,7 +14,7 @@
             <li class="item item-toggle">
                 消息提醒
                 <label class="toggle toggle-balanced">
-                    <input type="checkbox" ng-checked="data.is_wechat_notify" ng-change="toggleIsWechatNotify()">
+                    <input type="checkbox" ng-model="data.is_wechat_notify" ng-checked="data.is_wechat_notify == true" ng-change="toggleIsWechatNotify()">
                     <div class="track">
                         <div class="handle"></div>
                     </div>

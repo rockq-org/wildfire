@@ -14,8 +14,8 @@ var config = {
         return !this.debug;
     }, // 是否启用静态文件的合并压缩，详见视图中的Loader
 
-    name: 'Nodeclub', // 社区名字
-    description: 'CNode：Node.js专业中文社区', // 社区的描述
+    name: 'wildfire-server', // 社区名字
+    description: '', // 社区的描述
     keywords: 'nodejs, node, express, connect, socket.io',
 
     // 添加到 html head 中的信息
@@ -101,7 +101,7 @@ var config = {
     allow_sign_up: true,
 
     // newrelic 是个用来监控网站性能的服务
-    newrelic_key: 'yourkey',
+    newrelic_key: '3df4743d7df2855b939d512e018ba35347421c0f',
 
     // 下面两个配置都是文件上传的配置
 

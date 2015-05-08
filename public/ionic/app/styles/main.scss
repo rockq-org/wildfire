@@ -1,4 +1,4 @@
-$royal: #56c1b5 !default; 
+$royal: #56c1b5 !default;
 // Your application styles go here
 @import "modules/fast.scss";
 @import "modules/profile.scss";
@@ -74,13 +74,12 @@ $ionicons-font-path: "../fonts" !default;
   width:30% !important;
   padding:5px 10px !important;
 }
-
-input.user-add-txt,
-input.location-address{
-  margin-top: 5px;
+input.user-add-text{
+  border: 0;
   text-align: center;
+  width: 100%;
+  margin-top: 5px;
 }
-
 .visit-count{
   line-height: 45px;
   vertical-align: baseline;
@@ -92,7 +91,7 @@ input.location-address{
     width: 40px;
     height: 40px;
   }
-  span{  
+  span{
     line-height: 40px;
     vertical-align: top;
     overflow: hidden;

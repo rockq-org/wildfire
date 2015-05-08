@@ -114,7 +114,7 @@ angular.module('iwildfire.controllers', [])
         // Topics.setGeom({lng:140,lat:40.4});
         $scope.doRefresh();
         $log.debug('searchText', query);
-        $scope.tabTitle = query || '首页';
+        $scope.tabTitle = query || $scope.address;
     }
     $scope.showAddress = function() {
         var popup = $ionicPopup.alert({

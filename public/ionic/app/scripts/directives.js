@@ -255,7 +255,7 @@ angular.module('iwildfire.directives', [])
                 div.width(width);
                 div.height(height);
                 init(div[0], attrs, scope, locationDetail, width, height);
-            });
+            }, 3000);
         });
     };
 })

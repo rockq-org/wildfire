@@ -120,7 +120,7 @@ angular.module('iwildfire.controllers', [])
     $scope.showAddress = function() {
         var popup = $ionicPopup.alert({
             title: '当前位置',
-            template: $scope.tabTitle
+            template: '<h4 class="text-center">' + $scope.tabTitle + '</h4>'
         })
     }
 

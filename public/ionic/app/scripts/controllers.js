@@ -51,7 +51,7 @@ angular.module('iwildfire.controllers', [])
                 $scope.hasNextPage = true;
                 $scope.loadError = false;
                 if ($scope.topics.length == 0)
-                    $scope.loadingMsg = '附近没有二手交易信息^_^，试试其他地方吧';
+                    $scope.loadingMsg = '找不到符合你要求的二手交易信息^_^';
                 else
                     $scope.loadingMsg = '下拉加载更多';
             }, $rootScope.requestErrorHandler({

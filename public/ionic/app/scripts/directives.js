@@ -56,7 +56,9 @@ angular.module('iwildfire.directives', [])
                     // var content = '<img src="' + cfg.server + topics[n].goods_pics[0] + '" />';
                     var content = '';
                         // content += '<h3>';
-                        content += '<del>原价：￥ ' + topics[n].goods_pre_price + '</del>';
+                        if( topics[n].goods_pre_price ) {
+                            content += '<del>原价：￥ ' + topics[n].goods_pre_price + '</del>';
+                        }
                         content += '<span class="assertive float-right">现价：￥ ' + topics[n].goods_now_price + '</span>&nbsp;';
                         // content += '</h3>';
                         content += '<div style="width:100%; height:194px; background:url(';

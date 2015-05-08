@@ -343,7 +343,11 @@ angular.module('iwildfire.controllers', [])
             template: '跳转到登录认证 ...'
         });
         $timeout(function() {
-            window.location.href = '{0}/auth/wechat/embedded?redirect={1}'.f(cfg.server, encodeURIComponent('tab.index'));
+            window.location.href = '{0}/auth/wechat/embedded?redirect={1}'.f(cfg.server,
+                JSON.stringify({
+                    state: 'item',
+                    stateParams: $stateParams
+                }));
         }, 2000);
     } else if (store.getAccessToken() && (!cfg.debug)) {
         // 非调试，存在accesstoken

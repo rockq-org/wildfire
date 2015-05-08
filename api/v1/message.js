@@ -29,6 +29,9 @@ var index = function (req, res, next) {
           doc.author = _.pick(doc.author, ['loginname', 'name', 'avatar']);
           doc.topic = _.pick(doc.topic, ['id', 'author', 'title', 'last_reply_at']);
           doc.reply = _.pick(doc.reply, ['id', 'content', 'ups', 'create_at']);
+          // https://github.com/arrking/wildfire/issues/216
+          // replace loginnames tags in content.
+          doc.reply.content = doc.reply.content.replace(/^@[a-z0-9\-_]+\b/igm, '');
           doc = _.pick(doc, ['id', 'type', 'has_read', 'author', 'topic', 'reply']);
           return doc;
         });

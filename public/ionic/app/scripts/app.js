@@ -222,7 +222,7 @@ angular.module('iwildfire', ['ionic', 'iwildfire.controllers', 'iwildfire.servic
 
     .state('bind-mobile-phone', {
         cache: false,
-        url: '/bind-mobile-phone/:accessToken',
+        url: '/bind-mobile-phone/:accessToken/:md5',
         templateUrl: 'templates/bind-mobile-phone.html',
         controller: 'BindMobilePhoneCtrl'
     })

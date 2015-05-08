@@ -1305,6 +1305,7 @@ angular.module('iwildfire.controllers', [])
     $ionicPopup, $ionicLoading, $timeout, $log, webq, store) {
     var phonenoPattern = /^\(?([0-9]{11})\)?$/;
     var accessToken = $stateParams.accessToken;
+    var md5 = $stateParams.md5;
     store.setAccessToken(accessToken);
     var currentPhoneNumber;
 
@@ -1385,7 +1386,26 @@ angular.module('iwildfire.controllers', [])
                         if (result.user) {
                             store.setUserProfile(result.user);
                         }
-                        $state.go('tab.index');
+                        // get the state value
+                        // 
+                        if (md5 && (md5 !== 'null-md5')) {
+                            webq.getHashStateValByMd5(md5)
+                                .then(function(data) {
+                                    console.log('BindMobilePhoneCtrl Redirect to ' + data);
+                                    // check if the data is a state string or state object
+                                    if (data.startsWith('{')) {
+                                        var stateObj = JSON.parse(data);
+                                        $state.go(stateObj.state, stateObj.stateParams);
+                                    } else {
+                                        $state.go(data);
+                                    }
+                                }, function(err) {
+                                    console.log('BindAccessTokenCtrl Get an error, redirect to tab.index');
+                                    $state.go('tab.index');
+                                });
+                        } else {
+                            $state.go('tab.index');
+                        }
                     }, function(err) {
                         _fixVerifyCodeInputPlaceholder('验证码错误，重新输入');
                     })

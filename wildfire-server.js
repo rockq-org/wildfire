@@ -264,8 +264,12 @@ revision.short(function(gitRevision) {
                 res.locals.current_user = req.session.user = user;
             }
             if (!user.phone_number) {
+                if (req.query && req.query.state !== '') {
+                    res.redirect(util.format('http://%s/#/bind-mobile-phone/%s/null-md5', config.client_host, user.accessToken));
+                } else {
+                    res.redirect(util.format('http://%s/#/bind-mobile-phone/%s/%s', config.client_host, user.accessToken, req.query.state));
+                }
                 // force user input phone number
-                res.redirect(util.format('http://%s/#/bind-mobile-phone/%s', config.client_host, user.accessToken));
             } else if (req.query && req.query.state !== '') {
                 // pass user accesstoken into client
                 var redirectUrl = util.format('http://%s/#/bind-access-token/%s/%s', config.client_host, user.accessToken, req.query.state);

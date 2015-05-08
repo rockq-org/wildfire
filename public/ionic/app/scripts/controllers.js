@@ -1368,6 +1368,7 @@ angular.module('iwildfire.controllers', [])
 
 .controller('SettingsCtrl', function($log, $scope,
     $timeout,
+    $ionicPopup,
     $state,
     store,
     webq) {
@@ -1429,26 +1430,29 @@ angular.module('iwildfire.controllers', [])
     }
 
     $scope.toggleIsWechatNotify = function() {
-        alert('toggleIsWechatNotify' + $scope.data.is_wechat_notify);
         if ($scope.data.is_wechat_notify) {
-            alert('enable toggleIsWechatNotify');
             webq.enableWechatNotify()
                 .then(function() {
                     // done
                 }, function() {
                     // oops, error happens
-                    alert('fail to enable toggleIsWechatNotify');
                     $scope.data.is_wechat_notify = false;
+                    $ionicPopup.alert({
+                        title: '提示',
+                        template: 'Duang, 开启微信通知服务失败 &#% ... !'
+                    });
                 });
         } else {
-            alert('disable toggleIsWechatNotify');
             webq.disableWechatNotify()
                 .then(function() {
                     // done
                 }, function() {
                     // oops, error happens
-                    alert('fail to disable toggleIsWechatNotify');
                     $scope.data.is_wechat_notify = true;
+                    $ionicPopup.alert({
+                        title: '提示',
+                        template: 'Duang, 关闭微信通知服务失败 &#% ... !'
+                    });
                 });
         }
     }

@@ -839,7 +839,7 @@ angular.module('iwildfire.controllers', [])
                 return false;
             }
         }
-        if (!params.title || params.title.length < 6) {
+        if (!params.title || params.title.length < 5) {
             Msg.alert('请输入大于五个字的标题!');
             return false;
         }
@@ -1387,7 +1387,7 @@ angular.module('iwildfire.controllers', [])
                             store.setUserProfile(result.user);
                         }
                         // get the state value
-                        // 
+                        //
                         if (md5 && (md5 !== 'null-md5')) {
                             webq.getHashStateValByMd5(md5)
                                 .then(function(data) {

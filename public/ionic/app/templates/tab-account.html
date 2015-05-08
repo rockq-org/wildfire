@@ -6,7 +6,7 @@
         </div>
     </ion-header-bar>
     <ion-content has-header="true">
-        <div id="content">
+        <div id="account">
             <div id="profile-info">
                 <img id="profile-image" ng-src='{{data.avatar}}'>
                 <h3 id="profile-name">{{data.name}}</h3>
@@ -15,15 +15,15 @@
             <!-- example https://gist.github.com/Samurais/3cb9498588575f342f1e# -->
             <ion-tabs class="tabs-striped tabs-color-royal">
                 <!--  title="在售" -->
-                <ion-tab title="" icon="ion-ios-filing" badge="data.onGoingStuffsBadge" badge-style="badge-light" on-select="onTabSelected('onGoingStuffs')">
+                <ion-tab title="在售" badge="data.onGoingStuffsBadge||''+0" badge-style="badge-light" on-select="onTabSelected('onGoingStuffs')">
                     <!-- Tab 1 content -->
                 </ion-tab>
                 <!--  title="下架" -->
-                <ion-tab title="" icon="ion-ios-box" badge="data.offShelfStuffsBadge" badge-style="badge-light" on-select="onTabSelected('offShelfStuffs')">
+                <ion-tab title="下架" badge="data.offShelfStuffsBadge||''+0" badge-style="badge-light" on-select="onTabSelected('offShelfStuffs')">
                     <!-- Tab 2 content -->
                 </ion-tab>
                 <!--  title="收藏" -->
-                <ion-tab title="" icon="ion-ios-bookmarks" badge="data.favoritesStuffsBadge" badge-style="badge-light" on-select="onTabSelected('favoritesStuffs')">
+                <ion-tab title="收藏" badge="data.favoritesStuffsBadge||''+0" badge-style="badge-light" on-select="onTabSelected('favoritesStuffs')">
                     <!-- Tab 3 content -->
                 </ion-tab>
             </ion-tabs>
@@ -44,24 +44,25 @@ Orders fake tab
                         <h2>{{item.title}}</h2>
                         <p>¥ {{item.goods_now_price}}</p>
                         <i class="icon ion-ios-chatbubble-outline" style="color:red">{{item.reply_count}}</i>
-                        <i class="icon ion-ios-heart-outline" style="color:red">{{item.collect_count}}</i>
+                        <i class="icon ion-ios-heart-outline assertive">{{item.collect_count}}</i>
+                        <!--i class="icon ion-chevron-right icon-accessory"></i-->
                         <!-- need a filter to process create_at  -->
                         <span>{{item.create_at | relativets}} </span>
                         <span ng-if="!isFavoriteTab">
-                            <ion-option-button class="button-calm" ng-click="editDingOnShelf(item)" ng-if="item.goods_status === '在售'">
-                                顶
-                            </ion-option-button>
-                            <ion-option-button class="button-stable" ng-click="editOffShelf(item)" ng-if="item.goods_status === '在售'">
-                                下架
-                            </ion-option-button>
                             <ion-option-button class="button-energized" ng-click="editSoldOut(item)" ng-if="item.goods_status === '在售'">
                                 售出
                             </ion-option-button>
                             <ion-option-button class="button-assertive" ng-click="editDelete(item)" ng-if="item.goods_status === '下架'">
                                 删除
                             </ion-option-button>
+                            <ion-option-button class="button-assertive" ng-click="editOffShelf(item)" ng-if="item.goods_status === '在售'">
+                                下架
+                            </ion-option-button>
                             <ion-option-button class="button-royal" ng-click="editOnShelf(item)" ng-if="item.goods_status === '下架'">
                                 上架
+                            </ion-option-button>
+                            <ion-option-button class="button-calm" ng-click="editDingOnShelf(item)" ng-if="item.goods_status === '在售'">
+                                顶
                             </ion-option-button>
                         </span>
                         <span ng-if="isFavoriteTab">

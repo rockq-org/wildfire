@@ -146,7 +146,7 @@ angular.module('iwildfire.directives', [])
         var style = {
             left: 60,
             top: height - 66,
-            iconName: '3.png'
+            iconName: '6.png'
         };
         var resetControl = addControl(container, style);
         qq.maps.event.addListener(resetControl, 'click', function() {
@@ -214,7 +214,7 @@ angular.module('iwildfire.directives', [])
         resetControl.style.width = "36px";
         resetControl.style.height = "36px";
         resetControl.style.zIndex = "100000";
-        resetControl.innerHTML = '<img src="/images/map/3.png" />';
+        resetControl.innerHTML = '<img src="/images/map/6.png" />';
         element.appendChild(resetControl);
         qq.maps.event.addListener(resetControl, 'click', function() {
             console.log('here!');

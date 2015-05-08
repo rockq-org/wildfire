@@ -60,12 +60,15 @@ angular.module('iwildfire', ['ionic', 'iwildfire.controllers', 'iwildfire.servic
         };
     };
     $rootScope.message_not_read_count = 0;
-    Messages.getMessageCount().$promise.then(function(response) {
-        $timeout(function() {
-            // console.log(response.data);
-            $rootScope.message_not_read_count = response.data;
-        })
-    });
+    if(store.getAccessToken()) {
+        alert( store.getAccessToken() );
+        Messages.getMessageCount().$promise.then(function(response) {
+            $timeout(function() {
+                // console.log(response.data);
+                $rootScope.message_not_read_count = response.data;
+            });
+        });
+    }
 
 })
 

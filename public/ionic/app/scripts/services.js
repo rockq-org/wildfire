@@ -61,7 +61,6 @@ angular.module('iwildfire.services', ['ngResource'])
             return messagesCount;
         },
         getMessageCount: function() {
-            $log.debug('get messages count');
             return resource.count({
                 accesstoken: store.getAccessToken()
             });
@@ -879,9 +878,6 @@ Local storage is per domain. All pages, from one domain, can store and access th
     //var User = {};
     // make sure the user is logged in
     // before using saveReply.
-    var currentUser = store.getUserProfile() || {
-        accessToken: ''
-    };
 
     /**
      * Get current user from local store or resolve from server.
@@ -892,7 +888,7 @@ Local storage is per domain. All pages, from one domain, can store and access th
      */
     var Settings = {};
     var topic;
-    var resource = $resource(cfg.api + '/topic/:id?accesstoken=' + currentUser['accessToken'], {
+    var resource = $resource(cfg.api + '/topic/:id?accesstoken=' + store.getAccessToken(), {
         id: '@id'
     }, {
         complain: {
@@ -941,7 +937,7 @@ Local storage is per domain. All pages, from one domain, can store and access th
             var reply = angular.extend({}, replyData);
             return resource.reply({
                 topicId: topicId,
-                accesstoken: currentUser.accessToken
+                accesstoken: store.getAccessToken()
                     //accesstoken: '5447b4c3-0006-4a3c-9903-ac5a803bc17e'
             }, reply);
         },
@@ -949,7 +945,7 @@ Local storage is per domain. All pages, from one domain, can store and access th
             var currentUser = User.getCurrentUser();
             return resource.upReply({
                 replyId: replyId,
-                accesstoken: currentUser.accessToken
+                accesstoken: store.getAccessToken()
             }, null, function(response) {
                 if (response.success) {
                     angular.forEach(topic.replies, function(reply, key) {
@@ -970,19 +966,19 @@ Local storage is per domain. All pages, from one domain, can store and access th
             return resource.complain({
                 topicId: topicId,
                 description: description,
-                accesstoken: currentUser.accessToken
+                accesstoken: store.getAccessToken()
             });
         },
         collectTopic: function(topicId) {
             return resource.collect({
                 topic_id: topicId,
-                accesstoken: currentUser.accessToken
+                accesstoken: store.getAccessToken()
             });
         },
         deCollectTopic: function(topicId) {
             return resource.deCollect({
                 topic_id: topicId,
-                accesstoken: currentUser.accessToken
+                accesstoken: store.getAccessToken()
             });
         }
     };

@@ -7,7 +7,7 @@
 // 'starter.controllers' is found in controllers.js
 angular.module('iwildfire', ['ionic', 'iwildfire.controllers', 'iwildfire.services', 'iwildfire.directives', 'iwildfire.filters', 'config', 'angularMoment'])
 
-.run(function($ionicPlatform, $rootScope, $log, store, webq, $ionicLoading, amMoment, Messages, $timeout) {
+.run(function($ionicPlatform, $rootScope, $log, store, webq, $ionicLoading, amMoment, Messages, $timeout, Msg) {
 
     amMoment.changeLocale('zh-cn');
 
@@ -16,6 +16,10 @@ angular.module('iwildfire', ['ionic', 'iwildfire.controllers', 'iwildfire.servic
             msg = '加载中...';
         }
 
+        var content = '<ion-spinner></ion-spinner>';
+        content += '<h3>';
+        content += msg;
+        content += '</h3>';
         $ionicLoading.show({
             template: msg
         });
@@ -61,7 +65,7 @@ angular.module('iwildfire', ['ionic', 'iwildfire.controllers', 'iwildfire.servic
     };
     $rootScope.message_not_read_count = 0;
     if(store.getAccessToken()) {
-        alert( store.getAccessToken() );
+        Msg.alert( store.getAccessToken() );
         Messages.getMessageCount().$promise.then(function(response) {
             $timeout(function() {
                 // console.log(response.data);

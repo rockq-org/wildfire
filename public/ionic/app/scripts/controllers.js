@@ -10,6 +10,7 @@ angular.module('iwildfire.controllers', [])
     $location,
     $rootScope,
     $log,
+    Msg,
     Topics,
     webq,
     Tabs,
@@ -160,6 +161,7 @@ angular.module('iwildfire.controllers', [])
     $ionicPopup,
     $timeout,
     $state,
+    Msg,
     webq,
     store,
     locationDetail,
@@ -328,6 +330,7 @@ angular.module('iwildfire.controllers', [])
     $log,
     Topics,
     Topic,
+    Msg,
     store,
     cfg,
     User
@@ -549,6 +552,8 @@ angular.module('iwildfire.controllers', [])
     $log,
     $q,
     cfg,
+    Msg,
+    $rootScope,
     store,
     webq,
     wxWrapper,
@@ -581,7 +586,7 @@ angular.module('iwildfire.controllers', [])
                 }, 2000);
             }
         } else {
-            alert('错误！无法获得登录用户信息。');
+           Msg.alert('错误！无法获得登录用户信息。');
         }
     }
     console.log('I am here, the PostCtrl');
@@ -705,17 +710,17 @@ angular.module('iwildfire.controllers', [])
                          */
                         return webq.uploadWechatImages(data)
                     }, function(err) {
-                        alert(JSON.stringify(err));
+                       Msg.alert(JSON.stringify(err));
                     })
                     .then(function(result) {
-                        // alert('succ:' + JSON.stringify(result));
+                        //Msg.alert('succ:' + JSON.stringify(result));
                         _.each(result, function(value, index) {
                             // insert the image url into goods metadata
                             $scope.params.goods_pics.push(value.imageUrl);
                         });
 
                     }, function(err) {
-                        alert('fail:' + JSON.stringify(err));
+                       Msg.alert('fail:' + JSON.stringify(err));
                     });
             }
         });
@@ -757,12 +762,40 @@ angular.module('iwildfire.controllers', [])
     /**
      * 验证表单字段
      */
-    function validateForm(params) {
-        return !_.some([params.title, params.content, params.tab,
-            params.quality, params.goods_pre_price, params.goods_now_price
-        ], function(x) {
-            return (x == null) || (x == '');
-        });
+    function isFormValidate(params) {
+        if(params.goods_pics.length < 1) {
+           Msg.alert('至少上传一张图片!');
+            return false;
+        }
+        if(!params.tab) {
+           Msg.alert('请选择一个类别!');
+            return false;
+        }
+        if(!params.quality) {
+           Msg.alert('请设置成色!');
+            return false;
+        }
+        if(params.goods_pre_price && isPriceValidate(params.goods_pre_price)) {
+           Msg.alert('原价必须为合法数字(正数，最多两位小数)');
+            return false;
+        }
+        if(isPriceValidate(params.goods_now_price)) {
+           Msg.alert('转让价必须为合法数字(正数，最多两位小数)');
+            return false;
+        }
+        if( params.goods_pre_price ) {
+            alert('zzz');
+            if( params.goods_pre_price < params.goods_now_price) {
+               Msg.alert('原价应该大于等于转让价！');
+                return false;
+            }
+        }
+        if(params.title.length < 6) {
+           Msg.alert('请输入大于五个字的标题!');
+            return false;
+        }
+
+        return true;
     }
 
     function isPriceValidate(price) {
@@ -777,24 +810,10 @@ angular.module('iwildfire.controllers', [])
      * @return {[type]} [description]
      */
     $scope.submitGoods = function() {
-        if(isPriceValidate($scope.params.goods_pre_price)) {
-            alert('原价必须为合法数字(正数，最多两位小数)');
+        if (!isFormValidate($scope.params)) {
             return;
         }
-        if(isPriceValidate($scope.params.goods_now_price)) {
-            alert('转让价必须为合法数字(正数，最多两位小数)');
-            return;
-        }
-        if($scope.params.goods_pre_price < $scope.params.goods_now_price) {
-            alert('原价应该大于等于转让价！');
-            return;
-        }
-
-        if (!validateForm($scope.params)) {
-            alert('缺少信息。');
-            return;
-        }
-
+        Msg.show('提交中，请稍候...');
         webq.createNewGoods($scope.params)
             .then(function(result) {
                 /**
@@ -830,7 +849,9 @@ angular.module('iwildfire.controllers', [])
                 }
             }, function(err) {
                 console.log('lyman 566', JSON.stringify(err));
-                alert(err.error_msg);
+               Msg.alert(err.error_msg);
+            }).finally(function(){
+                Msg.hide();
             });
     }
 
@@ -911,7 +932,7 @@ angular.module('iwildfire.controllers', [])
 
 })
 
-.controller('InboxCtrl', function($scope, $ionicLoading, Messages, $log, store, $rootScope, $timeout, cfg) {
+.controller('InboxCtrl', function($scope, $ionicLoading, Messages, $log, store, $rootScope, $timeout, cfg, Msg) {
     $scope.doNotHaveMessage = false;
     // 既不是调试，也不存在accesstoken
     if ((!store.getAccessToken()) && (!cfg.debug)) {
@@ -976,6 +997,7 @@ angular.module('iwildfire.controllers', [])
     store,
     cfg,
     webq,
+    Msg,
     myProfile,
     myTopics,
     $q,
@@ -1110,9 +1132,9 @@ angular.module('iwildfire.controllers', [])
     $scope.editDingOnShelf = function(topic) {
         webq.dingMyTopic(topic)
             .then(function() {
-                alert('恭喜，成功置顶！');
+               Msg.alert('恭喜，成功置顶！');
             }, function() {
-                alert('没有成功，什么情况，稍候再试 ?');
+               Msg.alert('没有成功，什么情况，稍候再试 ?');
             });
     }
 
@@ -1146,13 +1168,13 @@ angular.module('iwildfire.controllers', [])
         topic.goods_status = '下架';
         webq.updateMyTopic(topic)
             .then(function(data) {
-                // alert('{0} 成功下架'.f(topic.title));
+                //Msg.alert('{0} 成功下架'.f(topic.title));
                 _separateMyTopics(true, function() {
                     $scope.stuffs = onGoingStuffs;
                     _resetScopeData();
                 });
             }, function(err) {
-                alert(JSON.stringify(err));
+               Msg.alert(JSON.stringify(err));
             });
     }
 
@@ -1167,14 +1189,14 @@ angular.module('iwildfire.controllers', [])
         topic.goods_status = '售出';
         webq.updateMyTopic(topic)
             .then(function(data) {
-                // alert('{0} 成功下架'.f(topic.title));
+                //Msg.alert('{0} 成功下架'.f(topic.title));
                 _separateMyTopics(true, function() {
 
                     $scope.stuffs = onGoingStuffs;
                     _resetScopeData();
                 });
             }, function(err) {
-                alert(JSON.stringify(err));
+               Msg.alert(JSON.stringify(err));
             });
     }
 
@@ -1189,13 +1211,13 @@ angular.module('iwildfire.controllers', [])
         topic.deleted = true;
         webq.updateMyTopic(topic)
             .then(function(data) {
-                // alert('{0} 成功下架'.f(topic.title));
+                //Msg.alert('{0} 成功下架'.f(topic.title));
                 _separateMyTopics(true, function() {
                     $scope.stuffs = offShelfStuffs;
                     _resetScopeData();
                 });
             }, function(err) {
-                alert(JSON.stringify(err));
+               Msg.alert(JSON.stringify(err));
             });
     }
 
@@ -1210,13 +1232,13 @@ angular.module('iwildfire.controllers', [])
         topic.goods_status = '在售';
         webq.updateMyTopic(topic)
             .then(function(data) {
-                // alert('{0} 成功下架'.f(topic.title));
+                //Msg.alert('{0} 成功下架'.f(topic.title));
                 _separateMyTopics(true, function() {
                     $scope.stuffs = offShelfStuffs;
                     _resetScopeData();
                 });
             }, function(err) {
-                alert(JSON.stringify(err));
+               Msg.alert(JSON.stringify(err));
             });
     }
 
@@ -1226,7 +1248,7 @@ angular.module('iwildfire.controllers', [])
     });
 })
 
-.controller('BindMobilePhoneCtrl', function($scope, $state, $stateParams,
+.controller('BindMobilePhoneCtrl', function($scope, $state, $stateParams, Msg,
     $ionicPopup, $ionicLoading, $timeout, $log, webq, store) {
     var phonenoPattern = /^\(?([0-9]{11})\)?$/;
     var accessToken = $stateParams.accessToken;
@@ -1270,7 +1292,7 @@ angular.module('iwildfire.controllers', [])
 
     $scope.sendVerifyCode = function() {
         // verify the input nubmer is a phone number
-        // alert('sendVerifyCode' + JSON.stringify($scope.data));
+        //Msg.alert('sendVerifyCode' + JSON.stringify($scope.data));
         if ($scope.data.phoneNumber &&
             isPhonenumber($scope.data.phoneNumber)) {
             // user has input a phone number
@@ -1285,7 +1307,7 @@ angular.module('iwildfire.controllers', [])
                     }, function(err) {
                         // get an error, now alert it.
                         // TODO process err in a user friendly way.
-                        alert(JSON.stringify(err));
+                       Msg.alert(JSON.stringify(err));
                     })
                     .finally(function() {
                         _hideLoadingSpin();
@@ -1338,6 +1360,7 @@ angular.module('iwildfire.controllers', [])
     $scope,
     $state,
     store,
+    Msg,
     webq) {
     console.log('Get stateParams: ' + JSON.stringify($stateParams));
     var accesstoken = $stateParams.accessToken;
@@ -1362,7 +1385,7 @@ angular.module('iwildfire.controllers', [])
                 console.error('getMyProfileResolve should not happen.');
             });
     } else {
-        alert('服务异常，运维人员玩命恢复中，认证失败!');
+       Msg.alert('服务异常，运维人员玩命恢复中，认证失败!');
     }
 })
 
@@ -1370,6 +1393,7 @@ angular.module('iwildfire.controllers', [])
     $timeout,
     $state,
     store,
+    Msg,
     webq) {
     $log.debug('SettingsCtrl ...');
 
@@ -1405,10 +1429,10 @@ angular.module('iwildfire.controllers', [])
         if ($scope.data.feedback.content) {
             webq.submitFeedback($scope.data.feedback.content)
                 .then(function() {
-                    alert('感谢您对我们的支持，一直在努力，不放弃治疗。');
+                   Msg.alert('感谢您对我们的支持，一直在努力，不放弃治疗。');
                     $scope.goBackSettings();
                 }, function() {
-                    alert('吐槽失败，看来是槽点太多。');
+                   Msg.alert('吐槽失败，看来是槽点太多。');
                 });
         } else {
             $scope.data.feedback.title = '反馈内容不可为空';

@@ -1,4 +1,44 @@
 angular.module('iwildfire.services', ['ngResource'])
+.factory('Msg', function($ionicLoading, $q, $timeout, $ionicPopup) {
+  function Msg(msg) {
+    if( msg == 'hide' ) {
+      Msg.hide();
+      return;
+    }
+
+    var d = $q.defer();
+    Msg.showOneSecond(msg, d);
+
+    return d.promise;
+  }
+
+  Msg.showOneSecond = function(msg, d) {
+    msg = '<h4>' + msg + '</h4>';
+    $ionicLoading.show({template: '<ion-spinner></ion-spinner> ' + msg });
+    $timeout(function(){
+      $ionicLoading.hide();
+      d.resolve();
+    }, 1000);
+  }
+
+  Msg.show = function(msg) {
+    msg = '<h4>' + msg + '</h4>';
+    $ionicLoading.show({template: '<ion-spinner></ion-spinner>' + msg});
+  }
+
+  Msg.hide = function() {
+    $ionicLoading.hide();
+  }
+
+  Msg.alert = function(msg) {
+    var alertPopup = $ionicPopup.alert({
+        title: '',
+        template: '<h4 class="text-center">' + msg + '</h4>'
+    });
+  }
+
+  return Msg;
+})
 
 .factory('Tabs', function() {
     var _Tabs = {};

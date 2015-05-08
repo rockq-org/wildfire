@@ -652,6 +652,7 @@ Local storage is per domain. All pages, from one domain, can store and access th
                 var longitude = res.longitude; // 经度，浮点数，范围为180 ~ -180。
                 var speed = res.speed; // 速度，以米/每秒计
                 var accuracy = res.accuracy; // 位置精度
+
                 $log.debug('get latlng by wechat api', JSON.stringify(res));
                 var geocoder;
                 var center = new qq.maps.LatLng(latitude, longitude);

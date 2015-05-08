@@ -178,6 +178,7 @@ angular.module('iwildfire.controllers', [])
     // };
     $scope.locationDetail = locationDetail;
     // $scope.locationDetail = {};
+    $scope.state = $state;
 
     $scope.sideMenus = Tabs.getList();
     $stateParams.tab = $stateParams.tab || 'all';
@@ -764,56 +765,73 @@ angular.module('iwildfire.controllers', [])
         });
     }
 
+    function isPriceValidate(price) {
+        var reg = /(^[-+]?[1-9]\d*(\.\d{1,2})?$)|(^[-+]?[0]{1}(\.\d{1,2})?$)/;
+        var isValidate = !reg.test(price);
+
+        return isValidate;
+    }
+
     /**
      * 提交二手物品创建信息
      * @return {[type]} [description]
      */
     $scope.submitGoods = function() {
-        // validate data
-        console.log('lyman 565 submitGoods');
-        if (validateForm($scope.params)) {
-            console.log('lyman 567 done with validateForm');
-
-            webq.createNewGoods($scope.params)
-                .then(function(result) {
-                    /**
-                     * success: true
-                     * topic_id: xxxx
-                     * @param  {[type]} result.success [description]
-                     * @return {[type]}                [description]
-                     */
-                    if (result.success) {
-                        // create record successfully.
-                        $state.go('item', {
-                            itemId: result.topic_id
-                        });
-                        // $ionicPopup.alert({
-                        //         title: '发布商品',
-                        //         template: '发布成功！'
-                        //     })
-                        //     .then(function(res) {
-                        //         $state.go('item', {
-                        //             itemId: result.topic_id
-                        //         });
-                        //     });
-                    } else {
-                        // fail to create record.
-                        $ionicPopup.alert({
-                                title: '发布商品',
-                                template: '发布失败！'
-                            })
-                            .then(function(res) {
-                                // # TODO
-                                console.error('发布失败！');
-                            });
-                    }
-                }, function(err) {
-                    console.log('lyman 566', JSON.stringify(err));
-                    alert(err.error_msg);
-                });
-        } else {
-            alert('缺少信息。')
+        if(isPriceValidate($scope.params.goods_pre_price)) {
+            alert('原价必须为合法数字(正数，最多两位小数)');
+            return;
         }
+        if(isPriceValidate($scope.params.goods_now_price)) {
+            alert('转让价必须为合法数字(正数，最多两位小数)');
+            return;
+        }
+        if($scope.params.goods_pre_price < $scope.params.goods_now_price) {
+            alert('原价应该大于等于转让价！');
+            return;
+        }
+
+        if (!validateForm($scope.params)) {
+            alert('缺少信息。');
+            return;
+        }
+
+        webq.createNewGoods($scope.params)
+            .then(function(result) {
+                /**
+                 * success: true
+                 * topic_id: xxxx
+                 * @param  {[type]} result.success [description]
+                 * @return {[type]}                [description]
+                 */
+                if (result.success) {
+                    // create record successfully.
+                    $state.go('item', {
+                        itemId: result.topic_id
+                    });
+                    // $ionicPopup.alert({
+                    //         title: '发布商品',
+                    //         template: '发布成功！'
+                    //     })
+                    //     .then(function(res) {
+                    //         $state.go('item', {
+                    //             itemId: result.topic_id
+                    //         });
+                    //     });
+                } else {
+                    // fail to create record.
+                    $ionicPopup.alert({
+                            title: '发布商品',
+                            template: '发布失败！'
+                        })
+                        .then(function(res) {
+                            // # TODO
+                            console.error('发布失败！');
+                        });
+                }
+            }, function(err) {
+                console.log('lyman 566', JSON.stringify(err));
+                alert(err.error_msg);
+            });
     }
 
     /*******************************************
@@ -893,14 +911,8 @@ angular.module('iwildfire.controllers', [])
 
 })
 
-.controller('InboxCtrl', function($scope,
-    $ionicLoading,
-    Messages,
-    $log,
-    $rootScope,
-    $timeout,
-    cfg) {
-
+.controller('InboxCtrl', function($scope, $ionicLoading, Messages, $log, store, $rootScope, $timeout, cfg) {
+    $scope.doNotHaveMessage = false;
     // 既不是调试，也不存在accesstoken
     if ((!store.getAccessToken()) && (!cfg.debug)) {
         $ionicLoading.show({
@@ -925,6 +937,10 @@ angular.module('iwildfire.controllers', [])
                 }, function(response) {
                     $log.debug('mark all response error:', response);
                 });
+            }
+
+            if( $scope.messages.hasnot_read_messages.length == 0 && $scope.messages.has_read_messages.length == 0 ) {
+                $scope.doNotHaveMessage = true;
             }
         }, function(response) {
             $log.debug('get messages response error:', response);

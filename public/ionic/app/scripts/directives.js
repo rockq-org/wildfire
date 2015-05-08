@@ -1,10 +1,10 @@
 angular.module('iwildfire.directives', [])
 
-.directive('qqMap', function(cfg, $timeout) {
+.directive('qqMap', function(cfg, $timeout, $ionicPopup) {
     var host = location.href.split('#')[0].split('?')[0];
     var markers = [];
     var center;
-    var infoWin;
+    // var infoWin;
     var tmpCenter = {
         api_address: '',
         user_edit_address: '',
@@ -25,7 +25,7 @@ angular.module('iwildfire.directives', [])
         return control;
     }
 
-    function updateTopicsMarkers(topics){
+    function updateTopicsMarkers(topics, scope){
         if (markers) {
             for (i in markers) {
                 markers[i].setMap(null);
@@ -52,15 +52,41 @@ angular.module('iwildfire.directives', [])
                 markers.push(marker);
 
                 qq.maps.event.addListener(marker, 'click', function() {
-                    var content = '<div style="width:180px;height:180px;">';
-                    content += topics[n].title;
-                    content += '转卖价：' + topics[n].goods_now_price;
-                    content += '原价：' + topics[n].goods_pre_price;
-                    content += '<img height="100px" src="' + cfg.server + topics[n].goods_pics[0] + '" />';
-                    content += '<br /><a href="#/item/' + topics[n].id + '">点击查看详情</a></div>';
-                    infoWin.open();
-                    infoWin.setContent( content );
-                    infoWin.setPosition( position );
+                    var title = topics[n].title;
+                    // var content = '<img src="' + cfg.server + topics[n].goods_pics[0] + '" />';
+                    var content = '';
+                        // content += '<h3>';
+                        content += '<del>原价：￥ ' + topics[n].goods_pre_price + '</del>';
+                        content += '<span class="assertive float-right">现价：￥ ' + topics[n].goods_now_price + '</span>&nbsp;';
+                        // content += '</h3>';
+                        content += '<div style="width:100%; height:194px; background:url(';
+                        content += cfg.server + topics[n].goods_pics[0];
+                        content += ') center no-repeat; background-size:cover"></div>';
+
+                    var confirmPopup = $ionicPopup.confirm({
+                            title: title,
+                            cancelText: 'X 关闭',
+                            cancelType: 'button-positive',
+                            okText: '前往查看 >',
+                            okType: 'button-assertive',
+                            template: content
+                        });
+
+                    confirmPopup.then(function(res) {
+                        if(res) {
+                            scope.state.go( 'item', {itemId: topics[n].id} );
+                        }
+                    });
+
+                    // var content = '<div style="width:180px;height:180px;">';
+                    // content += topics[n].title;
+                    // content += '转卖价：' + topics[n].goods_now_price;
+                    // content += '原价：' + topics[n].goods_pre_price;
+                    // content += '<img height="100px" src="' + cfg.server + topics[n].goods_pics[0] + '" />';
+                    // content += '<br /><a href="#/item/' + topics[n].id + '">点击查看详情</a></div>';
+                    // infoWin.open();
+                    // infoWin.setContent( content );
+                    // infoWin.setPosition( position );
                 });
             })(i);
         }
@@ -85,7 +111,7 @@ angular.module('iwildfire.directives', [])
             mapTypeControl: false
         });
 
-        infoWin = new qq.maps.InfoWindow({ map: map });
+        // infoWin = new qq.maps.InfoWindow({ map: map });
 
         var circle = new qq.maps.Circle({
             map: map,
@@ -129,7 +155,7 @@ angular.module('iwildfire.directives', [])
 
         // topics markers
         scope.$watchCollection('topics', function(newData, oldData){
-            updateTopicsMarkers(newData);
+            updateTopicsMarkers(newData, scope);
         });
     }
 
@@ -137,6 +163,7 @@ angular.module('iwildfire.directives', [])
         scope: {
             center: "=",
             zoom: "=",
+            state: '=',
             locationDetail: "=",
             topics: "=*"
         },
@@ -221,12 +248,14 @@ angular.module('iwildfire.directives', [])
 
     return function(scope, element, attrs) {
         webq.getLocationDetail().then(function(locationDetail){
-            var width = $document.width();
-            var height = $document.height() - 44;
-            var div = angular.element(element).find('div');
-            div.width(width);
-            div.height(height);
-            init(div[0], attrs, scope, locationDetail, width, height);
+            $timeout(function(){
+                var width = $document.width();
+                var height = $document.height() - 44;
+                var div = angular.element(element).find('div');
+                div.width(width);
+                div.height(height);
+                init(div[0], attrs, scope, locationDetail, width, height);
+            });
         });
     };
 })

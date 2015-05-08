@@ -1,7 +1,7 @@
 <ion-view hide-nav-bar="true">
     <ion-side-menus>
         <ion-side-menu-content>
-          <ion-header-bar class="bar-royal">
+          <ion-header-bar class="bar bar-header bar-royal">
               <div class="buttons">
                   <button class="button button-icon ion-navicon" menu-toggle="left"> {{menuTitle}}</button>
               </div>
@@ -12,7 +12,7 @@
           </ion-header-bar>
           <ion-nav-view name="menuContent">
               <ion-content>
-                <div qq-map center="map.center" zoom="map.zoom" topics="topics" location-detail="locationDetail" ></div>
+                <div qq-map center="map.center" zoom="map.zoom" topics="topics" location-detail="locationDetail" state="state"></div>
               </ion-content>
           </ion-nav-view>
         </ion-side-menu-content>

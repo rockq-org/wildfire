@@ -1,6 +1,15 @@
 'use strict';
 angular.module('iwildfire.filters', [])
 
+.filter('addPlatFormPostFix', function($rootScope) {
+    return function(input) {
+        if($rootScope.WILDFIRE_WECHAT_PLATFORM == 'Android') {
+            input += '#mp.weixin.qq.com';
+        }
+        return input;
+    }
+})
+
 .filter('flatternDistance', function() {
     var EARTH_RADIUS = 6378137.0;    //单位M
     var PI = Math.PI;

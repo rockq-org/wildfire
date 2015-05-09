@@ -385,6 +385,8 @@ function _pushReplyWithWechatTemplateAPI(toUserId, fromUserId, topicId, replyId)
             // Post Data
             _getWxAccessTokenFromRedis().then(function(doc) {
                 logger.debug('_pushReplyWithWechatTemplateAPI', 'get access token ' + doc);
+                var keyword3 = S(reply.content).replaceAll(u.format('@%s', toUser.loginname), u.format('对 @%s 说：', toUser.name)).s;
+                keyword3 = keyword3.replace(/^@[a-z0-9\-_]+\b/igm, '');
                 var payload = {
                     touser: toUser.profile.openid,
                     template_id: config.wechat_gzh.api.notify_template_id,
@@ -406,7 +408,7 @@ function _pushReplyWithWechatTemplateAPI(toUserId, fromUserId, topicId, replyId)
                         keyword3: {
                             // replace push content via wechat
                             // value: S(reply.content).replaceAll(u.format('[@%s](/user/%s)', toUser.loginname, toUser.loginname), u.format('对 @%s 说：', toUser.name)).s,
-                            value: S(reply.content).replaceAll(u.format('@%s', toUser.loginname), u.format('对 @%s 说：', toUser.name)).s,
+                            value: keyword3,
                             color: "#173177"
                         }
                         // ,

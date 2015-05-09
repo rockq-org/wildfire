@@ -72,7 +72,7 @@ angular.module('iwildfire.controllers', [])
                     $scope.hasNextPage = Topics.hasNextPage();
                     $log.debug('has next page ? ', $scope.hasNextPage);
                     if ($scope.hasNextPage == false)
-                        $scope.loadingMsg = '附近没有新的二手交易信息^_^，试试其他地方吧';
+                        $scope.loadingMsg = '附近没有其它的二手交易信息^_^，看看别的地方吧!';
 
                 }, 100);
                 $scope.topics = $scope.topics.concat(response.data);
@@ -248,7 +248,7 @@ angular.module('iwildfire.controllers', [])
                 $scope.hasNextPage = true;
                 $scope.loadError = false;
                 if ($scope.topics.length == 0)
-                    $scope.loadingMsg = '附近没有二手交易信息^_^，试试其他地方吧';
+                    $scope.loadingMsg = '附近没有其它的二手交易信息^_^，看看别的地方吧!';
                 else
                     $scope.loadingMsg = '下拉加载更多';
             }, $rootScope.requestErrorHandler({

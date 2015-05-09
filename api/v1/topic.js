@@ -114,7 +114,11 @@ var show = function(req, res, next) {
             });
         }
 
-        topic.visit_count += 1;
+        var isAuthor = typeof(req.user) == 'object' && req.user._id && req.user._id == topic.author_id;
+
+        if ( !isAuthor ) {
+            topic.visit_count += 1;
+        }
         topic.save();
 
         topic = _.pick(topic, ['_id', 'id', 'author_id', 'tab', 'content', 'title', 'last_reply_at',

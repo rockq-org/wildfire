@@ -70,7 +70,7 @@ angular.module('iwildfire.directives', [])
                             cancelText: 'X 关闭',
                             cancelType: 'button-positive',
                             okText: '前往查看 >',
-                            okType: 'button-assertive',
+                            okType: 'button-royal',
                             template: content
                         });
 
@@ -95,14 +95,16 @@ angular.module('iwildfire.directives', [])
     };
 
     function link(scope, element, attrs){
-        var location = LocationManager.getLocation();
-        if(location.lat) {
-            init_map(scope, element, attrs, location);
-            return;
-        }
+        $timeout(function(){
+            var location = LocationManager.getLocation();
+            if(location.lat) {
+                init_map(scope, element, attrs, location);
+                return;
+            }
 
-        LocationManager.getLocationFromAPI().then(function(location){
-            init_map(scope, element, attrs, location);
+            LocationManager.getLocationFromAPI().then(function(location){
+                init_map(scope, element, attrs, location);
+            });
         });
     }
 

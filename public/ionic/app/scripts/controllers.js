@@ -110,7 +110,7 @@ angular.module('iwildfire.controllers', [])
             return;
         }
         $log.debug('doSearch');
-        if( !query ) {
+        if (!query) {
             $scope.showSearch = false;
         }
         Topics.setQuery(query);
@@ -215,7 +215,7 @@ angular.module('iwildfire.controllers', [])
             return;
         }
         $log.debug('doSearch');
-        if( !query ) {
+        if (!query) {
             $scope.showSearch = false;
         }
         Topics.setQuery(query);
@@ -597,7 +597,9 @@ angular.module('iwildfire.controllers', [])
  * @param  {[type]} wechat_signature [description]
  * @return {[type]}                  [description]
  */
-.controller('PostCtrl', function($scope, $state,
+.controller('PostCtrl', function($scope, 
+    $rootScope,
+    $state,
     $stateParams,
     $ionicModal,
     $ionicPopup,
@@ -607,7 +609,6 @@ angular.module('iwildfire.controllers', [])
     $q,
     cfg,
     Msg,
-    $rootScope,
     store,
     webq,
     wxWrapper,
@@ -750,6 +751,8 @@ angular.module('iwildfire.controllers', [])
                 var localIds = res.localIds; // 返回选定照片的本地ID列表，localId可以作为img标签的src属性显示图片
                 // can not upload multi-images at the same time.
                 var deferred = $q.defer();
+                alert($rootScope.WILDFIRE_WECHAT_PLATFORM + ":" + JSON.stringify(localIds));
+
                 _processWxImages(localIds, null, deferred);
                 deferred.promise.then(function(data) {
                         /**

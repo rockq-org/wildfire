@@ -24,6 +24,22 @@ angular.module('iwildfire', ['ionic', 'iwildfire.controllers', 'iwildfire.servic
             template: msg
         });
     };
+
+    /**
+     * check the wechat installation env
+     */
+    $rootScope.WILDFIRE_WECHAT_PLATFORM = (function() {
+        var u = navigator.userAgent,
+            app = navigator.appVersion;
+        if (u.indexOf('Android') > -1 || u.indexOf('Linux') > -1) {
+            return 'Android';
+        } else if (!!u.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/)) {
+            return 'iOS';
+        } else {
+            return 'UNKNOWN';
+        }
+    })();
+
     $rootScope.hideLoading = function() {
         $ionicLoading.hide();
     };
@@ -64,8 +80,8 @@ angular.module('iwildfire', ['ionic', 'iwildfire.controllers', 'iwildfire.servic
         };
     };
     $rootScope.message_not_read_count = 0;
-    if(store.getAccessToken()) {
-        Msg.alert( store.getAccessToken() );
+    if (store.getAccessToken()) {
+        Msg.alert(store.getAccessToken());
         Messages.getMessageCount().$promise.then(function(response) {
             $timeout(function() {
                 // console.log(response.data);

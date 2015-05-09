@@ -48,6 +48,7 @@ angular.module('iwildfire.controllers', [])
             Topics.refresh().$promise.then(function(response) {
                 $log.debug('do refresh complete');
                 $scope.topics = response.data;
+                console.log(response.data.length);
                 // console.log(JSON.stringify(response.data));
                 $scope.hasNextPage = true;
                 $scope.loadError = false;
@@ -76,6 +77,9 @@ angular.module('iwildfire.controllers', [])
                         $scope.loadingMsg = '附近没有其它的二手交易信息^_^，看看别的地方吧!';
 
                 }, 100);
+                if(!$scope.topics){
+                    $scope.topics = [];
+                }
                 $scope.topics = $scope.topics.concat(response.data);
             }, $rootScope.requestErrorHandler({
                 noBackdrop: true
@@ -133,11 +137,12 @@ angular.module('iwildfire.controllers', [])
         $scope.address = location.user_edit_address;
         $scope.tabTitle = location.user_edit_address;
         Topics.setGeom(location);
+
         $scope.hasNextPage = Topics.hasNextPage();
         $scope.loadError = false;
-        $scope.topics = Topics.getTopics();
 
         $scope.doRefresh();
+        $scope.topics = Topics.getTopics();
         // loadDataAfterGetLocation();
     }
     $rootScope.$on('location.updated', loadData);

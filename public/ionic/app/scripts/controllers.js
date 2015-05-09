@@ -892,16 +892,19 @@ angular.module('iwildfire.controllers', [])
         }
         if (isPriceValidate(params.goods_now_price)) {
             Msg.alert('转让价必须为合法数字(正数，最多两位小数)');
+            document.querySelector('#gprice').focus();
             return false;
         }
         if (params.goods_pre_price) {
             if (parseFloat(params.goods_pre_price) < parseFloat(params.goods_now_price)) {
                 Msg.alert('原价应该大于等于转让价！');
+                document.querySelector('#gprice').focus();
                 return false;
             }
         }
         if (!params.title || params.title.length < 5) {
             Msg.alert('请输入大于五个字的标题!');
+            document.querySelector('#gtitle').focus();
             return false;
         }
         if (!params.content) {

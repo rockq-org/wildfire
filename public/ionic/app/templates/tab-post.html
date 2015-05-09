@@ -73,7 +73,7 @@
             <div class="col">
                 <label class="item item-input">
                     <span class="input-label">转让价</span>
-                    <input type="text" placeholder="￥" ng-model="params.goods_now_price">
+                    <input id="gprice" type="text" placeholder="￥" ng-model="params.goods_now_price">
                 </label>
             </div>
             <div class="col">
@@ -94,7 +94,7 @@
         </div>
         <div class="item item-input">
             <span class="input-label">宝贝名称</span>
-            <input ng-model="params.title" type="text" placeholder="输入大于五个字的标题">
+            <input id="gtitle" ng-model="params.title" type="text" placeholder="输入大于五个字的标题">
         </div>
         <div class="item item-icon-right" ng-click="openGoodsDespModal()">
             <span>宝贝描述</span>

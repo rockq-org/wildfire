@@ -245,7 +245,7 @@ Local storage is per domain. All pages, from one domain, can store and access th
  * @param  {[type]} cfg)  {               this.sendVerifyCode [description]
  * @return {[type]}       [description]
  */
-.service('webq', function($http, $q, $log, cfg, store) {
+.service('webq', function($http, $q, $log, cfg, store, Msg) {
 
     var self = this;
     /**
@@ -737,6 +737,29 @@ Local storage is per domain. All pages, from one domain, can store and access th
 
         return deferred.promise;
     };
+
+
+    this.showSlidePreview = function(current, urls) {
+        Msg.show('加载中...');
+
+        var newArr = urls.slice(0);
+        current = cfg.server + current;
+        for(var i in newArr) {
+            newArr[i] = cfg.server + newArr[i];
+        }
+        self.getWxWrapper()
+            .then(function(wxWrapper) {
+                wxWrapper.previewImage({
+                    current: current, // 当前显示的图片链接
+                    urls: newArr// 需要预览的图片链接列表
+                });
+            }, function(err) {
+                Msg('加载错误');
+            }).finally(function(){
+                Msg('hide');
+            });
+    };
+
 
     this.setPostGoodsLocation = function(postGoodsLocationDetail) {
         $log.debug('set post goods location detail', JSON.stringify(postGoodsLocationDetail));

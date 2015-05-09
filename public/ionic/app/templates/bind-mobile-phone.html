@@ -26,12 +26,9 @@
         </label>
       </div>
       <div class="item" style="border:none">
-        <label class="checkbox checkbox-royal">
-          <input ng-model="agree" type="checkbox">
-        </label>
-        <a href="javascript:void(0)" style="position:absolute;top: 28px;color:#444" ng-click="openModal($event)">接收用户协议</a>
+        <a href="javascript:void(0)" style="position:absolute;top: 28px;color:#444" ng-click="openModal($event)">点击「确定」按钮，代表你已阅读并同意《软件许可及服务协议》</a>
       </div>
-      <button ng-disabled="!agree" class="button button-block button-royal" ng-click="bindPhoneNumber()">
+      <button class="button button-block button-royal" ng-click="bindPhoneNumber()">
         确定
       </button>
     </div>

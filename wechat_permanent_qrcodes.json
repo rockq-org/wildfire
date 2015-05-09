@@ -1,16 +1,408 @@
 {
-  "gQE_7zoAAAAAAAAAASxodHRwOi8vd2VpeGluLnFxLmNvbS9xL3pVem1wZi1sQmt0LW83TTVxbVJGAAIEejQ7VQMEAAAAAA==": {
-    "metadata": {
-      "action_name": "QR_LIMIT_STR_SCENE",
-      "action_info": {
-        "scene": {
-          "scene_str": "1",
-          "scene_id": 1
-        }
-      }
+    "gQFy8DoAAAAAAAAAASxodHRwOi8vd2VpeGluLnFxLmNvbS9xL09VZ3VnNmZrMmdtanhuU2l2bUEwAAIEkJtHVQMEAAAAAA==": {
+        "metadata": {
+            "action_name": "QR_LIMIT_STR_SCENE",
+            "action_info": {
+                "scene": {
+                    "scene_str": "贸大推广码1",
+                    "scene_id": 1
+                }
+            }
+        },
+        "channel_key": "贸大推广码1",
+        "channel_stakeholder": "张三",
+        "channel_stakeholder_phone": "100000"
     },
-    "channel_key": "北邮拓展代理",
-    "channel_stakeholder": "张三",
-    "channel_stakeholder_phone": "100000"
-  }
+    "gQGM7zoAAAAAAAAAASxodHRwOi8vd2VpeGluLnFxLmNvbS9xL3prZ285U3prMXdtdXpJUGZ1R0EwAAIEbZxHVQMEAAAAAA==": {
+        "metadata": {
+            "action_name": "QR_LIMIT_STR_SCENE",
+            "action_info": {
+                "scene": {
+                    "scene_str": "贸大推广码2",
+                    "scene_id": 1
+                }
+            }
+        },
+        "channel_key": "贸大推广码2",
+        "channel_stakeholder": "张三",
+        "channel_stakeholder_phone": "100000"
+    },
+    "gQGi8DoAAAAAAAAAASxodHRwOi8vd2VpeGluLnFxLmNvbS9xL3YwZ0Z4TXprNVFtY2JQTHhsV0EwAAIEtpxHVQMEAAAAAA==": {
+        "metadata": {
+            "action_name": "QR_LIMIT_STR_SCENE",
+            "action_info": {
+                "scene": {
+                    "scene_str": "贸大推广码3",
+                    "scene_id": 1
+                }
+            }
+        },
+        "channel_key": "贸大推广码3",
+        "channel_stakeholder": "张三",
+        "channel_stakeholder_phone": "100000"
+    },
+    "gQGB7zoAAAAAAAAAASxodHRwOi8vd2VpeGluLnFxLmNvbS9xL0FraHlmeHZsWmdrZnZVX180bUEwAAIEWZ1HVQMEAAAAAA==": {
+        "metadata": {
+            "action_name": "QR_LIMIT_STR_SCENE",
+            "action_info": {
+                "scene": {
+                    "scene_str": "贸大推广码4",
+                    "scene_id": 1
+                }
+            }
+        },
+        "channel_key": "贸大推广码4",
+        "channel_stakeholder": "张三",
+        "channel_stakeholder_phone": "100000"
+    },
+    "gQFE8DoAAAAAAAAAASxodHRwOi8vd2VpeGluLnFxLmNvbS9xL1JFaFFKNlhrdlFuRUhRa2Z3R0EwAAIEap1HVQMEAAAAAA==": {
+        "metadata": {
+            "action_name": "QR_LIMIT_STR_SCENE",
+            "action_info": {
+                "scene": {
+                    "scene_str": "贸大推广码5",
+                    "scene_id": 1
+                }
+            }
+        },
+        "channel_key": "贸大推广码5",
+        "channel_stakeholder": "张三",
+        "channel_stakeholder_phone": "100000"
+    },
+    "gQGx7zoAAAAAAAAAASxodHRwOi8vd2VpeGluLnFxLmNvbS9xL2VFZ2R6T2JrNGdtYmlUWG1qV0EwAAIEep1HVQMEAAAAAA==": {
+        "metadata": {
+            "action_name": "QR_LIMIT_STR_SCENE",
+            "action_info": {
+                "scene": {
+                    "scene_str": "贸大推广码6",
+                    "scene_id": 1
+                }
+            }
+        },
+        "channel_key": "贸大推广码6",
+        "channel_stakeholder": "张三",
+        "channel_stakeholder_phone": "100000"
+    },
+    "gQEz8ToAAAAAAAAAASxodHRwOi8vd2VpeGluLnFxLmNvbS9xL21raEFtdzNrdHduTzE5ZTUwR0EwAAIEip1HVQMEAAAAAA==": {
+        "metadata": {
+            "action_name": "QR_LIMIT_STR_SCENE",
+            "action_info": {
+                "scene": {
+                    "scene_str": "贸大推广码7",
+                    "scene_id": 1
+                }
+            }
+        },
+        "channel_key": "贸大推广码7",
+        "channel_stakeholder": "张三",
+        "channel_stakeholder_phone": "100000"
+    },
+    "gQE78ToAAAAAAAAAASxodHRwOi8vd2VpeGluLnFxLmNvbS9xL1BFaDFjUTdra3ducW1IRkM1V0EwAAIEmZ1HVQMEAAAAAA==": {
+        "metadata": {
+            "action_name": "QR_LIMIT_STR_SCENE",
+            "action_info": {
+                "scene": {
+                    "scene_str": "贸大推广码8",
+                    "scene_id": 1
+                }
+            }
+        },
+        "channel_key": "贸大推广码8",
+        "channel_stakeholder": "张三",
+        "channel_stakeholder_phone": "100000"
+    },
+    "gQGs8DoAAAAAAAAAASxodHRwOi8vd2VpeGluLnFxLmNvbS9xL0lVZ1NTU3prLWdtSG4yeHdnbUEwAAIEqJ1HVQMEAAAAAA==": {
+        "metadata": {
+            "action_name": "QR_LIMIT_STR_SCENE",
+            "action_info": {
+                "scene": {
+                    "scene_str": "贸大推广码9",
+                    "scene_id": 1
+                }
+            }
+        },
+        "channel_key": "贸大推广码9",
+        "channel_stakeholder": "张三",
+        "channel_stakeholder_phone": "100000"
+    },
+    "gQFZ8DoAAAAAAAAAASxodHRwOi8vd2VpeGluLnFxLmNvbS9xL3hVaGJySURrcnduV01vaU55MkEwAAIEvZ1HVQMEAAAAAA==": {
+        "metadata": {
+            "action_name": "QR_LIMIT_STR_SCENE",
+            "action_info": {
+                "scene": {
+                    "scene_str": "贸大推广码10",
+                    "scene_id": 1
+                }
+            }
+        },
+        "channel_key": "贸大推广码10",
+        "channel_stakeholder": "张三",
+        "channel_stakeholder_phone": "100000"
+    },
+    "gQE48DoAAAAAAAAAASxodHRwOi8vd2VpeGluLnFxLmNvbS9xL1RraFhId3ZrclFuVWdRTXd4MkEwAAIE3p9HVQMEAAAAAA==": {
+        "metadata": {
+            "action_name": "QR_LIMIT_STR_SCENE",
+            "action_info": {
+                "scene": {
+                    "scene_str": "贸大推广码11",
+                    "scene_id": 1
+                }
+            }
+        },
+        "channel_key": "贸大推广码11",
+        "channel_stakeholder": "张三",
+        "channel_stakeholder_phone": "100000"
+    },
+    "gQFL8DoAAAAAAAAAASxodHRwOi8vd2VpeGluLnFxLmNvbS9xL2trZ1dfanJsQVFsNGlkODRobUEwAAIEGqBHVQMEAAAAAA==": {
+        "metadata": {
+            "action_name": "QR_LIMIT_STR_SCENE",
+            "action_info": {
+                "scene": {
+                    "scene_str": "贸大推广码12",
+                    "scene_id": 1
+                }
+            }
+        },
+        "channel_key": "贸大推广码12",
+        "channel_stakeholder": "张三",
+        "channel_stakeholder_phone": "100000"
+    },
+    "gQHG8DoAAAAAAAAAASxodHRwOi8vd2VpeGluLnFxLmNvbS9xLzIwZzZpU1Rrd0FtNXJaYW1xbUEwAAIEzaFHVQMEAAAAAA==": {
+        "metadata": {
+            "action_name": "QR_LIMIT_STR_SCENE",
+            "action_info": {
+                "scene": {
+                    "scene_str": "燕大推广码01",
+                    "scene_id": 1
+                }
+            }
+        },
+        "channel_key": "燕大推广码01",
+        "channel_stakeholder": "张三",
+        "channel_stakeholder_phone": "100000"
+    },
+    "gQG18DoAAAAAAAAAASxodHRwOi8vd2VpeGluLnFxLmNvbS9xL29FZzNFdGprMkFtaHNlMG9wMkEwAAIE7aFHVQMEAAAAAA==": {
+        "metadata": {
+            "action_name": "QR_LIMIT_STR_SCENE",
+            "action_info": {
+                "scene": {
+                    "scene_str": "燕大推广码02",
+                    "scene_id": 1
+                }
+            }
+        },
+        "channel_key": "燕大推广码02",
+        "channel_stakeholder": "张三",
+        "channel_stakeholder_phone": "100000"
+    },
+    "gQF38DoAAAAAAAAAASxodHRwOi8vd2VpeGluLnFxLmNvbS9xL1UwZ3dteXZrM0FtbE9CNmlvR0EwAAIECqJHVQMEAAAAAA==": {
+        "metadata": {
+            "action_name": "QR_LIMIT_STR_SCENE",
+            "action_info": {
+                "scene": {
+                    "scene_str": "燕大推广码03",
+                    "scene_id": 1
+                }
+            }
+        },
+        "channel_key": "燕大推广码03",
+        "channel_stakeholder": "张三",
+        "channel_stakeholder_phone": "100000"
+    },
+    "gQFs8DoAAAAAAAAAASxodHRwOi8vd2VpeGluLnFxLmNvbS9xLzVraDluUC1rbEFudFhxdWc3V0EwAAIEGaJHVQMEAAAAAA==": {
+        "metadata": {
+            "action_name": "QR_LIMIT_STR_SCENE",
+            "action_info": {
+                "scene": {
+                    "scene_str": "燕大推广码04",
+                    "scene_id": 1
+                }
+            }
+        },
+        "channel_key": "燕大推广码04",
+        "channel_stakeholder": "张三",
+        "channel_stakeholder_phone": "100000"
+    },
+    "gQEt8DoAAAAAAAAAASxodHRwOi8vd2VpeGluLnFxLmNvbS9xLy1raFRDTHZrckFuVmxyTWl3MkEwAAIEOaJHVQMEAAAAAA==": {
+        "metadata": {
+            "action_name": "QR_LIMIT_STR_SCENE",
+            "action_info": {
+                "scene": {
+                    "scene_str": "燕大推广码05",
+                    "scene_id": 1
+                }
+            }
+        },
+        "channel_key": "燕大推广码05",
+        "channel_stakeholder": "张三",
+        "channel_stakeholder_phone": "100000"
+    },
+    "gQGO8DoAAAAAAAAAASxodHRwOi8vd2VpeGluLnFxLmNvbS9xL2hVZ1RIcDdsQkFsOTNzamNnMkEwAAIESaJHVQMEAAAAAA==": {
+        "metadata": {
+            "action_name": "QR_LIMIT_STR_SCENE",
+            "action_info": {
+                "scene": {
+                    "scene_str": "燕大推广码06",
+                    "scene_id": 1
+                }
+            }
+        },
+        "channel_key": "燕大推广码06",
+        "channel_stakeholder": "张三",
+        "channel_stakeholder_phone": "100000"
+    },
+    "gQEZ8DoAAAAAAAAAASxodHRwOi8vd2VpeGluLnFxLmNvbS9xL2drZ3pqLXJsSmdsZkxNOVBvMkEwAAIEV6JHVQMEAAAAAA==": {
+        "metadata": {
+            "action_name": "QR_LIMIT_STR_SCENE",
+            "action_info": {
+                "scene": {
+                    "scene_str": "燕大推广码07",
+                    "scene_id": 1
+                }
+            }
+        },
+        "channel_key": "燕大推广码07",
+        "channel_stakeholder": "张三",
+        "channel_stakeholder_phone": "100000"
+    },
+    "gQEq8DoAAAAAAAAAASxodHRwOi8vd2VpeGluLnFxLmNvbS9xL0dVaEpRaFhrdlFuRWxWUmoyV0EwAAIEaaJHVQMEAAAAAA==": {
+        "metadata": {
+            "action_name": "QR_LIMIT_STR_SCENE",
+            "action_info": {
+                "scene": {
+                    "scene_str": "燕大推广码08",
+                    "scene_id": 1
+                }
+            }
+        },
+        "channel_key": "燕大推广码08",
+        "channel_stakeholder": "张三",
+        "channel_stakeholder_phone": "100000"
+    },
+    "gQER8DoAAAAAAAAAASxodHRwOi8vd2VpeGluLnFxLmNvbS9xLzgwaER0anprdXduQ29yNmIwMkEwAAIEfqJHVQMEAAAAAA==": {
+        "metadata": {
+            "action_name": "QR_LIMIT_STR_SCENE",
+            "action_info": {
+                "scene": {
+                    "scene_str": "燕大推广码09",
+                    "scene_id": 1
+                }
+            }
+        },
+        "channel_key": "燕大推广码09",
+        "channel_stakeholder": "张三",
+        "channel_stakeholder_phone": "100000"
+    },
+    "gQFR8ToAAAAAAAAAASxodHRwOi8vd2VpeGluLnFxLmNvbS9xL3VVZ0RjQS1rLXdtR0hmUlprMkEwAAIEjaJHVQMEAAAAAA==": {
+        "metadata": {
+            "action_name": "QR_LIMIT_STR_SCENE",
+            "action_info": {
+                "scene": {
+                    "scene_str": "燕大推广码10",
+                    "scene_id": 1
+                }
+            }
+        },
+        "channel_key": "燕大推广码10",
+        "channel_stakeholder": "张三",
+        "channel_stakeholder_phone": "100000"
+    },
+    "gQFt8DoAAAAAAAAAASxodHRwOi8vd2VpeGluLnFxLmNvbS9xLzFVZ2lvcGprd3dtNk5KaVdzbUEwAAIEnqJHVQMEAAAAAA==": {
+        "metadata": {
+            "action_name": "QR_LIMIT_STR_SCENE",
+            "action_info": {
+                "scene": {
+                    "scene_str": "燕大推广码11",
+                    "scene_id": 1
+                }
+            }
+        },
+        "channel_key": "燕大推广码11",
+        "channel_stakeholder": "张三",
+        "channel_stakeholder_phone": "100000"
+    },
+    "gQFw8DoAAAAAAAAAASxodHRwOi8vd2VpeGluLnFxLmNvbS9xL3NrZ2liYjNrelFtMHVmOVhzbUEwAAIEqqJHVQMEAAAAAA==": {
+        "metadata": {
+            "action_name": "QR_LIMIT_STR_SCENE",
+            "action_info": {
+                "scene": {
+                    "scene_str": "燕大推广码12",
+                    "scene_id": 1
+                }
+            }
+        },
+        "channel_key": "燕大推广码12",
+        "channel_stakeholder": "张三",
+        "channel_stakeholder_phone": "100000"
+    },
+    "gQHr8DoAAAAAAAAAASxodHRwOi8vd2VpeGluLnFxLmNvbS9xL1cwaGZHaDdrcXduU2hCWTd6MkEwAAIEvqJHVQMEAAAAAA==": {
+        "metadata": {
+            "action_name": "QR_LIMIT_STR_SCENE",
+            "action_info": {
+                "scene": {
+                    "scene_str": "燕大推广码13",
+                    "scene_id": 1
+                }
+            }
+        },
+        "channel_key": "燕大推广码13",
+        "channel_stakeholder": "张三",
+        "channel_stakeholder_phone": "100000"
+    },
+    "gQG28DoAAAAAAAAAASxodHRwOi8vd2VpeGluLnFxLmNvbS9xL2hVaGJrN2Jrb0FuWmU4aTl5MkEwAAIE0KJHVQMEAAAAAA==": {
+        "metadata": {
+            "action_name": "QR_LIMIT_STR_SCENE",
+            "action_info": {
+                "scene": {
+                    "scene_str": "燕大推广码14",
+                    "scene_id": 1
+                }
+            }
+        },
+        "channel_key": "燕大推广码14",
+        "channel_stakeholder": "张三",
+        "channel_stakeholder_phone": "100000"
+    },
+    "gQEC8ToAAAAAAAAAASxodHRwOi8vd2VpeGluLnFxLmNvbS9xL0QwaEdUR1RrcnduVy1FSncxbUEwAAIE4KJHVQMEAAAAAA==": {
+        "metadata": {
+            "action_name": "QR_LIMIT_STR_SCENE",
+            "action_info": {
+                "scene": {
+                    "scene_str": "燕大推广码15",
+                    "scene_id": 1
+                }
+            }
+        },
+        "channel_key": "燕大推广码15",
+        "channel_stakeholder": "张三",
+        "channel_stakeholder_phone": "100000"
+    },
+    "gQHT8DoAAAAAAAAAASxodHRwOi8vd2VpeGluLnFxLmNvbS9xLzlFaGU2eC1rc1FuSTI3blJ6bUEwAAIE76JHVQMEAAAAAA==": {
+        "metadata": {
+            "action_name": "QR_LIMIT_STR_SCENE",
+            "action_info": {
+                "scene": {
+                    "scene_str": "燕大推广码16",
+                    "scene_id": 1
+                }
+            }
+        },
+        "channel_key": "燕大推广码16",
+        "channel_stakeholder": "张三",
+        "channel_stakeholder_phone": "100000"
+    },
+    "gQFC8DoAAAAAAAAAASxodHRwOi8vd2VpeGluLnFxLmNvbS9xL0RFaGR4ei1rcHduZUwwSG96V0EwAAIE/6JHVQMEAAAAAA==": {
+        "metadata": {
+            "action_name": "QR_LIMIT_STR_SCENE",
+            "action_info": {
+                "scene": {
+                    "scene_str": "燕大推广码17",
+                    "scene_id": 1
+                }
+            }
+        },
+        "channel_key": "燕大推广码17",
+        "channel_stakeholder": "张三",
+        "channel_stakeholder_phone": "100000"
+    }
 }

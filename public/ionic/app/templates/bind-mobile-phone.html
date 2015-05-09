@@ -1,12 +1,13 @@
 <ion-view view-title="呱呱二手">
   <ion-content>
     <div class="list padding">
+      <h3 class="padding text-center">欢迎加入呱呱二手</h3>
       <label class="item-input item-select">
         <div class="input-label" style="width:100%">
           选择国家/地区
         </div>
         <select>
-          <option value='1' selected>中国大陆 +86</option>
+          <option value='1' selected>中国大陆&nbsp;&nbsp;&nbsp;+86</option>
           <!-- <option value='2'>中国台湾(+886)</option> -->
           <!-- <option value='3'>中国香港(+852)</option> -->
         </select>
@@ -15,7 +16,7 @@
         <label class="item-input-wrapper">
           <input ng-model="data.phoneNumber" type="text" placeholder="手机号码">
         </label>
-        <button ng-click="sendVerifyCode()"  class="button button-royal button-small">
+        <button ng-click="sendVerifyCode()" class="button button-royal button-small">
           发送验证码
         </button>
       </div>
@@ -24,8 +25,14 @@
           <input ng-model="data.verifyCode" type="text" placeholder="输入四位验证码">
         </label>
       </div>
-      <button class="button button-block button-royal" ng-click="bindPhoneNumber()">
-        注册
+      <li class="item item-checkbox checkbox-royal" style="border:none">
+        <label class="checkbox">
+          <input ng-model="agree" type="checkbox">
+        </label>
+        接收用户协议
+      </li>
+      <button ng-disabled="!agree" class="button button-block button-royal" ng-click="bindPhoneNumber()">
+        确定
       </button>
     </div>
   </ion-content>

@@ -14,7 +14,7 @@
       </label>
       <div class="item-input-inset">
         <label class="item-input-wrapper">
-          <input ng-model="data.phoneNumber" type="text" placeholder="手机号码">
+          <input id="phoneNumber" ng-model="data.phoneNumber" type="text" placeholder="手机号码">
         </label>
         <button ng-click="sendVerifyCode()" class="button button-royal button-small">
           发送验证码
@@ -22,7 +22,7 @@
       </div>
       <div class="item-input-inset">
         <label class="item-input-wrapper" style="margin-right: 160px;">
-          <input ng-model="data.verifyCode" type="text" placeholder="输入四位验证码">
+          <input id="verifyCode" ng-model="data.verifyCode" type="text" placeholder="输入四位验证码">
         </label>
       </div>
       <li class="item item-checkbox checkbox-royal" style="border:none">

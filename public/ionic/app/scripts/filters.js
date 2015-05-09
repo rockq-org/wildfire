@@ -18,7 +18,6 @@ angular.module('iwildfire.filters', [])
         return d*PI/180.0;
     }
 
-
     function getFlatternDistance(lat1,lng1,lat2,lng2){
         var f = getRad((lat1 + lat2)/2);
         var g = getRad((lat1 - lat2)/2);

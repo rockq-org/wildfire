@@ -7,7 +7,7 @@
 // 'starter.controllers' is found in controllers.js
 angular.module('iwildfire', ['ionic', 'iwildfire.controllers', 'iwildfire.services', 'iwildfire.directives', 'iwildfire.filters', 'config', 'angularMoment'])
 
-.run(function($ionicPlatform, $rootScope, $log, store, webq, $ionicLoading, amMoment, Messages, $timeout, Msg) {
+.run(function($ionicPlatform, $rootScope, LocationManager, $log, store, webq, $ionicLoading, amMoment, Messages, $timeout, Msg) {
 
     amMoment.changeLocale('zh-cn');
 
@@ -90,6 +90,7 @@ angular.module('iwildfire', ['ionic', 'iwildfire.controllers', 'iwildfire.servic
         });
     }
 
+    LocationManager.getLocationFromAPI();
 })
 
 .config(function($compileProvider) {
@@ -145,12 +146,7 @@ angular.module('iwildfire', ['ionic', 'iwildfire.controllers', 'iwildfire.servic
         views: {
             'tab-maps': {
                 templateUrl: 'templates/tab-maps.html',
-                controller: 'MapsCtrl',
-                resolve: {
-                    locationDetail: function(webq) {
-                        return webq.getLocationDetail();
-                    }
-                }
+                controller: 'MapsCtrl'
             }
         }
     })

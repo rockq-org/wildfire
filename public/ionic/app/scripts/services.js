@@ -1,4 +1,91 @@
 angular.module('iwildfire.services', ['ngResource'])
+.service('LocationManager', function($rootScope, webq, Msg, $q){
+    var _this = this;
+
+    _this.addressDetail = {
+
+    };
+
+    function getLatLngFromAPI(wxWrapper) {
+        var d = $q.defer();
+
+        wxWrapper.getLocation({
+            success: function(location) {
+                // location = {
+                //     longitude,
+                //     latitude,
+                //     accuracy,
+                //     speed,
+                //     errMsg,
+                // }
+                d.resolve(location);
+            }, cancel: function (res) {
+                Msg('用户拒绝授权获取地理位置');
+                d.reject('user rejected to get location');
+            }
+        });
+
+        return d.promise;
+    }
+
+    this.getAddressDetailFromAPI = function(location) {
+        var d = $q.defer();
+
+        var addressDetail = {};
+        var geocoder;
+        var center = new qq.maps.LatLng(location.latitude, location.longitude);
+        var geocoder = new qq.maps.Geocoder();
+        geocoder.getAddress(center);
+        geocoder.setComplete(function(result) {
+            var c = result.detail.addressComponents;
+            var full_address = c.country + c.province + c.city + c.district + c.street + c.streetNumber + c.town + c.village;
+            var address = c.streetNumber;
+            if(!address) {
+                address =  c.town + c.village;
+            }
+
+            addressDetail.api_address = full_address;
+            addressDetail.user_edit_address = address;
+            addressDetail.lat = location.latitude;
+            addressDetail.lng = location.longitude;
+
+            d.resolve(addressDetail);
+        });
+        geocoder.setError(function() {
+            Msg('无法从地图API获得您所在经纬度的地址详细信息');
+            d.reject('get addressDetail from geocoder faild');
+        });
+
+        return d.promise;
+    }
+
+    this.getLocationFromAPI = function() {
+        var d = $q.defer();
+        Msg.show('加载中，请稍候...');
+        webq.getWxWrapper()
+            .then(getLatLngFromAPI)
+            .then(this.getAddressDetailFromAPI)
+            .then(function(addressDetail){
+                d.resolve(addressDetail);
+                _this.setLocation(addressDetail);
+            }).catch(function(err){
+                console.log('error while getLocationFromAPI, error from', err);
+            }).finally(function(){
+                Msg('hide');
+            })
+
+        return d.promise;
+    }
+
+    this.getLocation = function() {
+        return this.addressDetail;
+    }
+
+    this.setLocation = function(addressDetail) {
+        this.addressDetail = addressDetail;
+        $rootScope.$broadcast('location.updated');
+    }
+})
 .factory('Msg', function($ionicLoading, $q, $timeout, $ionicPopup) {
   function Msg(msg) {
     if( msg == 'hide' ) {
@@ -677,68 +764,6 @@ Local storage is per domain. All pages, from one domain, can store and access th
         return deferred.promise;
     };
 
-    /**
-     * Get location detail with a wxWrapper and deferred object
-     * @param  {[type]} wxWrapper [description]
-     * @param  {[type]} deferred  [description]
-     * @return {[type]}           [description]
-     */
-    function _getLocationDetail(wxWrapper, deferred) {
-        var locationDetail = {};
-        wxWrapper.getLocation({
-            success: function(res) {
-                var latitude = res.latitude; // 纬度，浮点数，范围为90 ~ -90
-                var longitude = res.longitude; // 经度，浮点数，范围为180 ~ -180。
-                var speed = res.speed; // 速度，以米/每秒计
-                var accuracy = res.accuracy; // 位置精度
-
-                $log.debug('get latlng by wechat api', JSON.stringify(res));
-                var geocoder;
-                var center = new qq.maps.LatLng(latitude, longitude);
-                var geocoder = new qq.maps.Geocoder();
-                geocoder.getAddress(center);
-                geocoder.setComplete(function(result) {
-                    var c = result.detail.addressComponents;
-                    var full_address = c.country + c.province + c.city + c.district + c.street + c.streetNumber + c.town + c.village;
-                    var address = c.streetNumber + c.town + c.village;
-                    locationDetail.api_address = full_address;
-                    locationDetail.user_edit_address = address;
-                    locationDetail.lat = latitude;
-                    locationDetail.lng = longitude;
-
-                    if (locationDetail['nearPois']) {
-                        locationDetail.nearPois = null;
-                    }
-                    store.setLocationDetail(locationDetail);
-                    $log.debug('get location first time! save it into store', JSON.stringify(locationDetail));
-                    deferred.resolve(locationDetail);
-                });
-            }
-        });
-    }
-
-    this.getLocationDetail = function() {
-        var deferred = $q.defer();
-        var locationDetail = store.getLocationDetail();
-
-        if (locationDetail) {
-            deferred.resolve(locationDetail);
-            return deferred.promise;
-        }
-
-        console.log('get a new wxWrapper');
-        self.getWxWrapper()
-            .then(function(wxWrapper) {
-                _getLocationDetail(wxWrapper, deferred);
-            }, function(err) {
-                console.log('can not get location', err);
-                deferred.reject();
-            });
-
-        return deferred.promise;
-    };
-
-
     this.showSlidePreview = function(current, urls) {
         Msg.show('加载中...');
 
@@ -881,7 +906,7 @@ Local storage is per domain. All pages, from one domain, can store and access th
  * @param  {[type]} function(r) {                                               $log.debug('get topics tab:', tab, 'page:', page, 'data:', r.data);                return callback && callback(r [description]
  * @return {[type]}             [description]
  */
-.factory('Topics', function(cfg, $resource, $log) {
+.factory('Topics', function(cfg, $resource, $log, $rootScope) {
     var User = {}; //do it later
     var topics = [];
     var currentTab = 'all';
@@ -954,7 +979,7 @@ Local storage is per domain. All pages, from one domain, can store and access th
             return topics;
         },
         setQuery: function(query) {
-            text = query
+            text = query;
         },
         setGeom: function(geom) {
             $log.debug('setGeom', JSON.stringify(geom));

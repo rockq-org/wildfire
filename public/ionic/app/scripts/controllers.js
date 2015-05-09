@@ -597,7 +597,7 @@ angular.module('iwildfire.controllers', [])
  * @param  {[type]} wechat_signature [description]
  * @return {[type]}                  [description]
  */
-.controller('PostCtrl', function($scope, 
+.controller('PostCtrl', function($scope,
     $rootScope,
     $state,
     $stateParams,
@@ -722,20 +722,87 @@ angular.module('iwildfire.controllers', [])
             }
             var resId = resIds.pop();
             if (resId) {
-                wxWrapper.uploadImage({
-                    localId: resId, // 需要上传的图片的本地ID，由chooseImage接口获得
-                    isShowProgressTips: 1, // 默认为1，显示进度提示
-                    success: function(res) {
-                        results.push(res.serverId); // 返回图片的服务器端ID
-                        _processWxImages(resIds, results, deferred);
-                    }
-                });
+                $timeout(function() {
+                    wxWrapper.uploadImage({
+                        localId: resId, // 需要上传的图片的本地ID，由chooseImage接口获得
+                        isShowProgressTips: 1, // 默认为1，显示进度提示
+                        success: function(res) {
+                            results.push(res.serverId); // 返回图片的服务器端ID
+                            _processWxImages(resIds, results, deferred);
+                        }
+                    });
+                }, 100);
             } else {
                 deferred.resolve(results);
             }
         } catch (e) {
             deferred.reject(e);
         }
+    }
+
+    /**
+     * https://github.com/arrking/wildfire/issues/228
+     * @param  {[type]} localIds [description]
+     * @return {[type]}          [description]
+     */
+    function _processImagesForAndroid(localIds) {
+        // can not upload multi-images at the same time.
+        var deferred = $q.defer();
+        _processWxImages(localIds, null, deferred);
+        deferred.promise.then(function(data) {
+                /**
+                 * data is the serverIds array
+                 * ServerIds can be used to download
+                 * images from wechat server to local
+                 * server, by default, the images are
+                 * expired in three days.
+                 * http://mp.weixin.qq.com/wiki/12/58bfcfabbd501c7cd77c19bd9cfa8354.html
+                 * @param  {[type]} err [description]
+                 * @return {[type]}     [description]
+                 */
+                return webq.uploadWechatImages(data)
+            }, function(err) {
+                Msg.alert(JSON.stringify(err));
+            })
+            .then(function(result) {
+                //Msg.alert('succ:' + JSON.stringify(result));
+                _.each(result, function(value, index) {
+                    // insert the image url into goods metadata
+                    $scope.params.goods_pics.push(value.imageUrl);
+                });
+            }, function(err) {
+                Msg.alert('fail:' + JSON.stringify(err));
+            });
+    }
+
+    function _processImagesForIOS(localIds) {
+        // can not upload multi-images at the same time.
+        var deferred = $q.defer();
+        _processWxImages(localIds, null, deferred);
+        deferred.promise.then(function(data) {
+                /**
+                 * data is the serverIds array
+                 * ServerIds can be used to download
+                 * images from wechat server to local
+                 * server, by default, the images are
+                 * expired in three days.
+                 * http://mp.weixin.qq.com/wiki/12/58bfcfabbd501c7cd77c19bd9cfa8354.html
+                 * @param  {[type]} err [description]
+                 * @return {[type]}     [description]
+                 */
+                return webq.uploadWechatImages(data)
+            }, function(err) {
+                Msg.alert(JSON.stringify(err));
+            })
+            .then(function(result) {
+                //Msg.alert('succ:' + JSON.stringify(result));
+                _.each(result, function(value, index) {
+                    // insert the image url into goods metadata
+                    $scope.params.goods_pics.push(value.imageUrl);
+                });
+            }, function(err) {
+                Msg.alert('fail:' + JSON.stringify(err));
+            });
     }
 
     $scope.uploadImage = function() {
@@ -749,36 +816,17 @@ angular.module('iwildfire.controllers', [])
         wxWrapper.chooseImage({
             success: function(res) {
                 var localIds = res.localIds; // 返回选定照片的本地ID列表，localId可以作为img标签的src属性显示图片
-                // can not upload multi-images at the same time.
-                var deferred = $q.defer();
-                alert($rootScope.WILDFIRE_WECHAT_PLATFORM + ":" + JSON.stringify(localIds));
-
-                _processWxImages(localIds, null, deferred);
-                deferred.promise.then(function(data) {
-                        /**
-                         * data is the serverIds array
-                         * ServerIds can be used to download
-                         * images from wechat server to local
-                         * server, by default, the images are
-                         * expired in three days.
-                         * http://mp.weixin.qq.com/wiki/12/58bfcfabbd501c7cd77c19bd9cfa8354.html
-                         * @param  {[type]} err [description]
-                         * @return {[type]}     [description]
-                         */
-                        return webq.uploadWechatImages(data)
-                    }, function(err) {
-                        Msg.alert(JSON.stringify(err));
-                    })
-                    .then(function(result) {
-                        //Msg.alert('succ:' + JSON.stringify(result));
-                        _.each(result, function(value, index) {
-                            // insert the image url into goods metadata
-                            $scope.params.goods_pics.push(value.imageUrl);
-                        });
-
-                    }, function(err) {
-                        Msg.alert('fail:' + JSON.stringify(err));
-                    });
+                switch ($rootScope.WILDFIRE_WECHAT_PLATFORM) {
+                    case 'Android':
+                        _processImagesForAndroid(localIds);
+                        break;
+                    case 'iOS':
+                        _processImagesForIOS(localIds);
+                        break;
+                    default:
+                        Msg.alert('目前仅支持iOS和Android设备！');
+                        break;
+                }
             }
         });
 

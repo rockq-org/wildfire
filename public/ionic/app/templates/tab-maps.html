@@ -1,6 +1,8 @@
 <ion-view hide-nav-bar="true">
     <ion-side-menus>
-        <ion-side-menu-content>
+        <!-- for a map, user may drag anywhere, so the menu should not slide out.-->
+        <!-- http://ionicframework.com/docs/api/directive/ionSideMenuContent/ -->
+        <ion-side-menu-content drag-content="false">
           <ion-header-bar class="bar bar-header bar-royal">
               <div class="buttons">
                   <button class="button button-icon ion-navicon" menu-toggle="left"> {{menuTitle}}</button>

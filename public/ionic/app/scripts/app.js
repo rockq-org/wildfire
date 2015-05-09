@@ -104,7 +104,7 @@ angular.module('iwildfire', ['ionic', 'iwildfire.controllers', 'iwildfire.servic
     $ionicConfigProvider.tabs.position('bottom');
     $ionicConfigProvider.navBar.alignTitle('center');
     $ionicConfigProvider.form.checkbox('square');
-    //$ionicConfigProvider.form.toggle('small')
+    $ionicConfigProvider.form.toggle('small')
     $ionicConfigProvider.backButton.previousTitleText('false');
 })
 

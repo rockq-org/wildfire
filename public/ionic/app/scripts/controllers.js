@@ -1394,7 +1394,7 @@ angular.module('iwildfire.controllers', [])
     });
 })
 
-.controller('BindMobilePhoneCtrl', function($scope, $state, $stateParams, Msg,
+.controller('BindMobilePhoneCtrl', function($scope, $state, $stateParams, Msg, $ionicModal,
     $ionicPopup, $ionicLoading, $timeout, $log, webq, store) {
     var phonenoPattern = /^\(?([0-9]{11})\)?$/;
     var accessToken = $stateParams.accessToken;
@@ -1468,6 +1468,26 @@ angular.module('iwildfire.controllers', [])
             _fixPhoneNumberInputPlaceholder('输入正确的手机号码');
         }
     }
+    $ionicModal.fromTemplateUrl('my-modal.html', {
+        scope: $scope,
+        animation: 'slide-in-up'
+    }).then(function(modal) {
+        $scope.modal = modal;
+    });
+    $scope.openModal = function($event) {
+        $event.preventDefault();
+        console.log('message');
+        webq.getUserServiceAgreements()
+            .then(function(data) {
+                $scope.data.service_agreements = data;
+            }, function(err) {
+                $scope.data.service_agreements = '服务器抽疯了，木有返回数据。';
+            });
+        $scope.modal.show();
+    };
+    $scope.closeModal = function() {
+        $scope.modal.hide();
+    };
 
     $scope.bindPhoneNumber = function() {
         if ($scope.data.verifyCode && $scope.data.verifyCode.length == 4) {

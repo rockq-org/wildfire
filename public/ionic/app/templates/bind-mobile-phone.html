@@ -25,15 +25,32 @@
           <input id="verifyCode" ng-model="data.verifyCode" type="text" placeholder="输入四位验证码">
         </label>
       </div>
-      <li class="item item-checkbox checkbox-royal" style="border:none">
-        <label class="checkbox">
+      <div class="item" style="border:none">
+        <label class="checkbox checkbox-royal">
           <input ng-model="agree" type="checkbox">
         </label>
-        接收用户协议
-      </li>
+        <a href="javascript:void(0)" style="position:absolute;top: 28px;color:#444" ng-click="openModal($event)">接收用户协议</a>
+      </div>
       <button ng-disabled="!agree" class="button button-block button-royal" ng-click="bindPhoneNumber()">
         确定
       </button>
     </div>
   </ion-content>
 </ion-view>
+<script id="my-modal.html" type="text/ng-template">
+  <ion-modal-view>
+    <ion-header-bar class="bar-royal">
+      <h1 class="title">用户协议</h1>
+      <button ng-click="closeModal()" class="button button-clear">关闭</button>
+    </ion-header-bar>
+    <ion-content>
+        <div class="card" ng-show="data.service_agreements==null">
+            <div class="item item-text-wrap">
+                加载中...
+            </div>
+        </div>
+        <div class="padding" ng-bind-html='data.service_agreements'>
+        </div>
+    </ion-content>
+  </ion-modal-view>
+</script>

@@ -190,10 +190,12 @@ input.user-add-text{
 .has-reply {
   bottom: 150px;
 }
-.location.title {
+.location.title {  
   font-size: 15px;
   margin: 0 auto;
-  padding: 0 auto;
+  padding: 0 120px;
+  left: inherit;
+  right: inherit;
 }
 .title-expand {
   position: absolute;

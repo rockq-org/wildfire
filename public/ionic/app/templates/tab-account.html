@@ -39,12 +39,13 @@ Orders fake tab
                             亲，还没有记录呢
                         </div>
                     </div>
-                    <ion-item ng-repeat="item in stuffs" class="item item-thumbnail-left" href="#/item/{{item._id}}">
+                    <ion-item on-swipe-left="swiped=true" on-swipe-right="swiped=false" ng-repeat="item in stuffs" class="item item-thumbnail-left" href="#/item/{{item._id}}">
                         <img src="{{item.goods_pics[0]}}" />
+                        <i ng-class="swiped?'ion-chevron-left':'ion-chevron-right'" class="icon icon-accessory"></i>
                         <h2>{{item.title}}</h2>
                         <p>¥ {{item.goods_now_price}}</p>
-                        <i class="icon ion-ios-chatbubble-outline" style="color:red">{{item.reply_count}}</i>
-                        <i class="icon ion-ios-heart-outline assertive">{{item.collect_count}}</i>
+                        <span><i class="ion-ios-chatbubble-outline" style="color:red">{{item.reply_count}}</i>
+                        <i class="ion-ios-heart-outline assertive">{{item.collect_count}}</i></span>
                         <!--i class="icon ion-chevron-right icon-accessory"></i-->
                         <!-- need a filter to process create_at  -->
                         <span>{{item.create_at | relativets}} </span>

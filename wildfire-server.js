@@ -263,18 +263,21 @@ revision.short(function(gitRevision) {
             if (user) {
                 res.locals.current_user = req.session.user = user;
             }
-            if (!user.phone_number) {
-                if (req.query && req.query.state !== '') {
-                    res.redirect(util.format('http://%s/#/bind-mobile-phone/%s/%s', config.client_host, user.accessToken, req.query.state));
-                } else {
-                    res.redirect(util.format('http://%s/#/bind-mobile-phone/%s/null-md5', config.client_host, user.accessToken));
-                }
-                // force user input phone number
-            } else if (req.query && req.query.state !== '') {
-                // pass user accesstoken into client
-                var redirectUrl = util.format('http://%s/#/bind-access-token/%s/%s', config.client_host, user.accessToken, req.query.state);
-                logger.debug('/auth/wechat/embedded/callback hashState', redirectUrl);
-                res.redirect(redirectUrl);
+
+            if (req.query && req.query.state !== '') {
+                HashStateProxy.getHashStateByMD5(req.query.state)
+                    .then(function(doc) {
+                        if (doc.value === 'post' && !user.phone_number) {
+                            res.redirect(util.format('http://%s/#/bind-mobile-phone/%s/%s', config.client_host, user.accessToken, req.query.state));
+                        } else {
+                            // pass user accesstoken into client
+                            var redirectUrl = util.format('http://%s/#/bind-access-token/%s/%s', config.client_host, user.accessToken, req.query.state);
+                            logger.debug('/auth/wechat/embedded/callback hashState', redirectUrl);
+                            res.redirect(redirectUrl);
+                        }
+                    }, function() {
+                        res.redirect(util.format('http://%s/#/bind-mobile-phone/%s/null-md5', config.client_host, user.accessToken));
+                    });
             } else {
                 var redirectUrl = util.format('http://%s/#/bind-access-token/%s/null-md5', config.client_host, user.accessToken);
                 logger.debug('/auth/wechat/embedded/callback redirectUrl', redirectUrl);

@@ -25,8 +25,8 @@
           <input id="verifyCode" ng-model="data.verifyCode" type="text" placeholder="输入四位验证码">
         </label>
       </div>
-      <div class="item" style="border:none">
-        <a href="javascript:void(0)" style="position:absolute;top: 28px;color:#444" ng-click="openModal($event)">点击「确定」按钮，代表你已阅读并同意《软件许可及服务协议》</a>
+      <div class="item" style="border:none;" ng-click="openModal($event)">
+        点击「确定」按钮，代表你已阅读并同意 <span style="border-bottom:1px solid #000;">《软件许可及服务协议》</span>
       </div>
       <button class="button button-block button-royal" ng-click="bindPhoneNumber()">
         确定
@@ -34,7 +34,7 @@
     </div>
   </ion-content>
 </ion-view>
-<script id="my-modal.html" type="text/ng-template">
+<script id="modal-service-agreements.html" type="text/ng-template">
   <ion-modal-view>
     <ion-header-bar class="bar-royal">
       <h1 class="title">用户协议</h1>

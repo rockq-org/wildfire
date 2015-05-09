@@ -499,13 +499,13 @@ angular.module('iwildfire.controllers', [])
         function isPriceValidate(replyPrice, sellPrice) {
             var reg = /(^[-+]?[1-9]\d*(\.\d{1,2})?$)|(^[-+]?[0]{1}(\.\d{1,2})?$)/;
             var isValidate = reg.test(replyPrice);
-            if( !isValidate ) {
+            if (!isValidate) {
                 console.log('503');
                 return false;
             }
             replyPrice = parseFloat(replyPrice);
             sellPrice = parseFloat(sellPrice);
-            if(replyPrice < 0 || replyPrice > sellPrice) {
+            if (replyPrice < 0 || replyPrice > sellPrice) {
                 console.log('509');
                 return false;
             }
@@ -517,8 +517,8 @@ angular.module('iwildfire.controllers', [])
         $scope.saveReply = function() {
             $log.debug('new reply data:', JSON.stringify($scope.replyData));
 
-            if($scope.status.action == 'bid') {
-                if(!isPriceValidate($scope.replyData.price, $scope.topic.goods_now_price)) {
+            if ($scope.status.action == 'bid') {
+                if (!isPriceValidate($scope.replyData.price, $scope.topic.goods_now_price)) {
                     console.log('error');
                     Msg('价格填写有误，必须比售价低！');
                     return;
@@ -542,11 +542,11 @@ angular.module('iwildfire.controllers', [])
                     $ionicScrollDelegate.scrollBottom();
                 });
 
-                $scope.status.action= 'normal';
+                $scope.status.action = 'normal';
                 $scope.showReply = false;
             }, function() {
                 $rootScope.requestErrorHandler()
-            }).finally(function(){
+            }).finally(function() {
                 Msg('hide');
             });
         };
@@ -579,8 +579,8 @@ angular.module('iwildfire.controllers', [])
         };
 
         $scope.showSlidePreview = function(pic) {
-            console.log( pic, $scope.topic.goods_pics );
-            webq.showSlidePreview( pic, $scope.topic.goods_pics);
+            console.log(pic, $scope.topic.goods_pics);
+            webq.showSlidePreview(pic, $scope.topic.goods_pics);
         }
 
         // for complian topic
@@ -1468,7 +1468,7 @@ angular.module('iwildfire.controllers', [])
             _fixPhoneNumberInputPlaceholder('输入正确的手机号码');
         }
     }
-    $ionicModal.fromTemplateUrl('my-modal.html', {
+    $ionicModal.fromTemplateUrl('modal-service-agreements.html', {
         scope: $scope,
         animation: 'slide-in-up'
     }).then(function(modal) {

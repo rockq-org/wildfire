@@ -335,6 +335,7 @@ angular.module('iwildfire.controllers', [])
     Topics,
     Topic,
     Msg,
+    webq,
     store,
     cfg,
     User
@@ -547,6 +548,11 @@ angular.module('iwildfire.controllers', [])
                 });
             }
         };
+
+        $scope.showSlidePreview = function(pic) {
+            console.log( pic, $scope.topic.goods_pics );
+            webq.showSlidePreview( pic, $scope.topic.goods_pics);
+        }
 
         // for complian topic
         $scope.complainTopic = function(topic) {

@@ -73,7 +73,7 @@
             {{reply.author.name}}
           </span>
           <span class="assertive">
-            出价 {{reply.price}} ￥
+            出价 ￥ {{reply.price}}
           </span>
           <span class="item-note" am-time-ago="reply.create_at">
           </span>
@@ -132,7 +132,7 @@
         <button class="button button-small button-clear button-dark float-left" ng-click="status.action='normal'">
           取消
         </button>
-        <button class="button button-small button-clear button-royal float-right" ng-click="status.action='normal';saveReply()">
+        <button class="button button-small button-clear button-royal float-right" ng-click="saveReply()">
           发送
         </button>
       </div>

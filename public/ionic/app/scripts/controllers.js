@@ -496,18 +496,44 @@ angular.module('iwildfire.controllers', [])
             console.log(replyAuthor);
         }
 
+        function isPriceValidate(replyPrice, sellPrice) {
+            var reg = /(^[-+]?[1-9]\d*(\.\d{1,2})?$)|(^[-+]?[0]{1}(\.\d{1,2})?$)/;
+            var isValidate = reg.test(replyPrice);
+            if( !isValidate ) {
+                console.log('503');
+                return false;
+            }
+            replyPrice = parseFloat(replyPrice);
+            sellPrice = parseFloat(sellPrice);
+            if(replyPrice < 0 || replyPrice > sellPrice) {
+                console.log('509');
+                return false;
+            }
+            console.log('512');
+            return true;
+        }
+
         // save reply
         $scope.saveReply = function() {
             $log.debug('new reply data:', JSON.stringify($scope.replyData));
-            if ($scope.replyData.content == '') return $scope.showReply = false;
-            $ionicLoading.show();
+
+            if($scope.status.action == 'bid') {
+                if(!isPriceValidate($scope.replyData.price, $scope.topic.goods_now_price)) {
+                    console.log('error');
+                    Msg('价格填写有误，必须比售价低！');
+                    return;
+                }
+            }
+            if ($scope.replyData.content == '') {
+                return $scope.showReply = false;
+            }
+
+            Msg.show('提交中，请稍候...');
             if ($scope.replyData.replyTo) {
                 $scope.replyData.reply_to = $scope.replyData.replyTo.name;
                 $scope.replyData.content = '@' + $scope.replyData.replyTo.loginname + ' ' + $scope.replyData.content;
             }
-            console.log($scope.replyData);
             Topic.saveReply(id, $scope.replyData).$promise.then(function(response) {
-                $ionicLoading.hide();
                 $scope.replyData = {
                     content: ''
                 };
@@ -515,10 +541,13 @@ angular.module('iwildfire.controllers', [])
                 $scope.loadTopic(true).then(function() {
                     $ionicScrollDelegate.scrollBottom();
                 });
+
+                $scope.status.action= 'normal';
                 $scope.showReply = false;
             }, function() {
-                $ionicLoading.hide();
                 $rootScope.requestErrorHandler()
+            }).finally(function(){
+                Msg('hide');
             });
         };
 

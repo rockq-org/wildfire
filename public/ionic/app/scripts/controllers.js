@@ -8,6 +8,7 @@ angular.module('iwildfire.controllers', [])
     $timeout,
     $state,
     $location,
+    LocationManager,
     $rootScope,
     $log,
     Msg,
@@ -22,10 +23,10 @@ angular.module('iwildfire.controllers', [])
     $scope.img_prefix = cfg.server;
 
     $scope.currentTab = Topics.currentTab();
-    $scope.loadingMsg = '正在获取您的位置...';
+    // $scope.loadingMsg = '正在获取您的位置...';
 
     //cheat solution
-    function loadDataAfterGetLocation() {
+    // function loadDataAfterGetLocation() {
         $scope.loadingMsg = '正在搜索您附近得二手信息...';
         // check if tab is changed
         if ($stateParams.tab !== Topics.currentTab()) {
@@ -35,11 +36,11 @@ angular.module('iwildfire.controllers', [])
             Topics.resetData();
         }
 
-        $scope.topics = Topics.getTopics();
+        // $scope.topics = Topics.getTopics();
 
         // pagination
-        $scope.hasNextPage = Topics.hasNextPage();
-        $scope.loadError = false;
+        // $scope.hasNextPage = Topics.hasNextPage();
+        // $scope.loadError = false;
         // $log.debug('page load, has next page ? ', $scope.hasNextPage);
         $scope.doRefresh = function() {
             Topics.currentTab($stateParams.tab);
@@ -47,7 +48,7 @@ angular.module('iwildfire.controllers', [])
             Topics.refresh().$promise.then(function(response) {
                 $log.debug('do refresh complete');
                 $scope.topics = response.data;
-                console.log(JSON.stringify(response.data));
+                // console.log(JSON.stringify(response.data));
                 $scope.hasNextPage = true;
                 $scope.loadError = false;
                 if ($scope.topics.length == 0)
@@ -95,7 +96,7 @@ angular.module('iwildfire.controllers', [])
             $scope.currentTab = Topics.currentTab($stateParams.tab);
             $scope.doRefresh();
         }
-    }
+    // }
 
     /***********************************
      * Search
@@ -120,37 +121,27 @@ angular.module('iwildfire.controllers', [])
         // $scope.tabTitle = query || $scope.address;
     }
     $scope.showAddress = function() {
+        var location = LocationManager.getLocation();
         var popup = $ionicPopup.alert({
             title: '当前位置',
-            template: '<h4 class="text-center">' + $scope.tabTitle + '</h4>'
-        })
-    }
-
-    $scope.collectTopic = function(topic) {
-        topic.collect_count--;
-    }
-
-
-    webq.getLocationDetail()
-        .then(function(locationDetail) {
-            if ($rootScope.locationDetail) {
-                locationDetail = $rootScope.locationDetail;
-            }
-            if (typeof(locationDetail) != 'undefined') {
-                console.log('setup the locationDetail in indexCtrl after deferred', JSON.stringify(locationDetail));
-                $scope.address = locationDetail.user_edit_address;
-                $scope.tabTitle = locationDetail.user_edit_address;
-                Topics.setGeom(locationDetail);
-                loadDataAfterGetLocation();
-            } else {
-                // load pages from local browser for debugging
-                loadDataAfterGetLocation();
-            };
-        })
-        .catch(function(err) {
-            console.error('Get an error when running webq.getLocationDetail(wxWrapper)');
-            console.error(err);
+            template: '<h4 class="text-center">' + location.api_address + '</h4>'
         });
+    }
+
+    function loadData(){
+        var location = LocationManager.getLocation();
+        $scope.address = location.user_edit_address;
+        $scope.tabTitle = location.user_edit_address;
+        Topics.setGeom(location);
+        $scope.hasNextPage = Topics.hasNextPage();
+        $scope.loadError = false;
+        $scope.topics = Topics.getTopics();
+
+        $scope.doRefresh();
+        // loadDataAfterGetLocation();
+    }
+    $rootScope.$on('location.updated', loadData);
+    LocationManager.getLocationFromAPI();
 })
 
 
@@ -162,11 +153,11 @@ angular.module('iwildfire.controllers', [])
     $ionicModal,
     $ionicPopup,
     $timeout,
+    LocationManager,
     $state,
     Msg,
     webq,
     store,
-    locationDetail,
     $rootScope,
     $location,
     $log,
@@ -174,14 +165,6 @@ angular.module('iwildfire.controllers', [])
     Tabs,
     cfg
 ) {
-    // locationDetail = {
-    //     api_address: '仙游',
-    //     user_edit_address: '仙游',
-    //     lat: 25.3518140000000010,
-    //     lng: 118.7042859999999962
-    // };
-    $scope.locationDetail = locationDetail;
-    // $scope.locationDetail = {};
     $scope.state = $state;
 
     $scope.sideMenus = Tabs.getList();
@@ -224,22 +207,24 @@ angular.module('iwildfire.controllers', [])
         $log.debug('searchText', query);
         // $scope.tabTitle = query || '首页';
     }
-    $scope.showAddress = function() {
+
+    $scope.showFullAddress = function() {
+        var location = LocationManager.getLocation();
         var popup = $ionicPopup.alert({
             title: '当前位置',
-            template: $scope.tabTitle
+            template: '<h4 class="text-center">' + location.api_address + '</h4>'
         });
     }
 
-    function loadDataAfterGetLocation() {
-        $scope.loadingMsg = '正在搜索您附近得二手信息...';
-        if ($stateParams.tab !== Topics.currentTab()) {
-            $scope.currentTab = Topics.currentTab($stateParams.tab);
-            Topics.resetData();
-        }
+    // function loadDataAfterGetLocation() {
+    //     $scope.loadingMsg = '正在搜索您附近得二手信息...';
+    //     if ($stateParams.tab !== Topics.currentTab()) {
+    //         $scope.currentTab = Topics.currentTab($stateParams.tab);
+    //         Topics.resetData();
+    //     }
 
-        $scope.topics = Topics.getTopics();
-        $scope.loadError = false;
+    //     $scope.topics = Topics.getTopics();
+    //     $scope.loadError = false;
         $scope.doRefresh = function() {
             Topics.currentTab($stateParams.tab);
             $log.debug('do refresh');
@@ -281,44 +266,24 @@ angular.module('iwildfire.controllers', [])
                 $scope.$broadcast('scroll.infiniteScrollComplete');
             });
         };
+    // }
+
+    if ($stateParams.tab !== Topics.currentTab()) {
+        $scope.currentTab = Topics.currentTab($stateParams.tab);
+        Topics.resetData();
     }
 
-    // webq.getLocationDetail().then(function(locationDetail){
-    console.log('get location from resolve now!', JSON.stringify($scope.locationDetail));
-    $scope.map = {
-        center: {
-            lat: locationDetail.lat,
-            lng: locationDetail.lng
-        },
-        zoom: 13
-    };
-    $scope.address = locationDetail.user_edit_address;
-    $scope.tabTitle = locationDetail.user_edit_address;
-    Topics.setGeom(locationDetail);
-    $scope.locationDetail = locationDetail;
-    loadDataAfterGetLocation();
-    $scope.doRefresh();
-    // });
+    $rootScope.$on('location.updated', function(){
+        var locationDetail = LocationManager.getLocation();
+        $scope.address = locationDetail.user_edit_address;
 
+        $scope.topics = Topics.getTopics();
+        $scope.loadError = false;
 
-
-    $scope.$watchCollection('locationDetail', function(newValue, oldValue) {
-        $rootScope.locationDetail = newValue;
-        console.log('rootScope locationDetail', JSON.stringify(newValue));
-        $scope.address = $scope.locationDetail.user_edit_address;
-        $scope.tabTitle = $scope.locationDetail.user_edit_address;
-        Topics.setGeom($scope.locationDetail);
-        loadDataAfterGetLocation();
+        Topics.setGeom(locationDetail);
+        // loadDataAfterGetLocation();
         $scope.doRefresh();
     });
-
-    $scope.showFullAddress = function() {
-        console.log($scope.locationDetail.api_address);
-        var alertPopup = $ionicPopup.alert({
-            title: '',
-            template: $scope.locationDetail.api_address
-        });
-    }
 })
 
 .controller('ItemCtrl', function(
@@ -329,6 +294,7 @@ angular.module('iwildfire.controllers', [])
     $ionicLoading,
     $ionicPopup,
     $ionicActionSheet,
+    LocationManager,
     $ionicScrollDelegate,
     $ionicSlideBoxDelegate,
     $log,
@@ -400,7 +366,15 @@ angular.module('iwildfire.controllers', [])
             action: 'normal',
             showBargains: false
         }
-        $scope.currentLocation = store.getLocationDetail();
+
+        var location = LocationManager.getLocation();
+        if(location.lat) {
+            $scope.currentLocation = location;
+        } else {
+            LocationManager.getLocationFromAPI().then(function(location){
+                $scope.currentLocation = location;
+            });
+        }
 
         // before enter view event
         $scope.$on('$ionicView.beforeEnter', function() {
@@ -579,7 +553,6 @@ angular.module('iwildfire.controllers', [])
         };
 
         $scope.showSlidePreview = function(pic) {
-            console.log(pic, $scope.topic.goods_pics);
             webq.showSlidePreview(pic, $scope.topic.goods_pics);
         }
 
@@ -612,7 +585,7 @@ angular.module('iwildfire.controllers', [])
                 if (description) {
                     $scope.showLoading('提交中，请稍候！');
                     Topic.complainTopic(topic.id, description).$promise.then(function(response) {
-                        console.log(JSON.stringify(response));
+                        // console.log(JSON.stringify(response));
                         $scope.hideLoading();
                     });
                 }
@@ -639,6 +612,7 @@ angular.module('iwildfire.controllers', [])
     $ionicModal,
     $ionicPopup,
     $ionicLoading,
+    LocationManager,
     $timeout,
     $log,
     $q,
@@ -1030,38 +1004,40 @@ angular.module('iwildfire.controllers', [])
      * Store the exchange location information
      * @type {Object}
      */
-    webq.getLocationDetail(wxWrapper)
-        .then(function(data) {
-            $log.debug('webq.getLocationDetail locationDetail ', JSON.stringify(data));
-            $scope.locationDetail = data;
-            $scope.params.goods_exchange_location = data;
-            $scope.showEdit = false;
-            // Create the modal that we will use later
-            $ionicModal.fromTemplateUrl('templates/modal-change-location.html', {
-                scope: $scope
-            }).then(function(modal) {
-                $scope.changeLocationModal = modal;
-                // modal.show();
-            });
-
-            $scope.closeChangeLocationModal = function(isSubmit) {
-                if (isSubmit) {
-                    $timeout(function() {
-                        $scope.params.goods_exchange_location.api_address = $scope.locationDetail.api_address;
-                        $scope.params.goods_exchange_location.user_edit_address = $scope.locationDetail.user_edit_address;
-                        $scope.params.goods_exchange_location.lat = $scope.locationDetail.lat;
-                        $scope.params.goods_exchange_location.lng = $scope.locationDetail.lng;
-                        console.log('lyman 498', JSON.stringify($scope.locationDetail));
-                        console.log('lyman 499', JSON.stringify($scope.params.goods_exchange_location));
-                    });
-                }
-                $scope.changeLocationModal.hide();
-            }
-        })
-        .catch(function(err) {
-            console.error('Get an error when running webq.getLocationDetail(wxWrapper)');
-            console.error(err);
+    LocationManager.getLocationFromAPI().then(function(data){
+        $scope.locationDetail = data;
+        $scope.params.goods_exchange_location = data;
+        $scope.showEdit = false;
+        // Create the modal that we will use later
+        $ionicModal.fromTemplateUrl('templates/modal-change-location.html', {
+            scope: $scope
+        }).then(function(modal) {
+            $scope.changeLocationModal = modal;
+            // modal.show();
         });
+
+        $scope.closeChangeLocationModal = function(isSubmit) {
+            if (isSubmit) {
+                $timeout(function() {
+                    $scope.params.goods_exchange_location.api_address = $scope.locationDetail.api_address;
+                    $scope.params.goods_exchange_location.user_edit_address = $scope.locationDetail.user_edit_address;
+                    $scope.params.goods_exchange_location.lat = $scope.locationDetail.lat;
+                    $scope.params.goods_exchange_location.lng = $scope.locationDetail.lng;
+                    console.log('lyman 498', JSON.stringify($scope.locationDetail));
+                    console.log('lyman 499', JSON.stringify($scope.params.goods_exchange_location));
+                });
+            }
+            $scope.changeLocationModal.hide();
+        }
+    });
+    // webq.getLocationDetail(wxWrapper)
+    //     .then(function(data) {
+
+    //     })
+    //     .catch(function(err) {
+    //         console.error('Get an error when running webq.getLocationDetail(wxWrapper)');
+    //         console.error(err);
+    //     });
     /*******************************************
      * End Modal View to input detail of exchange location
      *******************************************/

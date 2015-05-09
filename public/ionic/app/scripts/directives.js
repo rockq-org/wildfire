@@ -1,6 +1,6 @@
 angular.module('iwildfire.directives', [])
 
-.directive('qqMap', function(cfg, $timeout, $ionicPopup) {
+.directive('qqMap', function(cfg, $timeout, $ionicPopup, LocationManager) {
     var host = location.href.split('#')[0].split('?')[0];
     var markers = [];
     var center;
@@ -95,25 +95,35 @@ angular.module('iwildfire.directives', [])
     };
 
     function link(scope, element, attrs){
-        console.log(scope);
+        var location = LocationManager.getLocation();
+        if(location.lat) {
+            init_map(scope, element, attrs, location);
+            return;
+        }
+
+        LocationManager.getLocationFromAPI().then(function(location){
+            init_map(scope, element, attrs, location);
+        });
+    }
+
+    function init_map(scope, element, attrs, location){
         var $wrap = element.parent().parent();
         var $element = angular.element( element );
         var container = $element.get(0);
         var width = $wrap.width();
-        var height = $wrap.height() - 44 - 49;
-        center = new qq.maps.LatLng(scope.center.lat, scope.center.lng);
+        // var height = $wrap.height() - 44 - 49;
+        var height = $wrap.height();
+        center = new qq.maps.LatLng(location.lat, location.lng);
 
         $element.width( width );
         $element.height( height );
 
         map = new qq.maps.Map( container, {
             center: center,
-            zoom: scope.zoom,
+            zoom: 13,
             zoomControl: true,
             mapTypeControl: false
         });
-
-        // infoWin = new qq.maps.InfoWindow({ map: map });
 
         var circle = new qq.maps.Circle({
             map: map,
@@ -135,16 +145,20 @@ angular.module('iwildfire.directives', [])
                     if(!address) {
                         address =  c.town + c.village;
                     }
-                    scope.locationDetail.api_address = full_address;
-                    scope.locationDetail.user_edit_address = address;
-                    scope.locationDetail.lat = result.detail.location.lat;
-                    scope.locationDetail.lng = result.detail.location.lng;
-                    var newCenter = new qq.maps.LatLng(scope.locationDetail.lat, scope.locationDetail.lng);
-                    console.log('change location');
+
+                    var location = {};
+                    location.api_address = full_address;
+                    location.user_edit_address = address;
+                    location.lat = result.detail.location.lat;
+                    location.lng = result.detail.location.lng;
+                    LocationManager.setLocation(location);
+
+                    var newCenter = new qq.maps.LatLng(location.lat, location.lng);
                     circle.setCenter( newCenter );
                 })
             }
         });
+        center_changed();
 
         // add reset control
         var style = {
@@ -165,17 +179,14 @@ angular.module('iwildfire.directives', [])
 
     return {
         scope: {
-            center: "=",
-            zoom: "=",
             state: '=',
-            locationDetail: "=",
             topics: "=*"
         },
         link: link
     };
 })
 
-.directive('chooseLocation', function($timeout, $document, webq) {
+.directive('chooseLocation', function($timeout, $document, webq, LocationManager) {
     var init = function(element, attrs, scope, locationDetail, width, height) {
         //初始化地图
         console.log(scope.locationDetail.lat);
@@ -254,7 +265,7 @@ angular.module('iwildfire.directives', [])
     }
 
     return function(scope, element, attrs) {
-        webq.getLocationDetail().then(function(locationDetail){
+        LocationManager.getLocationFromAPI().then(function(locationDetail){
             $timeout(function(){
                 var width = $document.width();
                 var height = $document.height() - 44;

@@ -3,18 +3,19 @@
         <!-- for a map, user may drag anywhere, so the menu should not slide out.-->
         <!-- http://ionicframework.com/docs/api/directive/ionSideMenuContent/ -->
         <ion-side-menu-content drag-content="false">
-          <ion-header-bar class="bar bar-header bar-royal">
+          <div class="bar bar-header bar-royal">
               <div class="buttons">
                   <button class="button button-icon ion-navicon" menu-toggle="left"> {{menuTitle}}</button>
               </div>
-              <h1 class="location title" ng-click="showFullAddress()">{{tabTitle}}</h1>
+              <h1 class="location title" ng-click="showFullAddress()">{{address}}</h1>
               <i class="title-expand icon ion-chevron-down icon-accessory"></i>
               <input class="searchbox" ng-class="showSearch?'expanded':''" ng-model="query" type="text" placeholder="">
+              <a ng-show="showSearch" class="button button-icon icon ion-ios-close-empty pull-right" style="right:50px;color:#888;" ng-click="query=''"></a>
               <a class="button button-icon icon ion-ios-search pull-right" ng-click="doSearch(query)"></a>
-          </ion-header-bar>
+          </div>
           <ion-nav-view name="menuContent">
               <ion-content>
-                <div qq-map center="map.center" zoom="map.zoom" topics="topics" location-detail="locationDetail" state="state"></div>
+                <div qq-map topics="topics" state="state"></div>
               </ion-content>
           </ion-nav-view>
         </ion-side-menu-content>

@@ -141,7 +141,7 @@ angular.module('iwildfire.controllers', [])
         Topics.setGeom(location);
         $scope.doRefresh();
     }
-    
+
     $rootScope.$on('location.updated', loadData);
     // LocationManager.getLocationFromAPI().then(function() {
     //     // $scope.topics = Topics.getTopics();
@@ -647,7 +647,8 @@ angular.module('iwildfire.controllers', [])
                 // do nothing
             } else {
                 $ionicLoading.show({
-                    template: '发布信息需要绑定手机号码 ...'
+                    template: '发布信息需要绑定手机号码 ...',
+                    duration: '3000'
                 });
                 $timeout(function() {
                     // 用户未绑定手机号

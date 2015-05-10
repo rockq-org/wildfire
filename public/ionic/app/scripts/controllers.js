@@ -149,6 +149,15 @@ angular.module('iwildfire.controllers', [])
     //     // $scope.loadError = false;
     //     loadData();
     // });
+    // 
+
+    // try to fix error when navigating to index page from profile, inbox or detail page
+    // when controller can not receive location change event.
+    $timeout(function() {
+        if (typeof(LocationManager.getLocation().api_address) === 'undefined') {
+            LocationManager.getLocationFromAPI();
+        }
+    }, 5000);
 })
 
 

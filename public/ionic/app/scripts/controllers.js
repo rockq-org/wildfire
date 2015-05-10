@@ -143,12 +143,12 @@ angular.module('iwildfire.controllers', [])
     }
     
     $rootScope.$on('location.updated', loadData);
-    LocationManager.getLocationFromAPI().then(function() {
-        // $scope.topics = Topics.getTopics();
-        // $scope.hasNextPage = Topics.hasNextPage();
-        // $scope.loadError = false;
-        loadData();
-    });
+    // LocationManager.getLocationFromAPI().then(function() {
+    //     // $scope.topics = Topics.getTopics();
+    //     // $scope.hasNextPage = Topics.hasNextPage();
+    //     // $scope.loadError = false;
+    //     loadData();
+    // });
 })
 
 

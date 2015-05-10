@@ -653,7 +653,8 @@ angular.module('iwildfire.controllers', [])
                 $timeout(function() {
                     // 用户未绑定手机号
                     $state.go('bind-mobile-phone', {
-                        accessToken: store.getAccessToken()
+                        accessToken: store.getAccessToken(),
+                        md5: 'null-md5'
                     });
                 }, 2000);
             }

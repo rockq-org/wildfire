@@ -45,6 +45,7 @@ angular.module('iwildfire.controllers', [])
         $scope.doRefresh = function() {
             Topics.currentTab($stateParams.tab);
             $log.debug('do refresh');
+            Msg.show('加载中，请稍候...');
             Topics.refresh().$promise.then(function(response) {
                 $log.debug('do refresh complete');
                 $scope.topics = response.data;
@@ -62,25 +63,27 @@ angular.module('iwildfire.controllers', [])
                 $scope.loadError = true;
             })).finally(function() {
                 $scope.$broadcast('scroll.refreshComplete');
+                Msg('hide');
             });
         };
         $scope.loadMore = function() {
             $log.debug('load more');
             Topics.pagination().$promise.then(function(response) {
-                $log.debug('load more complete');
+                console.log(response.data);
                 $scope.hasNextPage = false;
                 $scope.loadError = false;
                 $timeout(function() {
                     $scope.hasNextPage = Topics.hasNextPage();
-                    $log.debug('has next page ? ', $scope.hasNextPage);
+                    console.log('hasNextPage', $scope.hasNextPage);
                     if ($scope.hasNextPage == false)
                         $scope.loadingMsg = '附近没有其它的二手交易信息^_^，看看别的地方吧!';
-
+                    if(!$scope.topics){
+                        $scope.topics = [];
+                    }
+                    $scope.topics = $scope.topics.concat(response.data);
+                    $scope.$digest();
                 }, 100);
-                if(!$scope.topics){
-                    $scope.topics = [];
-                }
-                $scope.topics = $scope.topics.concat(response.data);
+
             }, $rootScope.requestErrorHandler({
                 noBackdrop: true
             }, function() {
@@ -133,20 +136,20 @@ angular.module('iwildfire.controllers', [])
     }
 
     function loadData(){
+        console.log('loadData trigger');
         var location = LocationManager.getLocation();
         $scope.address = location.user_edit_address;
         $scope.tabTitle = location.user_edit_address;
         Topics.setGeom(location);
-
-        $scope.hasNextPage = Topics.hasNextPage();
-        $scope.loadError = false;
-
         $scope.doRefresh();
-        $scope.topics = Topics.getTopics();
-        // loadDataAfterGetLocation();
     }
     $rootScope.$on('location.updated', loadData);
-    LocationManager.getLocationFromAPI();
+    LocationManager.getLocationFromAPI().then(function(){
+        // $scope.topics = Topics.getTopics();
+        // $scope.hasNextPage = Topics.hasNextPage();
+        // $scope.loadError = false;
+        loadData();
+    });
 })
 
 

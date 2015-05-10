@@ -132,6 +132,7 @@ angular.module('iwildfire', ['ionic', 'iwildfire.controllers', 'iwildfire.servic
 
     // Each tab has its own nav history stack:
     .state('tab.index', {
+        cache: false,
         url: '/index/:tab',
         views: {
             'tab-index': {
@@ -143,6 +144,7 @@ angular.module('iwildfire', ['ionic', 'iwildfire.controllers', 'iwildfire.servic
 
     .state('tab.maps', {
         url: '/maps/:tab',
+        cache: false,
         views: {
             'tab-maps': {
                 templateUrl: 'templates/tab-maps.html',
@@ -153,6 +155,7 @@ angular.module('iwildfire', ['ionic', 'iwildfire.controllers', 'iwildfire.servic
 
     .state('item', {
         url: '/item/:itemId',
+        cache: false,
         templateUrl: 'templates/item.html',
         controller: 'ItemCtrl'
     })

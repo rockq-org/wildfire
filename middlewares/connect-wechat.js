@@ -152,7 +152,7 @@ function onDefault(msg, res) {
     // body...
     logger.warn('onDefault', msg);
     res.reply({
-        content: 'We have no help desk，您闲的蛋疼吗？',
+        content: '您有任何问题请留言，我们将会尽快回复，感谢您的支持。',
         type: 'text'
     });
 }

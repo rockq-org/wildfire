@@ -45,7 +45,6 @@ angular.module('iwildfire.controllers', [])
         $scope.doRefresh = function() {
             Topics.currentTab($stateParams.tab);
             $log.debug('do refresh');
-            Msg.show('加载中，请稍候...');
             Topics.refresh().$promise.then(function(response) {
                 $log.debug('do refresh complete');
                 $scope.topics = response.data;
@@ -63,7 +62,6 @@ angular.module('iwildfire.controllers', [])
                 $scope.loadError = true;
             })).finally(function() {
                 $scope.$broadcast('scroll.refreshComplete');
-                Msg('hide');
             });
         };
         $scope.loadMore = function() {

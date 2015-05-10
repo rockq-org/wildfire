@@ -133,26 +133,22 @@ angular.module('iwildfire.controllers', [])
         });
     }
 
-    function loadData(callback) {
+    function loadData() {
         console.log('loadData trigger');
         var location = LocationManager.getLocation();
         $scope.address = location.user_edit_address;
         $scope.tabTitle = location.user_edit_address;
         Topics.setGeom(location);
         $scope.doRefresh();
-        callback();
     }
+    
+    $rootScope.$on('location.updated', loadData);
     LocationManager.getLocationFromAPI().then(function() {
         // $scope.topics = Topics.getTopics();
         // $scope.hasNextPage = Topics.hasNextPage();
         // $scope.loadError = false;
-        loadData(function() {
-            $timeout(function() {
-                $rootScope.$on('location.updated', loadData);
-            }, 500);
-        });
+        loadData();
     });
-
 })
 
 

@@ -27,71 +27,71 @@ angular.module('iwildfire.controllers', [])
 
     //cheat solution
     // function loadDataAfterGetLocation() {
-        $scope.loadingMsg = '正在搜索您附近得二手信息...';
-        // check if tab is changed
-        if ($stateParams.tab !== Topics.currentTab()) {
-            $scope.currentTab = Topics.currentTab($stateParams.tab);
-            // reset data if tab is changed
-            console.log('reset Data');
-            Topics.resetData();
-        }
+    $scope.loadingMsg = '正在搜索您附近得二手信息...';
+    // check if tab is changed
+    if ($stateParams.tab !== Topics.currentTab()) {
+        $scope.currentTab = Topics.currentTab($stateParams.tab);
+        // reset data if tab is changed
+        console.log('reset Data');
+        Topics.resetData();
+    }
 
-        // $scope.topics = Topics.getTopics();
+    // $scope.topics = Topics.getTopics();
 
-        // pagination
-        // $scope.hasNextPage = Topics.hasNextPage();
-        // $scope.loadError = false;
-        // $log.debug('page load, has next page ? ', $scope.hasNextPage);
-        $scope.doRefresh = function() {
-            Topics.currentTab($stateParams.tab);
-            $log.debug('do refresh');
-            Topics.refresh().$promise.then(function(response) {
-                $log.debug('do refresh complete');
-                $scope.topics = response.data;
-                console.log(response.data.length);
-                // console.log(JSON.stringify(response.data));
-                $scope.hasNextPage = true;
-                $scope.loadError = false;
-                if ($scope.topics.length == 0)
-                    $scope.loadingMsg = '找不到符合你要求的二手交易信息^_^';
-                else
-                    $scope.loadingMsg = '下拉加载更多';
-            }, $rootScope.requestErrorHandler({
-                noBackdrop: true
-            }, function() {
-                $scope.loadError = true;
-            })).finally(function() {
-                $scope.$broadcast('scroll.refreshComplete');
-            });
-        };
-        $scope.loadMore = function() {
-            $log.debug('load more');
-            Topics.pagination().$promise.then(function(response) {
-                console.log(response.data);
-                $scope.hasNextPage = false;
-                $scope.loadError = false;
-                $timeout(function() {
-                    $scope.hasNextPage = Topics.hasNextPage();
-                    console.log('hasNextPage', $scope.hasNextPage);
-                    if ($scope.hasNextPage == false)
-                        $scope.loadingMsg = '附近没有其它的二手交易信息^_^，看看别的地方吧!';
-                    if(!$scope.topics){
-                        $scope.topics = [];
-                    }
-                    $scope.topics = $scope.topics.concat(response.data);
-                    $scope.$digest();
-                }, 100);
+    // pagination
+    // $scope.hasNextPage = Topics.hasNextPage();
+    // $scope.loadError = false;
+    // $log.debug('page load, has next page ? ', $scope.hasNextPage);
+    $scope.doRefresh = function() {
+        Topics.currentTab($stateParams.tab);
+        $log.debug('do refresh');
+        Topics.refresh().$promise.then(function(response) {
+            $log.debug('do refresh complete');
+            $scope.topics = response.data;
+            console.log(response.data.length);
+            // console.log(JSON.stringify(response.data));
+            $scope.hasNextPage = true;
+            $scope.loadError = false;
+            if ($scope.topics.length == 0)
+                $scope.loadingMsg = '找不到符合你要求的二手交易信息^_^';
+            else
+                $scope.loadingMsg = '下拉加载更多';
+        }, $rootScope.requestErrorHandler({
+            noBackdrop: true
+        }, function() {
+            $scope.loadError = true;
+        })).finally(function() {
+            $scope.$broadcast('scroll.refreshComplete');
+        });
+    };
+    $scope.loadMore = function() {
+        $log.debug('load more');
+        Topics.pagination().$promise.then(function(response) {
+            console.log(response.data);
+            $scope.hasNextPage = false;
+            $scope.loadError = false;
+            $timeout(function() {
+                $scope.hasNextPage = Topics.hasNextPage();
+                console.log('hasNextPage', $scope.hasNextPage);
+                if ($scope.hasNextPage == false)
+                    $scope.loadingMsg = '附近没有其它的二手交易信息^_^，看看别的地方吧!';
+                if (!$scope.topics) {
+                    $scope.topics = [];
+                }
+                $scope.topics = $scope.topics.concat(response.data);
+                $scope.$digest();
+            }, 100);
 
-            }, $rootScope.requestErrorHandler({
-                noBackdrop: true
-            }, function() {
-                $scope.loadError = true;
-            })).finally(function() {
-                $scope.$broadcast('scroll.infiniteScrollComplete');
-            });
-        };
+        }, $rootScope.requestErrorHandler({
+            noBackdrop: true
+        }, function() {
+            $scope.loadError = true;
+        })).finally(function() {
+            $scope.$broadcast('scroll.infiniteScrollComplete');
+        });
+    };
 
-        $scope.changeSelected = function(item) {
+    $scope.changeSelected = function(item) {
             $state.go('tab.index', {
                 tab: item.value
             });
@@ -101,7 +101,7 @@ angular.module('iwildfire.controllers', [])
             $scope.currentTab = Topics.currentTab($stateParams.tab);
             $scope.doRefresh();
         }
-    // }
+        // }
 
     /***********************************
      * Search
@@ -133,21 +133,26 @@ angular.module('iwildfire.controllers', [])
         });
     }
 
-    function loadData(){
+    function loadData(callback) {
         console.log('loadData trigger');
         var location = LocationManager.getLocation();
         $scope.address = location.user_edit_address;
         $scope.tabTitle = location.user_edit_address;
         Topics.setGeom(location);
         $scope.doRefresh();
+        callback();
     }
-    $rootScope.$on('location.updated', loadData);
-    LocationManager.getLocationFromAPI().then(function(){
+    LocationManager.getLocationFromAPI().then(function() {
         // $scope.topics = Topics.getTopics();
         // $scope.hasNextPage = Topics.hasNextPage();
         // $scope.loadError = false;
-        loadData();
+        loadData(function() {
+            $timeout(function() {
+                $rootScope.$on('location.updated', loadData);
+            }, 500);
+        });
     });
+
 })
 
 
@@ -231,47 +236,47 @@ angular.module('iwildfire.controllers', [])
 
     //     $scope.topics = Topics.getTopics();
     //     $scope.loadError = false;
-        $scope.doRefresh = function() {
-            Topics.currentTab($stateParams.tab);
-            $log.debug('do refresh');
-            Topics.refresh().$promise.then(function(response) {
-                $scope.topics = response.data;
-                $scope.hasNextPage = true;
-                $scope.loadError = false;
-                if ($scope.topics.length == 0)
-                    $scope.loadingMsg = '附近没有其它的二手交易信息^_^，看看别的地方吧!';
-                else
-                    $scope.loadingMsg = '下拉加载更多';
-            }, $rootScope.requestErrorHandler({
-                noBackdrop: true
-            }, function() {
-                $scope.loadError = true;
-            })).finally(function() {
-                $scope.$broadcast('scroll.refreshComplete');
-            });
-        };
-        $scope.loadMore = function() {
-            $log.debug('load more');
-            Topics.pagination().$promise.then(function(response) {
-                $log.debug('load more complete');
-                $scope.hasNextPage = false;
-                $scope.loadError = false;
-                $timeout(function() {
-                    $scope.hasNextPage = Topics.hasNextPage();
-                    $log.debug('has next page ? ', $scope.hasNextPage);
-                    if ($scope.hasNextPage == false)
-                        $scope.loadingMsg = '附近没有新的二手交易信息^_^，试试其他地方吧';
+    $scope.doRefresh = function() {
+        Topics.currentTab($stateParams.tab);
+        $log.debug('do refresh');
+        Topics.refresh().$promise.then(function(response) {
+            $scope.topics = response.data;
+            $scope.hasNextPage = true;
+            $scope.loadError = false;
+            if ($scope.topics.length == 0)
+                $scope.loadingMsg = '附近没有其它的二手交易信息^_^，看看别的地方吧!';
+            else
+                $scope.loadingMsg = '下拉加载更多';
+        }, $rootScope.requestErrorHandler({
+            noBackdrop: true
+        }, function() {
+            $scope.loadError = true;
+        })).finally(function() {
+            $scope.$broadcast('scroll.refreshComplete');
+        });
+    };
+    $scope.loadMore = function() {
+        $log.debug('load more');
+        Topics.pagination().$promise.then(function(response) {
+            $log.debug('load more complete');
+            $scope.hasNextPage = false;
+            $scope.loadError = false;
+            $timeout(function() {
+                $scope.hasNextPage = Topics.hasNextPage();
+                $log.debug('has next page ? ', $scope.hasNextPage);
+                if ($scope.hasNextPage == false)
+                    $scope.loadingMsg = '附近没有新的二手交易信息^_^，试试其他地方吧';
 
-                }, 100);
-                $scope.topics = $scope.topics.concat(response.data);
-            }, $rootScope.requestErrorHandler({
-                noBackdrop: true
-            }, function() {
-                $scope.loadError = true;
-            })).finally(function() {
-                $scope.$broadcast('scroll.infiniteScrollComplete');
-            });
-        };
+            }, 100);
+            $scope.topics = $scope.topics.concat(response.data);
+        }, $rootScope.requestErrorHandler({
+            noBackdrop: true
+        }, function() {
+            $scope.loadError = true;
+        })).finally(function() {
+            $scope.$broadcast('scroll.infiniteScrollComplete');
+        });
+    };
     // }
 
     if ($stateParams.tab !== Topics.currentTab()) {
@@ -279,7 +284,7 @@ angular.module('iwildfire.controllers', [])
         Topics.resetData();
     }
 
-    $rootScope.$on('location.updated', function(){
+    $rootScope.$on('location.updated', function() {
         var locationDetail = LocationManager.getLocation();
         $scope.address = locationDetail.user_edit_address;
 
@@ -374,10 +379,10 @@ angular.module('iwildfire.controllers', [])
         }
 
         var location = LocationManager.getLocation();
-        if(location.lat) {
+        if (location.lat) {
             $scope.currentLocation = location;
         } else {
-            LocationManager.getLocationFromAPI().then(function(location){
+            LocationManager.getLocationFromAPI().then(function(location) {
                 $scope.currentLocation = location;
             });
         }
@@ -1010,7 +1015,7 @@ angular.module('iwildfire.controllers', [])
      * Store the exchange location information
      * @type {Object}
      */
-    LocationManager.getLocationFromAPI().then(function(data){
+    LocationManager.getLocationFromAPI().then(function(data) {
         $scope.locationDetail = data;
         $scope.params.goods_exchange_location = data;
         $scope.showEdit = false;

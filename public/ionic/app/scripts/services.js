@@ -61,7 +61,6 @@ angular.module('iwildfire.services', ['ngResource'])
 
     this.getLocationFromAPI = function() {
         var d = $q.defer();
-        Msg.show('加载中，请稍候...');
         webq.getWxWrapper()
             .then(getLatLngFromAPI)
             .then(this.getAddressDetailFromAPI)
@@ -70,9 +69,7 @@ angular.module('iwildfire.services', ['ngResource'])
                 _this.setLocation(addressDetail);
             }).catch(function(err){
                 console.log('error while getLocationFromAPI, error from', err);
-            }).finally(function(){
-                Msg('hide');
-            })
+            });
 
         return d.promise;
     }

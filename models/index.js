@@ -2,6 +2,7 @@ var mongoose = require('mongoose');
 var config = require('../config');
 
 // models
+require('./Log');
 require('./user');
 require('./topic');
 require('./reply');
@@ -12,6 +13,7 @@ require('./fileStorage');
 require('./feedback');
 require('./hash_state');
 
+exports.Log = mongoose.model('Log');
 exports.User = mongoose.model('User');
 exports.Topic = mongoose.model('Topic');
 exports.Reply = mongoose.model('Reply');

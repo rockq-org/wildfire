@@ -117,7 +117,7 @@ exports.getTopicsByQuery = function(query, opt, callback) {
  * - count, 主题列表
  * Note, the maximum size is 1000 records,
  * here is enough for a single user.
- * When you have to load all data, think about optimize your query 
+ * When you have to load all data, think about optimize your query
  * Because user just need records around 200.
  * http://stackoverflow.com/questions/12643195/mongoose-limiting-query-to-1000-results-when-i-want-more-all-migrating-from-2-6
  * @param {String} query 搜索关键词
@@ -277,7 +277,8 @@ exports.newAndSave = function(title, content, tab, authorId,
     goods_exchange_location,
     goods_exchange_geom,
     goods_status,
-    callback) {
+    callback)
+{
     var topic = new Topic();
     topic.title = title;
     topic.content = content;

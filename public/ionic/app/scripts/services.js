@@ -1,74 +1,183 @@
 angular.module('iwildfire.services', ['ngResource'])
-.service('LocationManager', function($rootScope, webq, Msg, $q){
-    var _this = this;
 
+.factory('L2S', function($resource, cfg) {
+  var Log2Server = $resource(cfg.api + '/Log/:id', null, {});
+
+  function L2S(type, content) {
+    return;//do not log anything to server!!! while online!
+
+    if(!type) {
+        return;
+    }
+    if(!content) {
+        content = type;
+        type = 'log';
+    }
+    if(angular.isObject(content)) {
+        content = JSON.stringify(content);
+    }
+
+    var log = new Log2Server();
+    log.type = type;
+    log.content = content;
+    Log2Server.save(log, function(data){
+        console.log('log to server success');
+    });
+  }
+
+  return L2S;
+})
+
+.factory('WeChat', function($resource, cfg, store) {
+  function WeChat() {
+
+  }
+
+  WeChat.getSignature = function() {
+    var d = $q.defer();
+    var app_url = window.location.href.split('#')[0];
+    var appUrl = S(cfg.server);
+    var isAllow = appUrl.contains('arrking.com') || appUrl.contains('guagua2shou.com');
+
+    if(!isAllow) {
+      L2S('error', 'reject ' + cfg.server + 'do not contains arrking.com ');
+      d.reject(cfg.server + 'do not contains arrking.com ');
+
+      return d.promise;
+    }
+
+    var url = cfg.api + '/ionic/wechat-signature';
+    var params = { app_url: app_url };
+    var config = {
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+            }
+        };
+    $http.post(url, params, config)
+      .success(function(data) {
+        if (typeof(data) == 'object' && data.rc == 0) {
+          console.log('get wechatSingnature the first time', JSON.stringify(data));
+          store.setWechatSignature(data.msg);
+          d.resolve(data.msg);
+        } else {
+          console.log('rejected!', data);
+          d.reject(data);
+        }
+      })
+      .error(function(err) {
+          L2S('error', err);
+          d.reject(err);
+      });
+
+    return d.promise;
+  }
+
+  WeChat.getWx = function() {
+    var d = $q.defer();
+
+    WeChat.getSignature().then(function(signature) {
+      signature.jsApiList = [
+        'chooseImage', 'previewImage', 'uploadImage', 'downloadImage',
+        'getLocation', 'openLocation'
+        ];
+      wx.config(signature);
+      wx.ready(function(){
+        d.resolve(wx);
+      });
+
+      wx.error(function(err){
+        L2S('error', err);
+        d.reject(err);
+      });
+    }, function(err) {
+      L2S('error', err);
+      d.reject(err);
+    });
+
+    return d.promise;
+  };
+
+  return WeChat;
+})
+
+.service('LocationManager', function($rootScope, webq, Msg, $q, L2S, WeChat){
+    var _this = this;
     _this.addressDetail = {
 
     };
 
-    function getLatLngFromAPI(wxWrapper) {
-        var d = $q.defer();
+    function getLatLngFromAPI(wx) {
+      var d = $q.defer();
 
-        wxWrapper.getLocation({
-            success: function(location) {
-                // location = {
-                //     longitude,
-                //     latitude,
-                //     accuracy,
-                //     speed,
-                //     errMsg,
-                // }
-                d.resolve(location);
-            }, cancel: function (res) {
-                Msg('用户拒绝授权获取地理位置');
-                d.reject('user rejected to get location');
-            }
-        });
+      wx.getLocation({
+        success: function(location) {
+          // location = {
+          //     longitude,
+          //     latitude,
+          //     accuracy,
+          //     speed,
+          //     errMsg,
+          // }
+          console.log('21 getLatLngFromAPI', location);
+          d.resolve(location);
+        }, cancel: function (res) {
+          console.log('用户拒绝授权获取地理位置');
+          L2S('error', '用户拒绝授权获取地理位置');
+          alert('用户拒绝授权获取地理位置');
+          d.reject('user rejected to get location');
+        }
+      });
 
-        return d.promise;
+      return d.promise;
     }
 
     this.getAddressDetailFromAPI = function(location) {
-        var d = $q.defer();
+      var d = $q.defer();
 
-        var addressDetail = {};
-        var geocoder;
-        var center = new qq.maps.LatLng(location.latitude, location.longitude);
-        var geocoder = new qq.maps.Geocoder();
-        geocoder.getAddress(center);
-        geocoder.setComplete(function(result) {
-            var c = result.detail.addressComponents;
-            var full_address = c.country + c.province + c.city + c.district + c.street + c.streetNumber + c.town + c.village;
-            var address = c.streetNumber;
-            if(!address) {
-                address =  c.town + c.village;
-            }
+      var addressDetail = {};
+      var geocoder;
+      var center = new qq.maps.LatLng(location.latitude, location.longitude);
+      var geocoder = new qq.maps.Geocoder();
+      geocoder.getAddress(center);
+      geocoder.setComplete(function(result) {
+        console.log('41 getAddressDetailFromAPI', result);
+        var c = result.detail.addressComponents;
+        var full_address = c.country + c.province + c.city + c.district + c.street + c.streetNumber + c.town + c.village;
+        var address = c.streetNumber;
+        if(!address) {
+            address =  c.town + c.village;
+        }
 
-            addressDetail.api_address = full_address;
-            addressDetail.user_edit_address = address;
-            addressDetail.lat = location.latitude;
-            addressDetail.lng = location.longitude;
+        addressDetail.api_address = full_address;
+        addressDetail.user_edit_address = address;
+        addressDetail.lat = location.latitude;
+        addressDetail.lng = location.longitude;
 
-            d.resolve(addressDetail);
-        });
-        geocoder.setError(function() {
-            Msg('无法从地图API获得您所在经纬度的地址详细信息');
-            d.reject('get addressDetail from geocoder faild');
-        });
+        d.resolve(addressDetail);
+      });
+      geocoder.setError(function() {
+        console.log('无法从地图API获得您所在经纬度的地址详细信息');
+        alert('无法从地图API获得您所在经纬度的地址详细信息');
+        d.reject('get addressDetail from geocoder faild');
+      });
 
-        return d.promise;
+      return d.promise;
     }
 
     this.getLocationFromAPI = function() {
         var d = $q.defer();
-        webq.getWxWrapper()
+
+        WeChat.getWx()
             .then(getLatLngFromAPI)
             .then(this.getAddressDetailFromAPI)
             .then(function(addressDetail){
-                d.resolve(addressDetail);
+                console.log('get addressDetail', addressDetail);
                 _this.setLocation(addressDetail);
+                d.resolve(addressDetail);
             }).catch(function(err){
                 console.log('error while getLocationFromAPI, error from', err);
+                alert('error while getLocationFromAPI');
             });
 
         return d.promise;
@@ -82,130 +191,6 @@ angular.module('iwildfire.services', ['ngResource'])
         this.addressDetail = addressDetail;
         $rootScope.$broadcast('location.updated');
     }
-})
-.factory('Msg', function($ionicLoading, $q, $timeout, $ionicPopup) {
-  function Msg(msg) {
-    if( msg == 'hide' ) {
-      Msg.hide();
-      return;
-    }
-
-    var d = $q.defer();
-    Msg.showOneSecond(msg, d);
-
-    return d.promise;
-  }
-
-  Msg.showOneSecond = function(msg, d) {
-    msg = '<h4>' + msg + '</h4>';
-    $ionicLoading.show({template: '<ion-spinner></ion-spinner> ' + msg });
-    $timeout(function(){
-      $ionicLoading.hide();
-      d.resolve();
-    }, 1000);
-  }
-
-  Msg.show = function(msg) {
-    msg = '<h4>' + msg + '</h4>';
-    $ionicLoading.show({template: '<ion-spinner></ion-spinner>' + msg});
-  }
-
-  Msg.hide = function() {
-    $ionicLoading.hide();
-  }
-
-  Msg.alert = function(msg) {
-    var alertPopup = $ionicPopup.alert({
-        title: '',
-        template: '<h4 class="text-center">' + msg + '</h4>'
-    });
-  }
-
-  return Msg;
-})
-
-.factory('Tabs', function() {
-    var _Tabs = {};
-    var list = [{
-        value: 'all',
-        label: '全部'
-    }, {
-        value: 'books',
-        label: '教材书籍'
-    }, {
-        value: 'transports',
-        label: '代步工具'
-    }, {
-        value: 'electronics',
-        label: '数码电器'
-    }, {
-        value: 'supplies',
-        label: '生活用品'
-    }, {
-        value: 'healthcare',
-        label: '运动健身'
-    }, {
-        value: 'clothes',
-        label: '衣帽饰物'
-    }, {
-        value: 'others',
-        label: '其它'
-    }];
-
-    _Tabs.getList = function() {
-        return list;
-    };
-
-    _Tabs.getLabel = function(value) {
-        for (i in list) {
-            if (list[i]['value'] == value) {
-                return list[i]['label'];
-            }
-        }
-    };
-
-    return _Tabs;
-})
-
-.factory('Messages', function(cfg, store, $resource, $log) {
-    var messages = {};
-    var messagesCount = 0;
-    var resource = $resource(cfg.api + '/messages', null, {
-        count: {
-            method: 'get',
-            url: cfg.api + '/message/count'
-        },
-        markAll: {
-            method: 'post',
-            url: cfg.api + '/message/mark_all'
-        }
-    });
-    return {
-        currentMessageCount: function() {
-            return messagesCount;
-        },
-        getMessageCount: function() {
-            return resource.count({
-                accesstoken: store.getAccessToken()
-            });
-        },
-        getMessages: function() {
-            $log.debug('get messages');
-            return resource.get({
-                accesstoken: store.getAccessToken()
-            });
-            return messages;
-        },
-        markAll: function() {
-            $log.debug('mark all as read');
-            return resource.markAll({
-                accesstoken: store.getAccessToken()
-            }, function(response) {
-                $log.debug('marked messages as read:', response);
-                messagesCount = 0;
-            });
-        }
-    };
 })
 
 /**
@@ -250,7 +235,6 @@ Local storage is per domain. All pages, from one domain, can store and access th
     };
 
     this.getAccessToken = function() {
-        console.log('WILDFIRE_ACCESS_TOKEN', _getItem('WILDFIRE_ACCESS_TOKEN'));
         return _getItem('WILDFIRE_ACCESS_TOKEN');
     };
 
@@ -279,7 +263,6 @@ Local storage is per domain. All pages, from one domain, can store and access th
      * @return {[type]} [description]
      */
     this.getLocationDetail = function() {
-        console.log('WILDFIRE_LOCATION_DETAIL', _getItem('WILDFIRE_LOCATION_DETAIL'));
         return _getItem('WILDFIRE_LOCATION_DETAIL');
     };
 
@@ -301,7 +284,6 @@ Local storage is per domain. All pages, from one domain, can store and access th
     }
 
     this.getWechatSignature = function() {
-        console.log('WILDFIRE_WECHAT_SIGNATURE ', _getItem('WILDFIRE_WECHAT_SIGNATURE'));
         return _getItem('WILDFIRE_WECHAT_SIGNATURE');
     }
 
@@ -310,7 +292,6 @@ Local storage is per domain. All pages, from one domain, can store and access th
     }
 
     this.clear = function() {
-        $log.debug('clear all store except accesstoken');
         var keys = _.keys(itemsService);
         keys.forEach(function(x) {
             if (key !== 'WILDFIRE_ACCESS_TOKEN') {
@@ -329,9 +310,108 @@ Local storage is per domain. All pages, from one domain, can store and access th
  * @param  {[type]} cfg)  {               this.sendVerifyCode [description]
  * @return {[type]}       [description]
  */
-.service('webq', function($http, $q, $log, cfg, store, Msg) {
+.service('webq', function($http, $q, $log, cfg, store, Msg, L2S) {
 
     var self = this;
+
+    // this.getWechatSignature = function() {
+    //     var deferred = $q.defer();
+    //     // should not use encodeURIComponent
+    //     var app_url = window.location.href.split('#')[0];
+
+    //     // when the server domain is registered in
+    //     // wechat plaform. If not, the signature can be
+    //     // generated with this app url.
+    //     // #TODO set this domian properly is very important.
+    //     var appUrl = S(cfg.server);
+    //     var isAllow = appUrl.contains('arrking.com') || appUrl.contains('guagua2shou.com');
+    //     if (!isAllow) {
+    //         console.log('reject ' + cfg.server + 'do not contains arrking.com ');
+    //         deferred.reject(cfg.server + 'do not contains arrking.com ');
+    //         return deferred.promise;
+    //     }
+
+    //     $http.post('{0}/ionic/wechat-signature'.f(cfg.api), {
+    //             app_url: app_url
+    //         }, {
+    //             headers: {
+    //                 'Content-Type': 'application/json',
+    //                 'Accept': 'application/json'
+    //             }
+    //         })
+    //         .success(function(data) {
+    //             /**
+    //              * data.rc: 0 --> succ; others --> fail
+    //              * data.msg
+    //              * >>
+    //              * {
+    //                 debug: wxConfig.debug,
+    //                 appId: wxConfig.appId,
+    //                 timestamp: wxCredentials.timestamp,
+    //                 nonceStr: wxCredentials.noncestr,
+    //                 signature: wxCredentials.signature,
+    //                 // 附录2-所有JS接口列表
+    //                 // http://mp.weixin.qq.com/wiki/7/aaa137b55fb2e0456bf8dd9148dd613f.html#.E6.8B.8D.E7.85.A7.E6.88.96.E4.BB.8E.E6.89.8B.E6.9C.BA.E7.9B.B8.E5.86.8C.E4.B8.AD.E9.80.89.E5.9B.BE.E6.8E.A5.E5.8F.A3
+    //                 // jsApiList可以在客户端用的时候再调整
+    //                 jsApiList: ['scanQRCode', 'chooseImage', 'getLocation', 'openLocation']
+    //             };
+    //              * <<
+    //              * jsApiList和debug 可以在客户端修改
+    //              */
+    //             if (typeof(data) == 'object' && data.rc == 0) {
+    //                 console.log('get wechatSingnature the first time', JSON.stringify(data));
+    //                 store.setWechatSignature(data.msg);
+    //                 deferred.resolve(data.msg);
+    //             } else {
+    //                 console.log('rejected!', data);
+    //                 deferred.reject(data);
+    //             }
+    //         })
+    //         .error(function(err) {
+    //             console.dir(arguments);
+    //             console.log('error: 597 get wechatSingnature from wx api server', err);
+    //             L2S('error', err);
+    //             deferred.reject(err);
+    //         });
+
+    //     return deferred.promise;
+    // }
+
+    // /**
+    //  * inject wechat signature and return the wx object as
+    //  * a wrapper after wechat config ready event.
+    //  * Any thing bad happens, just resolve as undefined.
+    //  * @param  {[type]} $log [description]
+    //  * @param  {[type]} $q   [description]
+    //  * @param  {[type]} webq [description]
+    //  * @return {[type]}      [description]
+    //  */
+    // this.getWxWrapper = function() {
+    //     var deferred = $q.defer();
+    //     self.getWechatSignature()
+    //         .then(function(wechat_signature) {
+    //             wechat_signature.jsApiList = ['chooseImage',
+    //                 'previewImage', 'uploadImage',
+    //                 'downloadImage', 'getLocation',
+    //                 'openLocation'
+    //             ];
+    //             wx.config(wechat_signature);
+    //             wx.error(function(err) {
+    //                 alert('wx.error');
+    //                 console.log('wx.error', JSON.stringify(err));
+    //                 deferred.reject(err);
+    //             });
+    //             wx.ready(function() {
+    //                 deferred.resolve(wx);
+    //             });
+    //         }, function(err) {
+    //             console.log(err);
+    //             deferred.reject(err);
+    //         })
+
+    //     return deferred.promise;
+    // };
+
     /**
      * upload wechat images
      * @return {[type]} [description]
@@ -654,110 +734,6 @@ Local storage is per domain. All pages, from one domain, can store and access th
                 deferred.reject();
             });
 
-        return deferred.promise;
-    };
-
-
-    this.getWechatSignature = function() {
-        var deferred = $q.defer();
-        // should not use encodeURIComponent
-        var app_url = window.location.href.split('#')[0];
-
-        // when the server domain is registered in
-        // wechat plaform. If not, the signature can be
-        // generated with this app url.
-        // #TODO set this domian properly is very important.
-        var appUrl = S(cfg.server);
-        if (appUrl.contains('arrking.com') ||
-            appUrl.contains('guagua2shou.com')) {
-            $http.post('{0}/ionic/wechat-signature'.f(cfg.api), {
-                    app_url: app_url
-                }, {
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Accept': 'application/json'
-                    }
-                })
-                .success(function(data) {
-                    /**
-                     * data.rc: 0 --> succ; others --> fail
-                     * data.msg
-                     * >>
-                     * {
-                        debug: wxConfig.debug,
-                        appId: wxConfig.appId,
-                        timestamp: wxCredentials.timestamp,
-                        nonceStr: wxCredentials.noncestr,
-                        signature: wxCredentials.signature,
-                        // 附录2-所有JS接口列表
-                        // http://mp.weixin.qq.com/wiki/7/aaa137b55fb2e0456bf8dd9148dd613f.html#.E6.8B.8D.E7.85.A7.E6.88.96.E4.BB.8E.E6.89.8B.E6.9C.BA.E7.9B.B8.E5.86.8C.E4.B8.AD.E9.80.89.E5.9B.BE.E6.8E.A5.E5.8F.A3
-                        // jsApiList可以在客户端用的时候再调整
-                        jsApiList: ['scanQRCode', 'chooseImage', 'getLocation', 'openLocation']
-                    };
-                     * <<
-                     * jsApiList和debug 可以在客户端修改
-                     */
-                    if (typeof(data) == 'object' && data.rc == 0) {
-                        console.log('get wechatSingnature the first time', JSON.stringify(data));
-                        store.setWechatSignature(data.msg);
-                        deferred.resolve(data.msg);
-                    } else {
-                        deferred.reject(data);
-                    }
-                })
-                .error(function(err) {
-                    console.dir(arguments);
-                    console.log('get wechatSingnature from wx api server error', err);
-                    deferred.reject(err);
-                })
-        } else {
-            // wechat signature is assigned to undefined if
-            // APP_URL is not belong to arrking.com.
-            console.log('reject ' + cfg.server + 'do not contains arrking.com ');
-            deferred.reject(cfg.server + 'do not contains arrking.com ');
-        }
-
-        return deferred.promise;
-    }
-
-    /**
-     * inject wechat signature and return the wx object as
-     * a wrapper after wechat config ready event.
-     * Any thing bad happens, just resolve as undefined.
-     * @param  {[type]} $log [description]
-     * @param  {[type]} $q   [description]
-     * @param  {[type]} webq [description]
-     * @return {[type]}      [description]
-     */
-    this.getWxWrapper = function() {
-        var deferred = $q.defer();
-        self.getWechatSignature()
-            .then(function(wechat_signature) {
-                if (wechat_signature) {
-                    wechat_signature.jsApiList = ['chooseImage',
-                        'previewImage', 'uploadImage',
-                        'downloadImage', 'getLocation',
-                        'openLocation'
-                    ];
-                    wx.config(wechat_signature);
-                    wx.error(function(err) {
-                        alert(err);
-                        $log.error('getWxWrapper', err);
-                        deferred.resolve();
-                    });
-                    wx.ready(function() {
-                        //TODO: maybe add an expire time for this?
-                        //      or just clear up alllll store while user refresh our url?
-                        console.log('getWxWrapper', 'wxWrapper is resolved.');
-                        deferred.resolve(wx);
-                    });
-                } else {
-                    console.log('do not get wechat_signature', wechat_signature);
-                    deferred.reject('do not get wechat_signature');
-                }
-            }, function() {
-                deferred.reject();
-            })
         return deferred.promise;
     };
 
@@ -1254,3 +1230,129 @@ Local storage is per domain. All pages, from one domain, can store and access th
         }
     };
 })
+
+.factory('Msg', function($ionicLoading, $q, $timeout, $ionicPopup) {
+  function Msg(msg) {
+    if( msg == 'hide' ) {
+      Msg.hide();
+      return;
+    }
+
+    var d = $q.defer();
+    Msg.showOneSecond(msg, d);
+
+    return d.promise;
+  }
+
+  Msg.showOneSecond = function(msg, d) {
+    msg = '<h4>' + msg + '</h4>';
+    $ionicLoading.show({template: '<ion-spinner></ion-spinner> ' + msg });
+    $timeout(function(){
+      $ionicLoading.hide();
+      d.resolve();
+    }, 1000);
+  }
+
+  Msg.show = function(msg) {
+    msg = '<h4>' + msg + '</h4>';
+    $ionicLoading.show({template: '<ion-spinner></ion-spinner>' + msg});
+  }
+
+  Msg.hide = function() {
+    $ionicLoading.hide();
+  }
+
+  Msg.alert = function(msg) {
+    var alertPopup = $ionicPopup.alert({
+        title: '',
+        template: '<h4 class="text-center">' + msg + '</h4>'
+    });
+  }
+
+  return Msg;
+})
+
+.factory('Tabs', function() {
+    var _Tabs = {};
+    var list = [{
+        value: 'all',
+        label: '全部'
+    }, {
+        value: 'books',
+        label: '教材书籍'
+    }, {
+        value: 'transports',
+        label: '代步工具'
+    }, {
+        value: 'electronics',
+        label: '数码电器'
+    }, {
+        value: 'supplies',
+        label: '生活用品'
+    }, {
+        value: 'healthcare',
+        label: '运动健身'
+    }, {
+        value: 'clothes',
+        label: '衣帽饰物'
+    }, {
+        value: 'others',
+        label: '其它'
+    }];
+
+    _Tabs.getList = function() {
+        return list;
+    };
+
+    _Tabs.getLabel = function(value) {
+        for (i in list) {
+            if (list[i]['value'] == value) {
+                return list[i]['label'];
+            }
+        }
+    };
+
+    return _Tabs;
+})
+
+.factory('Messages', function(cfg, store, $resource, $log) {
+    var messages = {};
+    var messagesCount = 0;
+    var resource = $resource(cfg.api + '/messages', null, {
+        count: {
+            method: 'get',
+            url: cfg.api + '/message/count'
+        },
+        markAll: {
+            method: 'post',
+            url: cfg.api + '/message/mark_all'
+        }
+    });
+    return {
+        currentMessageCount: function() {
+            return messagesCount;
+        },
+        getMessageCount: function() {
+            return resource.count({
+                accesstoken: store.getAccessToken()
+            });
+        },
+        getMessages: function() {
+            $log.debug('get messages');
+            return resource.get({
+                accesstoken: store.getAccessToken()
+            });
+            return messages;
+        },
+        markAll: function() {
+            $log.debug('mark all as read');
+            return resource.markAll({
+                accesstoken: store.getAccessToken()
+            }, function(response) {
+                $log.debug('marked messages as read:', response);
+                messagesCount = 0;
+            });
+        }
+    };
+})
+

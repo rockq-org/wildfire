@@ -1,5 +1,6 @@
 var express = require('express');
 
+var LogController = require('./api/v1/Log');
 var topicController = require('./api/v1/topic');
 var userController = require('./api/v1/user');
 var toolsController = require('./api/v1/tools');
@@ -12,6 +13,9 @@ var limit = require('./middlewares/limit');
 var config = require('./config');
 
 var router = express.Router();
+
+// Log
+router.post('/Log', LogController.save);
 
 // 主题
 router.get('/topics', topicController.index);

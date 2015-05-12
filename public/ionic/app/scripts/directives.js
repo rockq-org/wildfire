@@ -95,15 +95,20 @@ angular.module('iwildfire.directives', [])
     };
 
     function link(scope, element, attrs){
+        function _init_map(location) {
+          init_map(scope, element, attrs, location);
+        }
+
         $timeout(function(){
             var location = LocationManager.getLocation();
-            if(location.lat) {
-                init_map(scope, element, attrs, location);
+
+            if(location && location.lat) {
+                _init_map(location);
                 return;
             }
 
-            LocationManager.getLocationFromAPI().then(function(location){
-                init_map(scope, element, attrs, location);
+            LocationManager.getLocationFromAPI().then(_init_map).catch(function(err){
+              LocationManager.showLocationSelector().then(_init_map);
             });
         });
     }
@@ -267,15 +272,12 @@ angular.module('iwildfire.directives', [])
     }
 
     return function(scope, element, attrs) {
-        LocationManager.getLocationFromAPI().then(function(locationDetail){
-            $timeout(function(){
-                var width = $document.width();
-                var height = $document.height() - 44;
-                var div = angular.element(element).find('div');
-                div.width(width);
-                div.height(height);
-                init(div[0], attrs, scope, locationDetail, width, height);
-            }, 3000);
-        });
+        var locationDetail = LocationManager.getLocation()
+        var width = $document.width();
+        var height = $document.height() - 44;
+        var div = angular.element(element).find('div');
+        div.width(width);
+        div.height(height);
+        init(div[0], attrs, scope, locationDetail, width, height);
     };
 })

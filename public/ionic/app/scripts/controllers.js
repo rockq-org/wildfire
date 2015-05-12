@@ -79,7 +79,7 @@ angular.module('iwildfire.controllers', [])
                     $scope.topics = [];
                 }
                 $scope.topics = $scope.topics.concat(response.data);
-                $scope.$digest();
+                // $scope.$digest();
             }, 100);
 
         }, $rootScope.requestErrorHandler({
@@ -142,6 +142,10 @@ angular.module('iwildfire.controllers', [])
         $scope.doRefresh();
     }
 
+    LocationManager.getLocationFromAPI().then(loadData).catch(function(err){
+      LocationManager.showLocationSelector();
+    });
+
     $rootScope.$on('location.updated', loadData);
     // LocationManager.getLocationFromAPI().then(function() {
     //     // $scope.topics = Topics.getTopics();
@@ -153,12 +157,12 @@ angular.module('iwildfire.controllers', [])
 
     // try to fix error when navigating to index page from profile, inbox or detail page
     // when controller can not receive location change event.
-    $timeout(function() {
-        if (typeof(LocationManager.getLocation().api_address) === 'undefined') {
-            console.log('get location again');
-            LocationManager.getLocationFromAPI();
-        }
-    }, 5000);
+    // $timeout(function() {
+    //     if (typeof(LocationManager.getLocation().api_address) === 'undefined') {
+    //         console.log('get location again');
+    //         LocationManager.getLocationFromAPI();
+    //     }
+    // }, 5000);
 })
 
 
@@ -637,7 +641,8 @@ angular.module('iwildfire.controllers', [])
     Msg,
     store,
     webq,
-    wxWrapper,
+    WeChat,
+    // wxWrapper,
     Tabs) {
     // 既不是调试，也不存在accesstoken
     // 注意，假设 BindAccessToken 也是成功获取Profile的
@@ -672,7 +677,6 @@ angular.module('iwildfire.controllers', [])
             Msg.alert('错误！无法获得登录用户信息。');
         }
     }
-    console.log('I am here, the PostCtrl');
 
     $scope.params = {
         // 标题5到10个字
@@ -751,14 +755,16 @@ angular.module('iwildfire.controllers', [])
             var resId = resIds.pop();
             if (resId) {
                 $timeout(function() {
-                    wxWrapper.uploadImage({
-                        localId: resId, // 需要上传的图片的本地ID，由chooseImage接口获得
-                        isShowProgressTips: 1, // 默认为1，显示进度提示
-                        success: function(res) {
-                            results.push(res.serverId); // 返回图片的服务器端ID
-                            _processWxImages(resIds, results, deferred);
-                        }
+                  WeChat.getWx().then(function(wx){
+                    wx.uploadImage({
+                      localId: resId, // 需要上传的图片的本地ID，由chooseImage接口获得
+                      isShowProgressTips: 1, // 默认为1，显示进度提示
+                      success: function(res) {
+                          results.push(res.serverId); // 返回图片的服务器端ID
+                          _processWxImages(resIds, results, deferred);
+                      }
                     });
+                  });
                 }, 100);
             } else {
                 deferred.resolve(results);
@@ -834,30 +840,24 @@ angular.module('iwildfire.controllers', [])
     }
 
     $scope.uploadImage = function() {
-        // setup weixin sdk
-        // http://mp.weixin.qq.com/wiki/7/aaa137b55fb2e0456bf8dd9148dd613f.html#JSSDK.E4.BD.BF.E7.94.A8.E6.AD.A5.E9.AA.A4
-
-        // check if wxWrapper exists or not.
-        if (!wxWrapper)
-            return;
-
-        wxWrapper.chooseImage({
-            success: function(res) {
-                var localIds = res.localIds; // 返回选定照片的本地ID列表，localId可以作为img标签的src属性显示图片
-                switch ($rootScope.WILDFIRE_WECHAT_PLATFORM) {
-                    case 'Android':
-                        _processImagesForAndroid(localIds);
-                        break;
-                    case 'iOS':
-                        _processImagesForIOS(localIds);
-                        break;
-                    default:
-                        Msg.alert('目前仅支持iOS和Android设备！');
-                        break;
-                }
-            }
-        });
-
+          WeChat.getWx().then(function(wx){
+            wx.chooseImage({
+              success: function(res) {
+                  var localIds = res.localIds; // 返回选定照片的本地ID列表，localId可以作为img标签的src属性显示图片
+                  switch ($rootScope.WILDFIRE_WECHAT_PLATFORM) {
+                      case 'Android':
+                          _processImagesForAndroid(localIds);
+                          break;
+                      case 'iOS':
+                          _processImagesForIOS(localIds);
+                          break;
+                      default:
+                          Msg.alert('目前仅支持iOS和Android设备！');
+                          break;
+                  }
+              }
+            });
+          });
     };
 
     /**
@@ -1023,40 +1023,48 @@ angular.module('iwildfire.controllers', [])
      * Store the exchange location information
      * @type {Object}
      */
-    LocationManager.getLocationFromAPI().then(function(data) {
-        $scope.locationDetail = data;
-        $scope.params.goods_exchange_location = data;
-        $scope.showEdit = false;
-        // Create the modal that we will use later
-        $ionicModal.fromTemplateUrl('templates/modal-change-location.html', {
-            scope: $scope
-        }).then(function(modal) {
-            $scope.changeLocationModal = modal;
-            // modal.show();
-        });
+    $scope.showChangeLocationModal = function() {
+      if($scope.changeLocationModal) {
+        $scope.changeLocationModal.show();
+      } else {
+        console.log('do not have modal!');
+      }
+    }
 
-        $scope.closeChangeLocationModal = function(isSubmit) {
-            if (isSubmit) {
-                $timeout(function() {
-                    $scope.params.goods_exchange_location.api_address = $scope.locationDetail.api_address;
-                    $scope.params.goods_exchange_location.user_edit_address = $scope.locationDetail.user_edit_address;
-                    $scope.params.goods_exchange_location.lat = $scope.locationDetail.lat;
-                    $scope.params.goods_exchange_location.lng = $scope.locationDetail.lng;
-                    console.log('lyman 498', JSON.stringify($scope.locationDetail));
-                    console.log('lyman 499', JSON.stringify($scope.params.goods_exchange_location));
-                });
-            }
-            $scope.changeLocationModal.hide();
+    $scope.closeChangeLocationModal = function(isSubmit) {
+        if (isSubmit) {
+            $timeout(function() {
+                $scope.params.goods_exchange_location.api_address = $scope.locationDetail.api_address;
+                $scope.params.goods_exchange_location.user_edit_address = $scope.locationDetail.user_edit_address;
+                $scope.params.goods_exchange_location.lat = $scope.locationDetail.lat;
+                $scope.params.goods_exchange_location.lng = $scope.locationDetail.lng;
+                console.log('lyman 498', JSON.stringify($scope.locationDetail));
+                console.log('lyman 499', JSON.stringify($scope.params.goods_exchange_location));
+            });
         }
-    });
-    // webq.getLocationDetail(wxWrapper)
-    //     .then(function(data) {
+        $scope.changeLocationModal.hide();
+    }
 
-    //     })
-    //     .catch(function(err) {
-    //         console.error('Get an error when running webq.getLocationDetail(wxWrapper)');
-    //         console.error(err);
-    //     });
+    function initLocationSelector() {
+      console.log('initLocationSelector');
+      var data = LocationManager.getLocation();
+      $scope.locationDetail = data;
+      $scope.params.goods_exchange_location = data;
+      $scope.showEdit = false;
+
+      $ionicModal.fromTemplateUrl('templates/modal-change-location.html', {
+          scope: $scope
+      }).then(function(modal) {
+          $scope.changeLocationModal = modal;
+          // modal.show();
+      });
+    }
+
+    $rootScope.$on('location.updated', initLocationSelector);
+    LocationManager.getLocationFromAPI().then(initLocationSelector).catch(function(err){
+      LocationManager.showLocationSelector();
+    });
+
     /*******************************************
      * End Modal View to input detail of exchange location
      *******************************************/
@@ -1074,6 +1082,7 @@ angular.module('iwildfire.controllers', [])
 })
 
 .controller('InboxCtrl', function($scope, $ionicLoading, Messages, $log, store, $rootScope, $timeout, cfg, Msg) {
+  console.log('zzzzz');
     $scope.doNotHaveMessage = false;
     // 既不是调试，也不存在accesstoken
     if ((!store.getAccessToken()) && (!cfg.debug)) {
@@ -1087,7 +1096,7 @@ angular.module('iwildfire.controllers', [])
     } else {
         Messages.getMessages().$promise.then(function(response) {
             $scope.messages = response.data;
-            //console.log(JSON.stringify($scope.messages));
+            console.log(JSON.stringify($scope.messages));
             if ($scope.messages.hasnot_read_messages.length === 0) {
                 $rootScope.$broadcast('messagesMarkedAsRead');
             } else {

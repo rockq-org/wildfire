@@ -89,8 +89,6 @@ angular.module('iwildfire', ['ionic', 'iwildfire.controllers', 'iwildfire.servic
             });
         });
     }
-
-    LocationManager.getLocationFromAPI();
 })
 
 .config(function($compileProvider) {
@@ -162,12 +160,13 @@ angular.module('iwildfire', ['ionic', 'iwildfire.controllers', 'iwildfire.servic
         cache: false,
         url: '/post',
         templateUrl: 'templates/tab-post.html',
-        controller: 'PostCtrl',
-        resolve: {
-            wxWrapper: function(webq) {
-                return webq.getWxWrapper();
-            }
-        }
+        controller: 'PostCtrl'
+        // ,
+        // resolve: {
+        //     wxWrapper: function(WeChat) {
+        //         return WeChat.getWx();
+        //     }
+        // }
     })
 
     .state('tab.inbox', {

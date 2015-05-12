@@ -101,9 +101,9 @@
             <span class="item-content" style="padding-left:45px;">{{params.content}}</span>
             <i class="icon ion-chevron-right icon-accessory"></i>
         </div>
-        <div class="item item-icon-right" href="javascript:void(0)" ng-click="changeLocationModal.show()">
+        <div class="item item-icon-right" href="javascript:void(0)" ng-click="showChangeLocationModal()">
             <span>交易地点</span>
-            <span class="item-content" style="padding-left:45px;">{{params.goods_exchange_location.user_edit_address}}</span>
+            <span class="item-content" style="padding-left:45px;">{{params.goods_exchange_location.user_edit_address || '点击选择地址'}}</span>
             <i class="icon ion-location icon-accessory"></i>
         </div>
         <div class="padding">

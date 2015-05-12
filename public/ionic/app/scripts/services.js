@@ -4,6 +4,7 @@ angular.module('iwildfire.services', ['ngResource'])
   var Log2Server = $resource(cfg.api + '/Log/:id', null, {});
 
   function L2S(type, content) {
+    console.log(type, content);
     return;//do not log anything to server!!! while online!
 
     if(!type) {
@@ -28,13 +29,35 @@ angular.module('iwildfire.services', ['ngResource'])
   return L2S;
 })
 
-.factory('WeChat', function($resource, cfg, store) {
+.factory('WeChat', function(cfg, store, $q, $http, L2S) {
   function WeChat() {
 
   }
 
+  WeChat._data = {
+    // networkType: '',
+    // signature: ''
+  };
+
+  WeChat.getData = function(key) {
+    if(WeChat._data[key]) {
+      return WeChat._data[key];
+    }
+    return null;
+  }
+
+  WeChat.setData = function(key, value) {
+    WeChat._data[key] = value;
+  }
+
   WeChat.getSignature = function() {
     var d = $q.defer();
+    var signature = WeChat.getData('signature');
+    if(signature) {
+      d.resolve(signature);
+      return d.promise;
+    }
+
     var app_url = window.location.href.split('#')[0];
     var appUrl = S(cfg.server);
     var isAllow = appUrl.contains('arrking.com') || appUrl.contains('guagua2shou.com');
@@ -56,14 +79,13 @@ angular.module('iwildfire.services', ['ngResource'])
         };
     $http.post(url, params, config)
       .success(function(data) {
-        if (typeof(data) == 'object' && data.rc == 0) {
-          console.log('get wechatSingnature the first time', JSON.stringify(data));
-          store.setWechatSignature(data.msg);
-          d.resolve(data.msg);
-        } else {
-          console.log('rejected!', data);
+        if (!data || data.rc!=0) {
           d.reject(data);
+          return;
         }
+
+        WeChat.setData('signature', data.msg);
+        d.resolve(data.msg);
       })
       .error(function(err) {
           L2S('error', err);
@@ -75,6 +97,11 @@ angular.module('iwildfire.services', ['ngResource'])
 
   WeChat.getWx = function() {
     var d = $q.defer();
+    var _wx = WeChat.getData('wx');
+    if(_wx) {
+      d.resolve(_wx);
+      return d.promise;
+    }
 
     WeChat.getSignature().then(function(signature) {
       signature.jsApiList = [
@@ -84,13 +111,16 @@ angular.module('iwildfire.services', ['ngResource'])
       wx.config(signature);
       wx.ready(function(){
         d.resolve(wx);
+        WeChat.setData('wx', wx);
       });
 
       wx.error(function(err){
+        console.log('wx.error', err);
         L2S('error', err);
         d.reject(err);
       });
     }, function(err) {
+      console.log('96 err', err);
       L2S('error', err);
       d.reject(err);
     });
@@ -98,18 +128,83 @@ angular.module('iwildfire.services', ['ngResource'])
     return d.promise;
   };
 
+  WeChat.getNetworkType = function() {
+    var d = $q.defer();
+    var networkType = WeChat.getData('networkType');
+    if(networkType) {
+      d.resolve(networkType);
+      return d.promise;
+    }
+
+    WeChat.getWx().then(function(wx){
+      wx.getNetworkType({
+        success: function (res) {
+          var networkType = res.networkType; // 返回网络类型2g，3g，4g，wifi
+          console.log(networkType);
+          WeChat.setData('networkType', networkType);
+          d.resolve(networkType);
+        },
+        fail: function(res) {
+          d.reject(res);
+        }
+      });
+    });
+
+    return d.promise;
+  }
+
   return WeChat;
 })
 
-.service('LocationManager', function($rootScope, webq, Msg, $q, L2S, WeChat){
+.service('LocationManager', function($rootScope, webq, Msg, $q, L2S, WeChat, $ionicPopup){
     var _this = this;
-    _this.addressDetail = {
-
+    _this.addressDetailList = {
+      'bj': {"api_address":"中国福建省莆田市仙游县柳安街鲤南镇虎啸","user_edit_address":"鲤南镇虎啸","lat":25.35334,"lng":118.7019},
+      'chd': {"api_address":"中国福建省莆田市仙游县柳安街鲤南镇虎啸","user_edit_address":"鲤南镇虎啸","lat":25.35334,"lng":118.7019}
     };
 
-    function getLatLngFromAPI(wx) {
-      var d = $q.defer();
+    _this.addressDetail = null;
 
+    this.showLocationSelector = function() {
+      var d = $q.defer();
+      var tpl = '<ion-radio ng-model="cityData.location" ng-value="\'bj\'" selected="selected">北京</ion-radio>';
+      tpl += '<ion-radio ng-model="cityData.location" ng-value="\'chd\'">秦皇岛</ion-radio>';
+
+      var scope = $rootScope.$new();
+      scope.cityData = {};
+
+      var myPopup = $ionicPopup.show({
+          template: tpl,
+          title: '请选择您的城市',
+          scope: scope,
+          buttons: [
+            {
+              text: '<b>保存</b>',
+              type: 'button-positive',
+              onTap: function(e) {
+                if (!scope.cityData.location) {
+                  e.preventDefault();
+                } else {
+                  return scope.cityData.location;
+                }
+              }
+            }
+          ]
+        });
+        myPopup.then(function(city) {
+          var addressDetail = _this.addressDetailList['bj'];
+          if(_this.addressDetailList[city]) {
+            addressDetail = _this.addressDetailList[city];
+          }
+          _this.setLocation(addressDetail);
+          d.resolve(addressDetail);
+        });
+
+      return d.promise;
+    }
+
+    this.getLatLngFromAPI = function(wx) {
+      var d = $q.defer();
       wx.getLocation({
         success: function(location) {
           // location = {
@@ -121,10 +216,12 @@ angular.module('iwildfire.services', ['ngResource'])
           // }
           console.log('21 getLatLngFromAPI', location);
           d.resolve(location);
+        }, fail: function (res) {
+          console.dir(res);
+          d.reject(res);
         }, cancel: function (res) {
           console.log('用户拒绝授权获取地理位置');
-          L2S('error', '用户拒绝授权获取地理位置');
-          alert('用户拒绝授权获取地理位置');
+          // alert('用户拒绝授权获取地理位置');
           d.reject('user rejected to get location');
         }
       });
@@ -158,29 +255,56 @@ angular.module('iwildfire.services', ['ngResource'])
       });
       geocoder.setError(function() {
         console.log('无法从地图API获得您所在经纬度的地址详细信息');
-        alert('无法从地图API获得您所在经纬度的地址详细信息');
         d.reject('get addressDetail from geocoder faild');
       });
 
       return d.promise;
     }
 
+    // this.getLocationFromAPIPromise = null;
     this.getLocationFromAPI = function() {
-        var d = $q.defer();
+      // if(_this.getLocationFromAPIPromise) {
+      //   return _this.getLocationFromAPIPromise;
+      // }
 
-        WeChat.getWx()
-            .then(getLatLngFromAPI)
-            .then(this.getAddressDetailFromAPI)
-            .then(function(addressDetail){
-                console.log('get addressDetail', addressDetail);
-                _this.setLocation(addressDetail);
-                d.resolve(addressDetail);
-            }).catch(function(err){
-                console.log('error while getLocationFromAPI, error from', err);
-                alert('error while getLocationFromAPI');
-            });
+      var d = $q.defer();
 
+      if(this.getLocation()) {
+        console.log(JSON.stringify(this.getLocation()));
+        d.resolve(this.getLocation());
         return d.promise;
+      }
+      // this.getLocationFromAPIPromise = d.promise;
+      // this is not iOS, tooooo bad for location service, just rejected!
+      if($rootScope.WILDFIRE_WECHAT_PLATFORM != 'iOS') {
+        d.reject('not iOS, just choose location by popup');
+        return d.promise;
+      }
+
+      // Msg.show('定位中，请稍候...');
+      WeChat.getNetworkType()
+        .then(function(networkType){
+          if(networkType !== 'wifi') {
+            console.log('not wifi network, just choose location by popup');
+            d.reject('not wifi network');
+          }
+        })
+        .then(WeChat.getWx)
+        .then(this.getLatLngFromAPI)
+        .then(this.getAddressDetailFromAPI)
+        .then(function(addressDetail){
+            console.log('get addressDetail', addressDetail);
+            _this.setLocation(addressDetail);
+            d.resolve(addressDetail);
+        }).catch(function(err){
+            console.log('error while getLocationFromAPI, error from', err);
+            d.reject('212');
+        }).finally(function(){
+          Msg('hide');
+          // _this.getLocationFromAPIPromise = null;
+        });
+
+      return d.promise;
     }
 
     this.getLocation = function() {
@@ -310,7 +434,7 @@ Local storage is per domain. All pages, from one domain, can store and access th
  * @param  {[type]} cfg)  {               this.sendVerifyCode [description]
  * @return {[type]}       [description]
  */
-.service('webq', function($http, $q, $log, cfg, store, Msg, L2S) {
+.service('webq', function($http, $q, $log, cfg, store, Msg, L2S, WeChat) {
 
     var self = this;
 
@@ -745,7 +869,7 @@ Local storage is per domain. All pages, from one domain, can store and access th
         for(var i in newArr) {
             newArr[i] = cfg.server + newArr[i];
         }
-        self.getWxWrapper()
+        WeChat.getWx()
             .then(function(wxWrapper) {
                 wxWrapper.previewImage({
                     current: current, // 当前显示的图片链接

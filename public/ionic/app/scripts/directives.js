@@ -1,6 +1,6 @@
 angular.module('iwildfire.directives', [])
 
-.directive('qqMap', function(cfg, $timeout, $ionicPopup, LocationManager) {
+.directive('qqMap', function(cfg, $timeout, $ionicPopup, LocationManager, Msg) {
     var host = location.href.split('#')[0].split('?')[0];
     var markers = [];
     var center;
@@ -99,9 +99,10 @@ angular.module('iwildfire.directives', [])
           init_map(scope, element, attrs, location);
         }
 
+        Msg.show('地图加载中...');
         $timeout(function(){
             var location = LocationManager.getLocation();
-
+            Msg('hide');
             if(location && location.lat) {
                 _init_map(location);
                 return;
@@ -110,7 +111,7 @@ angular.module('iwildfire.directives', [])
             LocationManager.getLocationFromAPI().then(_init_map).catch(function(err){
               LocationManager.showLocationSelector().then(_init_map);
             });
-        });
+        }, 2000);
     }
 
     function init_map(scope, element, attrs, location){
@@ -193,7 +194,7 @@ angular.module('iwildfire.directives', [])
     };
 })
 
-.directive('chooseLocation', function($timeout, $document, webq, LocationManager) {
+.directive('chooseLocation', function($timeout, $document, webq, LocationManager, Msg) {
     var init = function(element, attrs, scope, locationDetail, width, height) {
         //初始化地图
         console.log(scope.locationDetail.lat);
@@ -269,9 +270,12 @@ angular.module('iwildfire.directives', [])
         });
 
         center_changed();
+        Msg('hide');
     }
 
     return function(scope, element, attrs) {
+      Msg('地图加载中...');
+      $timeout(function(){
         var locationDetail = LocationManager.getLocation()
         var width = $document.width();
         var height = $document.height() - 44;
@@ -279,5 +283,6 @@ angular.module('iwildfire.directives', [])
         div.width(width);
         div.height(height);
         init(div[0], attrs, scope, locationDetail, width, height);
+      }, 2000);
     };
 })

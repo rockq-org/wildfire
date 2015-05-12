@@ -389,7 +389,7 @@ angular.module('iwildfire.controllers', [])
         }
 
         var location = LocationManager.getLocation();
-        if (location.lat) {
+        if (location && location.lat) {
             $scope.currentLocation = location;
         } else {
             LocationManager.getLocationFromAPI().then(function(location) {
@@ -1027,7 +1027,7 @@ angular.module('iwildfire.controllers', [])
       if($scope.changeLocationModal) {
         $scope.changeLocationModal.show();
       } else {
-        console.log('do not have modal!');
+        initLocationSelector(null, true);
       }
     }
 
@@ -1045,7 +1045,7 @@ angular.module('iwildfire.controllers', [])
         $scope.changeLocationModal.hide();
     }
 
-    function initLocationSelector() {
+    function initLocationSelector(data, isShow) {
       console.log('initLocationSelector');
       var data = LocationManager.getLocation();
       $scope.locationDetail = data;
@@ -1056,7 +1056,9 @@ angular.module('iwildfire.controllers', [])
           scope: $scope
       }).then(function(modal) {
           $scope.changeLocationModal = modal;
-          // modal.show();
+          if(isShow) {
+            modal.show();
+          }
       });
     }
 

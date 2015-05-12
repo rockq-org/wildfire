@@ -159,8 +159,8 @@ angular.module('iwildfire.services', ['ngResource'])
 .service('LocationManager', function($rootScope, webq, Msg, $q, L2S, WeChat, $ionicPopup){
     var _this = this;
     _this.addressDetailList = {
-      'bj': {"api_address":"中国福建省莆田市仙游县柳安街鲤南镇虎啸","user_edit_address":"鲤南镇虎啸","lat":25.35334,"lng":118.7019},
-      'chd': {"api_address":"中国福建省莆田市仙游县柳安街鲤南镇虎啸","user_edit_address":"鲤南镇虎啸","lat":25.35334,"lng":118.7019}
+      'bj': {"api_address":"中国北京市北京市朝阳区诚信北路太阳宫乡太阳宫北村","user_edit_address":"太阳宫乡太阳宫北村","lat":39.979505,"lng":116.429},
+      'chd': {"api_address":"中国河北省秦皇岛市海港区求索路西港镇前道西村","user_edit_address":"西港镇前道西村","lat":39.910598,"lng":119.54266}
     };
 
     _this.addressDetail = null;
@@ -313,6 +313,7 @@ angular.module('iwildfire.services', ['ngResource'])
 
     this.setLocation = function(addressDetail) {
         this.addressDetail = addressDetail;
+        console.log(addressDetail);
         $rootScope.$broadcast('location.updated');
     }
 })

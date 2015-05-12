@@ -21,7 +21,12 @@ var auth = function(req, res, next) {
         }
 
         // set user as admin
-        if (config.admins.hasOwnProperty(user.loginname)) {
+        if (user.is_block) {
+            res.status(403);
+            return res.send({
+                error_msg: 'user is blocked.'
+            });
+        } else if (config.admins.hasOwnProperty(user.loginname)) {
             user.is_admin = true;
         }
 

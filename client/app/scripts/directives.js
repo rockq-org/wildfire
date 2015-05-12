@@ -99,7 +99,7 @@ angular.module('iwildfire.directives', [])
           init_map(scope, element, attrs, location);
         }
 
-        Msg.show('地图加载中...');
+        Msg.show('加载中...');
         $timeout(function(){
             var location = LocationManager.getLocation();
             Msg('hide');
@@ -274,7 +274,7 @@ angular.module('iwildfire.directives', [])
     }
 
     return function(scope, element, attrs) {
-      Msg('地图加载中...');
+      Msg('加载中...');
       $timeout(function(){
         var locationDetail = LocationManager.getLocation()
         var width = $document.width();

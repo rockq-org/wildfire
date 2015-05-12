@@ -135,7 +135,7 @@
     <!-- add user avatar -->
     <% if (topic.author && topic.author.name) { %>
       <div>
-        <h3>发布作者：</h3>
+        <h3>作者：</h3>
         <%= topic.author.name %>
         <br/>
         <img src="<%= topic.author.avatar %>" width="100px" height="100px"/>
@@ -146,7 +146,7 @@
     <!-- add location -->
     <% if (topic.goods_exchange_location && topic.goods_exchange_location.user_edit_address) { %>
       <div>
-        <h3>发布位置：</h3>
+        <h3>交易位置：</h3>
         <%= topic.goods_exchange_location.user_edit_address %>
       </div>
     <% } %>
@@ -154,7 +154,7 @@
 
     <!-- add pics -->
     <% if (topic.goods_pics && topic.goods_pics.length > 0) { %>
-        <h3>发布图片：</h3>
+        <h3>图片：</h3>
         <% for(var i=0; i<topic.goods_pics.length; i++) {%>
             <img src="<%= topic.goods_pics[i] %>" width="300" height="300" class="img-responsive"/>
             <br/>
@@ -163,7 +163,7 @@
     <% } %>
 
       <div class='topic_content'>
-        <h3>发布内容：</h3>
+        <h3>描述：</h3>
         <%- markdown(topic.linkedContent) %>
       </div>
     </div>

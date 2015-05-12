@@ -1,5 +1,5 @@
 rsync-server-include.list
-config.js
+server/config.js
 .cov
 coverage
 node_modules
@@ -18,11 +18,11 @@ assets.json
 desktop.ini
 
 *.log
-logs/*.log*
+server/logs/*.log*
 
 .idea
-public/upload/*
-!public/upload/README
+server/public/upload/*
+!server/public/upload/README
 
 *.sublime-project
 *.sublime-workspace
@@ -35,16 +35,16 @@ nohup.out
 dump.rdb
 
 # ignore ionic app
-public/ionic/platforms
-public/ionic/plugins
-public/ionic/www
-public/ionic/node_modules
-public/ionic/.idea
-public/ionic/.tmp
-public/ionic/.temp
-public/ionic/.sass-cache
-public/ionic/app/scripts/config.js
-public/ionic/app/bower_components
-public/ionic/app/scripts/configuration.js
-public/ionic/config/development.json
-public/ionic/config/production.json
+client/platforms
+client/plugins
+client/www
+client/node_modules
+client/.idea
+client/.tmp
+client/.temp
+client/.sass-cache
+client/app/scripts/config.js
+client/app/bower_components
+client/app/scripts/configuration.js
+client/config/development.json
+client/config/production.json

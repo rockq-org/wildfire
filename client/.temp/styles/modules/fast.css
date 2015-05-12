@@ -1,0 +1,34 @@
+/* line 1, ../../../app/styles/modules/fast.scss */
+.nopadding {
+  padding: 0 !important;
+}
+
+/* line 5, ../../../app/styles/modules/fast.scss */
+.fr {
+  float: right !important;
+}
+
+/* line 9, ../../../app/styles/modules/fast.scss */
+.m0 {
+  margin: 0 !important;
+}
+
+/* line 13, ../../../app/styles/modules/fast.scss */
+.mr5 {
+  margin-right: 5px !important;
+}
+
+/* line 17, ../../../app/styles/modules/fast.scss */
+.mb10 {
+  margin-bottom: 10px !important;
+}
+
+/* line 21, ../../../app/styles/modules/fast.scss */
+.border-dashed {
+  border-style: dashed !important;
+}
+
+/* line 25, ../../../app/styles/modules/fast.scss */
+.noborder {
+  border: none;
+}

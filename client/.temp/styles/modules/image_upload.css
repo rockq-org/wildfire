@@ -1,0 +1,48 @@
+/* line 1, ../../../app/styles/modules/image_upload.scss */
+.wf-img-upload {
+  margin: 0 auto;
+  padding: 8px;
+}
+/* line 5, ../../../app/styles/modules/image_upload.scss */
+.wf-img-upload .box {
+  box-sizing: content-box;
+  border: 1px solid #aaa;
+  background: #ddd;
+  margin: 4px 2px;
+  padding: 0;
+  height: 160px;
+}
+/* line 27, ../../../app/styles/modules/image_upload.scss */
+.wf-img-upload .box .goods-img-holder {
+  position: relative;
+}
+/* line 30, ../../../app/styles/modules/image_upload.scss */
+.wf-img-upload .box.upload {
+  background: #fff;
+  text-align: center;
+  color: #aaa;
+}
+/* line 34, ../../../app/styles/modules/image_upload.scss */
+.wf-img-upload .box.upload i {
+  font-size: 26px;
+  line-height: 78px;
+}
+/* line 39, ../../../app/styles/modules/image_upload.scss */
+.wf-img-upload .box img {
+  -webkit-flex: 1;
+          flex: 1;
+  max-width: 100%;
+  max-height: 100%;
+}
+/* line 44, ../../../app/styles/modules/image_upload.scss */
+.wf-img-upload .box span {
+  position: absolute;
+  font-size: 20px;
+  color: #ef473a;
+  top: 10px;
+  right: 10px;
+}
+/* line 52, ../../../app/styles/modules/image_upload.scss */
+.wf-img-upload .group .box {
+  height: 78px;
+}

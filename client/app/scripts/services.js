@@ -156,7 +156,7 @@ angular.module('iwildfire.services', ['ngResource'])
   return WeChat;
 })
 
-.service('LocationManager', function($rootScope, webq, Msg, $q, L2S, WeChat, $ionicPopup){
+.service('LocationManager', function($rootScope, webq, Msg, $q, L2S, WeChat, $ionicPopup, $timeout){
     var _this = this;
     _this.addressDetailList = {
       'bj': {"api_address":"中国北京市北京市朝阳区诚信北路太阳宫乡太阳宫北村","user_edit_address":"太阳宫乡太阳宫北村","lat":39.979505,"lng":116.429},
@@ -282,14 +282,17 @@ angular.module('iwildfire.services', ['ngResource'])
       }
 
       // Msg.show('定位中，请稍候...');
-      WeChat.getNetworkType()
-        .then(function(networkType){
-          if(networkType !== 'wifi') {
-            console.log('not wifi network, just choose location by popup');
-            d.reject('not wifi network');
-          }
-        })
-        .then(WeChat.getWx)
+      // WeChat.getNetworkType()
+      //   .then(function(networkType){
+      //     if(networkType !== 'wifi') {
+      //       console.log('not wifi network, just choose location by popup');
+      //       d.reject('not wifi network');
+      //     }
+      //   })
+      //   .then(WeChat.getWx)
+      this.getLocationTimeout(d);
+
+      WeChat.getWx()
         .then(this.getLatLngFromAPI)
         .then(this.getAddressDetailFromAPI)
         .then(function(addressDetail){
@@ -305,6 +308,16 @@ angular.module('iwildfire.services', ['ngResource'])
         });
 
       return d.promise;
+    }
+
+    this.getLocationTimeout = function(d) {
+      $timeout(function(){
+        var location = _this.getLocation();
+        if(location && location.lat) {
+          return;
+        }
+        d.reject('timeout for 5 seconds');
+      }, 5000);
     }
 
     this.getLocation = function() {

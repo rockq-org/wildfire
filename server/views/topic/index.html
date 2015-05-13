@@ -140,8 +140,15 @@
         <br/>
         <img src="<%= topic.author.avatar %>" width="100px" height="100px"/>
       </div>
-    <% } %>
+    <% } %>    
 
+    <!-- add user phone number -->
+    <% if (typeof(current_user) !== 'undefined') { %>
+      <div>
+        <h3>电话：</h3>
+        <%= topic.author.phone_number %>
+      </div>
+    <% } %>
 
     <!-- add location -->
     <% if (topic.goods_exchange_location && topic.goods_exchange_location.user_edit_address) { %>

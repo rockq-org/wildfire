@@ -5,6 +5,11 @@
          title="<%= topic.author.loginname %>"
             />
     <%= topic.author.name %>
+
+    <% if (typeof(current_user) !== 'undefined') { %>
+      <%= topic.author.phone_number %>
+    <% } %>
+
         <!-- add location -->
     <% if (topic.goods_exchange_location && topic.goods_exchange_location.user_edit_address) { %>
         <%= topic.goods_exchange_location.user_edit_address %>

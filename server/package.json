@@ -38,6 +38,7 @@
     "cors": "2.5.0",
     "csurf": "1.6.2",
     "data2xml": "0.8.0",
+    "date-util": "^1.2.1",
     "date-utils": "^1.2.16",
     "ejs-mate": "2.0.0",
     "eventproxy": "0.3.1",

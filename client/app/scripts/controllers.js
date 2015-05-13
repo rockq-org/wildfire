@@ -327,7 +327,6 @@ angular.module('iwildfire.controllers', [])
     cfg,
     User
 ) {
-
     // 既不是调试，也不存在accesstoken
     // 注意，假设 BindAccessToken 也是成功获取Profile的
     if ((!store.getAccessToken()) && (!cfg.debug)) {
@@ -381,8 +380,7 @@ angular.module('iwildfire.controllers', [])
         $scope.topic = topic;
         $scope.img_prefix = cfg.server;
         $scope.avatar_prefix = cfg.api + '/avatar/';
-        //$scope.showBargains = false;
-        //$scope.status = 'normal';
+        $scope.isSeller = false;
         $scope.status = {
             action: 'normal',
             showBargains: false
@@ -403,6 +401,7 @@ angular.module('iwildfire.controllers', [])
                     action: 'normal',
                     showBargains: false
                 }
+            $scope.isSeller = false;
                 // track view
             if (window.analytics) {
                 window.analytics.trackView('topic view');
@@ -428,7 +427,9 @@ angular.module('iwildfire.controllers', [])
                     if (item.price) $scope.bargains.push(item);
                     else $scope.replies.push(item);
                 });
-                $scope.isSeller = $scope.topic.author.accessToken == store.getAccessToken();
+                var profile = store.getUserProfile();
+                if(profile && (profile.loginname == $scope.topic.author.loginname))
+                    $scope.isSeller = true;
             }, $rootScope.requestErrorHandler({
                 noBackdrop: true
             }, function() {
@@ -481,14 +482,30 @@ angular.module('iwildfire.controllers', [])
             }
         }
 
+        $scope.bargainTo = function(replyAuthor) {
+            console.log(replyAuthor,$scope.topic.author);
+            if($scope.isSeller && replyAuthor && (replyAuthor.loginname == $scope.topic.author.loginname))
+                return;
+            $scope.status.showBargains = true;
+            $scope.status.action = 'bid';
+            $scope.replyData = {
+                price: $scope.topic.goods_now_price,
+                content: '便宜点我就收了'
+            };
+            if($scope.isSeller) {
+                $scope.replyData.replyTo = replyAuthor;
+                $scope.replyData.content = '再加点我就卖了';
+            }
+            $scope.replyData.replyTo = replyAuthor;
+        }
+
         $scope.replyTo = function(replyAuthor) {
             $scope.replyData = {
                 content: ''
             };
             $scope.replyData.replyTo = replyAuthor;
-            status.showBargains = false;
+            $scope.status.showBargains = false;
             $scope.status.action = 'reply';
-            console.log(replyAuthor);
         }
 
         function isPriceValidate(replyPrice, sellPrice) {

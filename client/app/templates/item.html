@@ -66,14 +66,17 @@
       <ion-item ng-if="bargains.length == 0">
         暂无出价
       </ion-item>
-      <ion-item class="item-avatar" ng-repeat="reply in bargains">
+      <ion-item ng-class="reply.author.loginname == topic.author.loginname?'item-avatar-right':'item-avatar'" ng-repeat="reply in bargains" ng-click="bargainTo(reply.author)">
         <img ng-src="{{reply.author.avatar}}">
         <p>
           <span ng-class="{'bold': reply.author.loginname == topic.author.loginname}">
             {{reply.author.name}}
           </span>
-          <span class="assertive">
+          <span class="assertive" ng-if="!reply.reply_to">
             出价 ￥ {{reply.price}}
+          </span>
+          <span class="assertive" ng-if="reply.reply_to">
+            回复 {{ reply.reply_to}}
           </span>
           <span class="item-note" am-time-ago="reply.create_at">
           </span>
@@ -94,8 +97,7 @@
       <ion-item ng-if="replies.length == 0">
         暂无评论
       </ion-item>
-      <ion-item class="item-avatar" ng-repeat="reply in replies"
-        ng-click="replyTo(reply.author)">
+      <ion-item ng-class="reply.author.loginname == topic.author.loginname?'item-avatar-right':'item-avatar'" ng-repeat="reply in replies" ng-click="replyTo(reply.author)">
         <img ng-src="{{reply.author.avatar}}">
         <p>
           <span ng-class="{'bold': reply.author.loginname == topic.author.loginname}">
@@ -114,7 +116,7 @@
   </ion-content>
   <div class="bar bar-footer" ng-show="status.action=='normal'">
     <div class="tabs tabs-color-royal">
-      <a ng-show="!isSeller" class="tab-item" ng-click="replyData={price:topic.goods_now_price,content:'便宜点我就收了'};status.showBargains=true;status.action='bid';">
+      <a ng-show="!isSeller" class="tab-item" ng-click="bargainTo()">
         我要出价
       </a>
       <div ng-show="!isSeller" class="tab-item">
@@ -127,7 +129,7 @@
       </a>
     </div>
   </div>
-  <div class="bar bar-footer" ng-show="status.action!='normal'" style="background:#ddd;height: 150px;display:block;" keyboard-attach>
+  <div class="bar bar-footer" ng-show="status.action=='bid'" style="background:#ddd;height: 150px;display:block;" keyboard-attach>
       <div class="row" style="display:block;">
         <button class="button button-small button-clear button-dark float-left" ng-click="status.action='normal'">
           取消
@@ -136,17 +138,39 @@
           发送
         </button>
       </div>
-      <div ng-show="status.action=='reply'" class="row" style="padding:10px;">
+      <div ng-show="isSeller" class="row" style="padding:10px;">
         <label class="col col-25">
           回复
         </label>
         <span class="col col-75">{{ (replyData.replyTo.name == topic.author.name)? '卖家':replyData.replyTo.name}}</span>
       </div>
-      <div ng-show="status.action=='bid'" class="row" style="padding:10px;">
+      <div ng-show="!isSeller" class="row" style="padding:10px;">
         <label class="col col-25">
           出价&nbsp;&nbsp;&nbsp;￥
         </label>
         <input class="col col-25" style="padding:2px 6px;" type="text" placeholder="" ng-model="replyData.price">
+      </div>
+      <div class="row" style="padding:10px;">
+        <label class="col col-25">
+          说点什么
+        </label>
+        <input class="col col-75" style="padding:2px 6px;" type="text" placeholder="" ng-model="replyData.content"></input>
+      </div>
+  </div>
+  <div class="bar bar-footer" ng-show="status.action=='reply'" style="background:#ddd;height: 150px;display:block;" keyboard-attach>
+      <div class="row" style="display:block;">
+        <button class="button button-small button-clear button-dark float-left" ng-click="status.action='normal'">
+          取消
+        </button>
+        <button class="button button-small button-clear button-royal float-right" ng-click="saveReply()">
+          发送
+        </button>
+      </div>
+      <div class="row" style="padding:10px;">
+        <label class="col col-25">
+          回复
+        </label>
+        <span class="col col-75">{{ (replyData.replyTo.name == topic.author.name)? '卖家':replyData.replyTo.name}}</span>
       </div>
       <div class="row" style="padding:10px;">
         <label class="col col-25">

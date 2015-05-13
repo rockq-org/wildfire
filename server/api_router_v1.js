@@ -78,4 +78,9 @@ router.post('/ionic/feedback', middleware.auth, ionicController.saveFeedback);
 router.post('/ionic/state', toolsController.getHashStateByMd5);
 router.get('/ionic/app-revision', ionicController.getAppGitRevision);
 
+/**
+ * get statistics of subscriptions
+ */
+router.post('/statistics/subscription', toolsController.getSubscriptionStatistics);
+
 module.exports = router;

@@ -496,7 +496,6 @@ angular.module('iwildfire.controllers', [])
                 $scope.replyData.replyTo = replyAuthor;
                 $scope.replyData.content = '再加点我就卖了';
             }
-            $scope.replyData.replyTo = replyAuthor;
         }
 
         $scope.replyTo = function(replyAuthor) {

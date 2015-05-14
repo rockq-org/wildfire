@@ -151,10 +151,29 @@ function onClick(msg, res) {
 function onDefault(msg, res) {
     // body...
     logger.warn('onDefault', msg);
-    res.reply({
-        content: '您有任何问题请留言，我们将会尽快回复，感谢您的支持。',
-        type: 'text'
-    });
+
+    // https://github.com/arrking/wildfire/issues/274
+    // http://mp.weixin.qq.com/wiki/10/79502792eef98d6e0c6e1739da387346.html
+    if (msg.MsgType == 'text') {
+        res.reply({
+            content: '您有任何问题请留言，我们将会尽快回复，感谢您的支持。',
+            type: 'text'
+        });
+    }
+
+    // 
+    // 地理位置消息
+    // <xml>
+    // <ToUserName><![CDATA[toUser]]></ToUserName>
+    // <FromUserName><![CDATA[fromUser]]></FromUserName>
+    // <CreateTime>1351776360</CreateTime>
+    // <MsgType><![CDATA[location]]></MsgType>
+    // <Location_X>23.134521</Location_X>
+    // <Location_Y>113.358803</Location_Y>
+    // <Scale>20</Scale>
+    // <Label><![CDATA[位置信息]]></Label>
+    // <MsgId>1234567890123456</MsgId>
+    // </xml> 
 }
 
 exports.setup = function(app, path) {

@@ -23,3 +23,5 @@
 
 app/main/constants/env-prod.json
 app/main/constants/env-dev.json
+app/main/constants/config-const.js
+app/chart/constants/config-const.js

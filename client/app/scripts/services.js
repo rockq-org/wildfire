@@ -317,7 +317,7 @@ angular.module('iwildfire.services', ['ngResource'])
           return;
         }
         d.reject('timeout for 5 seconds');
-      }, 5000);
+      }, 10000);
     }
 
     this.getLocation = function() {

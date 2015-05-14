@@ -3,8 +3,12 @@ angular.module('iwildfire.filters', [])
 
 .filter('addPlatFormPostFix', function($rootScope) {
     return function(input) {
+        console.log(wechatInfo);
         if($rootScope.WILDFIRE_WECHAT_PLATFORM == 'Android') {
-            input += '#mp.weixin.qq.com';
+            var wechatInfo = navigator.userAgent.match(/MicroMessenger\/([\d\.]+)/i) ;
+            if( wechatInfo && wechatInfo[1] < "5.1") {
+                input += '#mp.weixin.qq.com';
+            }
         }
         return input;
     }

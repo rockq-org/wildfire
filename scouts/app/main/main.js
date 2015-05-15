@@ -7,7 +7,7 @@ angular.module('main', [
 ])
 .config(function ($stateProvider, $urlRouterProvider) {
 
-  console.log('Allo! Allo from your module: ' + 'main');
+  // console.log('Allo! Allo from your module: ' + 'main');
 
   $urlRouterProvider.otherwise('/main');
 

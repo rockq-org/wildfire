@@ -1,11 +1,11 @@
 <?xml version="1.0" standalone="no"?>
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd" >
 <!--
-2015-5-15: Created with FontForge (http://fontforge.org)
+2015-5-16: Created with FontForge (http://fontforge.org)
 -->
 <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1">
 <metadata>
-Created by FontForge 20150401 at Fri May 15 21:55:13 2015
+Created by FontForge 20150401 at Sat May 16 15:32:28 2015
  By 聂功武
 Copyright (c) 2015, &#232;&#129;&#130;&#229;&#138;&#159;&#230;&#173;&#166;
 </metadata>
@@ -25,6 +25,8 @@ Copyright (c) 2015, &#232;&#129;&#130;&#229;&#138;&#159;&#230;&#173;&#166;
     unicode-range="U+F122-F4B9"
   />
     <missing-glyph />
+    <glyph glyph-name="uniF35D" unicode="&#xf35d;" horiz-adv-x="342" 
+d="M192 363v-260l120 120l30 -31l-171 -171l-171 171l30 30l120 -119v260h42z" />
     <glyph glyph-name="uniF122" unicode="&#xf122;" horiz-adv-x="416" 
 d="M414 338c1 -2 2 -4 2 -6s-1 -4 -2 -6l-249 -320c-2 -2 -5 -6 -9 -6s-8 3 -10 5s-141 136 -141 136l-3 3c-1 2 -2 4 -2 6s1 3 2 5l2 2c14 15 42 44 44 46s4 6 8 6s8 -4 10 -6s80 -78 80 -78l200 257c2 2 4 2 6 2s5 -1 7 -2z" />
     <glyph glyph-name="uniF123" unicode="&#xf123;" horiz-adv-x="448" 

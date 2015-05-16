@@ -22,7 +22,7 @@
           <ion-nav-view name="menuContent">
               <ion-content class="" style="top:44px">
               <!-- <ion-content class="has-subheader"> -->
-                <ion-refresher ng-if="topics.length > 0 || loadError" pulling-text="下拉刷新..." on-refresh="doRefresh()" refreshing-icon="ion-loading-c">
+                <ion-refresher ng-if="topics.length > 0 || loadError" pulling-text="下拉刷新..." on-refresh="doRefresh()" >
                 </ion-refresher>
                 <div class="list topics">
                   <div class="item col col-50 no-border" style="height:315px; float:left" ng-repeat="topic in topics">
@@ -56,7 +56,7 @@
                   Loading icon of infinte-scroll not showing with collection-repeat
                   https://github.com/driftyco/ionic/issues/2376
                 -->
-                <ion-infinite-scroll on-infinite="loadMore()" distance="10%" icon="ion-loading-c" ng-if="hasNextPage && !loadError">
+                <ion-infinite-scroll on-infinite="loadMore()" distance="10%" ng-if="hasNextPage && !loadError">
                 </ion-infinite-scroll>
                 <div class="item text-center padding">
                   <p>{{loadingMsg}}</p>

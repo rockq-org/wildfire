@@ -4,8 +4,8 @@
 .sass-cache
 
 # npm & bower
-/node_modules/
-/app/bower_components/
+node_modules/
+app/bower_components
 
 # ionic fonts
 /app/main/assets/fonts/ionicons.*
@@ -21,7 +21,5 @@
 *.sublime-project
 *.sublime-workspace
 
-app/main/constants/env-prod.json
-app/main/constants/env-dev.json
-app/main/constants/config-const.js
-app/chart/constants/config-const.js
+app/**/constants/**
+!app/main/constants/env-prod.json

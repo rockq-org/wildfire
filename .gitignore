@@ -49,6 +49,3 @@ client/app/bower_components
 client/app/scripts/configuration.js
 client/config/development.json
 client/config/production.json
-
-# ignore scouts
-scouts/app/bower_components/

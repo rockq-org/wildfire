@@ -97,9 +97,6 @@ input.user-add-text{
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
-    width: -webkit-calc(100% - 50px);
-    width: calc(100% - 50px);
-    display: inline-block;
   }
 }
 

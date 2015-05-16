@@ -254,7 +254,7 @@ module.exports = function (grunt) {
           src: [
             '<%= yeoman.images %>/**/*.{png,jpg,jpeg,gif,webp,svg}',
             '*.html',
-            'templates/**/*.html',
+            //'templates/**/*.html',
             'fonts/*'
           ]
         }, {
@@ -289,6 +289,7 @@ module.exports = function (grunt) {
         src: [
           '**/*',
           '!**/*.(scss,sass,css)',
+          '!templates/**/*.html',
         ]
       },
       tmp: {
@@ -395,6 +396,17 @@ module.exports = function (grunt) {
         browsers: ['PhantomJS'],
         singleRun: true,
       }
+    },
+
+    html2js: {
+      options: {
+        base: '<%= yeoman.app %>',
+        module: 'iwildfire.templates'
+      },
+      main: {
+        src: ['<%= yeoman.app %>/templates/**/*.html'],
+        dest: '<%= yeoman.app %>/scripts/templates.js'
+      },
     },
 
     // ngAnnotate tries to make the code safe for minification automatically by
@@ -506,7 +518,7 @@ module.exports = function (grunt) {
     }
 
     grunt.config('concurrent.ionic.tasks', ['ionic:serve', 'watch']);
-    grunt.task.run(['wiredep', 'init', 'concurrent:ionic']);
+    grunt.task.run(['wiredep', 'html2js', 'init', 'concurrent:ionic']);
   });
   grunt.registerTask('emulate', function() {
     grunt.config('concurrent.ionic.tasks', ['ionic:emulate:' + this.args.join(), 'watch']);

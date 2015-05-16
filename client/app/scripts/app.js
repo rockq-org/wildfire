@@ -5,7 +5,14 @@
 // the 2nd parameter is an array of 'requires'
 // 'starter.services' is found in services.js
 // 'starter.controllers' is found in controllers.js
-angular.module('iwildfire', ['ionic', 'iwildfire.controllers', 'iwildfire.services', 'iwildfire.directives', 'iwildfire.filters', 'config', 'angularMoment'])
+angular.module('iwildfire', ['ionic', 
+    'iwildfire.controllers', 
+    'iwildfire.services', 
+    'iwildfire.directives', 
+    'iwildfire.filters', 
+    'iwildfire.templates', 
+    'config', 
+    'angularMoment'])
 
 .run(function($ionicPlatform, $rootScope, LocationManager, $log, store, webq, $ionicLoading, amMoment, Messages, $timeout, Msg) {
 

@@ -16,8 +16,8 @@
         <label class="item-input-wrapper">
           <input id="phoneNumber" ng-model="data.phoneNumber" type="text" placeholder="手机号码">
         </label>
-        <button ng-click="sendVerifyCode()" class="button button-royal button-small">
-          发送验证码
+        <button ng-click="sendVerifyCode()" class="button button-royal button-small" ng-class="{'button-disabled':waitFor60Seconds}" ng-disabled="waitFor60Seconds">
+          {{submitTxt}}
         </button>
       </div>
       <div class="item-input-inset">

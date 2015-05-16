@@ -1417,7 +1417,7 @@ angular.module('iwildfire.controllers', [])
 })
 
 .controller('BindMobilePhoneCtrl', function($scope, $state, $stateParams, Msg, $ionicModal,
-    $ionicPopup, $ionicLoading, $timeout, $log, webq, store) {
+    $ionicPopup, $ionicLoading, $timeout, $log, webq, store, $interval) {
     var phonenoPattern = /^\(?([0-9]{11})\)?$/;
     var accessToken = $stateParams.accessToken;
     var md5 = $stateParams.md5;
@@ -1459,37 +1459,47 @@ angular.module('iwildfire.controllers', [])
         angular.element(document.getElementById('verifyCode')).attr('placeholder', txt);
     }
 
+    $scope.submitTxt = '发送验证码';
     $scope.sendVerifyCode = function() {
-        // verify the input nubmer is a phone number
-        //Msg.alert('sendVerifyCode' + JSON.stringify($scope.data));
-        if ($scope.data.phoneNumber &&
-            isPhonenumber($scope.data.phoneNumber)) {
-            // user has input a phone number
-            // post request to send the api
-            currentPhoneNumber = $scope.data.phoneNumber;
-            _showLoadingSpin('发送验证码 ...', function() {
-                webq.sendVerifyCode($scope.data.phoneNumber)
-                    .then(function(result) {
-                        // send code sucessfully, just close loading
-                        // spin in finally.
-                        _fixPhoneNumberInputPlaceholder('已发送至 {0}.'.f($scope.data.phoneNumber));
-                    }, function(err) {
-                        // get an error, now alert it.
-                        // TODO process err in a user friendly way.
-                        Msg.alert(JSON.stringify(err));
-                    })
-                    .finally(function() {
-                        _hideLoadingSpin();
-                    });
-            });
-            // $timeout(function(){
-            //  _hideLoadingSpin();
-            // }, 3000);
-        } else {
-            // validate failed.
-            _fixPhoneNumberInputPlaceholder('输入正确的手机号码');
-        }
-    }
+      // verify the input nubmer is a phone number
+      //Msg.alert('sendVerifyCode' + JSON.stringify($scope.data));
+      if (!$scope.data.phoneNumber || !isPhonenumber($scope.data.phoneNumber)) {
+        _fixPhoneNumberInputPlaceholder('输入正确的手机号码');
+        return;
+      }
+      // user has input a phone number
+      // post request to send the api
+      currentPhoneNumber = $scope.data.phoneNumber;
+      Msg.show('发送验证码 ...');
+      $scope.submitTxt = '等待60秒';
+      var seconds = 60;
+      var timeer = $interval(function(){
+        seconds--;
+        $scope.submitTxt = ' 等待 ' + seconds + ' 秒';
+      }, 1000, seconds);
+
+      $timeout(function(){
+        $scope.submitTxt = '发送验证码';
+        $scope.waitFor60Seconds = false;
+        $scope.data.phoneNumber = currentPhoneNumber;
+      }, 1000 * seconds + 1000);
+
+      $scope.waitFor60Seconds = true;
+      webq.sendVerifyCode($scope.data.phoneNumber)
+        .then(function(result) {
+            // send code sucessfully, just close loading
+            // spin in finally.
+            _fixPhoneNumberInputPlaceholder('已发送至 {0}.'.f($scope.data.phoneNumber));
+        }, function(err) {
+            // get an error, now alert it.
+            // TODO process err in a user friendly way.
+            Msg.alert(JSON.stringify(err));
+        })
+        .finally(function() {
+            Msg('hide');
+        });
+    };
+
     $ionicModal.fromTemplateUrl('modal-service-agreements.html', {
         scope: $scope,
         animation: 'slide-in-up'

@@ -1,20 +1,13 @@
 <div class='cell'>
 
-  <a class="user_avatar pull-left" href="/user/<%= topic.author.loginname %>">
-    <img src="<%= topic.author.avatar %>"
-         title="<%= topic.author.loginname %>"
-            />
-    <%= topic.author.name %>
+  <div class="topic_title_wrapper">
 
-    <% if (typeof(current_user) !== 'undefined') { %>
-      <%= topic.author.phone_number %>
-    <% } %>
+    <a class='topic_title' href='/topic/<%= topic._id %>' title='<%= topic.title %>'>
+      <%= topic.title %>
+    </a>
 
-        <!-- add location -->
-    <% if (topic.goods_exchange_location && topic.goods_exchange_location.user_edit_address) { %>
-        <%= topic.goods_exchange_location.user_edit_address %>
-    <% } %>
-  </a>
+    <%- partial('./_top_good', {topic: topic}) %>
+  </div>
 
   <span class="reply_count pull-left">
     <span class="count_of_replies" title="回复数">
@@ -28,7 +21,7 @@
 
   <% if (topic.reply && topic.reply.author) {%>
   <a class='last_time pull-right' href="/topic/<%= topic._id %><%- '#' + topic.reply._id %>">
-    <img class="user_small_avatar" src="<%= topic.reply.author.avatar_url %>">
+    <img class="user_small_avatar" src="<%= topic.reply.author.avatar %>">
     <span class="last_active_time"><%= topic.reply.friendly_create_at %></span>
   </a>
   <% } %>
@@ -38,12 +31,19 @@
     </span>
   <% } %>
 
-  <div class="topic_title_wrapper">
+  <a class="user_avatar pull-left" href="/user/<%= topic.author.loginname %>">
+    <img src="<%= topic.author.avatar %>"
+         title="<%= topic.author.loginname %>"
+            />
+    <%= topic.author.name %>
 
-    <%- partial('./_top_good', {topic: topic}) %>
+    <% if (typeof(current_user) !== 'undefined') { %>
+      <%= topic.author.phone_number %>
+    <% } %>
+  </a>
 
-    <a class='topic_title' href='/topic/<%= topic._id %>' title='<%= topic.title %>'>
-      <%= topic.title %>
-    </a>
-  </div>
+        <!-- add location -->
+    <% if (topic.goods_exchange_location && topic.goods_exchange_location.user_edit_address) { %>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<%= topic.goods_exchange_location.user_edit_address %>
+    <% } %>
 </div>

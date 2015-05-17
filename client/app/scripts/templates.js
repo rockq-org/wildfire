@@ -29,8 +29,8 @@ angular.module("templates/bind-mobile-phone.html", []).run(["$templateCache", fu
     "        <label class=\"item-input-wrapper\">\n" +
     "          <input id=\"phoneNumber\" ng-model=\"data.phoneNumber\" type=\"text\" placeholder=\"手机号码\">\n" +
     "        </label>\n" +
-    "        <button ng-click=\"sendVerifyCode()\" class=\"button button-royal button-small\">\n" +
-    "          发送验证码\n" +
+    "        <button ng-click=\"sendVerifyCode()\" class=\"button button-royal button-small\" ng-class=\"{'button-disabled':waitFor60Seconds}\" ng-disabled=\"waitFor60Seconds\">\n" +
+    "          {{submitTxt}}\n" +
     "        </button>\n" +
     "      </div>\n" +
     "      <div class=\"item-input-inset\">\n" +
@@ -99,7 +99,7 @@ angular.module("templates/inbox-detail.html", []).run(["$templateCache", functio
 
 angular.module("templates/item.html", []).run(["$templateCache", function($templateCache) {
   $templateCache.put("templates/item.html",
-    "<ion-view view-title=\"呱呱二手\">\n" +
+    "<ion-view view-title=\"topic.title||'呱呱二手'\">\n" +
     "  <ion-nav-buttons side=\"left\">\n" +
     "    <a class=\"button button-icon icon ion-ios-arrow-back\" href=\"#tab/index\"></a>\n" +
     "  </ion-nav-buttons>\n" +
@@ -559,7 +559,7 @@ angular.module("templates/tab-account.html", []).run(["$templateCache", function
 
 angular.module("templates/tab-inbox.html", []).run(["$templateCache", function($templateCache) {
   $templateCache.put("templates/tab-inbox.html",
-    "<ion-view view-title=\"呱呱二手\">\n" +
+    "<ion-view view-title=\"消息中心\">\n" +
     "  <ion-content>\n" +
     "    <ion-list>\n" +
     "      <ion-item class=\"item-remove-animate item-avatar item-icon-right\" ng-repeat=\"message in messages.hasnot_read_messages\" type=\"item-text-wrap\" href=\"#/item/{{message.topic.id}}\">\n" +

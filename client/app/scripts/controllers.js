@@ -812,7 +812,8 @@ angular.module('iwildfire.controllers', [])
                  */
                 return webq.uploadWechatImages(data)
             }, function(err) {
-                Msg.alert(JSON.stringify(err));
+                Msg.alert('Opps，图片上传好像有误，再传一次吧');
+                // Msg.alert(JSON.stringify(err));
             })
             .then(function(result) {
                 //Msg.alert('succ:' + JSON.stringify(result));
@@ -842,7 +843,8 @@ angular.module('iwildfire.controllers', [])
                  */
                 return webq.uploadWechatImages(data)
             }, function(err) {
-                Msg.alert(JSON.stringify(err));
+                Msg.alert('Opps，图片上传好像有误，再传一次吧');
+                // Msg.alert(JSON.stringify(err));
             })
             .then(function(result) {
                 //Msg.alert('succ:' + JSON.stringify(result));

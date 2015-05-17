@@ -84,16 +84,20 @@ exports.getRepliesByTopicId = function (id, cb) {
           }
           replies[i].author = author || { _id: '' };
           replies[i].friendly_create_at = tools.formatDate(replies[i].create_at, true);
-          //if (replies[i].content_is_html) {
+          console.log(replies[i].content);
+          if(replies[i].reply_to)
+            replies[i].content = replies[i].content.replace(/^@([a-z0-9\-_]+\b)/igm, 
+              '[' + replies[i].reply_to + '](/user/$1)');
+          if (replies[i].content_is_html) {
             return proxy.emit('reply_find');
-          /*}
+          }
           at.linkUsers(replies[i].content, function (err, str) {
             if (err) {
               return cb(err);
             }
             replies[i].content = str;
             proxy.emit('reply_find');
-          });*/
+          });
         });
       })(j);
     }

@@ -3,15 +3,18 @@ angular.module('iwildfire.templates', ['templates/bind-access-token.html', 'temp
 angular.module("templates/bind-access-token.html", []).run(["$templateCache", function($templateCache) {
   $templateCache.put("templates/bind-access-token.html",
     "<ion-view view-title=\"\">\n" +
-    "    <ion-content>\n" +
-    "    </ion-content>\n" +
+    "  <ion-content>\n" +
+    "  </ion-content>\n" +
     "</ion-view>\n" +
     "");
 }]);
 
 angular.module("templates/bind-mobile-phone.html", []).run(["$templateCache", function($templateCache) {
   $templateCache.put("templates/bind-mobile-phone.html",
-    "<ion-view view-title=\"呱呱二手\">\n" +
+    "<ion-view>\n" +
+    "  <ion-nav-title>\n" +
+    "    加入呱呱\n" +
+    "  </ion-nav-title>\n" +
     "  <ion-content>\n" +
     "    <div class=\"list padding\">\n" +
     "      <h3 class=\"padding text-center\">欢迎加入呱呱二手</h3>\n" +
@@ -85,7 +88,6 @@ angular.module("templates/inbox-detail.html", []).run(["$templateCache", functio
     "      </ion-item>\n" +
     "    </ion-list>\n" +
     "    <br>\n" +
-    "\n" +
     "    <ion-list>\n" +
     "      <ion-item ng-class=\"itemClass(chat)\" ng-repeat=\"chat in chats\" type=\"item-text-wrap\" href=\"#/tab/inbox/{{chat.id}}\">\n" +
     "        <img ng-src=\"{{chat.face}}\">\n" +
@@ -99,7 +101,10 @@ angular.module("templates/inbox-detail.html", []).run(["$templateCache", functio
 
 angular.module("templates/item.html", []).run(["$templateCache", function($templateCache) {
   $templateCache.put("templates/item.html",
-    "<ion-view view-title=\"{{topic.title||'呱呱二手'}}\">\n" +
+    "<ion-view>\n" +
+    "  <ion-nav-title>\n" +
+    "    {{topic.title||'呱呱二手'}}\n" +
+    "  </ion-nav-title>\n" +
     "  <ion-nav-buttons side=\"left\">\n" +
     "    <a class=\"button button-icon icon ion-ios-arrow-back\" href=\"#tab/index\"></a>\n" +
     "  </ion-nav-buttons>\n" +
@@ -338,30 +343,30 @@ angular.module("templates/modal-post-goods-desp.html", []).run(["$templateCache"
 angular.module("templates/settings/about.html", []).run(["$templateCache", function($templateCache) {
   $templateCache.put("templates/settings/about.html",
     "<ion-view view-title=\"呱呱二手\" hide-nav-bar=\"true\">\n" +
-    "    <ion-header-bar class=\"bar-royal\">\n" +
-    "        <div class=\"buttons\">\n" +
-    "            <button class=\"button icon-left ion-ios-arrow-left button-clear \" ng-click=\"goBackSettings()\"></button>\n" +
-    "        </div>\n" +
-    "        <h1 class=\"title\">关于 呱呱二手</h1>\n" +
-    "    </ion-header-bar>\n" +
-    "    <ion-content>\n" +
-    "        <div class=\"list card\">\n" +
-    "            <div class=\"item item-avatar\">\n" +
-    "                <img src=\"images/frog-icon.png\">\n" +
-    "                <h2>呱呱二手</h2>\n" +
-    "                <p>版本 v1.0, Build {{data.build}}</p>\n" +
-    "            </div>\n" +
-    "            <div class=\"item item-text-wrap\">\n" +
-    "                呱呱二手是一款主打校园、近距离的闲置及二手物品的交易平台，并立志于提供有别于现有常规的BBS，贴吧，weibo等手段的更好的用户体验，更好的完成近距闲置物品交易行为。\n" +
-    "            </div>\n" +
-    "            <div class=\"item item-text-wrap\">\n" +
-    "                呱呱二手的发展愿景就是促进物品价值的物尽其用，并推动循环经济的理念深入人心。\n" +
-    "            </div>\n" +
-    "            <div class=\"item item-text-wrap\">\n" +
-    "                呱呱二手使用方法，基于微信公众号的方式，使用时无需下载，能看快速浏览，发布以及简化二手及闲置转让中出现的各种沟通成本，让二手及闲置转让真正变得更加简单易用高效。\n" +
-    "            </div>\n" +
-    "        </div>\n" +
-    "    </ion-content>\n" +
+    "  <ion-header-bar class=\"bar-royal\">\n" +
+    "    <div class=\"buttons\">\n" +
+    "      <button class=\"button icon-left ion-ios-arrow-left button-clear \" ng-click=\"goBackSettings()\"></button>\n" +
+    "    </div>\n" +
+    "    <h1 class=\"title\">关于 呱呱二手</h1>\n" +
+    "  </ion-header-bar>\n" +
+    "  <ion-content>\n" +
+    "    <div class=\"list card\">\n" +
+    "      <div class=\"item item-avatar\">\n" +
+    "        <img src=\"images/frog-icon.png\">\n" +
+    "        <h2>呱呱二手</h2>\n" +
+    "        <p>版本 v1.0, Build {{data.build}}</p>\n" +
+    "      </div>\n" +
+    "      <div class=\"item item-text-wrap\">\n" +
+    "        呱呱二手是一款主打校园、近距离的闲置及二手物品的交易平台，并立志于提供有别于现有常规的BBS，贴吧，weibo等手段的更好的用户体验，更好的完成近距闲置物品交易行为。\n" +
+    "      </div>\n" +
+    "      <div class=\"item item-text-wrap\">\n" +
+    "        呱呱二手的发展愿景就是促进物品价值的物尽其用，并推动循环经济的理念深入人心。\n" +
+    "      </div>\n" +
+    "      <div class=\"item item-text-wrap\">\n" +
+    "        呱呱二手使用方法，基于微信公众号的方式，使用时无需下载，能看快速浏览，发布以及简化二手及闲置转让中出现的各种沟通成本，让二手及闲置转让真正变得更加简单易用高效。\n" +
+    "      </div>\n" +
+    "    </div>\n" +
+    "  </ion-content>\n" +
     "</ion-view>\n" +
     "");
 }]);
@@ -369,25 +374,25 @@ angular.module("templates/settings/about.html", []).run(["$templateCache", funct
 angular.module("templates/settings/feedback.html", []).run(["$templateCache", function($templateCache) {
   $templateCache.put("templates/settings/feedback.html",
     "<ion-view view-title=\"呱呱二手\" hide-nav-bar=\"true\">\n" +
-    "    <ion-header-bar class=\"bar-royal\">\n" +
-    "        <div class=\"buttons\">\n" +
-    "            <button class=\"button icon-left ion-ios-arrow-left button-clear \" ng-click=\"goBackSettings()\"></button>\n" +
-    "        </div>\n" +
-    "        <h1 class=\"title\">{{data.feedback.title}}</h1>\n" +
-    "    </ion-header-bar>\n" +
-    "    <ion-content>\n" +
-    "        <div class=\"list\">\n" +
-    "            <label class=\"item item-input\">\n" +
-    "                <!-- focus-me does not work -->\n" +
-    "                <!-- http://forum.ionicframework.com/t/auto-focus-textbox-while-template-loads/6851/5 -->\n" +
-    "                <!-- needs more permission in config -->\n" +
-    "                <textarea ng-model=\"data.feedback.content\" placeholder=\"这是给没有节操的Product Manager的一封匿名信\" style=\"height:150px\"></textarea>\n" +
-    "            </label>\n" +
-    "            <button class=\"button button-block button-outline button-positive\" ng-click=\"submitFeedback()\">\n" +
-    "                提交\n" +
-    "            </button>\n" +
-    "        </div>\n" +
-    "    </ion-content>\n" +
+    "  <ion-header-bar class=\"bar-royal\">\n" +
+    "    <div class=\"buttons\">\n" +
+    "      <button class=\"button icon-left ion-ios-arrow-left button-clear \" ng-click=\"goBackSettings()\"></button>\n" +
+    "    </div>\n" +
+    "    <h1 class=\"title\">{{data.feedback.title}}</h1>\n" +
+    "  </ion-header-bar>\n" +
+    "  <ion-content>\n" +
+    "    <div class=\"list\">\n" +
+    "      <label class=\"item item-input\">\n" +
+    "        <!-- focus-me does not work -->\n" +
+    "        <!-- http://forum.ionicframework.com/t/auto-focus-textbox-while-template-loads/6851/5 -->\n" +
+    "        <!-- needs more permission in config -->\n" +
+    "        <textarea ng-model=\"data.feedback.content\" placeholder=\"这是给没有节操的Product Manager的一封匿名信\" style=\"height:150px\"></textarea>\n" +
+    "      </label>\n" +
+    "      <button class=\"button button-block button-outline button-positive\" ng-click=\"submitFeedback()\">\n" +
+    "        提交\n" +
+    "      </button>\n" +
+    "    </div>\n" +
+    "  </ion-content>\n" +
     "</ion-view>\n" +
     "");
 }]);
@@ -395,15 +400,15 @@ angular.module("templates/settings/feedback.html", []).run(["$templateCache", fu
 angular.module("templates/settings/help.html", []).run(["$templateCache", function($templateCache) {
   $templateCache.put("templates/settings/help.html",
     "<ion-view view-title=\"呱呱二手\" hide-nav-bar=\"true\">\n" +
-    "    <ion-header-bar class=\"bar-royal\">\n" +
-    "        <div class=\"buttons\">\n" +
-    "            <button class=\"button icon-left ion-ios-arrow-left button-clear \" ng-click=\"goBackSettings()\"></button>\n" +
-    "        </div>\n" +
-    "        <h1 class=\"title\">帮助</h1>\n" +
-    "    </ion-header-bar>\n" +
-    "    <ion-content>\n" +
-    "        帮助\n" +
-    "    </ion-content>\n" +
+    "  <ion-header-bar class=\"bar-royal\">\n" +
+    "    <div class=\"buttons\">\n" +
+    "      <button class=\"button icon-left ion-ios-arrow-left button-clear \" ng-click=\"goBackSettings()\"></button>\n" +
+    "    </div>\n" +
+    "    <h1 class=\"title\">帮助</h1>\n" +
+    "  </ion-header-bar>\n" +
+    "  <ion-content>\n" +
+    "    帮助\n" +
+    "  </ion-content>\n" +
     "</ion-view>\n" +
     "");
 }]);
@@ -411,42 +416,42 @@ angular.module("templates/settings/help.html", []).run(["$templateCache", functi
 angular.module("templates/settings/index.html", []).run(["$templateCache", function($templateCache) {
   $templateCache.put("templates/settings/index.html",
     "<ion-view view-title=\"呱呱二手\" hide-nav-bar=\"true\">\n" +
-    "    <ion-header-bar class=\"bar-royal\">\n" +
-    "        <div class=\"buttons\">\n" +
-    "            <button class=\"button icon-left ion-ios-arrow-left button-clear \" ng-click=\"goBackProfile()\"></button>\n" +
-    "        </div>\n" +
-    "        <h1 class=\"title\">我的设置</h1>\n" +
-    "    </ion-header-bar>\n" +
-    "    <ion-content>\n" +
-    "        <div class=\"list\">\n" +
-    "            <a class=\"item item-icon-right\" href=\"javascript:void(0)\">\n" +
+    "  <ion-header-bar class=\"bar-royal\">\n" +
+    "    <div class=\"buttons\">\n" +
+    "      <button class=\"button icon-left ion-ios-arrow-left button-clear \" ng-click=\"goBackProfile()\"></button>\n" +
+    "    </div>\n" +
+    "    <h1 class=\"title\">我的设置</h1>\n" +
+    "  </ion-header-bar>\n" +
+    "  <ion-content>\n" +
+    "    <div class=\"list\">\n" +
+    "      <a class=\"item item-icon-right\" href=\"javascript:void(0)\">\n" +
     "                        手机号码 {{data.phone}}\n" +
     "                        <i class=\"icon royal ion-iphone\"></i>\n" +
     "                    </a>\n" +
-    "            <li class=\"item item-toggle\">\n" +
-    "                消息提醒\n" +
-    "                <label class=\"toggle toggle-royal toggle-balanced\">\n" +
-    "                    <input type=\"checkbox\" ng-model=\"data.is_wechat_notify\" ng-checked=\"data.is_wechat_notify == true\" ng-change=\"toggleIsWechatNotify()\">\n" +
-    "                    <div class=\"track\">\n" +
-    "                        <div class=\"handle\"></div>\n" +
-    "                    </div>\n" +
-    "                </label>\n" +
-    "            </li>\n" +
-    "            <a class=\"item item-icon-right\" ui-sref=\"feedback\">\n" +
+    "      <li class=\"item item-toggle\">\n" +
+    "        消息提醒\n" +
+    "        <label class=\"toggle toggle-royal toggle-balanced\">\n" +
+    "          <input type=\"checkbox\" ng-model=\"data.is_wechat_notify\" ng-checked=\"data.is_wechat_notify == true\" ng-change=\"toggleIsWechatNotify()\">\n" +
+    "          <div class=\"track\">\n" +
+    "            <div class=\"handle\"></div>\n" +
+    "          </div>\n" +
+    "        </label>\n" +
+    "      </li>\n" +
+    "      <a class=\"item item-icon-right\" ui-sref=\"feedback\">\n" +
     "                        用户反馈 <i class=\"icon royal ion-ios-paperplane-outline\"></i> \n" +
     "                    </a>\n" +
-    "            <a class=\"item item-icon-right\" ui-sref=\"service-agreement\">\n" +
+    "      <a class=\"item item-icon-right\" ui-sref=\"service-agreement\">\n" +
     "                        用户协议 <i class=\"icon royal ion-ios-paper-outline\"></i> \n" +
     "                    </a>\n" +
-    "            <!-- <a class=\"item item-icon-right\" ui-sref=\"help\">\n" +
+    "      <!-- <a class=\"item item-icon-right\" ui-sref=\"help\">\n" +
     "                         帮助 <i class=\"icon ion-help-buoy\"></i>\n" +
     "                    </a>\n" +
     " -->\n" +
-    "            <a class=\"item item-icon-right\" ui-sref=\"about\">\n" +
+    "      <a class=\"item item-icon-right\" ui-sref=\"about\">\n" +
     "                        关于 <i class=\"icon royal ion-ios-star-outline\"></i> \n" +
     "                    </a>\n" +
-    "        </div>\n" +
-    "    </ion-content>\n" +
+    "    </div>\n" +
+    "  </ion-content>\n" +
     "</ion-view>\n" +
     "");
 }]);
@@ -454,21 +459,21 @@ angular.module("templates/settings/index.html", []).run(["$templateCache", funct
 angular.module("templates/settings/service-agreement.html", []).run(["$templateCache", function($templateCache) {
   $templateCache.put("templates/settings/service-agreement.html",
     "<ion-view view-title=\"呱呱二手\" hide-nav-bar=\"true\">\n" +
-    "    <ion-header-bar class=\"bar-royal\">\n" +
-    "        <div class=\"buttons\">\n" +
-    "            <button class=\"button icon-left ion-ios-arrow-left button-clear \" ng-click=\"goBackSettings()\"></button>\n" +
-    "        </div>\n" +
-    "        <h1 class=\"title\">服务协议</h1>\n" +
-    "    </ion-header-bar>\n" +
-    "    <ion-content>\n" +
-    "        <div class=\"card\" ng-show=\"data.service_agreements==null\">\n" +
-    "            <div class=\"item item-text-wrap\">\n" +
-    "                加载中...\n" +
-    "            </div>\n" +
-    "        </div>\n" +
-    "        <div class=\"padding\" ng-bind-html='data.service_agreements'>\n" +
-    "        </div>\n" +
-    "    </ion-content>\n" +
+    "  <ion-header-bar class=\"bar-royal\">\n" +
+    "    <div class=\"buttons\">\n" +
+    "      <button class=\"button icon-left ion-ios-arrow-left button-clear \" ng-click=\"goBackSettings()\"></button>\n" +
+    "    </div>\n" +
+    "    <h1 class=\"title\">服务协议</h1>\n" +
+    "  </ion-header-bar>\n" +
+    "  <ion-content>\n" +
+    "    <div class=\"card\" ng-show=\"data.service_agreements==null\">\n" +
+    "      <div class=\"item item-text-wrap\">\n" +
+    "        加载中...\n" +
+    "      </div>\n" +
+    "    </div>\n" +
+    "    <div class=\"padding\" ng-bind-html='data.service_agreements'>\n" +
+    "    </div>\n" +
+    "  </ion-content>\n" +
     "</ion-view>\n" +
     "");
 }]);
@@ -476,57 +481,58 @@ angular.module("templates/settings/service-agreement.html", []).run(["$templateC
 angular.module("templates/tab-account.html", []).run(["$templateCache", function($templateCache) {
   $templateCache.put("templates/tab-account.html",
     "<ion-view hide-nav-bar=\"true\">\n" +
-    "    <ion-header-bar class=\"bar-royal\">\n" +
-    "        <h1 class=\"title\">我的呱呱二手</h1>\n" +
-    "        <div class=\"buttons\">\n" +
-    "            <a class=\"button button-clear button-icon ion-ios-gear-outline\" ui-sref=\"settings\"></a>\n" +
-    "        </div>\n" +
-    "    </ion-header-bar>\n" +
-    "    <ion-content class=\"has-header\" scroll=\"false\">\n" +
-    "        <div id=\"account\">\n" +
-    "            <div id=\"profile-info\">\n" +
-    "                <img id=\"profile-image\" ng-src='{{data.avatar}}'>\n" +
-    "                <h3 id=\"profile-name\">{{data.name}}</h3>\n" +
-    "                <!-- <h3 id=\"profile-phone\"><i class=\"icon ion-iphone\"></i> &nbsp;{{data.phone}}</h3> -->\n" +
-    "            </div>\n" +
-    "            <!-- example https://gist.github.com/Samurais/3cb9498588575f342f1e# -->\n" +
-    "            <ion-tabs class=\"tabs-striped tabs-color-royal\">\n" +
-    "                <!--  title=\"在售\" -->\n" +
-    "                <ion-tab title=\"在售\" badge=\"data.onGoingStuffsBadge||''+0\" badge-style=\"badge-light\" on-select=\"onTabSelected('onGoingStuffs')\">\n" +
-    "                    <!-- Tab 1 content -->\n" +
-    "                </ion-tab>\n" +
-    "                <!--  title=\"下架\" -->\n" +
-    "                <ion-tab title=\"下架\" badge=\"data.offShelfStuffsBadge||''+0\" badge-style=\"badge-light\" on-select=\"onTabSelected('offShelfStuffs')\">\n" +
-    "                    <!-- Tab 2 content -->\n" +
-    "                </ion-tab>\n" +
-    "                <!--  title=\"收藏\" -->\n" +
-    "                <ion-tab title=\"收藏\" badge=\"data.favoritesStuffsBadge||''+0\" badge-style=\"badge-light\" on-select=\"onTabSelected('favoritesStuffs')\">\n" +
-    "                    <!-- Tab 3 content -->\n" +
-    "                </ion-tab>\n" +
-    "            </ion-tabs>\n" +
-    "        </div>\n" +
-    "        <!-- <div padding=\"true\" style=\"padding-top:300px;z-index:300\">\n" +
+    "  <ion-header-bar class=\"bar-royal\">\n" +
+    "    <h1 class=\"title\">我的呱呱二手</h1>\n" +
+    "    <div class=\"buttons\">\n" +
+    "      <a class=\"button button-clear button-icon ion-ios-gear-outline\" ui-sref=\"settings\"></a>\n" +
+    "    </div>\n" +
+    "  </ion-header-bar>\n" +
+    "  <ion-content class=\"has-header\" scroll=\"false\">\n" +
+    "    <div id=\"account\">\n" +
+    "      <div id=\"profile-info\">\n" +
+    "        <img id=\"profile-image\" ng-src='{{data.avatar}}'>\n" +
+    "        <h3 id=\"profile-name\">{{data.name}}</h3>\n" +
+    "        <!-- <h3 id=\"profile-phone\"><i class=\"icon ion-iphone\"></i> &nbsp;{{data.phone}}</h3> -->\n" +
+    "      </div>\n" +
+    "      <!-- example https://gist.github.com/Samurais/3cb9498588575f342f1e# -->\n" +
+    "      <ion-tabs class=\"tabs-striped tabs-color-royal\">\n" +
+    "        <!--  title=\"在售\" -->\n" +
+    "        <ion-tab title=\"在售\" badge=\"data.onGoingStuffsBadge||''+0\" badge-style=\"badge-light\" on-select=\"onTabSelected('onGoingStuffs')\">\n" +
+    "          <!-- Tab 1 content -->\n" +
+    "        </ion-tab>\n" +
+    "        <!--  title=\"下架\" -->\n" +
+    "        <ion-tab title=\"下架\" badge=\"data.offShelfStuffsBadge||''+0\" badge-style=\"badge-light\" on-select=\"onTabSelected('offShelfStuffs')\">\n" +
+    "          <!-- Tab 2 content -->\n" +
+    "        </ion-tab>\n" +
+    "        <!--  title=\"收藏\" -->\n" +
+    "        <ion-tab title=\"收藏\" badge=\"data.favoritesStuffsBadge||''+0\" badge-style=\"badge-light\" on-select=\"onTabSelected('favoritesStuffs')\">\n" +
+    "          <!-- Tab 3 content -->\n" +
+    "        </ion-tab>\n" +
+    "      </ion-tabs>\n" +
+    "    </div>\n" +
+    "    <!-- <div padding=\"true\" style=\"padding-top:300px;z-index:300\">\n" +
     "Orders fake tab\n" +
     "</div> -->\n" +
-    "        <ion-pane id=\"my-stuff-list-container\">\n" +
-    "            <ion-scroll id=\"my-stuff-list-scroll\" zooming=\"false\" direction=\"y\">\n" +
-    "                <ion-list>\n" +
-    "                    <div class=\"card\" ng-if=\"stuffs.length === 0\">\n" +
-    "                        <div class=\"item item-text-wrap\">\n" +
-    "                            亲，还没有记录呢\n" +
-    "                        </div>\n" +
-    "                    </div>\n" +
-    "                    <ion-item on-swipe-left=\"swiped=true\" on-swipe-right=\"swiped=false\" ng-repeat=\"item in stuffs\" class=\"item item-thumbnail-left item-icon-right\" href=\"#/item/{{item._id}}\">\n" +
-    "                        <img src=\"{{item.goods_pics[0]}}\" />\n" +
-    "                        <i ng-class=\"swiped?'ion-chevron-left':'ion-chevron-right'\" class=\"icon icon-accessory\"></i>\n" +
-    "                        <h2>{{item.title}}</h2>\n" +
-    "                        <p>¥ {{item.goods_now_price}}</p>\n" +
-    "                        <span><i class=\"ion-ios-chatbubble-outline\" style=\"color:red\">{{item.reply_count}}</i>\n" +
-    "                        <i class=\"ion-ios-heart-outline assertive\">{{item.collect_count}}</i></span><br/>\n" +
-    "                        <!--i class=\"icon ion-chevron-right icon-accessory\"></i-->\n" +
-    "                        <!-- need a filter to process create_at  -->\n" +
-    "                        <span>{{item.create_at | relativets}} </span>\n" +
-    "                        <span ng-if=\"!isFavoriteTab\">\n" +
+    "    <ion-pane id=\"my-stuff-list-container\">\n" +
+    "      <ion-scroll id=\"my-stuff-list-scroll\" zooming=\"false\" direction=\"y\">\n" +
+    "        <ion-list>\n" +
+    "          <div class=\"card\" ng-if=\"stuffs.length === 0\">\n" +
+    "            <div class=\"item item-text-wrap\">\n" +
+    "              亲，还没有记录呢\n" +
+    "            </div>\n" +
+    "          </div>\n" +
+    "          <ion-item on-swipe-left=\"swiped=true\" on-swipe-right=\"swiped=false\" ng-repeat=\"item in stuffs\" class=\"item item-thumbnail-left item-icon-right\" href=\"#/item/{{item._id}}\">\n" +
+    "            <img src=\"{{item.goods_pics[0]}}\" />\n" +
+    "            <i ng-class=\"swiped?'ion-chevron-left':'ion-chevron-right'\" class=\"icon icon-accessory\"></i>\n" +
+    "            <h2>{{item.title}}</h2>\n" +
+    "            <p>¥ {{item.goods_now_price}}</p>\n" +
+    "            <span><i class=\"ion-ios-chatbubble-outline\" style=\"color:red\">{{item.reply_count}}</i>\n" +
+    "                        <i class=\"ion-ios-heart-outline assertive\">{{item.collect_count}}</i></span>\n" +
+    "            <br/>\n" +
+    "            <!--i class=\"icon ion-chevron-right icon-accessory\"></i-->\n" +
+    "            <!-- need a filter to process create_at  -->\n" +
+    "            <span>{{item.create_at | relativets}} </span>\n" +
+    "            <span ng-if=\"!isFavoriteTab\">\n" +
     "                            <ion-option-button class=\"button-energized\" ng-click=\"editSoldOut(item)\" ng-if=\"item.goods_status === '在售'\">\n" +
     "                                售出\n" +
     "                            </ion-option-button>\n" +
@@ -543,16 +549,16 @@ angular.module("templates/tab-account.html", []).run(["$templateCache", function
     "                                顶\n" +
     "                            </ion-option-button>\n" +
     "                        </span>\n" +
-    "                        <span ng-if=\"isFavoriteTab\">\n" +
+    "            <span ng-if=\"isFavoriteTab\">\n" +
     "                            <ion-option-button class=\"button-assertive\" ng-click=\"editUnCollected(item)\">\n" +
     "                                取消收藏\n" +
     "                            </ion-option-button>\n" +
     "                        </span>\n" +
-    "                    </ion-item>\n" +
-    "                </ion-list>\n" +
-    "            </ion-scroll>\n" +
-    "        </ion-pane>\n" +
-    "    </ion-content>\n" +
+    "          </ion-item>\n" +
+    "        </ion-list>\n" +
+    "      </ion-scroll>\n" +
+    "    </ion-pane>\n" +
+    "  </ion-content>\n" +
     "</ion-view>\n" +
     "");
 }]);
@@ -560,6 +566,9 @@ angular.module("templates/tab-account.html", []).run(["$templateCache", function
 angular.module("templates/tab-inbox.html", []).run(["$templateCache", function($templateCache) {
   $templateCache.put("templates/tab-inbox.html",
     "<ion-view view-title=\"消息中心\">\n" +
+    "  <ion-nav-title>\n" +
+    "    消息中心\n" +
+    "  </ion-nav-title>\n" +
     "  <ion-content>\n" +
     "    <ion-list>\n" +
     "      <ion-item class=\"item-remove-animate item-avatar item-icon-right\" ng-repeat=\"message in messages.hasnot_read_messages\" type=\"item-text-wrap\" href=\"#/item/{{message.topic.id}}\">\n" +
@@ -596,83 +605,83 @@ angular.module("templates/tab-index.html", []).run(["$templateCache", function($
   $templateCache.put("templates/tab-index.html",
     "<!-- http://ionicframework.com/docs/api/directive/ionSideMenus/ -->\n" +
     "<ion-view hide-nav-bar=\"true\">\n" +
-    "    <ion-side-menus>\n" +
-    "        <ion-side-menu-content id=\"index\">\n" +
-    "          <div class=\"bar bar-header bar-royal\">\n" +
-    "              <div class=\"buttons\">\n" +
-    "                  <button class=\"button button-icon ion-navicon\" menu-toggle=\"left\"> {{menuTitle}}</button>\n" +
-    "              </div>\n" +
-    "              <h1 class=\"location title\" ng-click=\"showAddress()\">{{tabTitle}}</h1>\n" +
-    "              <i class=\"title-expand icon ion-chevron-down icon-accessory\"></i>\n" +
-    "              <input class=\"searchbox\" ng-class=\"showSearch?'expanded':''\" ng-model=\"query\" type=\"text\" placeholder=\"\">\n" +
-    "              <a ng-show=\"showSearch\" class=\"button button-icon icon ion-ios-close-empty pull-right\" style=\"right:50px;color:#888;\" ng-click=\"query=''\"></a>\n" +
-    "              <a class=\"button button-icon icon ion-ios-search pull-right\" ng-click=\"doSearch(query)\"></a>\n" +
-    "          </div>\n" +
-    "          <!-- #TODO hide 特价推荐 at this time. https://github.com/arrking/wildfire/issues/123 -->\n" +
-    "<!--           <div class=\"bar bar-subheader\">\n" +
+    "  <ion-side-menus>\n" +
+    "    <ion-side-menu-content id=\"index\">\n" +
+    "      <div class=\"bar bar-header bar-royal\">\n" +
+    "        <div class=\"buttons\">\n" +
+    "          <button class=\"button button-icon ion-navicon\" menu-toggle=\"left\"> {{menuTitle}}</button>\n" +
+    "        </div>\n" +
+    "        <h1 class=\"location title\" ng-click=\"showAddress()\">{{tabTitle}}</h1>\n" +
+    "        <i class=\"title-expand icon ion-chevron-down icon-accessory\"></i>\n" +
+    "        <input class=\"searchbox\" ng-class=\"showSearch?'expanded':''\" ng-model=\"query\" type=\"text\" placeholder=\"\">\n" +
+    "        <a ng-show=\"showSearch\" class=\"button button-icon icon ion-ios-close-empty pull-right\" style=\"right:50px;color:#888;\" ng-click=\"query=''\"></a>\n" +
+    "        <a class=\"button button-icon icon ion-ios-search pull-right\" ng-click=\"doSearch(query)\"></a>\n" +
+    "      </div>\n" +
+    "      <!-- #TODO hide 特价推荐 at this time. https://github.com/arrking/wildfire/issues/123 -->\n" +
+    "      <!--           <div class=\"bar bar-subheader\">\n" +
     "            <div class=\"button-bar\">\n" +
     "              <a class=\"button button-clear active\">最新发布</a>\n" +
     "              <a class=\"button button-clear\">特价推荐</a>\n" +
     "            </div>\n" +
     "          </div> -->\n" +
-    "          <ion-nav-view name=\"menuContent\">\n" +
-    "              <ion-content class=\"\" style=\"top:44px\">\n" +
-    "              <!-- <ion-content class=\"has-subheader\"> -->\n" +
-    "                <ion-refresher ng-if=\"topics.length > 0 || loadError\" pulling-text=\"下拉刷新...\" on-refresh=\"doRefresh()\" >\n" +
-    "                </ion-refresher>\n" +
-    "                <div class=\"list topics\">\n" +
-    "                  <div class=\"item col col-50 no-border\" style=\"height:315px; float:left\" ng-repeat=\"topic in topics\">\n" +
-    "                      <div class=\"item item-image\">\n" +
-    "                        <a ui-sref=\"item({itemId: topic.id})\">\n" +
-    "                          <div class=\"full-image \" style=\"width:100%; height:194px; background:url('{{img_prefix}}{{topic.goods_pics[0]}}') center no-repeat; background-size:cover\"></div>\n" +
-    "                          <span class=\"{{topic.goods_quality_degree | badge}}\">{{topic.goods_quality_degree}}</span>\n" +
-    "                        </a>\n" +
-    "                        <div class=\"text-left padding-left padding-right padding-top\">\n" +
-    "                          <a ui-sref=\"item({itemId: topic.id})\" class=\"topics-title\"> <h2> {{topic.title}} </h2></a>\n" +
-    "                          <h2 class=\"price assertive\">\n" +
+    "      <ion-nav-view name=\"menuContent\">\n" +
+    "        <ion-content class=\"\" style=\"top:44px\">\n" +
+    "          <!-- <ion-content class=\"has-subheader\"> -->\n" +
+    "          <ion-refresher ng-if=\"topics.length > 0 || loadError\" pulling-text=\"下拉刷新...\" on-refresh=\"doRefresh()\">\n" +
+    "          </ion-refresher>\n" +
+    "          <div class=\"list topics\">\n" +
+    "            <div class=\"item col col-50 no-border\" style=\"height:315px; float:left\" ng-repeat=\"topic in topics\">\n" +
+    "              <div class=\"item item-image\">\n" +
+    "                <a ui-sref=\"item({itemId: topic.id})\">\n" +
+    "                  <div class=\"full-image \" style=\"width:100%; height:194px; background:url('{{img_prefix}}{{topic.goods_pics[0]}}') center no-repeat; background-size:cover\"></div>\n" +
+    "                  <span class=\"{{topic.goods_quality_degree | badge}}\">{{topic.goods_quality_degree}}</span>\n" +
+    "                </a>\n" +
+    "                <div class=\"text-left padding-left padding-right padding-top\">\n" +
+    "                  <a ui-sref=\"item({itemId: topic.id})\" class=\"topics-title\">\n" +
+    "                    <h2> {{topic.title}} </h2></a>\n" +
+    "                  <h2 class=\"price assertive\">\n" +
     "                            ￥ {{topic.goods_now_price}}\n" +
     "                            &nbsp;\n" +
     "                            <del>￥ {{topic.goods_pre_price}}</del>\n" +
     "                            <span ng-if='topic.goods_is_bargain' class=\"bargain\">侃</span>\n" +
     "                          </h2>\n" +
-    "                          <div class=\"clearfix dot-line\"></div>\n" +
-    "                          <div class=\"clearfix\">\n" +
-    "                            <div class=\"float-left\"><span class=\"update-time\" am-time-ago=\"topic.update_at\"></span></div>\n" +
-    "                            <div class=\"float-right\">\n" +
-    "                              <a class=\"button button-clear button-small\" ui-sref=\"item({itemId: topic.id})\">{{topic.reply_count}} <i class=\"icon ion-ios-chatboxes-outline\"> </i></a>\n" +
-    "                              <a class=\"button button-clear button-assertive button-small\">{{topic.collect_count}} <i class=\"icon ion-ios-heart\"> </i> </a>\n" +
-    "                            </div>\n" +
-    "                          </div>\n" +
-    "                        </div>\n" +
-    "                      </div>\n" +
+    "                  <div class=\"clearfix dot-line\"></div>\n" +
+    "                  <div class=\"clearfix\">\n" +
+    "                    <div class=\"float-left\"><span class=\"update-time\" am-time-ago=\"topic.update_at\"></span></div>\n" +
+    "                    <div class=\"float-right\">\n" +
+    "                      <a class=\"button button-clear button-small\" ui-sref=\"item({itemId: topic.id})\">{{topic.reply_count}} <i class=\"icon ion-ios-chatboxes-outline\"> </i></a>\n" +
+    "                      <a class=\"button button-clear button-assertive button-small\">{{topic.collect_count}} <i class=\"icon ion-ios-heart\"> </i> </a>\n" +
+    "                    </div>\n" +
     "                  </div>\n" +
     "                </div>\n" +
-    "\n" +
-    "                <!--\n" +
+    "              </div>\n" +
+    "            </div>\n" +
+    "          </div>\n" +
+    "          <!--\n" +
     "                  Loading icon of infinte-scroll not showing with collection-repeat\n" +
     "                  https://github.com/driftyco/ionic/issues/2376\n" +
     "                -->\n" +
-    "                <ion-infinite-scroll on-infinite=\"loadMore()\" distance=\"10%\" ng-if=\"hasNextPage && !loadError\">\n" +
-    "                </ion-infinite-scroll>\n" +
-    "                <div class=\"item text-center padding\">\n" +
-    "                  <p>{{loadingMsg}}</p>\n" +
-    "                </div>\n" +
-    "              </ion-content>\n" +
-    "          </ion-nav-view>\n" +
-    "        </ion-side-menu-content>\n" +
-    "        <ion-side-menu side=\"left\">\n" +
-    "            <ion-header-bar class=\"bar-stable\">\n" +
-    "                <h1 class=\"title\">分类</h1>\n" +
-    "            </ion-header-bar>\n" +
-    "            <ion-content>\n" +
-    "                <ion-list>\n" +
-    "                    <ion-item class=\"item topic-name-menu stable-bg {{currentTab==item.value?'activated':''}}\" menu-close ng-click=\"changeSelected(item)\" ng-repeat=\"item in sideMenus\" href=\"#/tab/index/{{item.value}}\">\n" +
-    "                        {{item.label}}\n" +
-    "                    </ion-item>\n" +
-    "                </ion-list>\n" +
-    "            </ion-content>\n" +
-    "        </ion-side-menu>\n" +
-    "    </ion-side-menus>\n" +
+    "          <ion-infinite-scroll on-infinite=\"loadMore()\" distance=\"10%\" ng-if=\"hasNextPage && !loadError\">\n" +
+    "          </ion-infinite-scroll>\n" +
+    "          <div class=\"item text-center padding\">\n" +
+    "            <p>{{loadingMsg}}</p>\n" +
+    "          </div>\n" +
+    "        </ion-content>\n" +
+    "      </ion-nav-view>\n" +
+    "    </ion-side-menu-content>\n" +
+    "    <ion-side-menu side=\"left\">\n" +
+    "      <ion-header-bar class=\"bar-stable\">\n" +
+    "        <h1 class=\"title\">分类</h1>\n" +
+    "      </ion-header-bar>\n" +
+    "      <ion-content>\n" +
+    "        <ion-list>\n" +
+    "          <ion-item class=\"item topic-name-menu stable-bg {{currentTab==item.value?'activated':''}}\" menu-close ng-click=\"changeSelected(item)\" ng-repeat=\"item in sideMenus\" href=\"#/tab/index/{{item.value}}\">\n" +
+    "            {{item.label}}\n" +
+    "          </ion-item>\n" +
+    "        </ion-list>\n" +
+    "      </ion-content>\n" +
+    "    </ion-side-menu>\n" +
+    "  </ion-side-menus>\n" +
     "</ion-view>\n" +
     "");
 }]);
@@ -680,157 +689,160 @@ angular.module("templates/tab-index.html", []).run(["$templateCache", function($
 angular.module("templates/tab-maps.html", []).run(["$templateCache", function($templateCache) {
   $templateCache.put("templates/tab-maps.html",
     "<ion-view hide-nav-bar=\"true\">\n" +
-    "    <ion-side-menus>\n" +
-    "        <!-- for a map, user may drag anywhere, so the menu should not slide out.-->\n" +
-    "        <!-- http://ionicframework.com/docs/api/directive/ionSideMenuContent/ -->\n" +
-    "        <ion-side-menu-content drag-content=\"false\">\n" +
-    "          <div class=\"bar bar-header bar-royal\">\n" +
-    "              <div class=\"buttons\">\n" +
-    "                  <button class=\"button button-icon ion-navicon\" menu-toggle=\"left\"> {{menuTitle}}</button>\n" +
-    "              </div>\n" +
-    "              <h1 class=\"location title\" ng-click=\"showFullAddress()\">{{address}}</h1>\n" +
-    "              <i class=\"title-expand icon ion-chevron-down icon-accessory\"></i>\n" +
-    "              <input class=\"searchbox\" ng-class=\"showSearch?'expanded':''\" ng-model=\"query\" type=\"text\" placeholder=\"\">\n" +
-    "              <a ng-show=\"showSearch\" class=\"button button-icon icon ion-ios-close-empty pull-right\" style=\"right:50px;color:#888;\" ng-click=\"query=''\"></a>\n" +
-    "              <a class=\"button button-icon icon ion-ios-search pull-right\" ng-click=\"doSearch(query)\"></a>\n" +
-    "          </div>\n" +
-    "          <ion-nav-view name=\"menuContent\">\n" +
-    "              <ion-content>\n" +
-    "                <div qq-map topics=\"topics\" state=\"state\"></div>\n" +
-    "              </ion-content>\n" +
-    "          </ion-nav-view>\n" +
-    "        </ion-side-menu-content>\n" +
-    "        <ion-side-menu side=\"left\">\n" +
-    "            <ion-header-bar class=\"bar-stable\">\n" +
-    "                <h1 class=\"title\">分类</h1>\n" +
-    "            </ion-header-bar>\n" +
-    "            <ion-content>\n" +
-    "                <ion-list>\n" +
-    "                    <ion-item class=\"item topic-name-menu stable-bg {{currentTab==item.value?'activated':''}}\" menu-close ng-click=\"changeSelected(item)\" ng-repeat=\"item in sideMenus\" href=\"#/tab/maps/{{item.value}}\">\n" +
-    "                        {{item.label}}\n" +
-    "                    </ion-item>\n" +
-    "                </ion-list>\n" +
-    "            </ion-content>\n" +
-    "        </ion-side-menu>\n" +
-    "    </ion-side-menus>\n" +
+    "  <ion-side-menus>\n" +
+    "    <!-- for a map, user may drag anywhere, so the menu should not slide out.-->\n" +
+    "    <!-- http://ionicframework.com/docs/api/directive/ionSideMenuContent/ -->\n" +
+    "    <ion-side-menu-content drag-content=\"false\">\n" +
+    "      <div class=\"bar bar-header bar-royal\">\n" +
+    "        <div class=\"buttons\">\n" +
+    "          <button class=\"button button-icon ion-navicon\" menu-toggle=\"left\"> {{menuTitle}}</button>\n" +
+    "        </div>\n" +
+    "        <h1 class=\"location title\" ng-click=\"showFullAddress()\">{{address}}</h1>\n" +
+    "        <i class=\"title-expand icon ion-chevron-down icon-accessory\"></i>\n" +
+    "        <input class=\"searchbox\" ng-class=\"showSearch?'expanded':''\" ng-model=\"query\" type=\"text\" placeholder=\"\">\n" +
+    "        <a ng-show=\"showSearch\" class=\"button button-icon icon ion-ios-close-empty pull-right\" style=\"right:50px;color:#888;\" ng-click=\"query=''\"></a>\n" +
+    "        <a class=\"button button-icon icon ion-ios-search pull-right\" ng-click=\"doSearch(query)\"></a>\n" +
+    "      </div>\n" +
+    "      <ion-nav-view name=\"menuContent\">\n" +
+    "        <ion-content>\n" +
+    "          <div qq-map topics=\"topics\" state=\"state\"></div>\n" +
+    "        </ion-content>\n" +
+    "      </ion-nav-view>\n" +
+    "    </ion-side-menu-content>\n" +
+    "    <ion-side-menu side=\"left\">\n" +
+    "      <ion-header-bar class=\"bar-stable\">\n" +
+    "        <h1 class=\"title\">分类</h1>\n" +
+    "      </ion-header-bar>\n" +
+    "      <ion-content>\n" +
+    "        <ion-list>\n" +
+    "          <ion-item class=\"item topic-name-menu stable-bg {{currentTab==item.value?'activated':''}}\" menu-close ng-click=\"changeSelected(item)\" ng-repeat=\"item in sideMenus\" href=\"#/tab/maps/{{item.value}}\">\n" +
+    "            {{item.label}}\n" +
+    "          </ion-item>\n" +
+    "        </ion-list>\n" +
+    "      </ion-content>\n" +
+    "    </ion-side-menu>\n" +
+    "  </ion-side-menus>\n" +
     "</ion-view>\n" +
     "");
 }]);
 
 angular.module("templates/tab-post.html", []).run(["$templateCache", function($templateCache) {
   $templateCache.put("templates/tab-post.html",
-    "<ion-view view-title=\"呱呱二手\">\n" +
-    "    <ion-nav-buttons side=\"left\">\n" +
-    "        <a class=\"button button-icon icon ion-ios-arrow-back\" href=\"#tab/index\"></a>\n" +
-    "    </ion-nav-buttons>\n" +
-    "    <ion-content class=\"wf-post-form has-footer\">\n" +
-    "        <div class=\"row wf-img-upload\">\n" +
-    "            <div class=\"col box\">\n" +
-    "                <div class=\"goods-img-holder\" ng-if=\"params.goods_pics.length > 0\">\n" +
-    "                    <!--<img ng-src=\"{{params.goods_pics[0]}}\" ng-click=\"removeGoodsPic(params.goods_pics[0])\">\n" +
+    "<ion-view>\n" +
+    "  <ion-nav-title>\n" +
+    "    发布商品\n" +
+    "  </ion-nav-title>\n" +
+    "  <ion-nav-buttons side=\"left\">\n" +
+    "    <a class=\"button button-icon icon ion-ios-arrow-back\" href=\"#tab/index\"></a>\n" +
+    "  </ion-nav-buttons>\n" +
+    "  <ion-content class=\"wf-post-form has-footer\">\n" +
+    "    <div class=\"row wf-img-upload\">\n" +
+    "      <div class=\"col box\">\n" +
+    "        <div class=\"goods-img-holder\" ng-if=\"params.goods_pics.length > 0\">\n" +
+    "          <!--<img ng-src=\"{{params.goods_pics[0]}}\" ng-click=\"removeGoodsPic(params.goods_pics[0])\">\n" +
     "                    </img>-->\n" +
-    "                    <div class=\"full-image \" style=\"width:100%; height:160px; background:url('{{params.goods_pics[0]}}') center no-repeat; background-size:cover\"></div>\n" +
-    "                    <span class=\"ion-ios-close\" ng-click=\"removeGoodsPic(params.goods_pics[0])\"></span>\n" +
-    "                </div>\n" +
-    "                <!-- <span class=\"goods-pic-del-badge\" ng-if=\"params.goods_pics.length > 0\"></span> -->\n" +
+    "          <div class=\"full-image \" style=\"width:100%; height:160px; background:url('{{params.goods_pics[0]}}') center no-repeat; background-size:cover\"></div>\n" +
+    "          <span class=\"ion-ios-close\" ng-click=\"removeGoodsPic(params.goods_pics[0])\"></span>\n" +
+    "        </div>\n" +
+    "        <!-- <span class=\"goods-pic-del-badge\" ng-if=\"params.goods_pics.length > 0\"></span> -->\n" +
+    "      </div>\n" +
+    "      <div class=\"col group nopadding\">\n" +
+    "        <div class=\"row nopadding\">\n" +
+    "          <div class=\"col box\">\n" +
+    "            <div class=\"goods-img-holder\" ng-if=\"params.goods_pics.length > 1\">\n" +
+    "              <!--<img ng-src=\"{{params.goods_pics[1]}}\" ng-click=\"removeGoodsPic(params.goods_pics[1])\" />-->\n" +
+    "              <div class=\"full-image \" style=\"width:100%; height:78px; background:url('{{params.goods_pics[1]}}') center no-repeat; background-size:cover\"></div>\n" +
+    "              <span class=\"ion-ios-close\" ng-click=\"removeGoodsPic(params.goods_pics[1])\"></span>\n" +
     "            </div>\n" +
-    "            <div class=\"col group nopadding\">\n" +
-    "                <div class=\"row nopadding\">\n" +
-    "                    <div class=\"col box\">\n" +
-    "                        <div class=\"goods-img-holder\" ng-if=\"params.goods_pics.length > 1\">\n" +
-    "                            <!--<img ng-src=\"{{params.goods_pics[1]}}\" ng-click=\"removeGoodsPic(params.goods_pics[1])\" />-->\n" +
-    "                            <div class=\"full-image \" style=\"width:100%; height:78px; background:url('{{params.goods_pics[1]}}') center no-repeat; background-size:cover\"></div>\n" +
-    "                            <span class=\"ion-ios-close\" ng-click=\"removeGoodsPic(params.goods_pics[1])\"></span>\n" +
-    "                        </div>\n" +
-    "                    </div>\n" +
-    "                    <div class=\"col box\">\n" +
-    "                        <div class=\"goods-img-holder\" ng-if=\"params.goods_pics.length > 2\">\n" +
-    "                            <!--<img ng-src=\"{{params.goods_pics[2]}}\" ng-click=\"removeGoodsPic(params.goods_pics[2])\" />-->\n" +
-    "                            <div class=\"full-image \" style=\"width:100%; height:78px; background:url('{{params.goods_pics[2]}}') center no-repeat; background-size:cover\"></div>\n" +
-    "                            <span class=\"ion-ios-close\" ng-click=\"removeGoodsPic(params.goods_pics[2])\"></span>\n" +
-    "                        </div>\n" +
-    "                    </div>\n" +
-    "                </div>\n" +
-    "                <div class=\"row nopadding\">\n" +
-    "                    <div class=\"col box\">\n" +
-    "                        <div class=\"goods-img-holder\" ng-if=\"params.goods_pics.length > 3\">\n" +
-    "                            <!--<img ng-src=\"{{params.goods_pics[3]}}\" ng-click=\"removeGoodsPic(params.goods_pics[3])\" />-->\n" +
-    "                            <div class=\"full-image \" style=\"width:100%; height:78px; background:url('{{params.goods_pics[3]}}') center no-repeat; background-size:cover\"></div>\n" +
-    "                            <span class=\"ion-ios-close\" ng-click=\"removeGoodsPic(params.goods_pics[3])\"></span>\n" +
-    "                        </div>\n" +
-    "                    </div>\n" +
-    "                    <div class=\"col box\" ng-if=\"params.goods_pics.length > 4\">\n" +
-    "                        <div class=\"goods-img-holder\">\n" +
-    "                            <!--<img ng-src=\"{{params.goods_pics[4]}}\" ng-click=\"removeGoodsPic(params.goods_pics[4])\" />-->\n" +
-    "                            <div class=\"full-image \" style=\"width:100%; height:78px; background:url('{{params.goods_pics[4]}}') center no-repeat; background-size:cover\"></div>\n" +
-    "                            <span class=\"ion-ios-close\" ng-click=\"removeGoodsPic(params.goods_pics[4])\"></span>\n" +
-    "                        </div>\n" +
-    "                    </div>\n" +
-    "                    <!-- at most, there are five images -->\n" +
-    "                    <!-- if reach five images, hide the upload button -->\n" +
-    "                    <div ng-if=\"params.goods_pics.length < 5\" class=\"col box upload\" id=\"uploadImg\" ng-click=\"uploadImage()\">\n" +
-    "                        <i class=\"icon ion-plus\"></i>\n" +
-    "                    </div>\n" +
-    "                </div>\n" +
+    "          </div>\n" +
+    "          <div class=\"col box\">\n" +
+    "            <div class=\"goods-img-holder\" ng-if=\"params.goods_pics.length > 2\">\n" +
+    "              <!--<img ng-src=\"{{params.goods_pics[2]}}\" ng-click=\"removeGoodsPic(params.goods_pics[2])\" />-->\n" +
+    "              <div class=\"full-image \" style=\"width:100%; height:78px; background:url('{{params.goods_pics[2]}}') center no-repeat; background-size:cover\"></div>\n" +
+    "              <span class=\"ion-ios-close\" ng-click=\"removeGoodsPic(params.goods_pics[2])\"></span>\n" +
     "            </div>\n" +
+    "          </div>\n" +
     "        </div>\n" +
-    "        <ion-list>\n" +
-    "            <ion-item>\n" +
-    "                <ul class=\"tag-list\">\n" +
-    "                    <li ng-repeat=\"item in tagList\" ng-class=\"item.value === params.tab ? 'active' : ''\">\n" +
-    "                        <a href=\"javascript:void(0)\" ng-click=\"changeTab(item.value)\">{{item.label}}</a>\n" +
-    "                    </li>\n" +
-    "                </ul>\n" +
-    "            </ion-item>\n" +
-    "            <ion-item>\n" +
-    "                <ul class=\"quality-list\">\n" +
-    "                    <li ng-repeat=\"item in qualityList\" ng-class=\"item === params.quality ? 'active' : ''\">\n" +
-    "                        <a href=\"javascript:void(0)\" ng-click=\"changeQuality(item)\">{{item}}</a>\n" +
-    "                    </li>\n" +
-    "                </ul>\n" +
-    "            </ion-item>\n" +
-    "        </ion-list>\n" +
-    "        <div class=\"row\">\n" +
-    "            <div class=\"col\">\n" +
-    "                <label class=\"item item-input\">\n" +
-    "                    <span class=\"input-label\">转让价</span>\n" +
-    "                    <input id=\"gprice\" type=\"text\" placeholder=\"￥\" ng-model=\"params.goods_now_price\">\n" +
-    "                </label>\n" +
+    "        <div class=\"row nopadding\">\n" +
+    "          <div class=\"col box\">\n" +
+    "            <div class=\"goods-img-holder\" ng-if=\"params.goods_pics.length > 3\">\n" +
+    "              <!--<img ng-src=\"{{params.goods_pics[3]}}\" ng-click=\"removeGoodsPic(params.goods_pics[3])\" />-->\n" +
+    "              <div class=\"full-image \" style=\"width:100%; height:78px; background:url('{{params.goods_pics[3]}}') center no-repeat; background-size:cover\"></div>\n" +
+    "              <span class=\"ion-ios-close\" ng-click=\"removeGoodsPic(params.goods_pics[3])\"></span>\n" +
     "            </div>\n" +
-    "            <div class=\"col\">\n" +
-    "                <label class=\"item item-input\">\n" +
-    "                    <span class=\"input-label\">原价</span>\n" +
-    "                    <input type=\"text\" placeholder=\"￥(非必填)\" ng-model=\"params.goods_pre_price\">\n" +
-    "                </label>\n" +
+    "          </div>\n" +
+    "          <div class=\"col box\" ng-if=\"params.goods_pics.length > 4\">\n" +
+    "            <div class=\"goods-img-holder\">\n" +
+    "              <!--<img ng-src=\"{{params.goods_pics[4]}}\" ng-click=\"removeGoodsPic(params.goods_pics[4])\" />-->\n" +
+    "              <div class=\"full-image \" style=\"width:100%; height:78px; background:url('{{params.goods_pics[4]}}') center no-repeat; background-size:cover\"></div>\n" +
+    "              <span class=\"ion-ios-close\" ng-click=\"removeGoodsPic(params.goods_pics[4])\"></span>\n" +
     "            </div>\n" +
+    "          </div>\n" +
+    "          <!-- at most, there are five images -->\n" +
+    "          <!-- if reach five images, hide the upload button -->\n" +
+    "          <div ng-if=\"params.goods_pics.length < 5\" class=\"col box upload\" id=\"uploadImg\" ng-click=\"uploadImage()\">\n" +
+    "            <i class=\"icon ion-plus\"></i>\n" +
+    "          </div>\n" +
     "        </div>\n" +
-    "        <div class=\"item item-toggle\">\n" +
-    "            <span>是否接受侃价</span>\n" +
-    "            <label class=\"toggle toggle-royal\">\n" +
-    "                <input type=\"checkbox\" ng-model=\"params.goods_is_bargain\">\n" +
-    "                <div class=\"track\">\n" +
-    "                    <div class=\"handle\"></div>\n" +
-    "                </div>\n" +
-    "            </label>\n" +
+    "      </div>\n" +
+    "    </div>\n" +
+    "    <ion-list>\n" +
+    "      <ion-item>\n" +
+    "        <ul class=\"tag-list\">\n" +
+    "          <li ng-repeat=\"item in tagList\" ng-class=\"item.value === params.tab ? 'active' : ''\">\n" +
+    "            <a href=\"javascript:void(0)\" ng-click=\"changeTab(item.value)\">{{item.label}}</a>\n" +
+    "          </li>\n" +
+    "        </ul>\n" +
+    "      </ion-item>\n" +
+    "      <ion-item>\n" +
+    "        <ul class=\"quality-list\">\n" +
+    "          <li ng-repeat=\"item in qualityList\" ng-class=\"item === params.quality ? 'active' : ''\">\n" +
+    "            <a href=\"javascript:void(0)\" ng-click=\"changeQuality(item)\">{{item}}</a>\n" +
+    "          </li>\n" +
+    "        </ul>\n" +
+    "      </ion-item>\n" +
+    "    </ion-list>\n" +
+    "    <div class=\"row\">\n" +
+    "      <div class=\"col\">\n" +
+    "        <label class=\"item item-input\">\n" +
+    "          <span class=\"input-label\">转让价</span>\n" +
+    "          <input id=\"gprice\" type=\"text\" placeholder=\"￥\" ng-model=\"params.goods_now_price\">\n" +
+    "        </label>\n" +
+    "      </div>\n" +
+    "      <div class=\"col\">\n" +
+    "        <label class=\"item item-input\">\n" +
+    "          <span class=\"input-label\">原价</span>\n" +
+    "          <input type=\"text\" placeholder=\"￥(非必填)\" ng-model=\"params.goods_pre_price\">\n" +
+    "        </label>\n" +
+    "      </div>\n" +
+    "    </div>\n" +
+    "    <div class=\"item item-toggle\">\n" +
+    "      <span>是否接受侃价</span>\n" +
+    "      <label class=\"toggle toggle-royal\">\n" +
+    "        <input type=\"checkbox\" ng-model=\"params.goods_is_bargain\">\n" +
+    "        <div class=\"track\">\n" +
+    "          <div class=\"handle\"></div>\n" +
     "        </div>\n" +
-    "        <div class=\"item item-input\">\n" +
-    "            <span class=\"input-label\">宝贝名称</span>\n" +
-    "            <input id=\"gtitle\" ng-model=\"params.title\" type=\"text\" placeholder=\"输入大于五个字的标题\">\n" +
-    "        </div>\n" +
-    "        <div class=\"item item-icon-right\" ng-click=\"openGoodsDespModal()\">\n" +
-    "            <span>宝贝描述</span>\n" +
-    "            <span class=\"item-content\" style=\"padding-left:45px;\">{{params.content}}</span>\n" +
-    "            <i class=\"icon ion-chevron-right icon-accessory\"></i>\n" +
-    "        </div>\n" +
-    "        <div class=\"item item-icon-right\" href=\"javascript:void(0)\" ng-click=\"showChangeLocationModal()\">\n" +
-    "            <span>交易地点</span>\n" +
-    "            <span class=\"item-content\" style=\"padding-left:45px;\">{{params.goods_exchange_location.user_edit_address || '点击选择地址'}}</span>\n" +
-    "            <i class=\"icon ion-location icon-accessory\"></i>\n" +
-    "        </div>\n" +
-    "        <div class=\"padding\">\n" +
-    "            <button class=\"button button-block button-royal\" ng-click=\"submitGoods()\">确定发布</button>\n" +
-    "        </div>\n" +
-    "    </ion-content>\n" +
+    "      </label>\n" +
+    "    </div>\n" +
+    "    <div class=\"item item-input\">\n" +
+    "      <span class=\"input-label\">宝贝名称</span>\n" +
+    "      <input id=\"gtitle\" ng-model=\"params.title\" type=\"text\" placeholder=\"输入大于五个字的标题\">\n" +
+    "    </div>\n" +
+    "    <div class=\"item item-icon-right\" ng-click=\"openGoodsDespModal()\">\n" +
+    "      <span>宝贝描述</span>\n" +
+    "      <span class=\"item-content\" style=\"padding-left:45px;\">{{params.content}}</span>\n" +
+    "      <i class=\"icon ion-chevron-right icon-accessory\"></i>\n" +
+    "    </div>\n" +
+    "    <div class=\"item item-icon-right\" href=\"javascript:void(0)\" ng-click=\"showChangeLocationModal()\">\n" +
+    "      <span>交易地点</span>\n" +
+    "      <span class=\"item-content\" style=\"padding-left:45px;\">{{params.goods_exchange_location.user_edit_address || '点击选择地址'}}</span>\n" +
+    "      <i class=\"icon ion-location icon-accessory\"></i>\n" +
+    "    </div>\n" +
+    "    <div class=\"padding\">\n" +
+    "      <button class=\"button button-block button-royal\" ng-click=\"submitGoods()\">确定发布</button>\n" +
+    "    </div>\n" +
+    "  </ion-content>\n" +
     "</ion-view>\n" +
     "");
 }]);

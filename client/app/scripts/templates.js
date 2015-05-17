@@ -99,7 +99,7 @@ angular.module("templates/inbox-detail.html", []).run(["$templateCache", functio
 
 angular.module("templates/item.html", []).run(["$templateCache", function($templateCache) {
   $templateCache.put("templates/item.html",
-    "<ion-view view-title=\"topic.title||'呱呱二手'\">\n" +
+    "<ion-view view-title=\"{{topic.title||'呱呱二手'}}\">\n" +
     "  <ion-nav-buttons side=\"left\">\n" +
     "    <a class=\"button button-icon icon ion-ios-arrow-back\" href=\"#tab/index\"></a>\n" +
     "  </ion-nav-buttons>\n" +

@@ -5,7 +5,14 @@
 // the 2nd parameter is an array of 'requires'
 // 'starter.services' is found in services.js
 // 'starter.controllers' is found in controllers.js
-angular.module('iwildfire', ['ionic', 'iwildfire.controllers', 'iwildfire.services', 'iwildfire.directives', 'iwildfire.filters', 'config', 'angularMoment'])
+angular.module('iwildfire', ['ionic', 
+    'iwildfire.controllers', 
+    'iwildfire.services', 
+    'iwildfire.directives', 
+    'iwildfire.filters', 
+    'iwildfire.templates', 
+    'config', 
+    'angularMoment'])
 
 .run(function($ionicPlatform, $rootScope, LocationManager, $log, store, webq, $ionicLoading, amMoment, Messages, $timeout, Msg) {
 
@@ -43,19 +50,6 @@ angular.module('iwildfire', ['ionic', 'iwildfire.controllers', 'iwildfire.servic
     $rootScope.hideLoading = function() {
         $ionicLoading.hide();
     };
-
-    $ionicPlatform.ready(function() {
-        // Hide the accessory bar by default (remove this to show the accessory bar above the keyboard
-        // for form inputs)
-        if (window.cordova && window.cordova.plugins && window.cordova.plugins.Keyboard) {
-            cordova.plugins.Keyboard.hideKeyboardAccessoryBar(true);
-        }
-        if (window.StatusBar) {
-            // org.apache.cordova.statusbar required
-            StatusBar.styleLightContent();
-        }
-
-    });
 
     // error handler
     var errorMsg = {

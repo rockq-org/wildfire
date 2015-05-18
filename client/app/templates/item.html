@@ -1,9 +1,12 @@
-<ion-view view-title="呱呱二手">
+<ion-view>
+  <ion-nav-title>
+    {{topic.title||'呱呱二手'}}
+  </ion-nav-title>
   <ion-nav-buttons side="left">
     <a class="button button-icon icon ion-ios-arrow-back" href="#tab/index"></a>
   </ion-nav-buttons>
   <ion-content class="has-header has-footer" ng-class="(status.action!='normal')?'has-reply':''">
-    <ion-refresher pulling-text="下拉刷新..." on-refresh="doRefresh()" refreshing-icon="ion-loading-c">
+    <ion-refresher pulling-text="下拉刷新..." on-refresh="doRefresh()">
     </ion-refresher>
 
     <ion-slide-box style="height: 200px;" does-continue="true" auto-play="true" slide-interval="4000">

@@ -67,7 +67,7 @@
           发布于 <%= topic.friendly_create_at %>
         </span>
         <span>
-          作者 <a href="/user/<%= topic.author.loginname %>"><%= topic.author.loginname %></a>
+          作者 <a href="/user/<%= topic.author.loginname %>"><%= topic.author.name %></a>
         </span>
         <span>
           <%= topic.visit_count %> 次浏览
@@ -80,6 +80,17 @@
         <% if (topic.tab) { %>
           <span> 来自 <%= topic.tabName %></span>
         <%}%>
+        <% if (topic.goods_exchange_location && topic.goods_exchange_location.user_edit_address) { %>
+          <br/><span>
+            交易位置：<%= topic.goods_exchange_location.user_edit_address %>
+          </span>
+        <% } %>
+
+        <% if (typeof(current_user) !== 'undefined') { %>
+          <span>
+            联系电话：<%= topic.author.phone_number %>
+          </span>
+        <% } %>
       </div>
       <% if (typeof(current_user) !== 'undefined') { %>
       <div id="manage_topic">
@@ -132,47 +143,17 @@
     </div>
     <div class='inner topic'>
 
-    <!-- add user avatar -->
-    <% if (topic.author && topic.author.name) { %>
-      <div>
-        <h3>作者：</h3>
-        <%= topic.author.name %>
-        <br/>
-        <img src="<%= topic.author.avatar %>" width="100px" height="100px"/>
-      </div>
-    <% } %>    
-
-    <!-- add user phone number -->
-    <% if (typeof(current_user) !== 'undefined') { %>
-      <div>
-        <h3>电话：</h3>
-        <%= topic.author.phone_number %>
-      </div>
-    <% } %>
-
-    <!-- add location -->
-    <% if (topic.goods_exchange_location && topic.goods_exchange_location.user_edit_address) { %>
-      <div>
-        <h3>交易位置：</h3>
-        <%= topic.goods_exchange_location.user_edit_address %>
-      </div>
-    <% } %>
-
+    <div class='topic_content'>
+      <%- markdown(topic.linkedContent) %>
+    </div>
 
     <!-- add pics -->
     <% if (topic.goods_pics && topic.goods_pics.length > 0) { %>
-        <h3>图片：</h3>
         <% for(var i=0; i<topic.goods_pics.length; i++) {%>
-            <img src="<%= topic.goods_pics[i] %>" width="300" height="300" class="img-responsive"/>
-            <br/>
-            <br/>
+            <img src="<%= topic.goods_pics[i] %>" style="width: 100%;margin-bottom:10px;" class="img-responsive"/>
         <% } %>
     <% } %>
 
-      <div class='topic_content'>
-        <h3>描述：</h3>
-        <%- markdown(topic.linkedContent) %>
-      </div>
     </div>
   </div>
   <% if (topic.replies && topic.replies.length > 0) { %>

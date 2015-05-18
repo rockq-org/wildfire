@@ -11,8 +11,6 @@ window.NREUM||(NREUM={}),__nr_require=function(t,e,n){function r(n){if(!e[n]){va
 ;NREUM.info={beacon:"bam.nr-data.net",errorBeacon:"bam.nr-data.net",licenseKey:"070d97cba3",applicationID:"6117070",sa:1,agent:"js-agent.newrelic.com/nr-632.min.js"}
 </script>
 
-    <script src="http://res.wx.qq.com/open/js/jweixin-1.0.0.js"></script>
-    <script charset="utf-8" src="http://map.qq.com/api/js?v=2.exp&key=342BZ-RLEH4-3HVUL-DTRGM-MBOPZ-2SFBQ"></script>
     <!-- build:css styles/vendor.css -->
     <!-- endbuild -->
     <link rel="stylesheet" href="lib/ionic/css/ionic.css" />
@@ -20,6 +18,24 @@ window.NREUM||(NREUM={}),__nr_require=function(t,e,n){function r(n){if(!e[n]){va
     <!-- IF using Sass (run gulp sass first), then uncomment below and remove the CSS includes above
     <link href="styles/ionic.app.css" rel="stylesheet">
     -->
+</head>
+
+<body ng-app="iwildfire" style="background-color:#56c1b5;">
+    <!--
+      The nav bar that will be updated as we navigate between views.
+    -->
+    <ion-nav-bar class="bar-royal">
+        <!--ion-nav-back-button>返回
+        </ion-nav-back-button-->
+    </ion-nav-bar>
+    <!--
+      The views will be rendered in the <ion-nav-view> directive below
+      Templates are in the /templates folder (but you could also
+      have templates inline in this html file if you'd like).
+    -->
+    <ion-nav-view>
+        <img src="images/loading.jpg" style="position: absolute;top: 50%;left: 50%;margin: -50px 0 0 -50px;width: 100px;">
+    </ion-nav-view>
     <!-- ionic/angularjs js -->
     <!-- build:js scripts/vendor.js -->
     <!-- bower:js -->
@@ -35,8 +51,6 @@ window.NREUM||(NREUM={}),__nr_require=function(t,e,n){function r(n){if(!e[n]){va
     <script src="bower_components/angular-ui-router/release/angular-ui-router.js"></script>
     <!-- endbower -->
     <!-- endbuild -->
-    <!-- cordova script (this will be a 404 during development) -->
-    <script src="cordova.js"></script>
     <!-- your app's js -->
     <!-- build:js scripts/scripts.js -->
     <script src="lib/ionic/js/ionic.js"></script>
@@ -51,24 +65,12 @@ window.NREUM||(NREUM={}),__nr_require=function(t,e,n){function r(n){if(!e[n]){va
     <script src="scripts/services.js"></script>
     <script src="scripts/directives.js"></script>
     <script src="scripts/filters.js"></script>
+    <script src="scripts/templates.js"></script>
     <script src="scripts/configuration.js"></script>
     <!-- endbuild -->
-</head>
 
-<body ng-app="iwildfire">
-    <!--
-      The nav bar that will be updated as we navigate between views.
-    -->
-    <ion-nav-bar class="bar-royal">
-        <!--ion-nav-back-button>返回
-        </ion-nav-back-button-->
-    </ion-nav-bar>
-    <!--
-      The views will be rendered in the <ion-nav-view> directive below
-      Templates are in the /templates folder (but you could also
-      have templates inline in this html file if you'd like).
-    -->
-    <ion-nav-view></ion-nav-view>
+    <script src="http://res.wx.qq.com/open/js/jweixin-1.0.0.js"></script>
+    <script charset="utf-8" src="http://map.qq.com/api/js?v=2.exp&key=342BZ-RLEH4-3HVUL-DTRGM-MBOPZ-2SFBQ"></script>
 </body>
 
 </html>

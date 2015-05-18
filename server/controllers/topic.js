@@ -66,7 +66,13 @@ exports.index = function (req, res, next) {
 
     topic.author = author;
 
-    topic.replies = replies;
+    //topic.replies = replies;
+    topic.replies = replies.map(function(reply) {
+      if(reply.reply_to)
+        reply.content = reply.content.replace(/^@([a-z0-9\-_]+\b)/igm, 
+          '回复 [' + reply.reply_to + '](/user/$1)');
+      return reply;
+    });
 
     // 点赞数排名第三的回答，它的点赞数就是阈值
     topic.reply_up_threshold = (function () {

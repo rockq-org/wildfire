@@ -1,4 +1,7 @@
-<ion-view view-title="呱呱二手">
+<ion-view>
+  <ion-nav-title>
+    加入呱呱
+  </ion-nav-title>
   <ion-content>
     <div class="list padding">
       <h3 class="padding text-center">欢迎加入呱呱二手</h3>
@@ -16,8 +19,8 @@
         <label class="item-input-wrapper">
           <input id="phoneNumber" ng-model="data.phoneNumber" type="text" placeholder="手机号码">
         </label>
-        <button ng-click="sendVerifyCode()" class="button button-royal button-small">
-          发送验证码
+        <button ng-click="sendVerifyCode()" class="button button-royal button-small" ng-class="{'button-disabled':waitFor60Seconds}" ng-disabled="waitFor60Seconds">
+          {{submitTxt}}
         </button>
       </div>
       <div class="item-input-inset">

@@ -448,7 +448,7 @@ Local storage is per domain. All pages, from one domain, can store and access th
  * @param  {[type]} cfg)  {               this.sendVerifyCode [description]
  * @return {[type]}       [description]
  */
-.service('webq', function($http, $q, $log, cfg, store, Msg, L2S, WeChat) {
+.service('webq', function($http, $q, $log, cfg, store, Msg, L2S, WeChat, $timeout) {
 
     var self = this;
 
@@ -587,6 +587,11 @@ Local storage is per domain. All pages, from one domain, can store and access th
 
     this.sendVerifyCode = function(phoneNumber) {
         var deferred = $q.defer();
+        $timeout(function(){
+          deferred.resolve('success');
+        }, 1000);
+        return deferred.promise;
+
         $http.post('{0}/user/bind_phone_number'.f(cfg.api), {
                 phoneNumber: phoneNumber,
                 accesstoken: store.getAccessToken()

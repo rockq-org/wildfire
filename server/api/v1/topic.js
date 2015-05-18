@@ -57,6 +57,7 @@ var index = function(req, res, next) {
     // if the topic is marked as deleted, do not return it.
     query.deleted = false;
     query.goods_status = '在售';
+    query.lock = false;
     // set the response data with descending order of topic.udpate_at
 
 
@@ -116,7 +117,7 @@ var show = function(req, res, next) {
 
         var isAuthor = typeof(req.user) == 'object' && req.user._id && req.user._id == topic.author_id;
 
-        if ( !isAuthor ) {
+        if (!isAuthor) {
             topic.visit_count += 1;
         }
         topic.save();

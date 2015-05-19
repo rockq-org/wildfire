@@ -63,7 +63,7 @@ module.exports = function (grunt) {
       },
       html: {
         files: ['<%= yeoman.app %>/**/*.html'],
-        tasks: ['newer:copy:app']
+        tasks: ['newer:copy:app', 'html2js']
       },
       js: {
         files: ['<%= yeoman.app %>/<%= yeoman.scripts %>/**/*.js'],
@@ -401,6 +401,7 @@ module.exports = function (grunt) {
     html2js: {
       options: {
         base: '<%= yeoman.app %>',
+        watch: true,
         module: 'iwildfire.templates'
       },
       main: {

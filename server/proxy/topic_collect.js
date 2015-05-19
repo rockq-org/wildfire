@@ -10,6 +10,17 @@ exports.getTopicCollectsByUserId = function (userId, callback) {
   TopicCollect.find({user_id: userId}, callback);
 };
 
+exports.getUserCollectedTopicIds = function (userId, callback) {
+  TopicCollect.find({user_id: userId}, function (list) {
+    var userCollectedTopicIds = [];
+    list.forEach(function(item) {
+      userCollectedTopicIds.push(item.topic_id);
+    });
+
+    callback(userCollectedTopicIds);
+  });
+};
+
 exports.newAndSave = function (userId, topicId, callback) {
   var topic_collect = new TopicCollect();
   topic_collect.user_id = userId;

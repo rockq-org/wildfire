@@ -13,6 +13,8 @@ angular.module('iwildfire.controllers', [])
     $log,
     Msg,
     Topics,
+    Topic,
+    User,
     webq,
     Tabs,
     cfg
@@ -52,10 +54,11 @@ angular.module('iwildfire.controllers', [])
             // console.log(JSON.stringify(response.data));
             $scope.hasNextPage = true;
             $scope.loadError = false;
-            if ($scope.topics.length == 0)
-                $scope.loadingMsg = '找不到符合你要求的二手交易信息^_^';
-            else
-                $scope.loadingMsg = '下拉加载更多';
+            if ($scope.topics.length === 0) {
+              $scope.loadingMsg = '找不到符合你要求的二手交易信息^_^';
+            } else {
+              $scope.loadingMsg = '下拉加载更多';
+            }
         }, $rootScope.requestErrorHandler({
             noBackdrop: true
         }, function() {
@@ -147,22 +150,37 @@ angular.module('iwildfire.controllers', [])
     });
 
     $rootScope.$on('location.updated', loadData);
-    // LocationManager.getLocationFromAPI().then(function() {
-    //     // $scope.topics = Topics.getTopics();
-    //     // $scope.hasNextPage = Topics.hasNextPage();
-    //     // $scope.loadError = false;
-    //     loadData();
-    // });
-    //
 
-    // try to fix error when navigating to index page from profile, inbox or detail page
-    // when controller can not receive location change event.
-    // $timeout(function() {
-    //     if (typeof(LocationManager.getLocation().api_address) === 'undefined') {
-    //         console.log('get location again');
-    //         LocationManager.getLocationFromAPI();
-    //     }
-    // }, 5000);
+    $scope.collectTopic = function(topic) {
+      if (topic.isCollected) {
+        console.log(topic.isCollected);
+          Topic.deCollectTopic(topic.id).$promise.then(function(response) {
+            console.log('done with decollected', JSON.stringify(response));
+              if (response.success) {
+                  topic.isCollected = false;
+                  if (!topic.collect_count) {
+                      topic.collect_count = 1;
+                  }
+                  topic.collect_count = parseInt(topic.collect_count) - 1;
+                  User.deCollectTopic(topic.id);
+              }
+          });
+      } else {
+        console.log(topic.isCollected);
+        Topic.collectTopic(topic.id).$promise.then(function(response) {
+          console.log('done with collected', JSON.stringify(response));
+            if (response.success) {
+                topic.isCollected = true;
+                if (!topic.collect_count) {
+                    topic.collect_count = 0;
+                }
+                topic.collect_count = parseInt(topic.collect_count) + 1;
+                User.collectTopic(topic.id);
+            }
+        });
+      }
+  };
+
 })
 
 

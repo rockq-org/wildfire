@@ -71,24 +71,41 @@ var index = function(req, res, next) {
     ep.fail(next);
 
     TopicModel.find(query, '', options, ep.done('topics'));
+    if (typeof(req.user) === 'object' && req.user._id) {
+      TopicCollect.getUserCollectedTopicIds(req.user._id, function (userCollectedTopicIds) {
+        console.log('76', userCollectedTopicIds);
+        ep.emit('userCollectedTopicIds', userCollectedTopicIds);
+      });
+    } else {
+      process.nextTick(function () {
+        ep.emit('userCollectedTopicIds', []);
+      });
+    }
 
-    ep.all('topics', function(topics) {
+    ep.all('topics', 'userCollectedTopicIds', function(topics, userCollectedTopicIds) {
         topics.forEach(function(topic) {
-            UserModel.findById(topic.author_id, ep.done(function(author) {
-                if (mdrender) {
-                    topic.content = renderHelper.markdown(at.linkUsers(topic.content));
-                }
-                topic.author = _.pick(author, ['loginname', 'avatar_url']);
-                ep.emit('author');
-            }));
+          UserModel.findById(topic.author_id, ep.done(function(author) {
+              if (mdrender) {
+                  topic.content = renderHelper.markdown(at.linkUsers(topic.content));
+              }
+              topic.author = _.pick(author, ['loginname', 'avatar_url']);
+              ep.emit('author');
+          }));
         });
 
         ep.after('author', topics.length, function() {
             topics = topics.map(function(topic) {
-                return _.pick(topic, ['id', 'author_id', 'tab', 'content', 'title', 'last_reply_at',
-                    'collect_count', 'goods_now_price', 'goods_pre_price', 'goods_is_bargain', 'update_at', 'goods_pics', 'goods_quality_degree', 'goods_exchange_location', 'goods_exchange_geom',
-                    'good', 'top', 'reply_count', 'visit_count', 'create_at', 'author', 'collect_count'
-                ]);
+              topic = _.pick(topic, ['id', 'author_id', 'tab', 'content', 'title', 'last_reply_at',
+                  'collect_count', 'goods_now_price', 'goods_pre_price', 'goods_is_bargain', 'update_at', 'goods_pics', 'goods_quality_degree', 'goods_exchange_location', 'goods_exchange_geom',
+                  'good', 'top', 'reply_count', 'visit_count', 'create_at', 'author', 'collect_count'
+              ]);
+              topic.isCollected = false;
+              if (userCollectedTopicIds.length > 0 && userCollectedTopicIds.indeOf(topic.id) !== -1) {
+                topic.isCollected = true;
+              }
+
+              console.log('103', topic);
+              return topic;
             });
 
             res.send({

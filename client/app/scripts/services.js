@@ -1219,6 +1219,7 @@ Local storage is per domain. All pages, from one domain, can store and access th
             });
         },
         collectTopic: function(topicId) {
+          console.log(topicId, store.getAccessToken());
             return resource.collect({
                 topic_id: topicId,
                 accesstoken: store.getAccessToken()

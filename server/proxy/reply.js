@@ -40,16 +40,16 @@ exports.getReplyById = function (id, callback) {
       reply.author = author;
       reply.friendly_create_at = tools.formatDate(reply.create_at, true);
       // TODO: 添加更新方法，有些旧帖子可以转换为markdown格式的内容
-      //if (reply.content_is_html) {
+      if (reply.content_is_html) {
         return callback(null, reply);
-      /*}
+      }
       at.linkUsers(reply.content, function (err, str) {
         if (err) {
           return callback(err);
         }
         reply.content = str;
         return callback(err, reply);
-      });*/
+      });
     });
   });
 };
@@ -84,20 +84,17 @@ exports.getRepliesByTopicId = function (id, cb) {
           }
           replies[i].author = author || { _id: '' };
           replies[i].friendly_create_at = tools.formatDate(replies[i].create_at, true);
-          console.log(replies[i].content);
-          if(replies[i].reply_to)
-            replies[i].content = replies[i].content.replace(/^@([a-z0-9\-_]+\b)/igm, 
-              '回复 [' + replies[i].reply_to + '](/user/$1)');
-          if (replies[i].content_is_html) {
+
+          //if (replies[i].content_is_html) {
             return proxy.emit('reply_find');
-          }
+          /*}
           at.linkUsers(replies[i].content, function (err, str) {
             if (err) {
               return cb(err);
             }
             replies[i].content = str;
             proxy.emit('reply_find');
-          });
+          });*/
         });
       })(j);
     }

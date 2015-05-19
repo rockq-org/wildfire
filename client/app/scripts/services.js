@@ -276,10 +276,10 @@ angular.module('iwildfire.services', ['ngResource'])
       }
       // this.getLocationFromAPIPromise = d.promise;
       // this is not iOS, tooooo bad for location service, just rejected!
-      if($rootScope.WILDFIRE_WECHAT_PLATFORM != 'iOS') {
-        d.reject('not iOS, just choose location by popup');
-        return d.promise;
-      }
+      // if($rootScope.WILDFIRE_WECHAT_PLATFORM != 'iOS') {
+      //   d.reject('not iOS, just choose location by popup');
+      //   return d.promise;
+      // }
 
       // Msg.show('定位中，请稍候...');
       // WeChat.getNetworkType()

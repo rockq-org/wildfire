@@ -681,6 +681,7 @@ angular.module('iwildfire.controllers', [])
     // 既不是调试，也不存在accesstoken
     // 注意，假设 BindAccessToken 也是成功获取Profile的
     if ((!store.getAccessToken()) && (!cfg.debug)) {
+        console.log('redirect to login');
         $ionicLoading.show({
             template: '跳转到登录认证 ...'
         });

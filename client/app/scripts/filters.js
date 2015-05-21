@@ -23,6 +23,11 @@ angular.module('iwildfire.filters', [])
     }
 
     function getFlatternDistance(lat1,lng1,lat2,lng2){
+        lat1 = parseFloat(lat1);
+        lng1 = parseFloat(lng1);
+        lat2 = parseFloat(lat2);
+        lng2 = parseFloat(lng2);
+
         var f = getRad((lat1 + lat2)/2);
         var g = getRad((lat1 - lat2)/2);
         var l = getRad((lng1 - lng2)/2);
@@ -62,6 +67,7 @@ angular.module('iwildfire.filters', [])
         }
         if(currentLocation){
             distance = getFlatternDistance(itemLocation.lat, itemLocation.lng, currentLocation.lat, currentLocation.lng);
+            console.log(distance, JSON.stringify(itemLocation), JSON.stringify(currentLocation));
             distance = parseInt(distance);
             if( distance > 1000 ) {
                 distance = getKm( distance );

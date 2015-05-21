@@ -4,7 +4,11 @@ angular.module('iwildfire.services', ['ngResource'])
   var Log2Server = $resource(cfg.api + '/Log/:id', null, {});
 
   function L2S(type, content) {
-    if (type !== 'verifycodeErr') {
+    var arr = [
+      'verifycodeErr',
+      'uploadImageErr'
+    ];
+    if (arr.indexOf(type) == -1) {
       return;
     }
 
@@ -121,7 +125,7 @@ angular.module('iwildfire.services', ['ngResource'])
         d.reject(err);
       });
     }, function(err) {
-      console.log('96 err', err);
+      console.log('96 err', JSON.stringify(err));
       L2S('error', err);
       d.reject(err);
     });

@@ -342,12 +342,12 @@ angular.module("templates/modal-post-goods-desp.html", []).run(["$templateCache"
 
 angular.module("templates/settings/about.html", []).run(["$templateCache", function($templateCache) {
   $templateCache.put("templates/settings/about.html",
-    "<ion-view view-title=\"呱呱二手\" hide-nav-bar=\"true\">\n" +
+    "<ion-view hide-nav-bar=\"true\">\n" +
     "  <ion-header-bar class=\"bar-royal\">\n" +
     "    <div class=\"buttons\">\n" +
     "      <button class=\"button icon-left ion-ios-arrow-left button-clear \" ng-click=\"goBackSettings()\"></button>\n" +
     "    </div>\n" +
-    "    <h1 class=\"title\">关于 呱呱二手</h1>\n" +
+    "    <h1 class=\"title\">关于</h1>\n" +
     "  </ion-header-bar>\n" +
     "  <ion-content>\n" +
     "    <div class=\"list card\">\n" +
@@ -373,7 +373,7 @@ angular.module("templates/settings/about.html", []).run(["$templateCache", funct
 
 angular.module("templates/settings/feedback.html", []).run(["$templateCache", function($templateCache) {
   $templateCache.put("templates/settings/feedback.html",
-    "<ion-view view-title=\"呱呱二手\" hide-nav-bar=\"true\">\n" +
+    "<ion-view hide-nav-bar=\"true\">\n" +
     "  <ion-header-bar class=\"bar-royal\">\n" +
     "    <div class=\"buttons\">\n" +
     "      <button class=\"button icon-left ion-ios-arrow-left button-clear \" ng-click=\"goBackSettings()\"></button>\n" +
@@ -399,7 +399,7 @@ angular.module("templates/settings/feedback.html", []).run(["$templateCache", fu
 
 angular.module("templates/settings/help.html", []).run(["$templateCache", function($templateCache) {
   $templateCache.put("templates/settings/help.html",
-    "<ion-view view-title=\"呱呱二手\" hide-nav-bar=\"true\">\n" +
+    "<ion-view hide-nav-bar=\"true\">\n" +
     "  <ion-header-bar class=\"bar-royal\">\n" +
     "    <div class=\"buttons\">\n" +
     "      <button class=\"button icon-left ion-ios-arrow-left button-clear \" ng-click=\"goBackSettings()\"></button>\n" +
@@ -415,12 +415,12 @@ angular.module("templates/settings/help.html", []).run(["$templateCache", functi
 
 angular.module("templates/settings/index.html", []).run(["$templateCache", function($templateCache) {
   $templateCache.put("templates/settings/index.html",
-    "<ion-view view-title=\"呱呱二手\" hide-nav-bar=\"true\">\n" +
+    "<ion-view hide-nav-bar=\"true\">\n" +
     "  <ion-header-bar class=\"bar-royal\">\n" +
     "    <div class=\"buttons\">\n" +
     "      <button class=\"button icon-left ion-ios-arrow-left button-clear \" ng-click=\"goBackProfile()\"></button>\n" +
     "    </div>\n" +
-    "    <h1 class=\"title\">我的设置</h1>\n" +
+    "    <h1 class=\"title\">设置</h1>\n" +
     "  </ion-header-bar>\n" +
     "  <ion-content>\n" +
     "    <div class=\"list\">\n" +
@@ -458,7 +458,7 @@ angular.module("templates/settings/index.html", []).run(["$templateCache", funct
 
 angular.module("templates/settings/service-agreement.html", []).run(["$templateCache", function($templateCache) {
   $templateCache.put("templates/settings/service-agreement.html",
-    "<ion-view view-title=\"呱呱二手\" hide-nav-bar=\"true\">\n" +
+    "<ion-view hide-nav-bar=\"true\">\n" +
     "  <ion-header-bar class=\"bar-royal\">\n" +
     "    <div class=\"buttons\">\n" +
     "      <button class=\"button icon-left ion-ios-arrow-left button-clear \" ng-click=\"goBackSettings()\"></button>\n" +
@@ -565,7 +565,7 @@ angular.module("templates/tab-account.html", []).run(["$templateCache", function
 
 angular.module("templates/tab-inbox.html", []).run(["$templateCache", function($templateCache) {
   $templateCache.put("templates/tab-inbox.html",
-    "<ion-view view-title=\"消息中心\">\n" +
+    "<ion-view>\n" +
     "  <ion-nav-title>\n" +
     "    消息中心\n" +
     "  </ion-nav-title>\n" +
@@ -609,7 +609,7 @@ angular.module("templates/tab-index.html", []).run(["$templateCache", function($
     "    <ion-side-menu-content id=\"index\">\n" +
     "      <div class=\"bar bar-header bar-royal\">\n" +
     "        <div class=\"buttons\">\n" +
-    "          <button class=\"button button-icon ion-navicon\" menu-toggle=\"left\"> {{menuTitle}}</button>\n" +
+    "            <button class=\"button button-icon ion-navicon\" menu-toggle=\"left\"> {{menuTitle}}</button>\n" +
     "        </div>\n" +
     "        <h1 class=\"location title\" ng-click=\"showAddress()\">{{tabTitle}}</h1>\n" +
     "        <i class=\"title-expand icon ion-chevron-down icon-accessory\"></i>\n" +
@@ -617,17 +617,9 @@ angular.module("templates/tab-index.html", []).run(["$templateCache", function($
     "        <a ng-show=\"showSearch\" class=\"button button-icon icon ion-ios-close-empty pull-right\" style=\"right:50px;color:#888;\" ng-click=\"query=''\"></a>\n" +
     "        <a class=\"button button-icon icon ion-ios-search pull-right\" ng-click=\"doSearch(query)\"></a>\n" +
     "      </div>\n" +
-    "      <!-- #TODO hide 特价推荐 at this time. https://github.com/arrking/wildfire/issues/123 -->\n" +
-    "      <!--           <div class=\"bar bar-subheader\">\n" +
-    "            <div class=\"button-bar\">\n" +
-    "              <a class=\"button button-clear active\">最新发布</a>\n" +
-    "              <a class=\"button button-clear\">特价推荐</a>\n" +
-    "            </div>\n" +
-    "          </div> -->\n" +
     "      <ion-nav-view name=\"menuContent\">\n" +
     "        <ion-content class=\"\" style=\"top:44px\">\n" +
-    "          <!-- <ion-content class=\"has-subheader\"> -->\n" +
-    "          <ion-refresher ng-if=\"topics.length > 0 || loadError\" pulling-text=\"下拉刷新...\" on-refresh=\"doRefresh()\">\n" +
+    "          <ion-refresher ng-if=\"topics.length > 0 || loadError\" pulling-text=\"下拉刷新...\" on-refresh=\"doRefresh()\" >\n" +
     "          </ion-refresher>\n" +
     "          <div class=\"list topics\">\n" +
     "            <div class=\"item col col-50 no-border\" style=\"height:315px; float:left\" ng-repeat=\"topic in topics\">\n" +
@@ -637,20 +629,19 @@ angular.module("templates/tab-index.html", []).run(["$templateCache", function($
     "                  <span class=\"{{topic.goods_quality_degree | badge}}\">{{topic.goods_quality_degree}}</span>\n" +
     "                </a>\n" +
     "                <div class=\"text-left padding-left padding-right padding-top\">\n" +
-    "                  <a ui-sref=\"item({itemId: topic.id})\" class=\"topics-title\">\n" +
-    "                    <h2> {{topic.title}} </h2></a>\n" +
+    "                  <a ui-sref=\"item({itemId: topic.id})\" class=\"topics-title\"> <h2> {{topic.title}} </h2></a>\n" +
     "                  <h2 class=\"price assertive\">\n" +
-    "                            ￥ {{topic.goods_now_price}}\n" +
-    "                            &nbsp;\n" +
-    "                            <del>￥ {{topic.goods_pre_price}}</del>\n" +
-    "                            <span ng-if='topic.goods_is_bargain' class=\"bargain\">侃</span>\n" +
-    "                          </h2>\n" +
+    "                    ￥ {{topic.goods_now_price}}\n" +
+    "                    &nbsp;\n" +
+    "                    <del>￥ {{topic.goods_pre_price}}</del>\n" +
+    "                    <span ng-if='topic.goods_is_bargain' class=\"bargain\">侃</span>\n" +
+    "                  </h2>\n" +
     "                  <div class=\"clearfix dot-line\"></div>\n" +
     "                  <div class=\"clearfix\">\n" +
     "                    <div class=\"float-left\"><span class=\"update-time\" am-time-ago=\"topic.update_at\"></span></div>\n" +
     "                    <div class=\"float-right\">\n" +
     "                      <a class=\"button button-clear button-small\" ui-sref=\"item({itemId: topic.id})\">{{topic.reply_count}} <i class=\"icon ion-ios-chatboxes-outline\"> </i></a>\n" +
-    "                      <a class=\"button button-clear button-assertive button-small\">{{topic.collect_count}} <i class=\"icon ion-ios-heart\"> </i> </a>\n" +
+    "                      <a class=\"button button-clear button-assertive button-small\" ng-click=\"collectTopic(topic)\">{{topic.collect_count}} <i class=\"icon\" ng-class=\"{'ion-ios-heart': topic.isCollected, 'ion-ios-heart-outline': !topic.isCollected}\"> </i>{{topic.isCollected}} </a>\n" +
     "                    </div>\n" +
     "                  </div>\n" +
     "                </div>\n" +
@@ -658,9 +649,9 @@ angular.module("templates/tab-index.html", []).run(["$templateCache", function($
     "            </div>\n" +
     "          </div>\n" +
     "          <!--\n" +
-    "                  Loading icon of infinte-scroll not showing with collection-repeat\n" +
-    "                  https://github.com/driftyco/ionic/issues/2376\n" +
-    "                -->\n" +
+    "            Loading icon of infinte-scroll not showing with collection-repeat\n" +
+    "            https://github.com/driftyco/ionic/issues/2376\n" +
+    "          -->\n" +
     "          <ion-infinite-scroll on-infinite=\"loadMore()\" distance=\"10%\" ng-if=\"hasNextPage && !loadError\">\n" +
     "          </ion-infinite-scroll>\n" +
     "          <div class=\"item text-center padding\">\n" +

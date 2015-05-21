@@ -1,5 +1,5 @@
 
-var common = require('../common');
+var common = require('../../common');
 var validator = require('validator');
 
 exports.save = function(req, res, next) {

@@ -149,10 +149,11 @@ angular.module('iwildfire.directives', [])
                 $timeout(function(){
                     var c = result.detail.addressComponents;
                     var full_address = c.country + c.province + c.city + c.district + c.street + c.streetNumber + c.town + c.village;
-                    var address = c.streetNumber;
-                    if(!address) {
-                        address =  c.town + c.village;
-                    }
+                    // var address = c.streetNumber;
+                    // if(!address) {
+                    //     address =  c.town + c.village;
+                    // }
+                    var address = c.district + c.street + c.streetNumber;
 
                     var location = {};
                     location.api_address = full_address;

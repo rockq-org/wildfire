@@ -160,8 +160,8 @@ angular.module('iwildfire.services', ['ngResource'])
 .service('LocationManager', function($rootScope, webq, Msg, $q, L2S, WeChat, $ionicPopup, $timeout){
     var _this = this;
     _this.addressDetailList = {
-      'bj': {"api_address":"中国北京市北京市朝阳区诚信北路太阳宫乡太阳宫北村","user_edit_address":"太阳宫乡太阳宫北村","lat":39.979505,"lng":116.429},
-      'chd': {"api_address":"中国河北省秦皇岛市海港区求索路西港镇前道西村","user_edit_address":"西港镇前道西村","lat":39.910598,"lng":119.54266}
+      'bj': {"api_address":"北京市朝阳区惠新东街10号","user_edit_address":"太阳宫乡太阳宫北村","lat":39.979505,"lng":116.429},
+      'chd': {"api_address":"河北省秦皇岛市河北大街西段438号","user_edit_address":"西港镇前道西村","lat":39.910598,"lng":119.54266}
     };
 
     _this.addressDetail = null;
@@ -242,10 +242,11 @@ angular.module('iwildfire.services', ['ngResource'])
         console.log('41 getAddressDetailFromAPI', result);
         var c = result.detail.addressComponents;
         var full_address = c.country + c.province + c.city + c.district + c.street + c.streetNumber + c.town + c.village;
-        var address = c.streetNumber;
-        if(!address) {
-            address =  c.town + c.village;
-        }
+        // var address = c.streetNumber;
+        // if(!address) {
+        //     address =  c.town + c.village;
+        // }
+        var address = c.district + c.street + c.streetNumber;
 
         addressDetail.api_address = full_address;
         addressDetail.user_edit_address = address;

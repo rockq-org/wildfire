@@ -256,10 +256,12 @@ angular.module('iwildfire.directives', [])
                 $timeout(function() {
                     var c = result.detail.addressComponents;
                     var full_address = c.country + c.province + c.city + c.district + c.street + c.streetNumber + c.town + c.village;
-                    var address = c.streetNumber;
-                    if(!address) {
-                        address =  c.town + c.village;
-                    }
+                    // var address = c.streetNumber;
+                    // if(!address) {
+                    //     address =  c.town + c.village;
+                    // }
+                    var address = c.district + c.street + c.streetNumber;
+
                     scope.$parent.$parent.locationDetail.api_address = full_address;
                     scope.$parent.$parent.locationDetail.user_edit_address = address;
                     scope.$parent.$parent.locationDetail.lat = result.detail.location.lat;

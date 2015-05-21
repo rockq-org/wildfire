@@ -4,8 +4,9 @@ angular.module('iwildfire.services', ['ngResource'])
   var Log2Server = $resource(cfg.api + '/Log/:id', null, {});
 
   function L2S(type, content) {
-    console.log(type, content);
-    return;//do not log anything to server!!! while online!
+    if (type !== 'verifycodeErr') {
+      return;
+    }
 
     if(!type) {
         return;

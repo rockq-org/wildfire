@@ -1437,7 +1437,7 @@ angular.module('iwildfire.controllers', [])
 })
 
 .controller('BindMobilePhoneCtrl', function($scope, $state, $stateParams, Msg, $ionicModal,
-    $ionicPopup, $ionicLoading, $timeout, $log, webq, store, $interval) {
+    $ionicPopup, $ionicLoading, $timeout, $log, webq, store, $interval, L2S) {
     var phonenoPattern = /^\(?([0-9]{11})\)?$/;
     var accessToken = $stateParams.accessToken;
     var md5 = $stateParams.md5;
@@ -1572,7 +1572,8 @@ angular.module('iwildfire.controllers', [])
                             $state.go('tab.index');
                         }
                     }, function(err) {
-                        _fixVerifyCodeInputPlaceholder('验证码错误，重新输入');
+                      L2S('verifycodeErr', err);
+                      _fixVerifyCodeInputPlaceholder('验证码错误，重新输入');
                     })
                     .finally(function() {
                         _hideLoadingSpin();

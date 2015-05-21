@@ -588,10 +588,6 @@ Local storage is per domain. All pages, from one domain, can store and access th
 
     this.sendVerifyCode = function(phoneNumber) {
         var deferred = $q.defer();
-        $timeout(function(){
-          deferred.resolve('success');
-        }, 1000);
-        return deferred.promise;
 
         $http.post('{0}/user/bind_phone_number'.f(cfg.api), {
                 phoneNumber: phoneNumber,

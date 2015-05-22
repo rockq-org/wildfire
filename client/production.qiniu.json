@@ -1,5 +1,5 @@
 {
-    "src":          "/root/git/wildfire/public/ionic/www",
+    "src":          "/root/git/wildfire/client/www",
     "dest":         "qiniu:access_key=9MboRdgFktNfebBxO99cVeR6oumOMYeDCkjTH5ek&secret_key=6-zwXgAB3DV2u32eZ6NRN05lgtcXbqOoSM0IGX7i&bucket=wildfire-gges&key_prefix=/",
     "deletable":    0,
     "debug_level":  0

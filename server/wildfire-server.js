@@ -11,10 +11,9 @@ var revision = require('git-rev');
 // Date add-ons for Node.js
 // https://www.npmjs.com/package/date-utils
 require('date-utils');
+//always use newrelic
+require('newrelic');
 
-if (!config.debug) {
-    require('newrelic');
-}
 // get git reverison for better tracking builds
 revision.short(function(gitRevision) {
 

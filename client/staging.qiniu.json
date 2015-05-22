@@ -1,6 +1,6 @@
 {
     "src":          "/root/git/wildfire/client/www",
-    "dest":         "qiniu:access_key=MuDBhibABT6T85B1mA5bqoolYVCmGUizJ2CMS_Wn&secret_key=x3W_dZVS75w6HraQciomlDfn_NC2hqPl4qfB1rF9&bucket=wildfirepro&key_prefix=/",
+    "dest":         "qiniu:access_key=MuDBhibABT6T85B1mA5bqoolYVCmGUizJ2CMS_Wn&secret_key=x3W_dZVS75w6HraQciomlDfn_NC2hqPl4qfB1rF9&bucket=wildfirepro",
     "deletable":    0,
     "debug_level":  0
 }

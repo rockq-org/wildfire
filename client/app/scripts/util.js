@@ -19,7 +19,7 @@ String.prototype.endsWith = function(suffix) {
 String.prototype.startsWith = function(str) {
     return this.indexOf(str) === 0;
 };
-
+/*
 ['log', 'warn'].forEach(function(method) {
   var old = console[method];
   console[method] = function() {
@@ -32,3 +32,4 @@ String.prototype.startsWith = function(str) {
     return old.apply(console, args);
   };
 });
+*/

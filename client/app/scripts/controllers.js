@@ -442,7 +442,7 @@ angular.module('iwildfire.controllers', [])
                 $scope.replies = [];
                 $scope.bargains = [];
                 $scope.topic.replies.forEach(function(item, i) {
-                    if (item.price) $scope.bargains.push(item);
+                    if (typeof(item.price)!='undefined') $scope.bargains.push(item);
                     else $scope.replies.push(item);
                 });
                 var profile = store.getUserProfile();

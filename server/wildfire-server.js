@@ -169,7 +169,7 @@ revision.short(function(gitRevision) {
     passport.use(new WechatStrategy({
         appId: wxConfig.appId,
         appSecret: wxConfig.appSecret,
-        callbackURL: util.format('http://%s/auth/wechat/embedded/callback', config.client_host),
+        callbackURL: util.format('http://%s/auth/wechat/embedded/callback', config.host),
         scope: 'snsapi_userinfo',
         passReqToCallback: true
             // state: true

@@ -842,12 +842,12 @@ Local storage is per domain. All pages, from one domain, can store and access th
         var defer = $q.defer();
         $http({
             method: 'GET',
-            url: '{0}/public/markdowns/user-service-agreements.md'.f(cfg.server)
+            url: '{0}/ionic/user-service-agreements'.f(cfg.api)
         }).success(function(data, status, headers, config) {
             var converter = new Showdown.converter();
             defer.resolve(converter.makeHtml(data));
         }).error(function(err, status) {
-            $log.error('Can not get /public/md/user-service-agreements.md from server.');
+            $log.error('Can not get /ionic/user-service-agreements from server.');
             defer.reject(err);
         });
         return defer.promise;

@@ -12,7 +12,8 @@ var common = require('../../common'),
     wx = require('../../middlewares/connect-wechat'),
     Feedback = require('../../models').Feedback,
     config = require('../../config'),
-    wxConfig = config.wechat_gzh;
+    wxConfig = config.wechat_gzh,
+    request = require('superagent');
 
 function _saveFeedback(userId, content, callback) {
     var feedback = new Feedback();
@@ -156,4 +157,18 @@ exports.getAppGitRevision = function(req, res, next) {
         rc: 1,
         revision: process.env['wildfire_git_revision']
     }, res);
+}
+
+/**
+ * Get user service level agreements
+ */
+exports.getSLA = function(req, res, next) {
+    request.get(u.format('http://%s:%d/public/markdowns/user-service-agreements.md', config.host, config.port))
+        .end(function(err, result) {
+            if (result.ok) {
+                res.send(result.text);
+            } else {
+                res.send('无法获取数据。')
+            }
+        });
 }

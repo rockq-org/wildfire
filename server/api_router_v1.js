@@ -71,7 +71,7 @@ router.post('/ionic/wechat-images', middleware.auth, ionicController.getWechatIm
  * Save user feedback
  */
 router.post('/ionic/feedback', middleware.auth, ionicController.saveFeedback);
-
+router.get('/ionic/user-service-agreements', ionicController.getSLA);
 /**
  * get state url
  */

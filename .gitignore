@@ -23,7 +23,7 @@ server/logs/*.log*
 .idea
 server/public/upload/*
 !server/public/upload/README
-server/public/scouts
+scouts
 
 *.sublime-project
 *.sublime-workspace

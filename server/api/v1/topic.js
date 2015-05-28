@@ -105,7 +105,7 @@ var index = function(req, res, next) {
                 topic.isCollected = true;
               }
 
-              console.log('103', topic);
+              // console.log('103', topic);
               return topic;
             });
 

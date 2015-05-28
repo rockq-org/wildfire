@@ -12,7 +12,7 @@ var revision = require('git-rev');
 // https://www.npmjs.com/package/date-utils
 require('date-utils');
 //always use newrelic
-require('newrelic');
+//require('newrelic');
 
 // get git reverison for better tracking builds
 revision.short(function(gitRevision) {

@@ -55,9 +55,9 @@ angular.module('iwildfire.controllers', [])
             $scope.hasNextPage = true;
             $scope.loadError = false;
             if ($scope.topics.length === 0) {
-              $scope.loadingMsg = '找不到符合你要求的二手交易信息^_^';
+                $scope.loadingMsg = '找不到符合你要求的二手交易信息^_^';
             } else {
-              $scope.loadingMsg = '下拉加载更多';
+                $scope.loadingMsg = '下拉加载更多';
             }
         }, $rootScope.requestErrorHandler({
             noBackdrop: true
@@ -145,41 +145,41 @@ angular.module('iwildfire.controllers', [])
         $scope.doRefresh();
     }
 
-    LocationManager.getLocationFromAPI().then(loadData).catch(function(err){
-      LocationManager.showLocationSelector();
+    LocationManager.getLocationFromAPI().then(loadData).catch(function(err) {
+        LocationManager.showLocationSelector();
     });
 
     $rootScope.$on('location.updated', loadData);
 
     $scope.collectTopic = function(topic) {
-      if (topic.isCollected) {
-        console.log(topic.isCollected);
-          Topic.deCollectTopic(topic.id).$promise.then(function(response) {
-            console.log('done with decollected', JSON.stringify(response));
-              if (response.success) {
-                  topic.isCollected = false;
-                  if (!topic.collect_count) {
-                      topic.collect_count = 1;
-                  }
-                  topic.collect_count = parseInt(topic.collect_count) - 1;
-                  User.deCollectTopic(topic.id);
-              }
-          });
-      } else {
-        console.log(topic.isCollected);
-        Topic.collectTopic(topic.id).$promise.then(function(response) {
-          console.log('done with collected', JSON.stringify(response));
-            if (response.success) {
-                topic.isCollected = true;
-                if (!topic.collect_count) {
-                    topic.collect_count = 0;
+        if (topic.isCollected) {
+            console.log(topic.isCollected);
+            Topic.deCollectTopic(topic.id).$promise.then(function(response) {
+                console.log('done with decollected', JSON.stringify(response));
+                if (response.success) {
+                    topic.isCollected = false;
+                    if (!topic.collect_count) {
+                        topic.collect_count = 1;
+                    }
+                    topic.collect_count = parseInt(topic.collect_count) - 1;
+                    User.deCollectTopic(topic.id);
                 }
-                topic.collect_count = parseInt(topic.collect_count) + 1;
-                User.collectTopic(topic.id);
-            }
-        });
-      }
-  };
+            });
+        } else {
+            console.log(topic.isCollected);
+            Topic.collectTopic(topic.id).$promise.then(function(response) {
+                console.log('done with collected', JSON.stringify(response));
+                if (response.success) {
+                    topic.isCollected = true;
+                    if (!topic.collect_count) {
+                        topic.collect_count = 0;
+                    }
+                    topic.collect_count = parseInt(topic.collect_count) + 1;
+                    User.collectTopic(topic.id);
+                }
+            });
+        }
+    };
 
 })
 
@@ -416,11 +416,11 @@ angular.module('iwildfire.controllers', [])
         // before enter view event
         $scope.$on('$ionicView.beforeEnter', function() {
             $scope.status = {
-                    action: 'normal',
-                    showBargains: false
-                }
+                action: 'normal',
+                showBargains: false
+            }
             $scope.isSeller = false;
-                // track view
+            // track view
             if (window.analytics) {
                 window.analytics.trackView('topic view');
             }
@@ -442,11 +442,11 @@ angular.module('iwildfire.controllers', [])
                 $scope.replies = [];
                 $scope.bargains = [];
                 $scope.topic.replies.forEach(function(item, i) {
-                    if (typeof(item.price)!='undefined') $scope.bargains.push(item);
+                    if (typeof(item.price) != 'undefined') $scope.bargains.push(item);
                     else $scope.replies.push(item);
                 });
                 var profile = store.getUserProfile();
-                if(profile && (profile.loginname == $scope.topic.author.loginname))
+                if (profile && (profile.loginname == $scope.topic.author.loginname))
                     $scope.isSeller = true;
             }, $rootScope.requestErrorHandler({
                 noBackdrop: true
@@ -501,8 +501,8 @@ angular.module('iwildfire.controllers', [])
         }
 
         $scope.bargainTo = function(replyAuthor) {
-            console.log(replyAuthor,$scope.topic.author);
-            if($scope.isSeller && replyAuthor && (replyAuthor.loginname == $scope.topic.author.loginname))
+            console.log(replyAuthor, $scope.topic.author);
+            if ($scope.isSeller && replyAuthor && (replyAuthor.loginname == $scope.topic.author.loginname))
                 return;
             $scope.status.showBargains = true;
             $scope.status.action = 'bid';
@@ -510,7 +510,7 @@ angular.module('iwildfire.controllers', [])
                 price: $scope.topic.goods_now_price,
                 content: '便宜点我就收了'
             };
-            if($scope.isSeller) {
+            if ($scope.isSeller) {
                 $scope.replyData.replyTo = replyAuthor;
                 $scope.replyData.content = '再加点我就卖了';
             }
@@ -790,16 +790,16 @@ angular.module('iwildfire.controllers', [])
             var resId = resIds.pop();
             if (resId) {
                 $timeout(function() {
-                  WeChat.getWx().then(function(wx){
-                    wx.uploadImage({
-                      localId: resId, // 需要上传的图片的本地ID，由chooseImage接口获得
-                      isShowProgressTips: 1, // 默认为1，显示进度提示
-                      success: function(res) {
-                          results.push(res.serverId); // 返回图片的服务器端ID
-                          _processWxImages(resIds, results, deferred);
-                      }
+                    WeChat.getWx().then(function(wx) {
+                        wx.uploadImage({
+                            localId: resId, // 需要上传的图片的本地ID，由chooseImage接口获得
+                            isShowProgressTips: 1, // 默认为1，显示进度提示
+                            success: function(res) {
+                                results.push(res.serverId); // 返回图片的服务器端ID
+                                _processWxImages(resIds, results, deferred);
+                            }
+                        });
                     });
-                  });
                 }, 100);
             } else {
                 deferred.resolve(results);
@@ -869,7 +869,7 @@ angular.module('iwildfire.controllers', [])
                 //Msg.alert('succ:' + JSON.stringify(result));
                 _.each(result, function(value, index) {
                     // insert the image url into goods metadata
-                    $scope.params.goods_pics.push(value.imageUrl);
+                    $scope.params.goods_pics.push(cfg.server + value.imageUrl);
                 });
             }, function(err) {
                 Msg.alert('fail:' + JSON.stringify(err));
@@ -877,24 +877,24 @@ angular.module('iwildfire.controllers', [])
     }
 
     $scope.uploadImage = function() {
-          WeChat.getWx().then(function(wx){
+        WeChat.getWx().then(function(wx) {
             wx.chooseImage({
-              success: function(res) {
-                  var localIds = res.localIds; // 返回选定照片的本地ID列表，localId可以作为img标签的src属性显示图片
-                  switch ($rootScope.WILDFIRE_WECHAT_PLATFORM) {
-                      case 'Android':
-                          _processImagesForAndroid(localIds);
-                          break;
-                      case 'iOS':
-                          _processImagesForIOS(localIds);
-                          break;
-                      default:
-                          Msg.alert('目前仅支持iOS和Android设备！');
-                          break;
-                  }
-              }
+                success: function(res) {
+                    var localIds = res.localIds; // 返回选定照片的本地ID列表，localId可以作为img标签的src属性显示图片
+                    switch ($rootScope.WILDFIRE_WECHAT_PLATFORM) {
+                        case 'Android':
+                            _processImagesForAndroid(localIds);
+                            break;
+                        case 'iOS':
+                            _processImagesForIOS(localIds);
+                            break;
+                        default:
+                            Msg.alert('目前仅支持iOS和Android设备！');
+                            break;
+                    }
+                }
             });
-          });
+        });
     };
 
     /**
@@ -1061,11 +1061,11 @@ angular.module('iwildfire.controllers', [])
      * @type {Object}
      */
     $scope.showChangeLocationModal = function() {
-      if($scope.changeLocationModal) {
-        $scope.changeLocationModal.show();
-      } else {
-        initLocationSelector(null, true);
-      }
+        if ($scope.changeLocationModal) {
+            $scope.changeLocationModal.show();
+        } else {
+            initLocationSelector(null, true);
+        }
     }
 
     $scope.closeChangeLocationModal = function(isSubmit) {
@@ -1083,25 +1083,25 @@ angular.module('iwildfire.controllers', [])
     }
 
     function initLocationSelector(data, isShow) {
-      console.log('initLocationSelector');
-      var data = LocationManager.getLocation();
-      $scope.locationDetail = data;
-      $scope.params.goods_exchange_location = data;
-      $scope.showEdit = false;
+        console.log('initLocationSelector');
+        var data = LocationManager.getLocation();
+        $scope.locationDetail = data;
+        $scope.params.goods_exchange_location = data;
+        $scope.showEdit = false;
 
-      $ionicModal.fromTemplateUrl('templates/modal-change-location.html', {
-          scope: $scope
-      }).then(function(modal) {
-          $scope.changeLocationModal = modal;
-          if(isShow) {
-            modal.show();
-          }
-      });
+        $ionicModal.fromTemplateUrl('templates/modal-change-location.html', {
+            scope: $scope
+        }).then(function(modal) {
+            $scope.changeLocationModal = modal;
+            if (isShow) {
+                modal.show();
+            }
+        });
     }
 
     $rootScope.$on('location.updated', initLocationSelector);
-    LocationManager.getLocationFromAPI().then(initLocationSelector).catch(function(err){
-      LocationManager.showLocationSelector();
+    LocationManager.getLocationFromAPI().then(initLocationSelector).catch(function(err) {
+        LocationManager.showLocationSelector();
     });
 
     /*******************************************
@@ -1121,7 +1121,7 @@ angular.module('iwildfire.controllers', [])
 })
 
 .controller('InboxCtrl', function($scope, $ionicLoading, Messages, $log, store, $rootScope, $timeout, cfg, Msg) {
-  console.log('zzzzz');
+    console.log('zzzzz');
     $scope.doNotHaveMessage = false;
     // 既不是调试，也不存在accesstoken
     if ((!store.getAccessToken()) && (!cfg.debug)) {
@@ -1482,43 +1482,43 @@ angular.module('iwildfire.controllers', [])
 
     $scope.submitTxt = '发送验证码';
     $scope.sendVerifyCode = function() {
-      // verify the input nubmer is a phone number
-      //Msg.alert('sendVerifyCode' + JSON.stringify($scope.data));
-      if (!$scope.data.phoneNumber || !isPhonenumber($scope.data.phoneNumber)) {
-        _fixPhoneNumberInputPlaceholder('输入正确的手机号码');
-        return;
-      }
-      // user has input a phone number
-      // post request to send the api
-      currentPhoneNumber = $scope.data.phoneNumber;
-      Msg.show('发送验证码 ...');
-      $scope.submitTxt = '等待60秒';
-      var seconds = 60;
-      var timeer = $interval(function(){
-        seconds--;
-        $scope.submitTxt = ' 等待 ' + seconds + ' 秒';
-      }, 1000, seconds);
+        // verify the input nubmer is a phone number
+        //Msg.alert('sendVerifyCode' + JSON.stringify($scope.data));
+        if (!$scope.data.phoneNumber || !isPhonenumber($scope.data.phoneNumber)) {
+            _fixPhoneNumberInputPlaceholder('输入正确的手机号码');
+            return;
+        }
+        // user has input a phone number
+        // post request to send the api
+        currentPhoneNumber = $scope.data.phoneNumber;
+        Msg.show('发送验证码 ...');
+        $scope.submitTxt = '等待60秒';
+        var seconds = 60;
+        var timeer = $interval(function() {
+            seconds--;
+            $scope.submitTxt = ' 等待 ' + seconds + ' 秒';
+        }, 1000, seconds);
 
-      $timeout(function(){
-        $scope.submitTxt = '发送验证码';
-        $scope.waitFor60Seconds = false;
-        $scope.data.phoneNumber = currentPhoneNumber;
-      }, 1000 * seconds + 1000);
+        $timeout(function() {
+            $scope.submitTxt = '发送验证码';
+            $scope.waitFor60Seconds = false;
+            $scope.data.phoneNumber = currentPhoneNumber;
+        }, 1000 * seconds + 1000);
 
-      $scope.waitFor60Seconds = true;
-      webq.sendVerifyCode($scope.data.phoneNumber)
-        .then(function(result) {
-            // send code sucessfully, just close loading
-            // spin in finally.
-            _fixPhoneNumberInputPlaceholder('已发送至 {0}.'.f($scope.data.phoneNumber));
-        }, function(err) {
-            // get an error, now alert it.
-            // TODO process err in a user friendly way.
-            Msg.alert(JSON.stringify(err));
-        })
-        .finally(function() {
-            Msg('hide');
-        });
+        $scope.waitFor60Seconds = true;
+        webq.sendVerifyCode($scope.data.phoneNumber)
+            .then(function(result) {
+                // send code sucessfully, just close loading
+                // spin in finally.
+                _fixPhoneNumberInputPlaceholder('已发送至 {0}.'.f($scope.data.phoneNumber));
+            }, function(err) {
+                // get an error, now alert it.
+                // TODO process err in a user friendly way.
+                Msg.alert(JSON.stringify(err));
+            })
+            .finally(function() {
+                Msg('hide');
+            });
     };
 
     $ionicModal.fromTemplateUrl('modal-service-agreements.html', {
@@ -1573,8 +1573,8 @@ angular.module('iwildfire.controllers', [])
                             $state.go('tab.index');
                         }
                     }, function(err) {
-                      L2S('verifycodeErr', err);
-                      _fixVerifyCodeInputPlaceholder('验证码错误，重新输入');
+                        L2S('verifycodeErr', err);
+                        _fixVerifyCodeInputPlaceholder('验证码错误，重新输入');
                     })
                     .finally(function() {
                         _hideLoadingSpin();

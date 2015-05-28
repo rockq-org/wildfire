@@ -92,12 +92,14 @@ angular.module('iwildfire', ['ionic',
 
 // global config for uniform ui for different platform
 .config(function($ionicConfigProvider) {
+    $ionicConfigProvider.scrolling.jsScrolling('false');
     $ionicConfigProvider.views.transition('ios');
     $ionicConfigProvider.tabs.style('standard');
     $ionicConfigProvider.tabs.position('bottom');
     $ionicConfigProvider.navBar.alignTitle('center');
     $ionicConfigProvider.form.checkbox('square');
-    $ionicConfigProvider.form.toggle('small')
+    $ionicConfigProvider.form.toggle('small');
+    $ionicConfigProvider.backButton.text('');
     $ionicConfigProvider.backButton.previousTitleText('false');
 })
 

@@ -45,7 +45,7 @@ function _downloadWechatServerImage(userId, serverId) {
 }
 
 /**
- * create user account by restrieving user profile data 
+ * create user account by restrieving user profile data
  * by msg
  * @param  {[type]} msg [description]
  * @return {[type]}        [description]
@@ -143,7 +143,7 @@ function onClick(msg, res) {
             break;
         default:
             logger.warn('onClick', msg);
-            res.send(200);
+            onDefault(msg, res);
             break;
     }
 }
@@ -154,26 +154,26 @@ function onDefault(msg, res) {
 
     // https://github.com/arrking/wildfire/issues/274
     // http://mp.weixin.qq.com/wiki/10/79502792eef98d6e0c6e1739da387346.html
-    if (msg.MsgType == 'text') {
+    // if (msg.MsgType == 'text') {
+    //     res.reply({
+    //         content: '亲，您的留言小呱已收到，小呱将会尽快回复您。如果您发的是抽奖活动的图片，不要着急噢，小呱将在人工审核后24小时内发放抽奖号码，感谢您的支持！如果您遇到系统登录不进去的情况，请多戳几次！由此给您带来的不便，小呱感到十分抱歉，再次感谢您的支持！',
+    //         type: 'text'
+    //     });
+    // }
+    switch (msg.MsgType) {
+      case 'text':
         res.reply({
-            content: '您有任何问题请留言，我们将会尽快回复，感谢您的支持。',
+            content: '亲，您的留言小呱已收到，小呱将会尽快回复您。如果您发的是抽奖活动的图片，不要着急噢，小呱将在人工审核后24小时内发放抽奖号码，感谢您的支持！如果您遇到系统登录不进去的情况，请多戳几次！由此给您带来的不便，小呱感到十分抱歉，再次感谢您的支持！',
             type: 'text'
         });
+        break;
+      default:
+        res.reply({
+            content: '亲，您的留言小呱已收到，小呱将会尽快回复您。如果您发的是抽奖活动的图片，不要着急噢，小呱将在人工审核后24小时内发放抽奖号码，感谢您的支持！如果您遇到系统登录不进去的情况，请多戳几次！由此给您带来的不便，小呱感到十分抱歉，再次感谢您的支持！',
+            type: 'text'
+        });
+        break;
     }
-
-    // 
-    // 地理位置消息
-    // <xml>
-    // <ToUserName><![CDATA[toUser]]></ToUserName>
-    // <FromUserName><![CDATA[fromUser]]></FromUserName>
-    // <CreateTime>1351776360</CreateTime>
-    // <MsgType><![CDATA[location]]></MsgType>
-    // <Location_X>23.134521</Location_X>
-    // <Location_Y>113.358803</Location_Y>
-    // <Scale>20</Scale>
-    // <Label><![CDATA[位置信息]]></Label>
-    // <MsgId>1234567890123456</MsgId>
-    // </xml> 
 }
 
 exports.setup = function(app, path) {

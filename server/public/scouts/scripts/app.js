@@ -55,7 +55,7 @@ angular.module('main')
   // https://github.com/mwaylabs/generator-m#gulp-environment
   ENV: {
     /*inject-env*/
-    'API': 'api/v1/'
+    'API': window.location.protocol + '//' + window.location.host + '/api/v1/'
     /*endinject*/
   },
 
@@ -174,7 +174,7 @@ angular.module('chart')
   // https://github.com/mwaylabs/generator-m#gulp-environment
   ENV: {
     /*inject-env*/
-    'API': 'api/v1/'
+    'API': window.location.protocol + '//' + window.location.host + '/api/v1/'
     /*endinject*/
   },
 

@@ -7,7 +7,7 @@ angular.module('main', [
 ])
 .config(function ($stateProvider, $urlRouterProvider) {
 
-  console.log('Allo! Allo from your module: ' + 'main');
+  // console.log('Allo! Allo from your module: ' + 'main');
 
   $urlRouterProvider.otherwise('/main');
 
@@ -55,7 +55,7 @@ angular.module('main')
   // https://github.com/mwaylabs/generator-m#gulp-environment
   ENV: {
     /*inject-env*/
-    'API': 'http://wildfire-service.arrking.com/api/v1/'
+    'API': 'api/v1/'
     /*endinject*/
   },
 
@@ -167,14 +167,14 @@ angular.module('chart')
 });
 
 'use strict';
-angular.module('Chart')
+angular.module('chart')
 .constant('Config', {
 
   // gulp environment: injects environment vars
   // https://github.com/mwaylabs/generator-m#gulp-environment
   ENV: {
     /*inject-env*/
-    'API': 'http://wildfire-service.arrking.com/api/v1/'
+    'API': 'api/v1/'
     /*endinject*/
   },
 

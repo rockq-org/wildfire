@@ -519,7 +519,7 @@ module.exports = function (grunt) {
     }
 
     grunt.config('concurrent.ionic.tasks', ['ionic:serve', 'watch']);
-    grunt.task.run(['wiredep', 'html2js', 'init', 'concurrent:ionic']);
+    grunt.task.run(['wiredep', 'init', 'concurrent:ionic']);
   });
   grunt.registerTask('emulate', function() {
     grunt.config('concurrent.ionic.tasks', ['ionic:emulate:' + this.args.join(), 'watch']);
@@ -537,6 +537,7 @@ module.exports = function (grunt) {
     'clean',
     'ngconstant:development',
     'wiredep',
+    'html2js',
     'concurrent:server',
     'autoprefixer',
     'newer:copy:app',

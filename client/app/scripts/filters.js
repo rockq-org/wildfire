@@ -1,6 +1,15 @@
 'use strict';
 angular.module('iwildfire.filters', [])
 
+.filter('maybePrefix', function(cfg) {
+  var imgPrefix = cfg.server;
+  return function(input) {
+    if (input.indexOf('http://') === -1) {
+      input = imgPrefix + input;
+    }
+    return input;
+  };
+})
 .filter('addPlatFormPostFix', function($rootScope) {
     return function(input) {
         console.log(wechatInfo);
@@ -13,7 +22,6 @@ angular.module('iwildfire.filters', [])
         return input;
     }
 })
-
 .filter('flatternDistance', function() {
     var EARTH_RADIUS = 6378137.0;    //单位M
     var PI = Math.PI;
